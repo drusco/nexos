@@ -10,7 +10,8 @@
     "dev": "tsc --watch",
     "build": "tsc",
     "test": "mocha --grep Emulator",
-    "lint": "eslint --ext .js,.ts src"
+    "lint": "eslint --ext .js,.ts src",
+    "lint:fix": "eslint --fix"
   },
   "husky": {
     "hooks": {
