@@ -19,7 +19,7 @@ export default class Emulator
     secret.set(this, data);
   }
 
-  use(value: unknown): unknown {
+  use(value: any): unknown {
     if (typeof value === "string" && value.length) {
       return createGroup.call(this, value);
     }
@@ -92,7 +92,7 @@ export default class Emulator
 
   encode(
     value: EmulatorNS.traceable,
-    callback: EmulatorNS.functionLike,
+    callback: EmulatorNS.functionLike
   ): object {
     if (items.has(value)) {
       const { id } = items.get(value);
@@ -288,7 +288,7 @@ const context = {
   apply(
     dummy: EmulatorNS.functionLike,
     that: object,
-    args: unknown[],
+    args: unknown[]
   ): unknown {
     const item = dummies.get(dummy);
     const { scope, group } = items.get(item);
@@ -353,7 +353,7 @@ function revokeItem(item: EmulatorNS.traceable): void {
 function createItem(
   groupId: string | undefined,
   target: EmulatorNS.traceable, // original target used for item
-  origin: EmulatorNS.origin, // the action used to create the item
+  origin: EmulatorNS.origin // the action used to create the item
 ): unknown {
   if (targets.has(target)) return targets.get(target); // return item linked to target
   if (items.has(target)) return target; // target is already item
