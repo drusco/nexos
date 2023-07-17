@@ -19,7 +19,7 @@ export default class Emulator
     secret.set(this, data);
   }
 
-  use(value: unknown): any {
+  use(value: unknown): unknown {
     if (typeof value === "string" && value.length) {
       return createGroup.call(this, value);
     }
