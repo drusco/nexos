@@ -38,7 +38,7 @@ describe("Emulator", function () {
         assert.strictEqual(array[array.length], undefined);
         assert.strictEqual(
           Emulator.equal(array[array.length - 1], fakeArray[array.length - 1]),
-          true
+          true,
         );
         assert.strictEqual(emulator.exists(fakeArray[array.length - 1]), true);
         assert.strictEqual(fakeArray.length, array.length + 1);

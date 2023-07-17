@@ -7,17 +7,21 @@ declare namespace Emulator {
     [x: string]: unknown;
   }
 
+  interface group {
+    length: number;
+    rootItem: functionLike;
+  }
+
+  interface groups {
+    [id: string]: group;
+  }
+
   interface private {
     options: options;
     groups: groups;
     itemCount: number;
     activeItems: number;
     groupCount: number;
-  }
-
-  interface group {
-    length: number;
-    rootItem: unknown;
   }
 
   interface origin {
@@ -40,9 +44,9 @@ declare namespace Emulator {
     group: string | undefined;
   }
 
-  type functionLike = (...args: unknown[]) => unknown;
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  type functionLike = Function;
   type traceable = object | functionLike;
-  type groups = Record<string, group>;
 }
 
 export default Emulator;

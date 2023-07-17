@@ -28,6 +28,9 @@ export default class Emulator
       if (value === this) return this; // prevent using instance as target
       if (value === null) return null;
       if (targets.has(value)) return targets.get(value); // return item linked to value
+    }
+
+    if (typeof value === "function") {
       if (items.has(value)) return value; // value is already item
     }
 
@@ -60,9 +63,12 @@ export default class Emulator
     let isItem: boolean = false;
     let isLinkedToItem: boolean = false;
 
-    if (typeof value === "object" || typeof value === "function") {
-      isItem = items.has(value);
+    if (typeof value === "object") {
       isLinkedToItem = targets.has(value);
+    }
+
+    if (typeof value === "function") {
+      isItem = items.has(value);
     }
 
     return isGroup || isItem || isLinkedToItem;
@@ -73,7 +79,7 @@ export default class Emulator
 
     let origin: EmulatorNS.origin;
 
-    if (typeof b === "object") {
+    if (typeof b === "function") {
       const item = items.get(b);
       origin = item.origin;
     }
@@ -82,7 +88,7 @@ export default class Emulator
       const { item } = origin;
       if (item === a) return true;
       origin = null;
-      if (typeof item === "object" && this.exists(item)) {
+      if (typeof item === "function" && this.exists(item)) {
         origin = items.get(item).origin;
       }
     }
@@ -94,7 +100,7 @@ export default class Emulator
     value: EmulatorNS.traceable,
     callback: EmulatorNS.functionLike,
   ): object {
-    if (items.has(value)) {
+    if (typeof value === "function" && items.has(value)) {
       const { id } = items.get(value);
 
       if (typeof callback == "function") {
@@ -119,16 +125,18 @@ export default class Emulator
   }
 
   exists(item: EmulatorNS.traceable): boolean {
+    if (typeof item !== "function") return false;
     return items.has(item);
   }
 
   getId(item: EmulatorNS.traceable): number {
     // Access the internal id of a proxy
+    if (typeof item !== "function") return;
     if (!this.exists(item)) return;
     return items.get(item).id;
   }
 
-  revoke(...args: EmulatorNS.traceable[]): void {
+  revoke(...args: EmulatorNS.functionLike[]): void {
     for (const traceable of args) {
       revokeItem(traceable);
     }
@@ -179,9 +187,9 @@ export default class Emulator
 }
 
 const secret = new WeakMap<EmulatorNS.EmulatorClass, EmulatorNS.private>();
-const dummies = new WeakMap<EmulatorNS.functionLike, object>();
-const targets = new WeakMap<EmulatorNS.traceable, unknown>(); // [target] -> item
-const items = new WeakMap<EmulatorNS.traceable, EmulatorNS.item>();
+const dummies = new WeakMap<EmulatorNS.functionLike, EmulatorNS.functionLike>();
+const targets = new WeakMap<EmulatorNS.traceable, EmulatorNS.functionLike>();
+const items = new WeakMap<EmulatorNS.functionLike, EmulatorNS.item>();
 
 const events = [
   "proxy",
@@ -310,13 +318,13 @@ function isTraceable(value: unknown): boolean {
   if (typeof value !== "object") return false;
   if (value === null) return false;
   if (targets.has(value)) return false; // has item linked to it
-  if (items.has(value)) return false; // is item
+  if (typeof value === "function" && items.has(value)) return false; // is item
   return true;
 }
 
 // Item methods
 
-function revokeItem(item: EmulatorNS.traceable): void {
+function revokeItem(item: EmulatorNS.functionLike): void {
   // @params
   // item [item] an active item
 
@@ -354,9 +362,9 @@ function createItem(
   groupId: string | undefined,
   target: EmulatorNS.traceable, // original target used for item
   origin: EmulatorNS.origin, // the action used to create the item
-): unknown {
+): EmulatorNS.functionLike {
   if (targets.has(target)) return targets.get(target); // return item linked to target
-  if (items.has(target)) return target; // target is already item
+  if (typeof target === "function" && items.has(target)) return target; // target is already item
 
   const data: EmulatorNS.private = secret.get(this);
   const { groups } = data;
@@ -414,7 +422,7 @@ function createGroup(id: string, target: object): unknown {
     return groups[id].rootItem;
   }
 
-  const rootItem: unknown = createItem.call(this, id, target);
+  const rootItem: EmulatorNS.functionLike = createItem.call(this, id, target);
 
   const group: EmulatorNS.group = {
     length: 0,
