@@ -10,7 +10,7 @@
     "dev": "tsc --watch",
     "build": "tsc",
     "test": "mocha --grep Emulator",
-    "lint": "eslint src"
+    "lint": "eslint src --fix"
   },
   "author": {
     "name": "Pedro Gallardo",
@@ -21,7 +21,10 @@
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.45.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^5.0.0",
     "mocha": "^10.2.0",
+    "prettier": "^3.0.0",
     "typescript": "^5.1.6"
   }
 }
