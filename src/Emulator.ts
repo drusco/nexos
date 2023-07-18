@@ -20,22 +20,26 @@ export default class Emulator
   }
 
   use(value: unknown): unknown {
-    if (typeof value === "string" && value.length) {
+    if (typeof value === "string") {
       return createGroup.call(this, value);
     }
 
     if (typeof value === "object") {
       if (value === this) return this; // prevent using instance as target
       if (value === null) return null;
-      if (targets.has(value)) return targets.get(value); // return item linked to value
+      if (targets.has(value)) return targets.get(value); // return proxy linked to value
     }
 
     if (typeof value === "function") {
-      if (items.has(value)) return value; // value is already item
+      if (items.has(value)) return value; // value is already a proxy
     }
 
-    if (typeof value === "object" || typeof value === "undefined") {
-      return createItem.call(this, null, value); // new item will not belong to any group
+    if (
+      typeof value === "object" ||
+      typeof value === "undefined" ||
+      typeof value === "function"
+    ) {
+      return createItem.call(this, defaultGroup, value);
     }
 
     return value; // return original value
@@ -314,6 +318,8 @@ const context = {
 
 // Helpers
 
+const defaultGroup = "__global";
+
 function isTraceable(value: unknown): boolean {
   if (typeof value !== "object") return false;
   if (value === null) return false;
@@ -359,17 +365,17 @@ function revokeItem(item: EmulatorNS.functionLike): void {
 }
 
 function createItem(
-  groupId: string | undefined,
-  target: EmulatorNS.traceable, // original target used for item
-  origin: EmulatorNS.origin, // the action used to create the item
+  groupId: string,
+  target: EmulatorNS.traceable, // original target used for proxy
+  origin: EmulatorNS.origin | undefined, // the action used to create the proxy
 ): EmulatorNS.functionLike {
-  if (targets.has(target)) return targets.get(target); // return item linked to target
-  if (typeof target === "function" && items.has(target)) return target; // target is already item
+  if (targets.has(target)) return targets.get(target); // return proxy linked to target
+  if (typeof target === "function" && items.has(target)) return target; // target is already proxy
 
   const data: EmulatorNS.private = secret.get(this);
   const { groups } = data;
 
-  const id = ++data.itemCount;
+  const itemId = ++data.itemCount;
   const dummy = function () {};
   const traceable = isTraceable(target);
   const { proxy, revoke } = Proxy.revocable(dummy, context);
@@ -378,7 +384,7 @@ function createItem(
   // set information about the item
 
   const item: EmulatorNS.item = {
-    id,
+    id: itemId,
     dummy,
     origin,
     target,
@@ -389,7 +395,7 @@ function createItem(
   };
 
   this.emit("proxy", {
-    id,
+    id: itemId,
     item: proxy,
     origin,
     group: item.group,
@@ -413,16 +419,21 @@ function createItem(
 
 // Group methods
 
-function createGroup(id: string, target: object): unknown {
+function createGroup(id: string, target: object): EmulatorNS.functionLike {
   const data: EmulatorNS.private = secret.get(this);
+  const groupId = id || defaultGroup;
   const { groups } = data;
 
   // return existing root item
-  if (groups[id]) {
-    return groups[id].rootItem;
+  if (groups[groupId]) {
+    return groups[groupId].rootItem;
   }
 
-  const rootItem: EmulatorNS.functionLike = createItem.call(this, id, target);
+  const rootItem: EmulatorNS.functionLike = createItem.call(
+    this,
+    groupId,
+    target,
+  );
 
   const group: EmulatorNS.group = {
     length: 0,
@@ -430,9 +441,9 @@ function createGroup(id: string, target: object): unknown {
   };
 
   data.groupCount += 1;
-  groups[id] = group;
+  groups[groupId] = group;
 
-  this.emit("createGroup", id);
+  this.emit("createGroup", groupId);
 
   return rootItem;
 }
