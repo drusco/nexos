@@ -10,7 +10,7 @@ export default class Emulator
 
     const data: EmulatorNS.private = {
       options,
-      groups: Object.create(null),
+      bindings: Object.create(null),
       itemCount: 0, // total item count including revoked items, it only increases
       activeItems: 0, // items that are not revoked
       groupCount: 0,
@@ -21,7 +21,7 @@ export default class Emulator
 
   use(value: unknown): unknown {
     if (typeof value === "string") {
-      return createGroup.call(this, value);
+      return bindString(this, value);
     }
 
     if (typeof value === "object") {
@@ -39,7 +39,7 @@ export default class Emulator
       typeof value === "undefined" ||
       typeof value === "function"
     ) {
-      return createItem.call(this, defaultGroup, value);
+      return bindTraceable(this, value);
     }
 
     return value; // return original value
@@ -61,8 +61,8 @@ export default class Emulator
   }
 
   used(value: unknown): boolean {
-    const { groups }: EmulatorNS.private = secret.get(this);
-    const isGroup = typeof value === "string" && !!groups[value];
+    const { bindings }: EmulatorNS.private = secret.get(this);
+    const isGroup = typeof value === "string" && !!bindings[value];
 
     let isItem: boolean = false;
     let isLinkedToItem: boolean = false;
@@ -199,15 +199,15 @@ const events = [
   "proxy",
   "action",
   "revoke",
-  "createGroup",
+  "bindString",
   "deleteGroup",
   "resolve",
   "resolveId",
 ];
 
-// Item context
+// Item traps
 
-const context = {
+const traps = {
   get(dummy: EmulatorNS.functionLike, key: string): unknown {
     const item = dummies.get(dummy);
     const { scope, group, target, sandbox } = items.get(item);
@@ -225,12 +225,12 @@ const context = {
     if (!sandboxKeys.includes(key)) {
       if (targets.has(target) && target[key] !== undefined) {
         if (isTraceable(target[key])) {
-          sandbox[key] = createItem.call(scope, group, target[key], origin);
+          sandbox[key] = bindTraceable(scope, target[key], origin, group);
         } else {
           sandbox[key] = target[key];
         }
       } else {
-        sandbox[key] = createItem.call(scope, group, undefined, origin);
+        sandbox[key] = bindTraceable(scope, undefined, origin, group);
       }
     }
 
@@ -250,7 +250,7 @@ const context = {
     };
 
     const final = traceable
-      ? createItem.call(scope, group, value, origin)
+      ? bindTraceable(scope, value as EmulatorNS.traceable, origin, group)
       : value;
 
     if (final === value) {
@@ -288,13 +288,13 @@ const context = {
     const item = dummies.get(dummy);
     const { scope, group } = items.get(item);
 
-    const origin = {
+    const origin: EmulatorNS.origin = {
       action: "construct",
       item,
       args,
     };
 
-    return createItem.call(scope, group, undefined, origin);
+    return bindTraceable(scope, undefined, origin, group);
   },
 
   apply(
@@ -305,20 +305,18 @@ const context = {
     const item = dummies.get(dummy);
     const { scope, group } = items.get(item);
 
-    const origin = {
+    const origin: EmulatorNS.origin = {
       action: "apply",
       item,
       that,
       args,
     };
 
-    return createItem.call(scope, group, undefined, origin);
+    return bindTraceable(scope, undefined, origin, group);
   },
 };
 
 // Helpers
-
-const defaultGroup = "__global";
 
 function isTraceable(value: unknown): boolean {
   if (typeof value !== "object") return false;
@@ -338,14 +336,14 @@ function revokeItem(item: EmulatorNS.functionLike): void {
 
   const { id, scope, group, dummy, revoke, target } = items.get(item);
   const _private = secret.get(scope);
-  const _group = _private.groups[group];
+  const _group = _private.bindings[group];
 
   if (_group) {
     _group.length--;
 
     if (_group.length === 0) {
       // delete the group when it is empty
-      delete _private.groups[group];
+      delete _private.bindings[group];
       scope.emit("deleteGroup", group);
       _private.groupCount--;
     }
@@ -364,22 +362,23 @@ function revokeItem(item: EmulatorNS.functionLike): void {
   scope.emit("revoke", id);
 }
 
-function createItem(
-  groupId: string,
+const bindTraceable = ((
+  scope: EmulatorNS.EmulatorClass,
   target: EmulatorNS.traceable, // original target used for proxy
-  origin: EmulatorNS.origin | undefined, // the action used to create the proxy
-): EmulatorNS.functionLike {
+  origin?: EmulatorNS.origin, // the action used to create the proxy
+  groupId?: string,
+): EmulatorNS.functionLike => {
   if (targets.has(target)) return targets.get(target); // return proxy linked to target
   if (typeof target === "function" && items.has(target)) return target; // target is already proxy
 
-  const data: EmulatorNS.private = secret.get(this);
-  const { groups } = data;
+  const data: EmulatorNS.private = secret.get(scope);
+  const { bindings } = data;
 
   const itemId = ++data.itemCount;
   const dummy = function () {};
   const traceable = isTraceable(target);
-  const { proxy, revoke } = Proxy.revocable(dummy, context);
-  const group = groups[groupId];
+  const { proxy, revoke } = Proxy.revocable(dummy, traps);
+  const group = bindings[groupId];
 
   // set information about the item
 
@@ -389,12 +388,12 @@ function createItem(
     origin,
     target,
     revoke,
-    scope: this,
+    scope,
     sandbox: Object.create(null),
     group: group && groupId,
   };
 
-  this.emit("proxy", {
+  scope.emit("proxy", {
     id: itemId,
     item: proxy,
     origin,
@@ -415,24 +414,31 @@ function createItem(
   }
 
   return proxy;
-}
+}) satisfies EmulatorNS.bindTraceable;
 
-// Group methods
+const bindString = ((
+  scope: EmulatorNS.EmulatorClass,
+  id: string,
+  target?: EmulatorNS.traceable,
+): EmulatorNS.functionLike => {
+  const data: EmulatorNS.private = secret.get(scope);
 
-function createGroup(id: string, target: object): EmulatorNS.functionLike {
-  const data: EmulatorNS.private = secret.get(this);
-  const groupId = id || defaultGroup;
-  const { groups } = data;
+  const { bindings } = data;
 
-  // return existing root item
-  if (groups[groupId]) {
-    return groups[groupId].rootItem;
+  if (!id.length) {
+    return bindTraceable(scope, target);
   }
 
-  const rootItem: EmulatorNS.functionLike = createItem.call(
-    this,
-    groupId,
+  // return existing root item
+  if (bindings[id]) {
+    return bindings[id].rootItem;
+  }
+
+  const rootItem: EmulatorNS.functionLike = bindTraceable(
+    scope,
     target,
+    undefined,
+    id,
   );
 
   const group: EmulatorNS.group = {
@@ -441,9 +447,9 @@ function createGroup(id: string, target: object): EmulatorNS.functionLike {
   };
 
   data.groupCount += 1;
-  groups[groupId] = group;
+  bindings[id] = group;
 
-  this.emit("createGroup", groupId);
+  scope.emit("bindString", id);
 
   return rootItem;
-}
+}) satisfies EmulatorNS.bindString;

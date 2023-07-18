@@ -3,6 +3,19 @@ import { EventEmitter } from "events";
 declare namespace Emulator {
   interface EmulatorClass extends EventEmitter {}
 
+  type bindString = (
+    scope: EmulatorClass,
+    id: string,
+    target?: traceable,
+  ) => functionLike;
+
+  type bindTraceable = (
+    scope: EmulatorClass,
+    target: traceable,
+    origin?: origin,
+    groupId?: string,
+  ) => functionLike;
+
   interface options {
     [x: string]: unknown;
   }
@@ -12,13 +25,13 @@ declare namespace Emulator {
     rootItem: functionLike;
   }
 
-  interface groups {
+  interface bindings {
     [id: string]: group;
   }
 
   interface private {
     options: options;
-    groups: groups;
+    bindings: bindings;
     itemCount: number;
     activeItems: number;
     groupCount: number;
@@ -36,12 +49,12 @@ declare namespace Emulator {
   interface item {
     id: number;
     dummy: functionLike;
-    origin: origin;
+    origin?: origin;
     target: traceable;
     revoke(): void;
     scope: EmulatorClass;
     sandbox: object;
-    group: string | undefined;
+    group?: string;
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types
