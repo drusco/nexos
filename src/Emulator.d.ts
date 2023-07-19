@@ -16,6 +16,9 @@ declare namespace Emulator {
     groupId?: string,
   ) => functionLike;
 
+  type isTraceable = (value: unknown) => boolean;
+  type revokeProxy = (proxy: functionLike) => void;
+
   interface options {
     [x: string]: unknown;
   }

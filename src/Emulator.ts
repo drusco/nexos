@@ -20,25 +20,29 @@ export default class Emulator
   }
 
   use(value: unknown): unknown {
-    if (typeof value === "string") {
+    const isString = typeof value === "string";
+    const isObject = typeof value === "object";
+    const isFunction = typeof value === "function";
+    const isUndefined = typeof value === "undefined";
+
+    if (isString && value.length) {
       return bindString(this, value);
     }
 
-    if (typeof value === "object") {
+    if (isObject) {
       if (value === this) return this; // prevent using instance as target
       if (value === null) return null;
+    }
+
+    if (isFunction) {
+      if (proxies.has(value)) return value; // value is already a proxy
+    }
+
+    if (isObject || isFunction) {
       if (targets.has(value)) return targets.get(value); // return proxy linked to value
     }
 
-    if (typeof value === "function") {
-      if (items.has(value)) return value; // value is already a proxy
-    }
-
-    if (
-      typeof value === "object" ||
-      typeof value === "undefined" ||
-      typeof value === "function"
-    ) {
+    if (isUndefined || isObject || isFunction) {
       return bindTraceable(this, value);
     }
 
@@ -72,7 +76,7 @@ export default class Emulator
     }
 
     if (typeof value === "function") {
-      isItem = items.has(value);
+      isItem = proxies.has(value);
     }
 
     return isGroup || isItem || isLinkedToItem;
@@ -84,7 +88,7 @@ export default class Emulator
     let origin: EmulatorNS.origin;
 
     if (typeof b === "function") {
-      const item = items.get(b);
+      const item = proxies.get(b);
       origin = item.origin;
     }
 
@@ -93,7 +97,7 @@ export default class Emulator
       if (item === a) return true;
       origin = null;
       if (typeof item === "function" && this.exists(item)) {
-        origin = items.get(item).origin;
+        origin = proxies.get(item).origin;
       }
     }
 
@@ -104,8 +108,8 @@ export default class Emulator
     value: EmulatorNS.traceable,
     callback: EmulatorNS.functionLike,
   ): object {
-    if (typeof value === "function" && items.has(value)) {
-      const { id } = items.get(value);
+    if (typeof value === "function" && proxies.has(value)) {
+      const { id } = proxies.get(value);
 
       if (typeof callback == "function") {
         callback(value);
@@ -130,19 +134,19 @@ export default class Emulator
 
   exists(item: EmulatorNS.traceable): boolean {
     if (typeof item !== "function") return false;
-    return items.has(item);
+    return proxies.has(item);
   }
 
   getId(item: EmulatorNS.traceable): number {
     // Access the internal id of a proxy
     if (typeof item !== "function") return;
     if (!this.exists(item)) return;
-    return items.get(item).id;
+    return proxies.get(item).id;
   }
 
   revoke(...args: EmulatorNS.functionLike[]): void {
     for (const traceable of args) {
-      revokeItem(traceable);
+      revokeProxy(traceable);
     }
   }
 
@@ -193,7 +197,7 @@ export default class Emulator
 const secret = new WeakMap<EmulatorNS.EmulatorClass, EmulatorNS.private>();
 const dummies = new WeakMap<EmulatorNS.functionLike, EmulatorNS.functionLike>();
 const targets = new WeakMap<EmulatorNS.traceable, EmulatorNS.functionLike>();
-const items = new WeakMap<EmulatorNS.functionLike, EmulatorNS.item>();
+const proxies = new WeakMap<EmulatorNS.functionLike, EmulatorNS.item>();
 
 const events = [
   "proxy",
@@ -210,7 +214,7 @@ const events = [
 const traps = {
   get(dummy: EmulatorNS.functionLike, key: string): unknown {
     const item = dummies.get(dummy);
-    const { scope, group, target, sandbox } = items.get(item);
+    const { scope, group, target, sandbox } = proxies.get(item);
 
     const origin: EmulatorNS.origin = {
       action: "get",
@@ -239,7 +243,7 @@ const traps = {
 
   set(dummy: EmulatorNS.functionLike, key: string, value: unknown): boolean {
     const item = dummies.get(dummy);
-    const { scope, group, sandbox } = items.get(item);
+    const { scope, group, sandbox } = proxies.get(item);
     const traceable = isTraceable(value);
 
     const origin: EmulatorNS.origin = {
@@ -269,7 +273,7 @@ const traps = {
 
   deleteProperty(dummy: EmulatorNS.functionLike, key: string): boolean {
     const item = dummies.get(dummy);
-    const { target, sandbox, scope } = items.get(item);
+    const { target, sandbox, scope } = proxies.get(item);
 
     // delete from original target too
     if (targets.has(target)) delete target[key];
@@ -286,7 +290,7 @@ const traps = {
 
   construct(dummy: EmulatorNS.functionLike, args: unknown[]): object {
     const item = dummies.get(dummy);
-    const { scope, group } = items.get(item);
+    const { scope, group } = proxies.get(item);
 
     const origin: EmulatorNS.origin = {
       action: "construct",
@@ -299,11 +303,11 @@ const traps = {
 
   apply(
     dummy: EmulatorNS.functionLike,
-    that: object,
-    args: unknown[],
+    that?: object,
+    args?: unknown[],
   ): unknown {
     const item = dummies.get(dummy);
-    const { scope, group } = items.get(item);
+    const { scope, group, target } = proxies.get(item);
 
     const origin: EmulatorNS.origin = {
       action: "apply",
@@ -312,29 +316,34 @@ const traps = {
       args,
     };
 
+    if (typeof target === "function") {
+      target.apply(that, args);
+    }
     return bindTraceable(scope, undefined, origin, group);
   },
 };
 
-// Helpers
+const isTraceable = ((value: unknown): boolean => {
+  // if (typeof value !== "object") return false;
+  // if (value === null) return false;
+  // if (targets.has(value)) return false; // has item linked to it
+  // if (typeof value === "function" && proxies.has(value)) return false; // is item
+  // return true;
 
-function isTraceable(value: unknown): boolean {
-  if (typeof value !== "object") return false;
+  if (!(typeof value === "object" || typeof value === "function")) return false;
   if (value === null) return false;
   if (targets.has(value)) return false; // has item linked to it
-  if (typeof value === "function" && items.has(value)) return false; // is item
+  if (typeof value === "function" && proxies.has(value)) return false; // is item
   return true;
-}
+}) satisfies EmulatorNS.isTraceable;
 
-// Item methods
-
-function revokeItem(item: EmulatorNS.functionLike): void {
+const revokeProxy = ((proxy: EmulatorNS.functionLike): void => {
   // @params
   // item [item] an active item
 
-  if (!items.has(item)) return;
+  if (!proxies.has(proxy)) return;
 
-  const { id, scope, group, dummy, revoke, target } = items.get(item);
+  const { id, scope, group, dummy, revoke, target } = proxies.get(proxy);
   const _private = secret.get(scope);
   const _group = _private.bindings[group];
 
@@ -353,14 +362,14 @@ function revokeItem(item: EmulatorNS.functionLike): void {
 
   dummies.delete(dummy);
   targets.delete(target);
-  items.delete(item);
+  proxies.delete(proxy);
 
   revoke();
 
   _private.activeItems--;
 
   scope.emit("revoke", id);
-}
+}) satisfies EmulatorNS.revokeProxy;
 
 const bindTraceable = ((
   scope: EmulatorNS.EmulatorClass,
@@ -369,7 +378,7 @@ const bindTraceable = ((
   groupId?: string,
 ): EmulatorNS.functionLike => {
   if (targets.has(target)) return targets.get(target); // return proxy linked to target
-  if (typeof target === "function" && items.has(target)) return target; // target is already proxy
+  if (typeof target === "function" && proxies.has(target)) return target; // target is already proxy
 
   const data: EmulatorNS.private = secret.get(scope);
   const { bindings } = data;
@@ -407,7 +416,7 @@ const bindTraceable = ((
   data.activeItems += 1;
 
   dummies.set(dummy, proxy);
-  items.set(proxy, item);
+  proxies.set(proxy, item);
 
   if (traceable) {
     targets.set(target, proxy);
@@ -422,12 +431,7 @@ const bindString = ((
   target?: EmulatorNS.traceable,
 ): EmulatorNS.functionLike => {
   const data: EmulatorNS.private = secret.get(scope);
-
   const { bindings } = data;
-
-  if (!id.length) {
-    return bindTraceable(scope, target);
-  }
 
   // return existing root item
   if (bindings[id]) {
