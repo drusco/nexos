@@ -61,7 +61,11 @@ declare namespace Emulator {
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types
-  type functionLike = Function;
+  interface functionLike extends Function {
+    (...args: any[]): void;
+    [x: string]: any;
+  }
+
   type traceable = object | functionLike;
 }
 

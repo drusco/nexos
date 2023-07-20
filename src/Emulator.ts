@@ -1,11 +1,11 @@
-import EmulatorNS from "./Emulator.d";
+import EmulatorNS from "./types/Emulator";
 import { EventEmitter } from "events";
 
 export default class Emulator
   extends EventEmitter
   implements EmulatorNS.EmulatorClass
 {
-  constructor(options: EmulatorNS.options) {
+  constructor(options: EmulatorNS.options = {}) {
     super();
 
     const data: EmulatorNS.private = {
@@ -19,7 +19,10 @@ export default class Emulator
     secret.set(this, data);
   }
 
-  use(value: unknown): unknown {
+  use(
+    value?: object | EmulatorNS.functionLike | undefined | string,
+  ): EmulatorNS.functionLike;
+  use(value?: unknown): unknown {
     const isString = typeof value === "string";
     const isObject = typeof value === "object";
     const isFunction = typeof value === "function";
@@ -35,7 +38,7 @@ export default class Emulator
     }
 
     if (isFunction) {
-      if (proxies.has(value)) return value; // value is already a proxy
+      if (proxies.has(value as EmulatorNS.functionLike)) return value; // value is already a proxy
     }
 
     if (isObject || isFunction) {
@@ -64,7 +67,7 @@ export default class Emulator
     return itemCount;
   }
 
-  used(value: unknown): boolean {
+  used(value: any): boolean {
     const { bindings }: EmulatorNS.private = secret.get(this);
     const isGroup = typeof value === "string" && !!bindings[value];
 
@@ -88,7 +91,7 @@ export default class Emulator
     let origin: EmulatorNS.origin;
 
     if (typeof b === "function") {
-      const item = proxies.get(b);
+      const item = proxies.get(b as EmulatorNS.functionLike);
       origin = item.origin;
     }
 
@@ -97,7 +100,7 @@ export default class Emulator
       if (item === a) return true;
       origin = null;
       if (typeof item === "function" && this.exists(item)) {
-        origin = proxies.get(item).origin;
+        origin = proxies.get(item as EmulatorNS.functionLike).origin;
       }
     }
 
@@ -106,10 +109,13 @@ export default class Emulator
 
   encode(
     value: EmulatorNS.traceable,
-    callback: EmulatorNS.functionLike,
+    callback?: EmulatorNS.functionLike,
   ): object {
-    if (typeof value === "function" && proxies.has(value)) {
-      const { id } = proxies.get(value);
+    if (
+      typeof value === "function" &&
+      proxies.has(value as EmulatorNS.functionLike)
+    ) {
+      const { id } = proxies.get(value as EmulatorNS.functionLike);
 
       if (typeof callback == "function") {
         callback(value);
@@ -134,14 +140,14 @@ export default class Emulator
 
   exists(item: EmulatorNS.traceable): boolean {
     if (typeof item !== "function") return false;
-    return proxies.has(item);
+    return proxies.has(item as EmulatorNS.functionLike);
   }
 
   getId(item: EmulatorNS.traceable): number {
     // Access the internal id of a proxy
     if (typeof item !== "function") return;
     if (!this.exists(item)) return;
-    return proxies.get(item).id;
+    return proxies.get(item as EmulatorNS.functionLike).id;
   }
 
   revoke(...args: EmulatorNS.functionLike[]): void {
@@ -324,16 +330,12 @@ const traps = {
 };
 
 const isTraceable = ((value: unknown): boolean => {
-  // if (typeof value !== "object") return false;
-  // if (value === null) return false;
-  // if (targets.has(value)) return false; // has item linked to it
-  // if (typeof value === "function" && proxies.has(value)) return false; // is item
-  // return true;
-
-  if (!(typeof value === "object" || typeof value === "function")) return false;
+  const isObject = typeof value === "object";
+  const isFunction = typeof value === "function";
+  if (!(isObject || isFunction)) return false;
   if (value === null) return false;
   if (targets.has(value)) return false; // has item linked to it
-  if (typeof value === "function" && proxies.has(value)) return false; // is item
+  if (isFunction && proxies.has(value as EmulatorNS.functionLike)) return false; // is item
   return true;
 }) satisfies EmulatorNS.isTraceable;
 
@@ -378,7 +380,12 @@ const bindTraceable = ((
   groupId?: string,
 ): EmulatorNS.functionLike => {
   if (targets.has(target)) return targets.get(target); // return proxy linked to target
-  if (typeof target === "function" && proxies.has(target)) return target; // target is already proxy
+  if (
+    typeof target === "function" &&
+    proxies.has(target as EmulatorNS.functionLike)
+  ) {
+    return target as EmulatorNS.functionLike; // target is already proxy
+  }
 
   const data: EmulatorNS.private = secret.get(scope);
   const { bindings } = data;

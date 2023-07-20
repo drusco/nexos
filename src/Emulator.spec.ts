@@ -1,28 +1,33 @@
+import { describe, it, expect } from "@jest/globals";
+import Emulator from "./Emulator";
 import assert from "assert";
-import Emulator from "../dist/Emulator.js";
+//import EmulatorNS from "../src/Emulator.js";
 
-const emulator = new Emulator();
-const emulator2 = new Emulator();
+const emulator = new Emulator({});
+const emulator2 = new Emulator({});
 
-describe("Emulator", function () {
-  describe("methods", function () {
-    describe("#use()", function () {
-      it("returns function [proxy]", function () {
+describe("Emulator", () => {
+  describe("methods", () => {
+    describe("#use()", () => {
+      it(`Returns a proxy function when parameter(s) type is object | string | function | undefined`, () => {
+        assert.strictEqual(typeof emulator.use({}), "function");
+        assert.strictEqual(typeof emulator.use([]), "function");
+        expect(typeof emulator.use("test")).toStrictEqual("function");
+        assert.strictEqual(typeof emulator.use(() => {}), "function");
         assert.strictEqual(typeof emulator.use(), "function");
       });
 
-      it("can have an id and be found by it", function () {
-        const id = "unique-id";
-        const a = emulator.use(id);
-        assert.strictEqual(a, emulator.use(id));
+      it("Can be referenced by a string identifier", function () {
+        const id = "";
+        const proxy = emulator.use(id);
+        assert.strictEqual(proxy, emulator.use(id));
       });
 
-      it("can be based on an external object", function () {
+      it("Can be referenced by an object", function () {
         const object = { external: true };
-        const a = emulator.use(object);
-        assert.strictEqual(Emulator.equal(a, object), true);
-        assert.strictEqual(emulator.use(object), a);
-        assert.strictEqual(a.external, true);
+        const proxy = emulator.use(object);
+        assert.strictEqual(emulator.use(object), proxy);
+        assert.strictEqual(proxy.external, true);
       });
 
       it("can be based on an external array", function () {
@@ -52,13 +57,14 @@ describe("Emulator", function () {
 
       it("exists within instance if searched by id", function () {
         const id = "id-123";
-        const a = emulator.use(id);
+        emulator.use(id);
         assert.strictEqual(emulator.used(id), true);
       });
 
       it("exists within instance if searched by object", function () {
         const object = { external: true };
-        const a = emulator.use(object);
+        const proxy = emulator.use(object);
+        assert.strictEqual(emulator.used(proxy), true);
         assert.strictEqual(emulator.used(object), true);
       });
     });
@@ -97,9 +103,9 @@ describe("Emulator", function () {
         const current = emulator.count();
         const expected = current + 3;
 
-        const a = emulator.use();
-        const b = emulator.use("b");
-        const c = emulator.use("c");
+        emulator.use();
+        emulator.use("b");
+        emulator.use("c");
 
         assert.strictEqual(emulator.count(), expected);
       });
@@ -110,9 +116,9 @@ describe("Emulator", function () {
         const current = emulator.groups();
         const expected = current + 2;
 
-        const a = emulator.use();
-        const b = emulator.use("group-b-2");
-        const c = emulator.use("group-c-2");
+        emulator.use();
+        emulator.use("group-b-2");
+        emulator.use("group-c-2");
 
         assert.strictEqual(emulator.groups(), expected);
       });
@@ -139,7 +145,7 @@ describe("Emulator", function () {
     describe("#exist()", function () {
       it("checks if value is group, proxy or target", function () {
         const target = { external: "yes" };
-        const a = emulator.use(target);
+        emulator.use(target);
         const group = "my-group-id-456";
         const proxyGroup = emulator.use(group);
 
@@ -217,7 +223,7 @@ describe("Emulator", function () {
 
       it("will not set a value to the original target", function () {
         const a = emulator.use();
-        const deep = { deep: true };
+        const deep = { deep: true, property: undefined };
 
         a.set2 = { object: true };
 
@@ -245,7 +251,7 @@ describe("Emulator", function () {
 
       it("can delete a property from a proxy and its original target", function () {
         const a = emulator.use();
-        const deep = { deep: true };
+        const deep = { deep: true, property: undefined };
 
         a.set2 = { object: true };
 
