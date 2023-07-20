@@ -3,21 +3,8 @@ import { EventEmitter } from "events";
 declare namespace Emulator {
   interface EmulatorClass extends EventEmitter {}
 
-  type bindString = (
-    scope: EmulatorClass,
-    id: string,
-    target?: traceable,
-  ) => functionLike;
-
-  type bindTraceable = (
-    scope: EmulatorClass,
-    target: traceable,
-    origin?: origin,
-    groupId?: string,
-  ) => functionLike;
-
   type isTraceable = (value: unknown) => boolean;
-  type revokeProxy = (proxy: functionLike) => void;
+  type revokeProxy = (proxy: proxy) => void;
 
   interface options {
     [x: string]: unknown;
@@ -25,7 +12,7 @@ declare namespace Emulator {
 
   interface group {
     length: number;
-    rootItem: functionLike;
+    rootProxy: proxy;
   }
 
   interface bindings {
@@ -51,7 +38,7 @@ declare namespace Emulator {
 
   interface item {
     id: number;
-    dummy: functionLike;
+    dummy: proxy;
     origin?: origin;
     target: traceable;
     revoke(): void;
@@ -61,12 +48,12 @@ declare namespace Emulator {
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types
-  interface functionLike extends Function {
+  interface proxy extends Function {
     (...args: any[]): void;
     [x: string]: any;
   }
 
-  type traceable = object | functionLike;
+  type traceable = object | proxy;
 }
 
 export default Emulator;

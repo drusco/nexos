@@ -1,20 +1,30 @@
 import { describe, it, expect } from "@jest/globals";
 import Emulator from "./Emulator";
 import assert from "assert";
-//import EmulatorNS from "../src/Emulator.js";
 
 const emulator = new Emulator({});
 const emulator2 = new Emulator({});
 
 describe("Emulator", () => {
   describe("methods", () => {
-    describe("#use()", () => {
+    describe("use", () => {
       it(`Returns a proxy function when parameter(s) type is object | string | function | undefined`, () => {
         assert.strictEqual(typeof emulator.use({}), "function");
         assert.strictEqual(typeof emulator.use([]), "function");
-        expect(typeof emulator.use("test")).toStrictEqual("function");
+        expect(typeof emulator.use("identifier")).toStrictEqual("function");
         assert.strictEqual(typeof emulator.use(() => {}), "function");
         assert.strictEqual(typeof emulator.use(), "function");
+        expect(typeof emulator.use(emulator.use())).toStrictEqual("function");
+
+        const test = emulator.use();
+
+        test();
+      });
+
+      it('Returns original value when parameter(s) is "" | null | number | boolean', () => {
+        expect(emulator.use("")).toStrictEqual("");
+        expect(emulator.use(null)).toStrictEqual(null);
+        expect(emulator.use(10)).toStrictEqual(10);
       });
 
       it("Can be referenced by a string identifier", function () {
