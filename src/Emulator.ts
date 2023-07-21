@@ -48,8 +48,8 @@ export default class Emulator
     return proxy;
   }
 
-  use(value: any): any {
-    if (value === this) return this;
+  use(value?: any): EmulatorNS.proxy {
+    //if (value === this) return null;
     if (proxies.has(value)) return value; // value is already a proxy
     if (targets.has(value)) return targets.get(value); // return proxy linked to value
 
@@ -233,14 +233,19 @@ const traps = {
     if (!sandboxKeys.includes(key)) {
       if (targets.has(target) && target[key] !== undefined) {
         if (isTraceable(target[key])) {
+          console.log("aaa", key);
           sandbox[key] = createProxy(scope, target[key], group, origin);
         } else {
+          console.log("bbb", key);
           sandbox[key] = target[key];
         }
       } else {
+        console.log("ccc", key);
         sandbox[key] = createProxy(scope, undefined, group, origin);
       }
     }
+
+    if (key === "external") console.log("GET", key, target, sandbox);
 
     return Reflect.get(sandbox, key);
   },

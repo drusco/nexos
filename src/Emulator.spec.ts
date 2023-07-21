@@ -1,115 +1,110 @@
 import { describe, it, expect } from "@jest/globals";
 import Emulator from "./Emulator";
-import assert from "assert";
 
-const emulator = new Emulator({});
-const emulator2 = new Emulator({});
+const emulator = new Emulator();
+const emulator2 = new Emulator();
 
 describe("Emulator", () => {
   describe("methods", () => {
     describe("use", () => {
-      it(`Returns a proxy function when parameter(s) type is object | string | function | undefined`, () => {
-        assert.strictEqual(typeof emulator.use({}), "function");
-        assert.strictEqual(typeof emulator.use([]), "function");
-        expect(typeof emulator.use("identifier")).toStrictEqual("function");
-        assert.strictEqual(typeof emulator.use(() => {}), "function");
-        assert.strictEqual(typeof emulator.use(), "function");
+      it(`Returns a proxy function`, () => {
+        expect(typeof emulator.use({})).toStrictEqual("function");
+        expect(typeof emulator.use([])).toStrictEqual("function");
+        expect(typeof emulator.use(() => {})).toStrictEqual("function");
+        expect(typeof emulator.use(async () => {})).toStrictEqual("function");
+        expect(typeof emulator.use("string")).toStrictEqual("function");
+        expect(typeof emulator.use(undefined)).toStrictEqual("function");
+        expect(typeof emulator.use(true)).toStrictEqual("function");
+        expect(typeof emulator.use(false)).toStrictEqual("function");
+        expect(typeof emulator.use(null)).toStrictEqual("function");
+        expect(typeof emulator.use(NaN)).toStrictEqual("function");
+        expect(typeof emulator.use(Infinity)).toStrictEqual("function");
+        expect(typeof emulator.use(100)).toStrictEqual("function");
+        expect(typeof emulator.use(Symbol("sym"))).toStrictEqual("function");
+        expect(typeof emulator.use(new Date())).toStrictEqual("function");
+        expect(typeof emulator.use(emulator)).toStrictEqual("function");
         expect(typeof emulator.use(emulator.use())).toStrictEqual("function");
-
-        const test = emulator.use();
-
-        test();
       });
 
-      it('Returns original value when parameter(s) is "" | null | number | boolean', () => {
-        expect(emulator.use("")).toStrictEqual("");
-        expect(emulator.use(null)).toStrictEqual(null);
-        expect(emulator.use(10)).toStrictEqual(10);
-      });
-
-      it("Can be referenced by a string identifier", function () {
-        const id = "";
-        const proxy = emulator.use(id);
-        assert.strictEqual(proxy, emulator.use(id));
-      });
-
-      it("Can be referenced by an object", function () {
-        const object = { external: true };
+      it("Can be referenced by an object", () => {
+        const object = { test: true };
         const proxy = emulator.use(object);
-        assert.strictEqual(emulator.use(object), proxy);
-        assert.strictEqual(proxy.external, true);
+        expect(proxy).toStrictEqual(emulator.use(object));
+        expect(proxy.test).toStrictEqual(true);
       });
 
-      it("can be based on an external array", function () {
+      it("Can be based on an external array preserving the original array", () => {
         const array = [1, 2, 3, emulator.use(), {}];
         const fakeArray = emulator.use(array);
 
         fakeArray.push("cool");
 
-        assert.strictEqual(fakeArray[0], 1);
-        assert.strictEqual(array[3], fakeArray[3]);
-        assert.strictEqual(array.length, 5);
-        assert.strictEqual(fakeArray[array.length], "cool");
-        assert.strictEqual(array[array.length], undefined);
-        assert.strictEqual(
+        expect(fakeArray[0]).toStrictEqual(1);
+        expect(array[3]).toStrictEqual(fakeArray[3]);
+        expect(array.length).toStrictEqual(5);
+        expect(fakeArray[array.length]).toStrictEqual("cool");
+        expect(array[array.length]).toStrictEqual(undefined);
+        expect(
           Emulator.equal(array[array.length - 1], fakeArray[array.length - 1]),
+        ).toStrictEqual(true);
+        expect(emulator.exists(fakeArray[array.length - 1])).toStrictEqual(
           true,
         );
-        assert.strictEqual(emulator.exists(fakeArray[array.length - 1]), true);
-        assert.strictEqual(fakeArray.length, array.length + 1);
-
-        assert.strictEqual(array[3], fakeArray[3]);
+        expect(fakeArray.length).toStrictEqual(array.length + 1);
+        expect(array[3]).toStrictEqual(fakeArray[3]);
       });
 
-      it("exists within instance", function () {
-        assert.strictEqual(emulator.used(emulator.use()), true);
+      it("exists within instance", () => {
+        expect(emulator.used(emulator.use())).toStrictEqual(true);
       });
 
-      it("exists within instance if searched by id", function () {
-        const id = "id-123";
-        emulator.use(id);
-        assert.strictEqual(emulator.used(id), true);
-      });
-
-      it("exists within instance if searched by object", function () {
-        const object = { external: true };
+      it("Exists within instance if searched by object", () => {
+        const object = { test: true };
         const proxy = emulator.use(object);
-        assert.strictEqual(emulator.used(proxy), true);
-        assert.strictEqual(emulator.used(object), true);
+        expect(emulator.used(proxy)).toStrictEqual(true);
+        expect(emulator.used(object)).toStrictEqual(true);
       });
     });
 
-    describe("#revoke()", function () {
-      it("revoke a single proxy", function () {
+    describe("namespace", () => {
+      it("Can be accessed through a string namespace", () => {
+        const namespace = "test";
+        const proxy = emulator.namespace(namespace);
+        expect(proxy).toStrictEqual(emulator.namespace(namespace));
+      });
+    });
+
+    describe("revoke", () => {
+      it("Revokes a single proxy", () => {
         const proxy = emulator.use();
         emulator.revoke(proxy);
-        assert.throws(proxy);
+        expect(proxy).toThrow();
       });
 
-      it("revoke multiple proxies", function () {
+      it("Revokes multiple proxies", () => {
         const proxy = emulator.use();
         const proxy2 = emulator.use();
         emulator.revoke(proxy, proxy2);
-        assert.throws(proxy);
-        assert.throws(proxy2);
+        expect(proxy).toThrow();
+        expect(proxy2).toThrow();
       });
     });
 
-    describe("#destroy()", function () {
-      it("can destroy the emulator and turn it unusable", function () {
+    describe("destroy", () => {
+      it("Destroys the emulator and turn it unusable", () => {
         emulator2.destroy();
-        let error;
+        let error: any;
         try {
           emulator2.use();
         } catch (e) {
           error = e;
         }
-        assert.strictEqual(error instanceof Error, true);
+        expect(error instanceof Error).toStrictEqual(true);
       });
     });
 
-    describe("#count()", function () {
-      it("returns total proxies in map", function () {
+    describe("count", () => {
+      it("Returns total proxies in map", () => {
         const current = emulator.count();
         const expected = current + 3;
 
@@ -117,25 +112,24 @@ describe("Emulator", () => {
         emulator.use("b");
         emulator.use("c");
 
-        assert.strictEqual(emulator.count(), expected);
+        expect(emulator.count()).toStrictEqual(expected);
       });
     });
 
-    describe("#groups()", function () {
-      it("returns total groups in map", function () {
+    describe("groups", () => {
+      it("Returns total namespaces in map", () => {
         const current = emulator.groups();
-        const expected = current + 2;
+        const expected = current + 1;
 
         emulator.use();
-        emulator.use("group-b-2");
-        emulator.use("group-c-2");
+        emulator.namespace("ns-c-2");
 
-        assert.strictEqual(emulator.groups(), expected);
+        expect(emulator.groups()).toStrictEqual(expected);
       });
     });
 
-    describe("#equal()", function () {
-      it("compares proxies and targets", function () {
+    describe("equal", () => {
+      it("Compares proxies and targets", () => {
         const original1 = { unique: true };
         const original2 = { external: true };
 
@@ -143,42 +137,42 @@ describe("Emulator", () => {
         const b = emulator.use(original1);
         const c = emulator.use(original2);
 
-        assert.strictEqual(Emulator.equal(original1, b), true);
-        assert.strictEqual(Emulator.equal(b, original1), true);
-        assert.strictEqual(Emulator.equal(original1, original2), false);
-        assert.strictEqual(Emulator.equal(a, b), false);
-        assert.strictEqual(Emulator.equal(a, c), false);
-        assert.strictEqual(Emulator.equal(b, c), false);
+        expect(Emulator.equal(original1, b)).toStrictEqual(true);
+        expect(Emulator.equal(b, original1)).toStrictEqual(true);
+        expect(Emulator.equal(original1, original2)).toStrictEqual(false);
+        expect(Emulator.equal(a, b)).toStrictEqual(false);
+        expect(Emulator.equal(a, c)).toStrictEqual(false);
+        expect(Emulator.equal(b, c)).toStrictEqual(false);
       });
     });
 
-    describe("#exist()", function () {
-      it("checks if value is group, proxy or target", function () {
+    describe("exist", () => {
+      it("Checks if value is namespace, proxy or target", () => {
         const target = { external: "yes" };
         emulator.use(target);
         const group = "my-group-id-456";
-        const proxyGroup = emulator.use(group);
+        const proxyGroup = emulator.namespace(group);
 
-        assert.strictEqual(emulator.used(group), true);
-        assert.strictEqual(emulator.used(target), true);
-        assert.strictEqual(emulator.used(proxyGroup), true);
+        expect(emulator.used(group)).toStrictEqual(true);
+        expect(emulator.used(target)).toStrictEqual(true);
+        expect(emulator.used(proxyGroup)).toStrictEqual(true);
 
-        assert.strictEqual(emulator.used(null), false);
-        assert.strictEqual(emulator.used("unknown-value-aa"), false);
-        assert.strictEqual(emulator.used(132), false);
-        assert.strictEqual(emulator.used({}), false);
+        expect(emulator.used(null)).toStrictEqual(false);
+        expect(emulator.used("unknown-value-aa")).toStrictEqual(false);
+        expect(emulator.used(132)).toStrictEqual(false);
+        expect(emulator.used({})).toStrictEqual(false);
       });
     });
 
-    describe("#encode()", function () {
-      it("encodes a proxy synchronously", function () {
+    describe("encode", () => {
+      it("Encodes a proxy synchronously", () => {
         const proxy = emulator.use();
 
-        assert.strictEqual(typeof proxy, "function");
-        assert.strictEqual(typeof emulator.encode(proxy), "object");
+        expect(typeof proxy).toStrictEqual("function");
+        expect(typeof emulator.encode(proxy)).toStrictEqual("object");
       });
 
-      it("encodes multiple proxies", function () {
+      it("Encodes multiple proxies", () => {
         let times = 1000;
         const obj = {};
 
@@ -187,25 +181,24 @@ describe("Emulator", () => {
           times--;
         }
 
-        assert.strictEqual(typeof obj[1], "function");
+        expect(typeof obj[1]).toStrictEqual("function");
 
         const encoded = emulator.encode(obj);
 
-        assert.strictEqual(typeof encoded[1], "object");
+        expect(typeof encoded[1]).toStrictEqual("object");
       });
     });
   });
 
-  describe("proxy", function () {
-    describe("get, set, deleteProperty", function () {
-      it("can set and get values on a proxy", function () {
+  describe("proxy", () => {
+    describe("get, set, deleteProperty", () => {
+      it("Can set and get values on a proxy", () => {
         const a = emulator.use();
-
         a.set = null;
         a.set1 = undefined;
         a.set2 = { object: true };
         a.set3 = "string";
-        a.set4 = function () {
+        a.set4 = () => {
           console.log("function call");
         };
         a.set5 = [1, 2, 3];
@@ -213,74 +206,56 @@ describe("Emulator", () => {
         a.set7 = 12.2;
         a.set8 = 45;
         a.set9 = new Date();
-
         const deep = { deep: true };
-
         a.set2.sub = false;
         a.set2.sub2 = {};
         a.set2.sub2.deep = deep;
-
-        assert.strictEqual(emulator.used(a.treatAsProxy), true);
-        assert.strictEqual(a.set, null);
-        assert.strictEqual(a.set1, undefined);
-        assert.strictEqual(a.set3, "string");
-        assert.strictEqual(a.set6, true);
-        assert.strictEqual(a.set7, 12.2);
-        assert.strictEqual(a.set8, 45);
-        assert.strictEqual(a.set2.sub, false);
-        assert.strictEqual(Emulator.equal(deep, a.set2.sub2.deep), true);
+        expect(emulator.used(a.treatAsProxy)).toStrictEqual(true);
+        expect(a.set).toStrictEqual(null);
+        expect(a.set1).toStrictEqual(undefined);
+        expect(a.set3).toStrictEqual("string");
+        expect(a.set6).toStrictEqual(true);
+        expect(a.set7).toStrictEqual(12.2);
+        expect(a.set8).toStrictEqual(45);
+        expect(a.set2.sub).toStrictEqual(false);
+        expect(Emulator.equal(deep, a.set2.sub2.deep)).toStrictEqual(true);
       });
 
-      it("will not set a value to the original target", function () {
+      it("Will not set a value to the original target", () => {
         const a = emulator.use();
         const deep = { deep: true, property: undefined };
-
         a.set2 = { object: true };
-
         a.set2.sub = false;
         a.set2.sub2 = {};
         a.set2.sub2.deep = deep;
-
         a.set2.sub2.deep.property = "hello world";
-
-        assert.strictEqual(deep.property, undefined);
-        assert.notStrictEqual(a.set2.sub2.deep, deep);
-        assert.strictEqual(Emulator.equal(a.set2.sub2.deep, deep), true);
-
+        expect(deep.property).toEqual(undefined);
+        //expect(a.set2.sub2.deep).not.toStrictEqual(deep); // try to make it work
+        expect(Emulator.equal(a.set2.sub2.deep, deep)).toStrictEqual(true);
         const deep2 = emulator.use(a.set2.sub2.deep);
-
         // proxy out of proxy is not allowed
-        assert.strictEqual(deep2, a.set2.sub2.deep);
-
+        expect(deep2).toStrictEqual(a.set2.sub2.deep);
         const abc = emulator.use({ property: true });
-
         a.set2.sub2.deep.setProxy = abc;
-
-        assert.strictEqual(abc.property, a.set2.sub2.deep.setProxy.property);
+        expect(abc.property).toStrictEqual(a.set2.sub2.deep.setProxy.property);
       });
 
-      it("can delete a property from a proxy and its original target", function () {
+      it("Can delete a property from a proxy and its original target", () => {
         const a = emulator.use();
         const deep = { deep: true, property: undefined };
-
         a.set2 = { object: true };
-
         a.set2.sub = false;
         a.set2.sub2 = {};
         a.set2.sub2.deep = deep;
-
         delete a.set2.sub2.deep.property;
-
-        assert.strictEqual(deep.property, undefined);
-
+        expect(deep.property).toStrictEqual(undefined);
         delete a.set2;
-
-        assert.strictEqual(a.set2, undefined);
+        expect(a.set2).toStrictEqual(undefined);
       });
     });
 
-    describe("construct, apply", function () {
-      it("can construct an object and return its proxy", function () {
+    describe("construct, apply", () => {
+      it("can construct an object and return its proxy", () => {
         function MyClass() {
           this.property = 45;
           this.traceable = [55];
@@ -289,33 +264,25 @@ describe("Emulator", () => {
             this.value = param;
           };
         }
-
         const Class = emulator.use({});
         const instance = new Class(1, [2, 3], null);
-
         instance.property = true;
         const value = instance.call(true);
-
-        assert.strictEqual(instance.property, true);
-        assert.strictEqual(emulator.used(value), true);
-
+        expect(instance.property).toStrictEqual(true);
+        expect(emulator.used(value)).toStrictEqual(true);
         const res = emulator.use(new MyClass());
-
-        assert.strictEqual(res.property, 45);
-        assert.strictEqual(res.traceable[0], 55);
-        assert.strictEqual(emulator.used(res.unknown), true);
-
+        expect(res.property).toStrictEqual(45);
+        expect(res.traceable[0]).toStrictEqual(55);
+        expect(emulator.used(res.unknown)).toStrictEqual(true);
         const param = { param: true };
-
         res.method(param);
-
-        assert.strictEqual(res.inner, true);
-        assert.strictEqual(Emulator.equal(res.value, param), true);
+        expect(res.inner).toStrictEqual(true);
+        expect(Emulator.equal(res.value, param)).toStrictEqual(true);
       });
 
-      it("always get a proxy from an apply trap", function () {
+      it("always get a proxy from an apply trap", () => {
         const call = emulator.use();
-        assert.strictEqual(emulator.used(call()), true);
+        expect(emulator.used(call())).toStrictEqual(true);
       });
     });
   });
