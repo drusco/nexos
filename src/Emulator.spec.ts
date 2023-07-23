@@ -8,61 +8,55 @@ describe("Emulator", () => {
   describe("methods", () => {
     describe("use", () => {
       it(`Returns a proxy function`, () => {
-        expect(typeof emulator.use({})).toStrictEqual("function");
-        expect(typeof emulator.use([])).toStrictEqual("function");
-        expect(typeof emulator.use(() => {})).toStrictEqual("function");
-        expect(typeof emulator.use(async () => {})).toStrictEqual("function");
-        expect(typeof emulator.use("string")).toStrictEqual("function");
-        expect(typeof emulator.use(undefined)).toStrictEqual("function");
-        expect(typeof emulator.use(true)).toStrictEqual("function");
-        expect(typeof emulator.use(false)).toStrictEqual("function");
-        expect(typeof emulator.use(null)).toStrictEqual("function");
-        expect(typeof emulator.use(NaN)).toStrictEqual("function");
-        expect(typeof emulator.use(Infinity)).toStrictEqual("function");
-        expect(typeof emulator.use(100)).toStrictEqual("function");
-        expect(typeof emulator.use(Symbol("sym"))).toStrictEqual("function");
-        expect(typeof emulator.use(new Date())).toStrictEqual("function");
-        expect(typeof emulator.use(emulator)).toStrictEqual("function");
-        expect(typeof emulator.use(emulator.use())).toStrictEqual("function");
+        expect(typeof emulator.use({})).toBe("function");
+        expect(typeof emulator.use([])).toBe("function");
+        expect(typeof emulator.use(() => {})).toBe("function");
+        expect(typeof emulator.use(async () => {})).toBe("function");
+        expect(typeof emulator.use("string")).toBe("function");
+        expect(typeof emulator.use(undefined)).toBe("function");
+        expect(typeof emulator.use(true)).toBe("function");
+        expect(typeof emulator.use(false)).toBe("function");
+        expect(typeof emulator.use(null)).toBe("function");
+        expect(typeof emulator.use(NaN)).toBe("function");
+        expect(typeof emulator.use(Infinity)).toBe("function");
+        expect(typeof emulator.use(100)).toBe("function");
+        expect(typeof emulator.use(Symbol("sym"))).toBe("function");
+        expect(typeof emulator.use(new Date())).toBe("function");
+        expect(typeof emulator.use(emulator)).toBe("function");
+        expect(typeof emulator.use(emulator.use())).toBe("function");
       });
 
       it("Can be referenced by an object", () => {
-        const object = { test: true };
-        const proxy = emulator.use(object);
-        expect(proxy).toStrictEqual(emulator.use(object));
-        expect(proxy.test).toStrictEqual(true);
+        const reference = { test: true };
+        const proxy = emulator.use(reference);
+        expect(proxy).toBe(emulator.use(reference));
+        expect(proxy.test).toBe(true);
       });
 
-      it("Can be based on an external array preserving the original array", () => {
-        const array = [1, 2, 3, emulator.use(), {}];
-        const fakeArray = emulator.use(array);
-
-        fakeArray.push("cool");
-
-        expect(fakeArray[0]).toStrictEqual(1);
-        expect(array[3]).toStrictEqual(fakeArray[3]);
-        expect(array.length).toStrictEqual(5);
-        expect(fakeArray[array.length]).toStrictEqual("cool");
-        expect(array[array.length]).toStrictEqual(undefined);
-        expect(
-          Emulator.equal(array[array.length - 1], fakeArray[array.length - 1]),
-        ).toStrictEqual(true);
-        expect(emulator.exists(fakeArray[array.length - 1])).toStrictEqual(
-          true,
-        );
-        expect(fakeArray.length).toStrictEqual(array.length + 1);
-        expect(array[3]).toStrictEqual(fakeArray[3]);
+      it("Returns a proxy function for undefined properties", () => {
+        const reference = {};
+        const proxy = emulator.use(reference);
+        expect(typeof proxy.test).toBe("function");
       });
 
-      it("exists within instance", () => {
-        expect(emulator.used(emulator.use())).toStrictEqual(true);
-      });
+      it("Can be referenced by an array object", () => {
+        const reference = [1, 2, 3, emulator.use(), {}];
+        const arrayProxy = emulator.use(reference);
 
-      it("Exists within instance if searched by object", () => {
-        const object = { test: true };
-        const proxy = emulator.use(object);
-        expect(emulator.used(proxy)).toStrictEqual(true);
-        expect(emulator.used(object)).toStrictEqual(true);
+        arrayProxy.push("test");
+
+        expect(arrayProxy[0]).toBe(1);
+        expect(arrayProxy[1]).toBe(2);
+        expect(arrayProxy[2]).toBe(3);
+        expect(arrayProxy[3]).toBe(reference[3]);
+        expect(arrayProxy[arrayProxy.length - 1]).toBe("test");
+        expect(typeof arrayProxy[reference.length - 1]).toBe("function");
+
+        expect(reference.length).toBe(5);
+        expect(reference[reference.length]).toBe(undefined); // does not change the target
+
+        expect(arrayProxy.length).toStrictEqual(reference.length + 1);
+        expect(arrayProxy.pop()).toBe("test");
       });
     });
 
@@ -70,23 +64,20 @@ describe("Emulator", () => {
       it("Can be accessed through a string namespace", () => {
         const namespace = "test";
         const proxy = emulator.namespace(namespace);
-        expect(proxy).toStrictEqual(emulator.namespace(namespace));
+        expect(proxy).toBe(emulator.namespace(namespace));
       });
     });
 
     describe("revoke", () => {
-      it("Revokes a single proxy", () => {
+      it("Turns a proxy unusable", () => {
         const proxy = emulator.use();
         emulator.revoke(proxy);
         expect(proxy).toThrow();
-      });
-
-      it("Revokes multiple proxies", () => {
-        const proxy = emulator.use();
-        const proxy2 = emulator.use();
-        emulator.revoke(proxy, proxy2);
-        expect(proxy).toThrow();
-        expect(proxy2).toThrow();
+        expect(() => proxy.property).toThrow();
+        expect(() => (proxy.property = true)).toThrow();
+        expect(() => delete proxy.property).toThrow();
+        expect(() => new proxy().toThrow());
+        expect(() => proxy.method()).toThrow();
       });
     });
 
@@ -146,24 +137,6 @@ describe("Emulator", () => {
       });
     });
 
-    describe("exist", () => {
-      it("Checks if value is namespace, proxy or target", () => {
-        const target = { external: "yes" };
-        emulator.use(target);
-        const group = "my-group-id-456";
-        const proxyGroup = emulator.namespace(group);
-
-        expect(emulator.used(group)).toStrictEqual(true);
-        expect(emulator.used(target)).toStrictEqual(true);
-        expect(emulator.used(proxyGroup)).toStrictEqual(true);
-
-        expect(emulator.used(null)).toStrictEqual(false);
-        expect(emulator.used("unknown-value-aa")).toStrictEqual(false);
-        expect(emulator.used(132)).toStrictEqual(false);
-        expect(emulator.used({})).toStrictEqual(false);
-      });
-    });
-
     describe("encode", () => {
       it("Encodes a proxy synchronously", () => {
         const proxy = emulator.use();
@@ -210,7 +183,7 @@ describe("Emulator", () => {
         a.set2.sub = false;
         a.set2.sub2 = {};
         a.set2.sub2.deep = deep;
-        expect(emulator.used(a.treatAsProxy)).toStrictEqual(true);
+        expect(typeof a.treatAsProxy).toBe("function");
         expect(a.set).toStrictEqual(null);
         expect(a.set1).toStrictEqual(undefined);
         expect(a.set3).toStrictEqual("string");
@@ -267,13 +240,13 @@ describe("Emulator", () => {
         const Class = emulator.use({});
         const instance = new Class(1, [2, 3], null);
         instance.property = true;
-        const value = instance.call(true);
+        const value = instance.call();
         expect(instance.property).toStrictEqual(true);
-        expect(emulator.used(value)).toStrictEqual(true);
+        expect(typeof value).toBe("function");
         const res = emulator.use(new MyClass());
         expect(res.property).toStrictEqual(45);
         expect(res.traceable[0]).toStrictEqual(55);
-        expect(emulator.used(res.unknown)).toStrictEqual(true);
+        expect(typeof res.unknown).toBe("function");
         const param = { param: true };
         res.method(param);
         expect(res.inner).toStrictEqual(true);
@@ -282,7 +255,7 @@ describe("Emulator", () => {
 
       it("always get a proxy from an apply trap", () => {
         const call = emulator.use();
-        expect(emulator.used(call())).toStrictEqual(true);
+        expect(typeof call()).toBe("function");
       });
     });
   });

@@ -71,24 +71,6 @@ export default class Emulator
     return itemCount;
   }
 
-  used(value: any): boolean {
-    const { bindings }: EmulatorNS.private = secret.get(this);
-    const isGroup = typeof value === "string" && !!bindings[value];
-
-    let isItem: boolean = false;
-    let isLinkedToItem: boolean = false;
-
-    if (typeof value === "object") {
-      isLinkedToItem = targets.has(value);
-    }
-
-    if (typeof value === "function") {
-      isItem = proxies.has(value);
-    }
-
-    return isGroup || isItem || isLinkedToItem;
-  }
-
   contains(a: EmulatorNS.traceable, b: EmulatorNS.traceable): boolean {
     if (!this.exists(a) || !this.exists(b)) return false;
 
@@ -148,10 +130,35 @@ export default class Emulator
     return proxies.get(item as EmulatorNS.proxy).id;
   }
 
-  revoke(...args: EmulatorNS.proxy[]): void {
-    for (const traceable of args) {
-      revokeProxy(traceable);
+  revoke(proxy: EmulatorNS.proxy): void {
+    if (!proxies.has(proxy)) return;
+
+    const { id, group, dummy, revoke, target } = proxies.get(proxy);
+    const _private = secret.get(this);
+    const _group = _private.bindings[group];
+
+    if (_group) {
+      _group.length--;
+
+      if (_group.length === 0) {
+        // delete the group when it is empty
+        delete _private.bindings[group];
+        this.emit("deleteGroup", group);
+        _private.groupCount--;
+      }
     }
+
+    // remove item references
+
+    dummies.delete(dummy);
+    targets.delete(target);
+    proxies.delete(proxy);
+
+    revoke();
+
+    _private.activeItems--;
+
+    this.emit("revoke", id);
   }
 
   destroy(): void {
@@ -315,7 +322,7 @@ const traps = {
     };
 
     if (typeof target === "function") {
-      target.apply(that, args);
+      return target.apply(that, args);
     }
     return createProxy(scope, undefined, group, origin);
   },
@@ -330,40 +337,6 @@ const isTraceable = ((value: unknown): boolean => {
   if (isFunction && proxies.has(value as EmulatorNS.proxy)) return false; // is item
   return true;
 }) satisfies EmulatorNS.isTraceable;
-
-const revokeProxy = ((proxy: EmulatorNS.proxy): void => {
-  // @params
-  // item [item] an active item
-
-  if (!proxies.has(proxy)) return;
-
-  const { id, scope, group, dummy, revoke, target } = proxies.get(proxy);
-  const _private = secret.get(scope);
-  const _group = _private.bindings[group];
-
-  if (_group) {
-    _group.length--;
-
-    if (_group.length === 0) {
-      // delete the group when it is empty
-      delete _private.bindings[group];
-      scope.emit("deleteGroup", group);
-      _private.groupCount--;
-    }
-  }
-
-  // remove item references
-
-  dummies.delete(dummy);
-  targets.delete(target);
-  proxies.delete(proxy);
-
-  revoke();
-
-  _private.activeItems--;
-
-  scope.emit("revoke", id);
-}) satisfies EmulatorNS.revokeProxy;
 
 const createProxy = (
   scope: EmulatorNS.EmulatorClass,
