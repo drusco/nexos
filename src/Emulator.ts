@@ -213,8 +213,6 @@ const events = [
   "resolveId",
 ];
 
-// Item traps
-
 const traps = {
   get(dummy: EmulatorNS.proxy, key: string): unknown {
     const item = dummies.get(dummy);
@@ -233,19 +231,14 @@ const traps = {
     if (!sandboxKeys.includes(key)) {
       if (targets.has(target) && target[key] !== undefined) {
         if (isTraceable(target[key])) {
-          console.log("aaa", key);
           sandbox[key] = createProxy(scope, target[key], group, origin);
         } else {
-          console.log("bbb", key);
           sandbox[key] = target[key];
         }
       } else {
-        console.log("ccc", key);
         sandbox[key] = createProxy(scope, undefined, group, origin);
       }
     }
-
-    if (key === "external") console.log("GET", key, target, sandbox);
 
     return Reflect.get(sandbox, key);
   },

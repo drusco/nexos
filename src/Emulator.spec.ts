@@ -230,7 +230,7 @@ describe("Emulator", () => {
         a.set2.sub2.deep = deep;
         a.set2.sub2.deep.property = "hello world";
         expect(deep.property).toEqual(undefined);
-        //expect(a.set2.sub2.deep).not.toStrictEqual(deep); // try to make it work
+        expect(a.set2.sub2.deep).not.toBe(deep);
         expect(Emulator.equal(a.set2.sub2.deep, deep)).toStrictEqual(true);
         const deep2 = emulator.use(a.set2.sub2.deep);
         // proxy out of proxy is not allowed
