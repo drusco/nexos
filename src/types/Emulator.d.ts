@@ -4,7 +4,6 @@ declare namespace Emulator {
   interface EmulatorClass extends EventEmitter {}
 
   type isTraceable = (value: unknown) => boolean;
-  type revokeProxy = (proxy: proxy) => void;
 
   interface options {
     [x: string]: unknown;

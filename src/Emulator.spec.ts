@@ -2,7 +2,6 @@ import { describe, it, expect } from "@jest/globals";
 import Emulator from "./Emulator";
 
 const emulator = new Emulator();
-const emulator2 = new Emulator();
 
 describe("Emulator", () => {
   describe("methods", () => {
@@ -82,83 +81,70 @@ describe("Emulator", () => {
     });
 
     describe("destroy", () => {
-      it("Destroys the emulator and turn it unusable", () => {
-        emulator2.destroy();
-        let error: any;
-        try {
-          emulator2.use();
-        } catch (e) {
-          error = e;
-        }
-        expect(error instanceof Error).toStrictEqual(true);
+      it("Destroys the emulator and turns it unusable", () => {
+        const emulator = new Emulator();
+        emulator.destroy();
+        expect(emulator.use).toThrow();
       });
     });
 
     describe("count", () => {
-      it("Returns total proxies in map", () => {
+      it("Returns the number of proxies in the emulator", () => {
         const current = emulator.count();
-        const expected = current + 3;
-
         emulator.use();
-        emulator.use("b");
-        emulator.use("c");
-
-        expect(emulator.count()).toStrictEqual(expected);
+        expect(emulator.count()).toBe(current + 1);
       });
     });
 
     describe("groups", () => {
-      it("Returns total namespaces in map", () => {
+      it("Returns the number of namespaces in the emulator", () => {
         const current = emulator.groups();
-        const expected = current + 1;
-
-        emulator.use();
-        emulator.namespace("ns-c-2");
-
-        expect(emulator.groups()).toStrictEqual(expected);
+        emulator.namespace(`${Date.now()}`);
+        expect(emulator.groups()).toBe(current + 1);
       });
     });
 
     describe("equal", () => {
       it("Compares proxies and targets", () => {
-        const original1 = { unique: true };
-        const original2 = { external: true };
+        const target1 = { test: true };
+        const target2 = { test: true };
 
-        const a = emulator.use();
-        const b = emulator.use(original1);
-        const c = emulator.use(original2);
+        const proxy1 = emulator.use(target1);
+        const proxy2 = emulator.use(target2);
 
-        expect(Emulator.equal(original1, b)).toStrictEqual(true);
-        expect(Emulator.equal(b, original1)).toStrictEqual(true);
-        expect(Emulator.equal(original1, original2)).toStrictEqual(false);
-        expect(Emulator.equal(a, b)).toStrictEqual(false);
-        expect(Emulator.equal(a, c)).toStrictEqual(false);
-        expect(Emulator.equal(b, c)).toStrictEqual(false);
+        expect(Emulator.equal(target1, proxy1)).toBe(true);
+        expect(Emulator.equal(proxy1, target1)).toBe(true);
+        expect(Emulator.equal(target2, proxy2)).toBe(true);
+        expect(Emulator.equal(proxy2, target2)).toBe(true);
+        expect(Emulator.equal(target1, target1)).toBe(true);
+        expect(Emulator.equal(target2, target2)).toBe(true);
+        expect(Emulator.equal(target1, target2)).toBe(false);
+        expect(Emulator.equal(target2, target1)).toBe(false);
+        expect(Emulator.equal(proxy1, proxy1)).toBe(true);
+        expect(Emulator.equal(proxy2, proxy2)).toBe(true);
+        expect(Emulator.equal(proxy1, proxy2)).toBe(false);
+        expect(Emulator.equal(proxy2, proxy1)).toBe(false);
       });
     });
 
     describe("encode", () => {
       it("Encodes a proxy synchronously", () => {
         const proxy = emulator.use();
-
         expect(typeof proxy).toStrictEqual("function");
         expect(typeof emulator.encode(proxy)).toStrictEqual("object");
       });
 
-      it("Encodes multiple proxies", () => {
+      it("Encodes multiple proxies deeply", () => {
         let times = 1000;
-        const obj = {};
+        const map: unknown[] = [];
 
         while (times) {
-          obj[times] = emulator.use();
-          times--;
+          map.push(emulator.use());
+          times -= 1;
         }
 
-        expect(typeof obj[1]).toStrictEqual("function");
-
-        const encoded = emulator.encode(obj);
-
-        expect(typeof encoded[1]).toStrictEqual("object");
+        const encoded = emulator.encode(map);
+        expect(typeof encoded[999]).toBe("object");
       });
     });
   });
