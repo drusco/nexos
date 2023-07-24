@@ -114,11 +114,6 @@ export default class Emulator
     return value;
   }
 
-  getId(value: EmulatorNS.traceable): number {
-    if (!exists(value)) return -1;
-    return proxies.get(this.use(value)).id;
-  }
-
   revoke(proxy: EmulatorNS.proxy): void {
     if (!proxies.has(proxy)) return;
 
@@ -155,38 +150,11 @@ export default class Emulator
     secret.delete(this);
   }
 
-  async resolve(item: EmulatorNS.traceable): Promise<void> {
-    // Access the real value of a proxy
-
-    if (!exists(item)) return;
-
-    return new Promise((resolve): void => {
-      // 'resolve' event listener must exists
-      // resolve function expects to be called
-      this.emit("resolve", item, resolve);
-    });
-  }
-
-  async resolveId(item: EmulatorNS.traceable): Promise<void> {
-    // Access the external id of a proxy
-
-    if (!exists(item) && typeof item != "object") return;
-
-    return new Promise((resolve): void => {
-      // 'resolveId' event listener must exists
-      // resolve function expects to be called
-      this.emit("resolveId", item, resolve);
-    });
-  }
-
-  static equal(a: EmulatorNS.traceable, b: EmulatorNS.traceable): boolean {
-    /* fix wrong result when comparing target === item[target] */
-
-    if (a === b) return true; // same allocation
-    if (targets.has(a)) return targets.get(a) === b; // a has item, compare its item to b
-    if (targets.has(b)) return targets.get(b) === a; // b has item, compare its item to a
-
-    return false;
+  resolve(value: any): EmulatorNS.itemPublicData {
+    if (!exists(value)) return value;
+    const proxy = this.use(value);
+    const { id, target } = proxies.get(proxy);
+    return { id, target };
   }
 }
 
@@ -195,117 +163,129 @@ const dummies = new WeakMap<EmulatorNS.proxy, EmulatorNS.proxy>();
 const targets = new WeakMap<EmulatorNS.traceable, EmulatorNS.proxy>();
 const proxies = new WeakMap<EmulatorNS.proxy, EmulatorNS.item>();
 
-const traps = {
-  get(dummy: EmulatorNS.proxy, key: string): unknown {
-    const item = dummies.get(dummy);
-    const { scope, group, target, sandbox } = proxies.get(item);
+const getTrap = (dummy: EmulatorNS.proxy, key: string): unknown => {
+  const item = dummies.get(dummy);
+  const { scope, group, target, sandbox } = proxies.get(item);
 
-    const origin: EmulatorNS.origin = {
-      action: "get",
-      key,
-      item,
-    };
+  const origin: EmulatorNS.origin = {
+    action: "get",
+    key,
+    item,
+  };
 
-    // treat everything as a proxy
+  // treat everything as a proxy
 
-    const sandboxKeys = Object.keys(sandbox);
+  const sandboxKeys = Object.keys(sandbox);
 
-    if (!sandboxKeys.includes(key)) {
-      if (targets.has(target) && target[key] !== undefined) {
-        if (isTraceable(target[key])) {
-          sandbox[key] = createProxy(scope, target[key], group, origin);
-        } else {
-          sandbox[key] = target[key];
-        }
+  if (!sandboxKeys.includes(key)) {
+    if (targets.has(target) && target[key] !== undefined) {
+      if (isTraceable(target[key])) {
+        sandbox[key] = createProxy(scope, target[key], group, origin);
       } else {
-        sandbox[key] = createProxy(scope, undefined, group, origin);
+        sandbox[key] = target[key];
       }
+    } else {
+      sandbox[key] = createProxy(scope, undefined, group, origin);
     }
+  }
 
-    return Reflect.get(sandbox, key);
-  },
+  return Reflect.get(sandbox, key);
+};
 
-  set(dummy: EmulatorNS.proxy, key: string, value: unknown): boolean {
-    const item = dummies.get(dummy);
-    const { scope, group, sandbox } = proxies.get(item);
-    const traceable = isTraceable(value);
+const setTrap = (
+  dummy: EmulatorNS.proxy,
+  key: string,
+  value: unknown,
+): boolean => {
+  const item = dummies.get(dummy);
+  const { scope, group, sandbox } = proxies.get(item);
+  const traceable = isTraceable(value);
 
-    const origin: EmulatorNS.origin = {
+  const origin: EmulatorNS.origin = {
+    action: "set",
+    item,
+    key,
+    value,
+  };
+
+  const final = traceable ? createProxy(scope, value, group, origin) : value;
+
+  if (final === value) {
+    // final value is not traceable
+    scope.emit("action", {
       action: "set",
       item,
       key,
-      value,
-    };
-
-    const final = traceable
-      ? createProxy(scope, value as EmulatorNS.traceable, group, origin)
-      : value;
-
-    if (final === value) {
-      // final value is not traceable
-      scope.emit("action", {
-        action: "set",
-        item,
-        key,
-        value: final,
-      });
-    }
-
-    // set final value to sandbox only
-    return Reflect.set(sandbox, key, final);
-  },
-
-  deleteProperty(dummy: EmulatorNS.proxy, key: string): boolean {
-    const item = dummies.get(dummy);
-    const { target, sandbox, scope } = proxies.get(item);
-
-    // delete from original target too
-    if (targets.has(target)) delete target[key];
-
-    scope.emit("action", {
-      action: "delete",
-      item,
-      key,
+      value: final,
     });
+  }
 
-    // set value to undefined but keep key for [get] to use
-    return Reflect.set(sandbox, key, undefined);
-  },
+  // set final value to sandbox only
+  return Reflect.set(sandbox, key, final);
+};
 
-  construct(dummy: EmulatorNS.proxy, args: unknown[]): object {
-    const item = dummies.get(dummy);
-    const { scope, group } = proxies.get(item);
+const deletePropertyTrap = (dummy: EmulatorNS.proxy, key: string): boolean => {
+  const item = dummies.get(dummy);
+  const { target, sandbox, scope } = proxies.get(item);
 
-    const origin: EmulatorNS.origin = {
-      action: "construct",
-      item,
-      args,
-    };
+  // delete from original target too
+  if (targets.has(target)) delete target[key];
 
-    return createProxy(scope, undefined, group, origin);
-  },
+  scope.emit("action", {
+    action: "delete",
+    item,
+    key,
+  });
 
-  apply(dummy: EmulatorNS.proxy, that?: object, args?: unknown[]): unknown {
-    const item = dummies.get(dummy);
-    const { scope, group, target } = proxies.get(item);
+  // set value to undefined but keep key for [get] to use
+  return Reflect.set(sandbox, key, undefined);
+};
 
-    const origin: EmulatorNS.origin = {
-      action: "apply",
-      item,
-      that,
-      args,
-    };
+const constructTrap = (dummy: EmulatorNS.proxy, args: unknown[]): object => {
+  const item = dummies.get(dummy);
+  const { scope, group } = proxies.get(item);
 
-    if (typeof target === "function") {
-      return target.apply(that, args);
-    }
-    return createProxy(scope, undefined, group, origin);
-  },
+  const origin: EmulatorNS.origin = {
+    action: "construct",
+    item,
+    args,
+  };
+
+  return createProxy(scope, undefined, group, origin);
+};
+
+const applyTrap = (
+  dummy: EmulatorNS.proxy,
+  that?: object,
+  args?: unknown[],
+): unknown => {
+  const item = dummies.get(dummy);
+  const { scope, group, target } = proxies.get(item);
+
+  const origin: EmulatorNS.origin = {
+    action: "apply",
+    item,
+    that,
+    args,
+  };
+
+  if (typeof target === "function") {
+    return target.apply(that, args);
+  }
+  return createProxy(scope, undefined, group, origin);
+};
+
+const traps = {
+  get: getTrap,
+  set: setTrap,
+  deleteProperty: deletePropertyTrap,
+  construct: constructTrap,
+  apply: applyTrap,
 };
 
 const createProxy = (
   scope: EmulatorNS.EmulatorClass,
-  target: any,
+  target: EmulatorNS.traceable,
   namespace?: string,
   trap?: EmulatorNS.origin, // the action used to create the proxy
 ): EmulatorNS.proxy => {

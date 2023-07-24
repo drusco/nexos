@@ -33,11 +33,14 @@ declare namespace Emulator {
     args?: unknown[];
   }
 
-  interface item {
+  interface itemPublicData {
     id: number;
+    target?: unknown;
+  }
+
+  interface item extends itemPublicData {
     dummy: proxy;
-    origin?: origin;
-    target: traceable;
+    origin?: origin | undefined;
     revoke(): void;
     scope: EmulatorClass;
     sandbox: object;
@@ -50,7 +53,7 @@ declare namespace Emulator {
     [x: string]: any;
   }
 
-  type traceable = object | proxy;
+  type traceable = any;
 }
 
 export default Emulator;

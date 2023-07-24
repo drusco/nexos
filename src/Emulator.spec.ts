@@ -54,7 +54,7 @@ describe("Emulator", () => {
         expect(reference.length).toBe(5);
         expect(reference[reference.length]).toBe(undefined); // does not change the target
 
-        expect(arrayProxy.length).toStrictEqual(reference.length + 1);
+        expect(arrayProxy.length).toBe(reference.length + 1);
         expect(arrayProxy.pop()).toBe("test");
       });
     });
@@ -105,34 +105,11 @@ describe("Emulator", () => {
       });
     });
 
-    describe("equal", () => {
-      it("Compares proxies and targets", () => {
-        const target1 = { test: true };
-        const target2 = { test: true };
-
-        const proxy1 = emulator.use(target1);
-        const proxy2 = emulator.use(target2);
-
-        expect(Emulator.equal(target1, proxy1)).toBe(true);
-        expect(Emulator.equal(proxy1, target1)).toBe(true);
-        expect(Emulator.equal(target2, proxy2)).toBe(true);
-        expect(Emulator.equal(proxy2, target2)).toBe(true);
-        expect(Emulator.equal(target1, target1)).toBe(true);
-        expect(Emulator.equal(target2, target2)).toBe(true);
-        expect(Emulator.equal(target1, target2)).toBe(false);
-        expect(Emulator.equal(target2, target1)).toBe(false);
-        expect(Emulator.equal(proxy1, proxy1)).toBe(true);
-        expect(Emulator.equal(proxy2, proxy2)).toBe(true);
-        expect(Emulator.equal(proxy1, proxy2)).toBe(false);
-        expect(Emulator.equal(proxy2, proxy1)).toBe(false);
-      });
-    });
-
     describe("encode", () => {
       it("Encodes a proxy synchronously", () => {
         const proxy = emulator.use();
-        expect(typeof proxy).toStrictEqual("function");
-        expect(typeof emulator.encode(proxy)).toStrictEqual("object");
+        expect(typeof proxy).toBe("function");
+        expect(typeof emulator.encode(proxy)).toBe("object");
       });
 
       it("Encodes multiple proxies deeply", () => {
