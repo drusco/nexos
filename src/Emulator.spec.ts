@@ -4,7 +4,7 @@ import Emulator from "./Emulator";
 const emulator = new Emulator();
 
 describe("Emulator", () => {
-  describe("methods", () => {
+  describe("Methods", () => {
     describe("use", () => {
       it(`Returns a proxy function`, () => {
         expect(typeof emulator.use({})).toBe("function");
@@ -85,6 +85,7 @@ describe("Emulator", () => {
         const emulator = new Emulator();
         emulator.destroy();
         expect(emulator.use).toThrow();
+        expect(emulator.namespace).toThrow();
       });
     });
 
@@ -149,99 +150,113 @@ describe("Emulator", () => {
     });
   });
 
-  describe("proxy", () => {
-    describe("get, set, deleteProperty", () => {
-      it("Can set and get values on a proxy", () => {
-        const a = emulator.use();
-        a.set = null;
-        a.set1 = undefined;
-        a.set2 = { object: true };
-        a.set3 = "string";
-        a.set4 = () => {
-          console.log("function call");
-        };
-        a.set5 = [1, 2, 3];
-        a.set6 = true;
-        a.set7 = 12.2;
-        a.set8 = 45;
-        a.set9 = new Date();
-        const deep = { deep: true };
-        a.set2.sub = false;
-        a.set2.sub2 = {};
-        a.set2.sub2.deep = deep;
-        expect(typeof a.treatAsProxy).toBe("function");
-        expect(a.set).toStrictEqual(null);
-        expect(a.set1).toStrictEqual(undefined);
-        expect(a.set3).toStrictEqual("string");
-        expect(a.set6).toStrictEqual(true);
-        expect(a.set7).toStrictEqual(12.2);
-        expect(a.set8).toStrictEqual(45);
-        expect(a.set2.sub).toStrictEqual(false);
-        expect(Emulator.equal(deep, a.set2.sub2.deep)).toStrictEqual(true);
+  describe("Proxy", () => {
+    describe("Get, Set and Delete traps", () => {
+      it("Can get values from a proxy", () => {
+        const proxy = emulator.use();
+        const deep = { test: true };
+
+        proxy.number = 100;
+        proxy.null = null;
+        proxy.boolean = true;
+        proxy.undefined = undefined;
+        proxy.object = { test: true };
+        proxy.array = ["test", emulator.use()];
+        proxy.string = "test";
+        proxy.function = () => "test";
+
+        proxy.object.boolean = false;
+        proxy.object.sub = {};
+        proxy.object.sub.deep = deep;
+
+        proxy.toDelete = true;
+        delete proxy.toDelete;
+
+        expect(typeof proxy.unknown).toBe("function");
+        expect(proxy.number).toBe(100);
+        expect(proxy.null).toBe(null);
+        expect(proxy.boolean).toBe(true);
+        expect(proxy.undefined).toBe(undefined);
+        expect(typeof proxy.object).toBe("function");
+        expect(typeof proxy.array).toBe("function");
+        expect(proxy.string).toBe("test");
+        expect(proxy.function()).toBe("test");
+        expect(proxy.object.boolean).toBe(false);
+        expect(typeof proxy.object.sub).toBe("function");
+        expect(proxy.object.sub.deep).toBe(emulator.use(deep));
+        expect(proxy.object.sub.deep.test).toBe(true);
+        expect(proxy.toDelete).toBe(undefined);
       });
 
       it("Will not set a value to the original target", () => {
-        const a = emulator.use();
-        const deep = { deep: true, property: undefined };
-        a.set2 = { object: true };
-        a.set2.sub = false;
-        a.set2.sub2 = {};
-        a.set2.sub2.deep = deep;
-        a.set2.sub2.deep.property = "hello world";
-        expect(deep.property).toEqual(undefined);
-        expect(a.set2.sub2.deep).not.toBe(deep);
-        expect(Emulator.equal(a.set2.sub2.deep, deep)).toStrictEqual(true);
-        const deep2 = emulator.use(a.set2.sub2.deep);
-        // proxy out of proxy is not allowed
-        expect(deep2).toStrictEqual(a.set2.sub2.deep);
-        const abc = emulator.use({ property: true });
-        a.set2.sub2.deep.setProxy = abc;
-        expect(abc.property).toStrictEqual(a.set2.sub2.deep.setProxy.property);
+        const proxy = emulator.use();
+        const deep = { test: true };
+
+        proxy.set = { object: true };
+        proxy.set.sub = {};
+        proxy.set.sub.deep = deep;
+        proxy.set.sub.deep.test = false;
+        emulator.use(deep).test = null;
+
+        expect(deep.test).toBe(true);
+        expect(emulator.use(deep).test).toBe(null);
       });
 
       it("Can delete a property from a proxy and its original target", () => {
-        const a = emulator.use();
-        const deep = { deep: true, property: undefined };
-        a.set2 = { object: true };
-        a.set2.sub = false;
-        a.set2.sub2 = {};
-        a.set2.sub2.deep = deep;
-        delete a.set2.sub2.deep.property;
-        expect(deep.property).toStrictEqual(undefined);
-        delete a.set2;
-        expect(a.set2).toStrictEqual(undefined);
+        const proxy = emulator.use();
+        const deep = { deep: true, property: "test" };
+
+        proxy.set = { test: true };
+        proxy.set.sub = {};
+        proxy.set.sub.deep = deep;
+
+        delete proxy.set.sub.deep.property;
+        delete proxy.set;
+
+        expect(deep.property).toBe(undefined);
+        expect(proxy.set).toBe(undefined);
       });
     });
 
-    describe("construct, apply", () => {
-      it("can construct an object and return its proxy", () => {
-        function MyClass() {
-          this.property = 45;
-          this.traceable = [55];
-          this.method = function (param) {
+    describe("Construct and Apply traps", () => {
+      it("Can construct an object and return its proxy", () => {
+        class Test {
+          property: number = 45;
+          traceable: number[] = [55];
+          inner: boolean;
+          value: any;
+          method(param: any) {
             this.inner = true;
             this.value = param;
-          };
+          }
         }
-        const Class = emulator.use({});
-        const instance = new Class(1, [2, 3], null);
-        instance.property = true;
+        const TestClassProxy = emulator.use();
+        const instance = new TestClassProxy(1, [2, 3], null);
         const value = instance.call();
-        expect(instance.property).toStrictEqual(true);
-        expect(typeof value).toBe("function");
-        const res = emulator.use(new MyClass());
-        expect(res.property).toStrictEqual(45);
-        expect(res.traceable[0]).toStrictEqual(55);
-        expect(typeof res.unknown).toBe("function");
+        const test = emulator.use(new Test());
         const param = { param: true };
-        res.method(param);
-        expect(res.inner).toStrictEqual(true);
-        expect(Emulator.equal(res.value, param)).toStrictEqual(true);
+
+        test.method(param);
+        instance.property = true;
+
+        expect(typeof instance).toBe("function");
+        expect(typeof value).toBe("function");
+        expect(typeof test.unknown).toBe("function");
+        expect(instance.property).toBe(true);
+        expect(test.property).toBe(45);
+        expect(test.traceable[0]).toBe(55);
+        expect(test.inner).toBe(true);
+        expect(test.value).toBe(emulator.use(param));
       });
 
-      it("always get a proxy from an apply trap", () => {
-        const call = emulator.use();
-        expect(typeof call()).toBe("function");
+      it("Gets a proxy from an apply trap when target is not a function", () => {
+        const proxy = emulator.use();
+        expect(typeof proxy()).toBe("function");
+      });
+
+      it("Gets a value from an apply trap when target is a function", () => {
+        const proxy = emulator.use((value: number) => value / 2);
+        expect(proxy(10)).toBe(5);
       });
     });
   });

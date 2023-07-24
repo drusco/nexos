@@ -1,9 +1,9 @@
 import { EventEmitter } from "events";
 
 declare namespace Emulator {
-  interface EmulatorClass extends EventEmitter {}
-
-  type isTraceable = (value: unknown) => boolean;
+  interface EmulatorClass extends EventEmitter {
+    isTraceable(value: any): boolean;
+  }
 
   interface options {
     [x: string]: unknown;
