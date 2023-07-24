@@ -71,45 +71,41 @@ export default class Emulator
     return itemCount;
   }
 
-  contains(a: EmulatorNS.traceable, b: EmulatorNS.traceable): boolean {
-    if (!this.exists(a) || !this.exists(b)) return false;
+  // no estoy seguro si tiene algun uso
+  // voy a comentar para aprovechar la logica de busqueda por origen
 
-    let origin: EmulatorNS.origin;
+  // contains(a: EmulatorNS.traceable, b: EmulatorNS.traceable): boolean {
+  //   if (!exists(a)) return false;
+  //   if (!exists(b)) return false;
 
-    if (typeof b === "function") {
-      const item = proxies.get(b as EmulatorNS.proxy);
-      origin = item.origin;
+  //   let origin: EmulatorNS.origin;
+
+  //   const item = exists(b) ? this.use(b) : null;
+  //   origin = item?.origin;
+
+  //   while (origin) {
+  //     const { item } = origin;
+  //     if (item === a) return true;
+  //     origin = null;
+  //     if (exists(item)) {
+  //       origin = proxies.get(item as EmulatorNS.proxy).origin;
+  //     }
+  //   }
+
+  //   return false;
+  // }
+
+  encode(value: unknown): unknown {
+    if (exists(value)) {
+      const { id } = proxies.get(this.use(value));
+      return { id, encoded: true }; // TODO: usar Symbol para saber si es encoded o no
     }
 
-    while (origin) {
-      const { item } = origin;
-      if (item === a) return true;
-      origin = null;
-      if (typeof item === "function" && this.exists(item)) {
-        origin = proxies.get(item as EmulatorNS.proxy).origin;
-      }
-    }
-
-    return false;
-  }
-
-  encode(value: EmulatorNS.traceable, callback?: EmulatorNS.proxy): object {
-    if (typeof value === "function" && proxies.has(value as EmulatorNS.proxy)) {
-      const { id } = proxies.get(value as EmulatorNS.proxy);
-
-      if (typeof callback == "function") {
-        callback(value);
-      }
-
-      return { id, encoded: true };
-    }
-
-    if (typeof value == "object") {
+    if (typeof value == "object" && value) {
       const copy = Array.isArray(value) ? [] : {};
 
       for (const key in value) {
-        if (!value[key]) continue;
-        copy[key] = this.encode(value[key], callback);
+        copy[key] = this.encode(value[key]);
       }
 
       value = copy;
@@ -118,15 +114,8 @@ export default class Emulator
     return value;
   }
 
-  exists(value: any): boolean {
-    if (proxies.has(value) || targets.has(value)) {
-      return true;
-    }
-    return false;
-  }
-
   getId(value: EmulatorNS.traceable): number {
-    if (!this.exists(value)) return -1;
+    if (!exists(value)) return -1;
     return proxies.get(this.use(value)).id;
   }
 
@@ -166,19 +155,10 @@ export default class Emulator
     secret.delete(this);
   }
 
-  isTraceable(value: any): boolean {
-    if (value === null) return false;
-    if (this.exists(value)) return false;
-    if (!(typeof value === "object" || typeof value === "function")) {
-      return false;
-    }
-    return true;
-  }
-
   async resolve(item: EmulatorNS.traceable): Promise<void> {
     // Access the real value of a proxy
 
-    if (!this.exists(item)) return;
+    if (!exists(item)) return;
 
     return new Promise((resolve): void => {
       // 'resolve' event listener must exists
@@ -190,7 +170,7 @@ export default class Emulator
   async resolveId(item: EmulatorNS.traceable): Promise<void> {
     // Access the external id of a proxy
 
-    if (!this.exists(item) && typeof item != "object") return;
+    if (!exists(item) && typeof item != "object") return;
 
     return new Promise((resolve): void => {
       // 'resolveId' event listener must exists
@@ -208,26 +188,12 @@ export default class Emulator
 
     return false;
   }
-
-  static getEventNames(): string[] {
-    return [...events];
-  }
 }
 
 const secret = new WeakMap<EmulatorNS.EmulatorClass, EmulatorNS.private>();
 const dummies = new WeakMap<EmulatorNS.proxy, EmulatorNS.proxy>();
 const targets = new WeakMap<EmulatorNS.traceable, EmulatorNS.proxy>();
 const proxies = new WeakMap<EmulatorNS.proxy, EmulatorNS.item>();
-
-const events = [
-  "proxy",
-  "action",
-  "revoke",
-  "namespace",
-  "deleteGroup",
-  "resolve",
-  "resolveId",
-];
 
 const traps = {
   get(dummy: EmulatorNS.proxy, key: string): unknown {
@@ -246,7 +212,7 @@ const traps = {
 
     if (!sandboxKeys.includes(key)) {
       if (targets.has(target) && target[key] !== undefined) {
-        if (scope.isTraceable(target[key])) {
+        if (isTraceable(target[key])) {
           sandbox[key] = createProxy(scope, target[key], group, origin);
         } else {
           sandbox[key] = target[key];
@@ -262,7 +228,7 @@ const traps = {
   set(dummy: EmulatorNS.proxy, key: string, value: unknown): boolean {
     const item = dummies.get(dummy);
     const { scope, group, sandbox } = proxies.get(item);
-    const traceable = scope.isTraceable(value);
+    const traceable = isTraceable(value);
 
     const origin: EmulatorNS.origin = {
       action: "set",
@@ -353,7 +319,7 @@ const createProxy = (
 
   const itemId = ++data.itemCount;
   const dummy = function () {};
-  const traceable = scope.isTraceable(target);
+  const traceable = isTraceable(target);
   const { proxy, revoke } = Proxy.revocable(dummy, traps);
   const group = bindings[namespace];
 
@@ -391,4 +357,21 @@ const createProxy = (
   }
 
   return proxy;
+};
+
+const exists = (value: any): boolean => {
+  if (proxies.has(value)) return true;
+  if (targets.has(value)) return true;
+  return false;
+};
+
+const isTraceable = (value: any): boolean => {
+  const isObject = typeof value === "object";
+  const isFunction = typeof value === "function";
+
+  if (!isObject && !isFunction) return false;
+  if (value === null) return false;
+  if (exists(value)) return false;
+
+  return true;
 };

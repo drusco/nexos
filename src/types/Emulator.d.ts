@@ -1,9 +1,7 @@
 import { EventEmitter } from "events";
 
 declare namespace Emulator {
-  interface EmulatorClass extends EventEmitter {
-    isTraceable(value: any): boolean;
-  }
+  interface EmulatorClass extends EventEmitter {}
 
   interface options {
     [x: string]: unknown;
@@ -15,7 +13,7 @@ declare namespace Emulator {
   }
 
   interface bindings {
-    [id: string]: group;
+    [namespace: string]: group;
   }
 
   interface private {
