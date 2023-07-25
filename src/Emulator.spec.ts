@@ -126,115 +126,115 @@ describe("Emulator", () => {
       });
     });
   });
+});
 
-  describe("Proxy", () => {
-    describe("Get, Set and Delete traps", () => {
-      it("Can get values from a proxy", () => {
-        const proxy = emulator.use();
-        const deep = { test: true };
+describe("Proxy", () => {
+  describe("Get, Set and Delete traps", () => {
+    it("Can get values from a proxy", () => {
+      const proxy = emulator.use();
+      const deep = { test: true };
 
-        proxy.number = 100;
-        proxy.null = null;
-        proxy.boolean = true;
-        proxy.undefined = undefined;
-        proxy.object = { test: true };
-        proxy.array = ["test", emulator.use()];
-        proxy.string = "test";
-        proxy.function = () => "test";
+      proxy.number = 100;
+      proxy.null = null;
+      proxy.boolean = true;
+      proxy.undefined = undefined;
+      proxy.object = { test: true };
+      proxy.array = ["test", emulator.use()];
+      proxy.string = "test";
+      proxy.function = () => "test";
 
-        proxy.object.boolean = false;
-        proxy.object.sub = {};
-        proxy.object.sub.deep = deep;
+      proxy.object.boolean = false;
+      proxy.object.sub = {};
+      proxy.object.sub.deep = deep;
 
-        proxy.toDelete = true;
-        delete proxy.toDelete;
+      proxy.toDelete = true;
+      delete proxy.toDelete;
 
-        expect(typeof proxy.unknown).toBe("function");
-        expect(proxy.number).toBe(100);
-        expect(proxy.null).toBe(null);
-        expect(proxy.boolean).toBe(true);
-        expect(proxy.undefined).toBe(undefined);
-        expect(typeof proxy.object).toBe("function");
-        expect(typeof proxy.array).toBe("function");
-        expect(proxy.string).toBe("test");
-        expect(proxy.function()).toBe("test");
-        expect(proxy.object.boolean).toBe(false);
-        expect(typeof proxy.object.sub).toBe("function");
-        expect(proxy.object.sub.deep).toBe(emulator.use(deep));
-        expect(proxy.object.sub.deep.test).toBe(true);
-        expect(proxy.toDelete).toBe(undefined);
-      });
-
-      it("Will not set a value to the original target", () => {
-        const proxy = emulator.use();
-        const deep = { test: true };
-
-        proxy.set = { object: true };
-        proxy.set.sub = {};
-        proxy.set.sub.deep = deep;
-        proxy.set.sub.deep.test = false;
-        emulator.use(deep).test = null;
-
-        expect(deep.test).toBe(true);
-        expect(emulator.use(deep).test).toBe(null);
-      });
-
-      it("Can delete a property from a proxy and its original target", () => {
-        const proxy = emulator.use();
-        const deep = { deep: true, property: "test" };
-
-        proxy.set = { test: true };
-        proxy.set.sub = {};
-        proxy.set.sub.deep = deep;
-
-        delete proxy.set.sub.deep.property;
-        delete proxy.set;
-
-        expect(deep.property).toBe(undefined);
-        expect(proxy.set).toBe(undefined);
-      });
+      expect(typeof proxy.unknown).toBe("function");
+      expect(proxy.number).toBe(100);
+      expect(proxy.null).toBe(null);
+      expect(proxy.boolean).toBe(true);
+      expect(proxy.undefined).toBe(undefined);
+      expect(typeof proxy.object).toBe("function");
+      expect(typeof proxy.array).toBe("function");
+      expect(proxy.string).toBe("test");
+      expect(proxy.function()).toBe("test");
+      expect(proxy.object.boolean).toBe(false);
+      expect(typeof proxy.object.sub).toBe("function");
+      expect(proxy.object.sub.deep).toBe(emulator.use(deep));
+      expect(proxy.object.sub.deep.test).toBe(true);
+      expect(proxy.toDelete).toBe(undefined);
     });
 
-    describe("Construct and Apply traps", () => {
-      it("Can construct an object and return its proxy", () => {
-        class Test {
-          property: number = 45;
-          traceable: number[] = [55];
-          inner: boolean;
-          value: any;
-          method(param: any) {
-            this.inner = true;
-            this.value = param;
-          }
+    it("Will not set a value to the original target", () => {
+      const proxy = emulator.use();
+      const deep = { test: true };
+
+      proxy.set = { object: true };
+      proxy.set.sub = {};
+      proxy.set.sub.deep = deep;
+      proxy.set.sub.deep.test = false;
+      emulator.use(deep).test = null;
+
+      expect(deep.test).toBe(true);
+      expect(emulator.use(deep).test).toBe(null);
+    });
+
+    it("Can delete a property from a proxy and its original target", () => {
+      const proxy = emulator.use();
+      const deep = { deep: true, property: "test" };
+
+      proxy.set = { test: true };
+      proxy.set.sub = {};
+      proxy.set.sub.deep = deep;
+
+      delete proxy.set.sub.deep.property;
+      delete proxy.set;
+
+      expect(deep.property).toBe(undefined);
+      expect(proxy.set).toBe(undefined);
+    });
+  });
+
+  describe("Construct and Apply traps", () => {
+    it("Can construct an object and return its proxy", () => {
+      class Test {
+        property: number = 45;
+        traceable: number[] = [55];
+        inner: boolean;
+        value: any;
+        method(param: any) {
+          this.inner = true;
+          this.value = param;
         }
-        const TestClassProxy = emulator.use();
-        const instance = new TestClassProxy(1, [2, 3], null);
-        const value = instance.call();
-        const test = emulator.use(new Test());
-        const param = { param: true };
+      }
+      const TestClassProxy = emulator.use();
+      const instance = new TestClassProxy(1, [2, 3], null);
+      const value = instance.call();
+      const test = emulator.use(new Test());
+      const param = { param: true };
 
-        test.method(param);
-        instance.property = true;
+      test.method(param);
+      instance.property = true;
 
-        expect(typeof instance).toBe("function");
-        expect(typeof value).toBe("function");
-        expect(typeof test.unknown).toBe("function");
-        expect(instance.property).toBe(true);
-        expect(test.property).toBe(45);
-        expect(test.traceable[0]).toBe(55);
-        expect(test.inner).toBe(true);
-        expect(test.value).toBe(emulator.use(param));
-      });
+      expect(typeof instance).toBe("function");
+      expect(typeof value).toBe("function");
+      expect(typeof test.unknown).toBe("function");
+      expect(instance.property).toBe(true);
+      expect(test.property).toBe(45);
+      expect(test.traceable[0]).toBe(55);
+      expect(test.inner).toBe(true);
+      expect(test.value).toBe(emulator.use(param));
+    });
 
-      it("Gets a proxy from an apply trap when target is not a function", () => {
-        const proxy = emulator.use();
-        expect(typeof proxy()).toBe("function");
-      });
+    it("Gets a proxy from an apply trap when target is not a function", () => {
+      const proxy = emulator.use();
+      expect(typeof proxy()).toBe("function");
+    });
 
-      it("Gets a value from an apply trap when target is a function", () => {
-        const proxy = emulator.use((value: number) => value / 2);
-        expect(proxy(10)).toBe(5);
-      });
+    it("Gets a value from an apply trap when target is a function", () => {
+      const proxy = emulator.use((value: number) => value / 2);
+      expect(proxy(10)).toBe(5);
     });
   });
 });
