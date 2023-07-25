@@ -71,27 +71,24 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
 
   // no estoy seguro si tiene algun uso
   // voy a comentar para aprovechar la logica de busqueda por origen
-
-  // contains(a: Exotic.Traceable, b: Exotic.Traceable): boolean {
-  //   if (!findProxy(a)) return false;
-  //   if (!findProxy(b)) return false;
-
-  //   let origin: Exotic.proxy.origin;
-
-  //   const item = findProxy(b) ? this.use(b) : null;
-  //   origin = item?.origin;
-
-  //   while (origin) {
-  //     const { item } = origin;
-  //     if (item === a) return true;
-  //     origin = null;
-  //     if (findProxy(item)) {
-  //       origin = map.proxies.get(item as Exotic.Proxy).origin;
-  //     }
-  //   }
-
-  //   return false;
-  // }
+  contains(a: Exotic.Traceable, b: Exotic.Traceable): boolean {
+    console.log(a, b);
+    return true;
+    // if (!findProxy(a)) return false;
+    // if (!findProxy(b)) return false;
+    // let origin: Exotic.proxy.origin;
+    // const item = findProxy(b) ? this.use(b) : null;
+    // origin = item?.origin;
+    // while (origin) {
+    //   const { item } = origin;
+    //   if (item === a) return true;
+    //   origin = null;
+    //   if (findProxy(item)) {
+    //     origin = map.proxies.get(item as Exotic.Proxy).origin;
+    //   }
+    // }
+    // return false;
+  }
 
   encode(value: unknown): unknown {
     if (findProxy(value)) {
