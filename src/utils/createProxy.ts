@@ -2,7 +2,7 @@ import Exotic from "../types/Emulator";
 import map from "./map";
 import findProxy from "./findProxy";
 import isTraceable from "./isTraceable";
-import traps from "./traps";
+import * as traps from "./traps";
 
 const createProxy = (
   scope: Exotic.Emulator,
