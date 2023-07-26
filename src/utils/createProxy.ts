@@ -1,8 +1,8 @@
-import Exotic from "../types/Emulator";
-import map from "./map";
-import findProxy from "./findProxy";
-import isTraceable from "./isTraceable";
-import * as traps from "./traps";
+import Exotic from "../types/Emulator.js";
+import map from "./map.js";
+import findProxy from "./findProxy.js";
+import isTraceable from "./isTraceable.js";
+import * as traps from "./traps/index.js";
 
 const createProxy = (
   scope: Exotic.Emulator,
