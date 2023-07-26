@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "module": "ES6",
+    "module": "ES2015",
     "target": "ES5",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "outDir": "dist",
     "resolveJsonModule": true,
     "emitDecoratorMetadata": true,
@@ -11,7 +11,8 @@
     "sourceMap": true,
     "rootDir": "./src",
     "declaration": true,
+    "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/Emulator.spec.ts"],
   "exclude": ["node_modules", "src/**/*.spec.ts"]
 }

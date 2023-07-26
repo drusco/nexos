@@ -1,7 +1,7 @@
-import isTraceable from "./isTraceable.js";
-import findProxy from "./findProxy.js";
-import createProxy from "./createProxy.js";
-import map from "./map.js";
-import * as traps from "./traps/index.js";
+import isTraceable from "./isTraceable";
+import findProxy from "./findProxy";
+import createProxy from "./createProxy";
+import map from "./map";
+import * as traps from "./traps";
 
 export { isTraceable, findProxy, map, createProxy, traps };

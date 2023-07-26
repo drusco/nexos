@@ -2,7 +2,7 @@
   "name": "emulator",
   "version": "1.0.0",
   "description": "test emulation",
-  "main": "dist/bundle.js",
+  "main": "dist/index.js",
   "private": true,
   "type": "module",
   "license": "UNLICENSED",
@@ -23,6 +23,7 @@
     "email": "pedrogallardo7011@gmail.com"
   },
   "devDependencies": {
+    "@jest/globals": "^29.6.1",
     "@types/expect": "^24.3.0",
     "@types/jest": "^29.5.3",
     "@types/node": "^20.4.2",
