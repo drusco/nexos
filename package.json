@@ -1,8 +1,8 @@
 {
   "name": "emulator",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "test emulation",
+  "main": "dist/bundle.js",
   "private": true,
   "type": "module",
   "license": "UNLICENSED",

@@ -1,6 +1,6 @@
 import Exotic from "../../types/Emulator";
-import createProxy from "../createProxy";
-import map from "../map";
+import createProxy from "../createProxy.js";
+import map from "../map.js";
 
 const construct = (dummy: Exotic.FunctionLike, args: unknown[]): object => {
   const item = map.dummies.get(dummy);

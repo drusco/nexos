@@ -1,7 +1,7 @@
 import Exotic from "../../types/Emulator";
-import createProxy from "../createProxy";
-import isTraceable from "../isTraceable";
-import map from "../map";
+import createProxy from "../createProxy.js";
+import isTraceable from "../isTraceable.js";
+import map from "../map.js";
 
 const set = (
   dummy: Exotic.FunctionLike,
