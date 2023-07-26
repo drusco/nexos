@@ -1,5 +1,6 @@
 import { EventEmitter } from "events";
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace Exotic {
   type Traceable = object | FunctionLike;
 
@@ -16,6 +17,7 @@ declare namespace Exotic {
     [x: string]: any;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace proxy {
     interface group {
       length: number;
@@ -32,6 +34,7 @@ declare namespace Exotic {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace emulator {
     interface options {
       [x: string]: unknown;

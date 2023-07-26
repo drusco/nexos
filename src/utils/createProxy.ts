@@ -1,4 +1,4 @@
-import Exotic from "../types/Emulator.js";
+import Exotic from "../types/Exotic.js";
 import map from "./map.js";
 import findProxy from "./findProxy.js";
 import isTraceable from "./isTraceable.js";

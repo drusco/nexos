@@ -1,4 +1,4 @@
-import Exotic from "./types/Emulator.js";
+import Exotic from "./types/Exotic.js";
 import { findProxy, map, createProxy } from "./utils/index.js";
 import { EventEmitter } from "events";
 
