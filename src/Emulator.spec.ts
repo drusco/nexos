@@ -121,7 +121,7 @@ describe("Emulator", () => {
           times -= 1;
         }
 
-        const encoded = emulator.encode(map);
+        const encoded: any = emulator.encode(map);
         expect(typeof encoded[999]).toBe("object");
       });
     });
