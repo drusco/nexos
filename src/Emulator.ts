@@ -1,5 +1,5 @@
 import Exotic from "./types/Exotic.js";
-import { findProxy, map, createProxy } from "./utils/index.js";
+import { findProxy, map, createProxy } from "./utils/index";
 import { EventEmitter } from "events";
 
 export default class Emulator extends EventEmitter implements Exotic.Emulator {
