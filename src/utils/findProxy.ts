@@ -1,5 +1,5 @@
-import Exotic from "../types/Exotic.js";
-import map from "./map.js";
+import Exotic from "../types/Exotic";
+import map from "./map";
 
 const find = (value: any): Exotic.Proxy | null => {
   if (map.proxies.has(value)) return value; // value is already a proxy
