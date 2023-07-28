@@ -1,5 +1,5 @@
-import Exotic from "../../types/Exotic";
-import map from "../map";
+import Exotic from "../../types/Exotic.js";
+import map from "../map.js";
 
 const deleteProperty = (dummy: Exotic.FunctionLike, key: string): boolean => {
   const item = map.dummies.get(dummy);

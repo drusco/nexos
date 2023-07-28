@@ -1,5 +1,5 @@
 import { describe, it, expect } from "@jest/globals";
-import Emulator from "./Emulator";
+import Emulator from "../dist/Emulator";
 
 const emulator = new Emulator();
 
