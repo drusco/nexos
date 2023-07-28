@@ -1,4 +1,4 @@
-import find from "./findProxy.js";
+import find from "./findProxy";
 
 const isTraceable = (value: any): boolean => {
   const isObject = typeof value === "object";

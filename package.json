@@ -4,15 +4,14 @@
   "description": "test emulation",
   "main": "dist/index.js",
   "private": true,
-  "type": "module",
+  "type": "commonjs",
   "license": "UNLICENSED",
   "scripts": {
     "prepare": "husky install",
     "dev": "tsc --watch",
     "build": "tsc",
     "test": "jest",
-    "lint": "eslint --ext .js,.ts src",
-    "lint:fix": "eslint --fix"
+    "lint": "eslint --fix --ext .js,.ts,.json src"
   },
   "author": {
     "name": "Pedro Gallardo",

@@ -27,7 +27,3 @@ files will be available on the dist directory
 ### Lint files
 
 `npm run lint`
-
-Quickly fix code formatting
-
-`npm run lint:fix`

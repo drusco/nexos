@@ -1,7 +1,7 @@
-import get from "./get.js";
-import set from "./set.js";
-import deleteProperty from "./deleteProperty.js";
-import construct from "./construct.js";
-import apply from "./apply.js";
+import get from "./get";
+import set from "./set";
+import deleteProperty from "./deleteProperty";
+import construct from "./construct";
+import apply from "./apply";
 
 export { get, set, deleteProperty, construct, apply };
