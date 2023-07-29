@@ -5,7 +5,7 @@ import map from "../map";
 
 const get = (dummy: Exotic.FunctionLike, key: string): unknown => {
   const item = map.dummies.get(dummy);
-  const { scope, group, target, sandbox } = map.proxies.get(item);
+  const { scope, namespace, target, sandbox } = map.proxies.get(item);
 
   const origin: Exotic.proxy.origin = {
     action: "get",
@@ -20,12 +20,12 @@ const get = (dummy: Exotic.FunctionLike, key: string): unknown => {
   if (!sandboxKeys.includes(key)) {
     if (map.targets.has(target) && target[key] !== undefined) {
       if (isTraceable(target[key])) {
-        sandbox[key] = createProxy(scope, target[key], group, origin);
+        sandbox[key] = createProxy(scope, target[key], namespace, origin);
       } else {
         sandbox[key] = target[key];
       }
     } else {
-      sandbox[key] = createProxy(scope, undefined, group, origin);
+      sandbox[key] = createProxy(scope, undefined, namespace, origin);
     }
   }
 

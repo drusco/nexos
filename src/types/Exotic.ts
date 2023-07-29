@@ -3,6 +3,7 @@ import { EventEmitter } from "events";
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace Exotic {
   type Traceable = object | FunctionLike;
+  type Namespace = string | symbol;
 
   interface Emulator extends EventEmitter {
     use(target?: unknown): Proxy;
@@ -21,7 +22,8 @@ declare namespace Exotic {
   namespace proxy {
     interface group {
       length: number;
-      root: Exotic.Proxy;
+      first: Exotic.Proxy;
+      last: Exotic.Proxy;
     }
 
     interface origin {
@@ -41,7 +43,7 @@ declare namespace Exotic {
     }
 
     interface bindings {
-      [namespace: string]: proxy.group;
+      [ns: Namespace]: proxy.group;
     }
 
     interface private {
@@ -63,7 +65,7 @@ declare namespace Exotic {
       revoke(): void;
       scope: Emulator;
       sandbox: object;
-      group?: string;
+      namespace: Namespace;
     }
   }
 }

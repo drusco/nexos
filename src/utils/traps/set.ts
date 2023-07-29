@@ -9,7 +9,7 @@ const set = (
   value: unknown,
 ): boolean => {
   const item = map.dummies.get(dummy);
-  const { scope, group, sandbox } = map.proxies.get(item);
+  const { scope, namespace, sandbox } = map.proxies.get(item);
   const traceable = isTraceable(value);
 
   const origin: Exotic.proxy.origin = {
@@ -19,7 +19,9 @@ const set = (
     value,
   };
 
-  const final = traceable ? createProxy(scope, value, group, origin) : value;
+  const final = traceable
+    ? createProxy(scope, value, namespace, origin)
+    : value;
 
   if (final === value) {
     // final value is not traceable

@@ -8,7 +8,7 @@ const apply = (
   args?: unknown[],
 ): unknown => {
   const item = map.dummies.get(dummy);
-  const { scope, group, target } = map.proxies.get(item);
+  const { scope, namespace, target } = map.proxies.get(item);
 
   const origin: Exotic.proxy.origin = {
     action: "apply",
@@ -20,7 +20,7 @@ const apply = (
   if (typeof target === "function") {
     return target.apply(that, args);
   }
-  return createProxy(scope, undefined, group, origin);
+  return createProxy(scope, undefined, namespace, origin);
 };
 
 export default apply;

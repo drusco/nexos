@@ -17,40 +17,21 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     map.emulators.set(this, data);
   }
 
-  namespace(namespace: string): Exotic.Proxy {
-    if (!namespace.length) {
-      throw Error("namespace cannot be an empty string");
-    }
-
+  namespace(namespace: Exotic.Namespace): Exotic.Proxy {
     const data: Exotic.emulator.private = map.emulators.get(this);
     const { bindings } = data;
+    const proxyGroup = bindings[namespace];
 
-    // return existing root proxy
-    if (bindings[namespace]) {
-      return bindings[namespace].root;
-    }
+    // return the first proxy in the existing group
+    if (proxyGroup) return proxyGroup.first;
 
-    // create new root proxy
-    const proxy: Exotic.Proxy = createProxy(this, namespace, namespace);
-
-    const group: Exotic.proxy.group = {
-      length: 0,
-      root: proxy,
-    };
-
-    data.groupCount += 1;
-    bindings[namespace] = group;
-
-    this.emit("namespace", namespace);
-
-    return proxy;
+    // create the first proxy for a new group
+    return createProxy(this, undefined, namespace);
   }
 
   use(value?: any): Exotic.Proxy {
-    //if (value === this) return null;
-    if (map.proxies.has(value)) return value; // value is already a proxy
-    if (map.targets.has(value)) return map.targets.get(value); // return proxy linked to value
-
+    const proxy = findProxy(value);
+    if (proxy) return proxy;
     return createProxy(this, value);
   }
 
@@ -67,27 +48,6 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
   total(): number {
     const { itemCount }: Exotic.emulator.private = map.emulators.get(this);
     return itemCount;
-  }
-
-  // no estoy seguro si tiene algun uso
-  // voy a comentar para aprovechar la logica de busqueda por origen
-  contains(a: Exotic.Traceable, b: Exotic.Traceable): boolean {
-    console.log(a, b);
-    return true;
-    // if (!findProxy(a)) return false;
-    // if (!findProxy(b)) return false;
-    // let origin: Exotic.proxy.origin;
-    // const item = findProxy(b) ? this.use(b) : null;
-    // origin = item?.origin;
-    // while (origin) {
-    //   const { item } = origin;
-    //   if (item === a) return true;
-    //   origin = null;
-    //   if (findProxy(item)) {
-    //     origin = map.proxies.get(item as Exotic.Proxy).origin;
-    //   }
-    // }
-    // return false;
   }
 
   encode(value: unknown): unknown {
@@ -109,27 +69,23 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return value;
   }
 
-  revoke(proxy: Exotic.Proxy): void {
-    if (!map.proxies.has(proxy)) return;
+  revoke(value: Exotic.Traceable): void {
+    const proxy = findProxy(value);
+    if (!proxy) return;
 
-    const {
-      id,
-      group: namespace,
-      dummy,
-      revoke,
-      target,
-    } = map.proxies.get(proxy);
+    const { id, namespace, dummy, revoke, target } = map.proxies.get(proxy);
     const data = map.emulators.get(this);
-    const ns = data.bindings[namespace];
+    const { bindings } = data;
+    const group = bindings[namespace];
 
-    if (ns) {
-      ns.length--;
+    if (group) {
+      group.length -= 1;
 
-      if (ns.length === 0) {
-        // delete the group when it is empty
-        delete data.bindings[namespace];
-        this.emit("deleteGroup", namespace);
-        data.groupCount--;
+      if (!group.length) {
+        // delete empty group
+        delete bindings[namespace];
+        this.emit("unbind", namespace);
+        data.groupCount -= 1;
       }
     }
 
@@ -141,7 +97,7 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
 
     revoke();
 
-    data.activeItems--;
+    data.activeItems -= 1;
 
     this.emit("revoke", id);
   }
