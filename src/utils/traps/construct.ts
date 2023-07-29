@@ -3,12 +3,12 @@ import createProxy from "../createProxy";
 import map from "../map";
 
 const construct = (dummy: Exotic.FunctionLike, args: unknown[]): object => {
-  const item = map.dummies.get(dummy);
-  const { scope, namespace } = map.proxies.get(item);
+  const proxy = map.dummies.get(dummy);
+  const { scope, namespace } = map.proxies.get(proxy);
 
   const origin: Exotic.proxy.origin = {
     action: "construct",
-    item,
+    proxy,
     args,
   };
 

@@ -7,12 +7,12 @@ const apply = (
   that?: object,
   args?: unknown[],
 ): unknown => {
-  const item = map.dummies.get(dummy);
-  const { scope, namespace, target } = map.proxies.get(item);
+  const proxy = map.dummies.get(dummy);
+  const { scope, namespace, target } = map.proxies.get(proxy);
 
   const origin: Exotic.proxy.origin = {
     action: "apply",
-    item,
+    proxy,
     that,
     args,
   };

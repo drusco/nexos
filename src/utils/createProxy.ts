@@ -8,20 +8,20 @@ import * as traps from "./traps";
 const createProxy = (
   scope: Exotic.Emulator,
   target: any,
-  namespace: Exotic.Namespace = globalNamespace,
+  namespace: Exotic.namespace = globalNamespace,
   origin?: Exotic.proxy.origin, // the action used to create the proxy
 ): Exotic.Proxy => {
   // target is already a proxy; no proxy out of proxy; no duplicates
   const currentProxy = findProxy(target);
   if (currentProxy) return currentProxy;
 
-  const data: Exotic.emulator.private = map.emulators.get(scope);
+  const data: Exotic.emulator.data = map.emulators.get(scope);
   const { bindings } = data;
 
   const id = ++data.itemCount;
   const dummy: Exotic.FunctionLike = function () {};
   const traceable = isTraceable(target);
-  const { proxy, revoke } = Proxy.revocable(dummy as Exotic.Proxy, traps);
+  const { proxy, revoke } = Proxy.revocable<Exotic.Proxy>(dummy, traps);
 
   let group: Exotic.proxy.group = bindings[namespace];
 
@@ -39,7 +39,7 @@ const createProxy = (
   }
 
   // set the proxy information
-  const item: Exotic.emulator.item = {
+  const proxyData: Exotic.emulator.proxyData = {
     id,
     dummy,
     origin,
@@ -61,7 +61,7 @@ const createProxy = (
   data.activeItems += 1;
 
   map.dummies.set(dummy, proxy);
-  map.proxies.set(proxy, item);
+  map.proxies.set(proxy, proxyData);
 
   if (traceable) {
     map.targets.set(target, proxy);

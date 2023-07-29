@@ -6,7 +6,7 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
   constructor(options: Exotic.emulator.options = {}) {
     super();
 
-    const data: Exotic.emulator.private = {
+    const data: Exotic.emulator.data = {
       options,
       bindings: Object.create(null),
       itemCount: 0, // total item count including revoked items, it only increases
@@ -17,8 +17,8 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     map.emulators.set(this, data);
   }
 
-  namespace(namespace: Exotic.Namespace): Exotic.Proxy {
-    const data: Exotic.emulator.private = map.emulators.get(this);
+  namespace(namespace: Exotic.namespace): Exotic.Proxy {
+    const data: Exotic.emulator.data = map.emulators.get(this);
     const { bindings } = data;
     const group = bindings[namespace];
 
@@ -29,24 +29,24 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return createProxy(this, undefined, namespace);
   }
 
-  use(value?: any): Exotic.Proxy {
+  use(value?: unknown): Exotic.Proxy {
     const proxy = findProxy(value);
     if (proxy) return proxy;
     return createProxy(this, value);
   }
 
   groups(): number {
-    const { groupCount }: Exotic.emulator.private = map.emulators.get(this);
+    const { groupCount }: Exotic.emulator.data = map.emulators.get(this);
     return groupCount;
   }
 
   count(): number {
-    const { activeItems }: Exotic.emulator.private = map.emulators.get(this);
+    const { activeItems }: Exotic.emulator.data = map.emulators.get(this);
     return activeItems;
   }
 
   total(): number {
-    const { itemCount }: Exotic.emulator.private = map.emulators.get(this);
+    const { itemCount }: Exotic.emulator.data = map.emulators.get(this);
     return itemCount;
   }
 
@@ -69,7 +69,7 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return value;
   }
 
-  revoke(value: Exotic.Traceable): void {
+  revoke(value: Exotic.traceable): void {
     const proxy = findProxy(value);
     if (!proxy) return;
 
@@ -107,7 +107,7 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     map.emulators.delete(this);
   }
 
-  resolve(value: any): Exotic.emulator.itemPublicData {
+  resolve(value: any): Exotic.emulator.proxy {
     if (!findProxy(value)) return value;
     const proxy = this.use(value);
     const { id, target } = map.proxies.get(proxy);

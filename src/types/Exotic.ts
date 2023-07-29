@@ -2,11 +2,12 @@ import { EventEmitter } from "events";
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace Exotic {
-  type Traceable = object | FunctionLike;
-  type Namespace = string | symbol;
+  type traceable = object | FunctionLike;
+  type namespace = string | symbol;
 
   interface Emulator extends EventEmitter {
-    use(target?: unknown): Proxy;
+    use(value?: unknown): Proxy;
+    namespace(namespace: namespace): Proxy;
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -15,7 +16,7 @@ declare namespace Exotic {
   }
 
   interface Proxy extends FunctionLike {
-    [x: string]: any;
+    [x: namespace]: any;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -28,25 +29,25 @@ declare namespace Exotic {
 
     interface origin {
       action: "get" | "set" | "construct" | "apply";
-      item: unknown;
-      key?: string;
-      value?: unknown;
-      that?: unknown;
-      args?: unknown[];
+      proxy: Proxy;
+      key?: namespace;
+      value?: any;
+      that?: any;
+      args?: any[];
     }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace emulator {
     interface options {
-      [x: string]: unknown;
+      [x: string]: any;
     }
 
     interface bindings {
-      [ns: Namespace]: proxy.group;
+      [ns: namespace]: proxy.group;
     }
 
-    interface private {
+    interface data {
       options: options;
       bindings: bindings;
       itemCount: number;
@@ -54,18 +55,18 @@ declare namespace Exotic {
       groupCount: number;
     }
 
-    interface itemPublicData {
+    interface proxy {
       id: number;
       target?: any;
     }
 
-    interface item extends itemPublicData {
-      dummy: FunctionLike;
-      origin?: proxy.origin | undefined;
+    interface proxyData extends proxy {
       revoke(): void;
+      dummy: FunctionLike;
+      origin?: proxy.origin;
       scope: Emulator;
-      sandbox: object;
-      namespace: Namespace;
+      sandbox: { [x: namespace]: any };
+      namespace: namespace;
     }
   }
 }

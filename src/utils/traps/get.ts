@@ -4,13 +4,13 @@ import isTraceable from "../isTraceable";
 import map from "../map";
 
 const get = (dummy: Exotic.FunctionLike, key: string): unknown => {
-  const item = map.dummies.get(dummy);
-  const { scope, namespace, target, sandbox } = map.proxies.get(item);
+  const proxy = map.dummies.get(dummy);
+  const { scope, namespace, target, sandbox } = map.proxies.get(proxy);
 
   const origin: Exotic.proxy.origin = {
     action: "get",
     key,
-    item,
+    proxy,
   };
 
   // treat everything as a proxy
