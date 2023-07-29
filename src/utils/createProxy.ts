@@ -3,7 +3,7 @@ import map from "./map";
 import findProxy from "./findProxy";
 import isTraceable from "./isTraceable";
 import { globalNamespace } from "./constants";
-import * as traps from "./traps";
+import traps from "./traps";
 
 const createProxy = (
   scope: Exotic.Emulator,

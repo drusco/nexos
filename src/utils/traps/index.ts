@@ -4,4 +4,4 @@ import deleteProperty from "./deleteProperty";
 import construct from "./construct";
 import apply from "./apply";
 
-export { get, set, deleteProperty, construct, apply };
+export default { get, set, deleteProperty, construct, apply };
