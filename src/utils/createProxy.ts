@@ -39,7 +39,7 @@ const createProxy = (
   }
 
   // set the proxy information
-  const proxyData: Exotic.emulator.proxyData = {
+  const proxyData: Exotic.proxy.data = {
     id,
     dummy,
     origin,

@@ -107,7 +107,7 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     map.emulators.delete(this);
   }
 
-  resolve(value: any): Exotic.emulator.proxy {
+  resolve(value: any): Exotic.proxy.public {
     if (!findProxy(value)) return value;
     const proxy = this.use(value);
     const { id, target } = map.proxies.get(proxy);

@@ -35,6 +35,20 @@ declare namespace Exotic {
       that?: any;
       args?: any[];
     }
+
+    interface public {
+      id: number;
+      target?: any;
+    }
+
+    interface data extends public {
+      revoke(): void;
+      dummy: FunctionLike;
+      origin?: proxy.origin;
+      scope: Emulator;
+      sandbox: { [x: namespace]: any };
+      namespace: namespace;
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -53,20 +67,6 @@ declare namespace Exotic {
       itemCount: number;
       activeItems: number;
       groupCount: number;
-    }
-
-    interface proxy {
-      id: number;
-      target?: any;
-    }
-
-    interface proxyData extends proxy {
-      revoke(): void;
-      dummy: FunctionLike;
-      origin?: proxy.origin;
-      scope: Emulator;
-      sandbox: { [x: namespace]: any };
-      namespace: namespace;
     }
   }
 }
