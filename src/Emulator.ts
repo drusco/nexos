@@ -20,10 +20,10 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
   namespace(namespace: Exotic.Namespace): Exotic.Proxy {
     const data: Exotic.emulator.private = map.emulators.get(this);
     const { bindings } = data;
-    const proxyGroup = bindings[namespace];
+    const group = bindings[namespace];
 
     // return the first proxy in the existing group
-    if (proxyGroup) return proxyGroup.first;
+    if (group) return group.first;
 
     // create the first proxy for a new group
     return createProxy(this, undefined, namespace);
