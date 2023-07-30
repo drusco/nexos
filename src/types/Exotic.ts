@@ -6,8 +6,9 @@ declare namespace Exotic {
   type namespace = string | symbol;
 
   interface Emulator extends EventEmitter {
-    use(value?: unknown): Proxy;
     namespace(namespace: namespace): Proxy;
+    useProxy(value?: any): Proxy;
+    useTarget(value?: any): any;
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types

@@ -1,16 +1,17 @@
 import Exotic from "../../types/Exotic";
 import map from "../map";
+import findProxy from "../findProxy";
 
 const deleteProperty = (dummy: Exotic.FunctionLike, key: string): boolean => {
-  const item = map.dummies.get(dummy);
-  const { target, sandbox, scope } = map.proxies.get(item);
+  const proxy = findProxy(dummy);
+  const { target, sandbox, scope } = map.proxies.get(proxy);
 
   // delete from original target too
   if (map.targets.has(target)) delete target[key];
 
   scope.emit("action", {
     action: "delete",
-    item,
+    proxy,
     key,
   });
 

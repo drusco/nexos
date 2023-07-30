@@ -29,10 +29,17 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return createProxy(this, undefined, namespace);
   }
 
-  use(value?: unknown): Exotic.Proxy {
+  useProxy(value?: unknown): Exotic.Proxy {
     const proxy = findProxy(value);
     if (proxy) return proxy;
     return createProxy(this, value);
+  }
+
+  useTarget(value?: any): any {
+    const proxy = findProxy(value);
+    if (!proxy) return value;
+    const { target } = map.proxies.get(proxy);
+    return target;
   }
 
   groups(): number {
@@ -52,7 +59,7 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
 
   encode(value: unknown): unknown {
     if (findProxy(value)) {
-      const { id } = map.proxies.get(this.use(value));
+      const { id } = map.proxies.get(this.useProxy(value));
       return { id, encoded: true }; // TODO: usar Symbol para saber si es encoded o no
     }
 
@@ -109,7 +116,7 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
 
   resolve(value: any): Exotic.proxy.public {
     if (!findProxy(value)) return value;
-    const proxy = this.use(value);
+    const proxy = this.useProxy(value);
     const { id, target } = map.proxies.get(proxy);
     return { id, target };
   }

@@ -1,5 +1,7 @@
 import Exotic from "../../types/Exotic";
 import createProxy from "../createProxy";
+import findProxy from "../findProxy";
+import isTraceable from "../isTraceable";
 import map from "../map";
 
 const apply = (
@@ -7,7 +9,7 @@ const apply = (
   that?: object,
   args?: unknown[],
 ): unknown => {
-  const proxy = map.dummies.get(dummy);
+  const proxy = findProxy(dummy);
   const { scope, namespace, target } = map.proxies.get(proxy);
 
   const origin: Exotic.proxy.origin = {
@@ -17,10 +19,17 @@ const apply = (
     args,
   };
 
+  let newTarget: any;
+
   if (typeof target === "function") {
-    return target.apply(that, args);
+    const value = Reflect.apply(target, that, args);
+
+    if (isTraceable(value))
+      newTarget = createProxy(scope, value, namespace, origin);
+    else newTarget = value;
   }
-  return createProxy(scope, undefined, namespace, origin);
+
+  return createProxy(scope, newTarget, namespace, origin);
 };
 
 export default apply;

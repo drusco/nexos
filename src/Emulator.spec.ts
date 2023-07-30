@@ -1,46 +1,52 @@
 import { describe, it, expect } from "@jest/globals";
 import Emulator from "./Emulator";
 
-const emulator = new Emulator();
+const $ = new Emulator();
 
 describe("Emulator", () => {
   describe("Methods", () => {
-    describe("use", () => {
+    describe("useProxy", () => {
       it(`Returns a proxy function`, () => {
-        expect(typeof emulator.use({})).toBe("function");
-        expect(typeof emulator.use([])).toBe("function");
-        expect(typeof emulator.use(() => {})).toBe("function");
-        expect(typeof emulator.use(async () => {})).toBe("function");
-        expect(typeof emulator.use("string")).toBe("function");
-        expect(typeof emulator.use(undefined)).toBe("function");
-        expect(typeof emulator.use(true)).toBe("function");
-        expect(typeof emulator.use(false)).toBe("function");
-        expect(typeof emulator.use(null)).toBe("function");
-        expect(typeof emulator.use(NaN)).toBe("function");
-        expect(typeof emulator.use(Infinity)).toBe("function");
-        expect(typeof emulator.use(100)).toBe("function");
-        expect(typeof emulator.use(Symbol("sym"))).toBe("function");
-        expect(typeof emulator.use(new Date())).toBe("function");
-        expect(typeof emulator.use(emulator)).toBe("function");
-        expect(typeof emulator.use(emulator.use())).toBe("function");
+        expect(typeof $.useProxy({})).toBe("function");
+        expect(typeof $.useProxy([])).toBe("function");
+        expect(typeof $.useProxy(() => {})).toBe("function");
+        expect(typeof $.useProxy(async () => {})).toBe("function");
+        expect(typeof $.useProxy("string")).toBe("function");
+        expect(typeof $.useProxy(undefined)).toBe("function");
+        expect(typeof $.useProxy(true)).toBe("function");
+        expect(typeof $.useProxy(false)).toBe("function");
+        expect(typeof $.useProxy(null)).toBe("function");
+        expect(typeof $.useProxy(NaN)).toBe("function");
+        expect(typeof $.useProxy(Infinity)).toBe("function");
+        expect(typeof $.useProxy(100)).toBe("function");
+        expect(typeof $.useProxy(Symbol("sym"))).toBe("function");
+        expect(typeof $.useProxy(new Date())).toBe("function");
+        expect(typeof $.useProxy($)).toBe("function");
+        expect(typeof $.useProxy($.useProxy())).toBe("function");
+      });
+
+      it("Creates unique proxies when targets are not objects", () => {
+        const proxyA = $.useProxy("");
+        const proxyB = $.useProxy("");
+        expect(proxyA).not.toBe(proxyB);
       });
 
       it("Can be referenced by an object", () => {
         const reference = { test: true };
-        const proxy = emulator.use(reference);
-        expect(proxy).toBe(emulator.use(reference));
+        const proxy = $.useProxy(reference);
+        expect(proxy).toBe($.useProxy(reference));
         expect(proxy.test).toBe(true);
       });
 
       it("Returns a proxy function for undefined properties", () => {
         const reference = {};
-        const proxy = emulator.use(reference);
+        const proxy = $.useProxy(reference);
         expect(typeof proxy.test).toBe("function");
       });
 
       it("Can be referenced by an array object", () => {
-        const reference = [1, 2, 3, emulator.use(), {}];
-        const arrayProxy = emulator.use(reference);
+        const reference = [1, 2, 3, $.useProxy(), {}];
+        const arrayProxy = $.useProxy(reference);
 
         arrayProxy.push("test");
 
@@ -55,22 +61,31 @@ describe("Emulator", () => {
         expect(reference[reference.length]).toBe(undefined); // does not change the target
 
         expect(arrayProxy.length).toBe(reference.length + 1);
-        expect(arrayProxy.pop()).toBe("test");
+        expect($.useTarget(arrayProxy.pop())).toBe("test");
+      });
+    });
+
+    describe("useTarget", () => {
+      it("Returns the target used by a proxy", () => {
+        const target = "$%&Test";
+        const proxy = $.useProxy(target);
+        const targetFromProxy = $.useTarget(proxy);
+        expect(target).toBe(targetFromProxy);
       });
     });
 
     describe("namespace", () => {
       it("Can be accessed through a string namespace", () => {
         const namespace = "test";
-        const proxy = emulator.namespace(namespace);
-        expect(proxy).toBe(emulator.namespace(namespace));
+        const proxy = $.namespace(namespace);
+        expect(proxy).toBe($.namespace(namespace));
       });
     });
 
     describe("revoke", () => {
       it("Turns a proxy unusable", () => {
-        const proxy = emulator.use();
-        emulator.revoke(proxy);
+        const proxy = $.useProxy();
+        $.revoke(proxy);
         expect(proxy).toThrow();
         expect(() => proxy.property).toThrow();
         expect(() => (proxy.property = true)).toThrow();
@@ -81,35 +96,35 @@ describe("Emulator", () => {
     });
 
     describe("destroy", () => {
-      it("Destroys the emulator and turns it unusable", () => {
-        const emulator = new Emulator();
-        emulator.destroy();
-        expect(emulator.use).toThrow();
-        expect(emulator.namespace).toThrow();
+      it("Destroys the $ and turns it unusable", () => {
+        const $ = new Emulator();
+        $.destroy();
+        expect($.useProxy).toThrow();
+        expect($.namespace).toThrow();
       });
     });
 
     describe("count", () => {
-      it("Returns the number of proxies in the emulator", () => {
-        const current = emulator.count();
-        emulator.use();
-        expect(emulator.count()).toBe(current + 1);
+      it("Returns the number of proxies in the $", () => {
+        const current = $.count();
+        $.useProxy();
+        expect($.count()).toBe(current + 1);
       });
     });
 
     describe("groups", () => {
-      it("Returns the number of namespaces in the emulator", () => {
-        const current = emulator.groups();
-        emulator.namespace(`${Date.now()}`);
-        expect(emulator.groups()).toBe(current + 1);
+      it("Returns the number of namespaces in the $", () => {
+        const current = $.groups();
+        $.namespace(`${Date.now()}`);
+        expect($.groups()).toBe(current + 1);
       });
     });
 
     describe("encode", () => {
       it("Encodes a proxy synchronously", () => {
-        const proxy = emulator.use();
+        const proxy = $.useProxy();
         expect(typeof proxy).toBe("function");
-        expect(typeof emulator.encode(proxy)).toBe("object");
+        expect(typeof $.encode(proxy)).toBe("object");
       });
 
       it("Encodes multiple proxies deeply", () => {
@@ -117,11 +132,11 @@ describe("Emulator", () => {
         const map: unknown[] = [];
 
         while (times) {
-          map.push(emulator.use());
+          map.push($.useProxy());
           times -= 1;
         }
 
-        const encoded: any = emulator.encode(map);
+        const encoded: any = $.encode(map);
         expect(typeof encoded[999]).toBe("object");
       });
     });
@@ -131,7 +146,7 @@ describe("Emulator", () => {
 describe("Proxy", () => {
   describe("Get, Set and Delete traps", () => {
     it("Can get values from a proxy", () => {
-      const proxy = emulator.use();
+      const proxy = $.useProxy();
       const deep = { test: true };
 
       proxy.number = 100;
@@ -139,7 +154,7 @@ describe("Proxy", () => {
       proxy.boolean = true;
       proxy.undefined = undefined;
       proxy.object = { test: true };
-      proxy.array = ["test", emulator.use()];
+      proxy.array = ["test", $.useProxy()];
       proxy.string = "test";
       proxy.function = () => "test";
 
@@ -158,30 +173,30 @@ describe("Proxy", () => {
       expect(typeof proxy.object).toBe("function");
       expect(typeof proxy.array).toBe("function");
       expect(proxy.string).toBe("test");
-      expect(proxy.function()).toBe("test");
+      expect($.useTarget(proxy.function())).toBe("test");
       expect(proxy.object.boolean).toBe(false);
       expect(typeof proxy.object.sub).toBe("function");
-      expect(proxy.object.sub.deep).toBe(emulator.use(deep));
+      expect(proxy.object.sub.deep).toBe($.useProxy(deep));
       expect(proxy.object.sub.deep.test).toBe(true);
       expect(proxy.toDelete).toBe(undefined);
     });
 
     it("Will not set a value to the original target", () => {
-      const proxy = emulator.use();
+      const proxy = $.useProxy();
       const deep = { test: true };
 
       proxy.set = { object: true };
       proxy.set.sub = {};
       proxy.set.sub.deep = deep;
       proxy.set.sub.deep.test = false;
-      emulator.use(deep).test = null;
+      $.useProxy(deep).test = null;
 
       expect(deep.test).toBe(true);
-      expect(emulator.use(deep).test).toBe(null);
+      expect($.useProxy(deep).test).toBe(null);
     });
 
     it("Can delete a property from a proxy and its original target", () => {
-      const proxy = emulator.use();
+      const proxy = $.useProxy();
       const deep = { deep: true, property: "test" };
 
       proxy.set = { test: true };
@@ -208,10 +223,10 @@ describe("Proxy", () => {
           this.value = param;
         }
       }
-      const TestClassProxy = emulator.use();
+      const TestClassProxy = $.useProxy();
       const instance = new TestClassProxy(1, [2, 3], null);
       const value = instance.call();
-      const test = emulator.use(new Test());
+      const test = $.useProxy(new Test());
       const param = { param: true };
 
       test.method(param);
@@ -224,17 +239,17 @@ describe("Proxy", () => {
       expect(test.property).toBe(45);
       expect(test.traceable[0]).toBe(55);
       expect(test.inner).toBe(true);
-      expect(test.value).toBe(emulator.use(param));
+      expect(test.value).toBe($.useProxy(param));
     });
 
     it("Gets a proxy from an apply trap when target is not a function", () => {
-      const proxy = emulator.use();
+      const proxy = $.useProxy();
       expect(typeof proxy()).toBe("function");
     });
 
     it("Gets a value from an apply trap when target is a function", () => {
-      const proxy = emulator.use((value: number) => value / 2);
-      expect(proxy(10)).toBe(5);
+      const proxy = $.useProxy((value: number) => value / 2);
+      expect($.useTarget(proxy(10))).toBe(5);
     });
   });
 });

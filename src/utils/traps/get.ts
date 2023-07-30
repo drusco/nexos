@@ -1,10 +1,11 @@
 import Exotic from "../../types/Exotic";
 import createProxy from "../createProxy";
 import isTraceable from "../isTraceable";
+import findProxy from "../findProxy";
 import map from "../map";
 
 const get = (dummy: Exotic.FunctionLike, key: string): unknown => {
-  const proxy = map.dummies.get(dummy);
+  const proxy = findProxy(dummy);
   const { scope, namespace, target, sandbox } = map.proxies.get(proxy);
 
   const origin: Exotic.proxy.origin = {
@@ -13,20 +14,21 @@ const get = (dummy: Exotic.FunctionLike, key: string): unknown => {
     proxy,
   };
 
-  // treat everything as a proxy
+  const sandboxKeys = Reflect.ownKeys(sandbox);
+  const newSandboxKey = !sandboxKeys.includes(key);
 
-  const sandboxKeys = Object.keys(sandbox);
+  if (newSandboxKey) {
+    let newTarget: any;
+    const valueExists = map.targets.has(target) && target[key] !== undefined;
+    const traceable = !(valueExists && !isTraceable(target[key]));
 
-  if (!sandboxKeys.includes(key)) {
-    if (map.targets.has(target) && target[key] !== undefined) {
-      if (isTraceable(target[key])) {
-        sandbox[key] = createProxy(scope, target[key], namespace, origin);
-      } else {
-        sandbox[key] = target[key];
-      }
-    } else {
-      sandbox[key] = createProxy(scope, undefined, namespace, origin);
-    }
+    if (valueExists) newTarget = target[key];
+
+    const value = traceable
+      ? createProxy(scope, newTarget, namespace, origin)
+      : newTarget;
+
+    sandbox[key] = value;
   }
 
   return Reflect.get(sandbox, key);

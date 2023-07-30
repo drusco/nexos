@@ -1,6 +1,7 @@
 import Exotic from "../../types/Exotic";
 import createProxy from "../createProxy";
 import isTraceable from "../isTraceable";
+import findProxy from "../findProxy";
 import map from "../map";
 
 const set = (
@@ -8,7 +9,7 @@ const set = (
   key: string,
   value: unknown,
 ): boolean => {
-  const proxy = map.dummies.get(dummy);
+  const proxy = findProxy(dummy);
   const { scope, namespace, sandbox } = map.proxies.get(proxy);
   const traceable = isTraceable(value);
 
@@ -19,22 +20,22 @@ const set = (
     value,
   };
 
-  const final = traceable
+  const newValue = traceable
     ? createProxy(scope, value, namespace, origin)
     : value;
 
-  if (final === value) {
-    // final value is not traceable
+  if (newValue === value) {
+    // new value is not traceable
     scope.emit("action", {
       action: "set",
       proxy,
       key,
-      value: final,
+      value: newValue,
     });
   }
 
-  // set final value to sandbox only
-  return Reflect.set(sandbox, key, final);
+  // set new value to sandbox only
+  return Reflect.set(sandbox, key, newValue);
 };
 
 export default set;
