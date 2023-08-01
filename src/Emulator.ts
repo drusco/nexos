@@ -17,16 +17,16 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     map.emulators.set(this, data);
   }
 
-  bind(namespace: Exotic.namespace): Exotic.Proxy {
+  bind(selector: Exotic.namespace): Exotic.Proxy {
     const data: Exotic.emulator.data = map.emulators.get(this);
     const { bindings } = data;
-    const group = bindings[namespace];
+    const group = bindings[selector];
 
     // return the first proxy in the existing group
     if (group) return group.first;
 
     // create the first proxy for a new group
-    return createProxy(this, undefined, namespace);
+    return createProxy(this, undefined, selector);
   }
 
   proxy(value?: unknown): Exotic.Proxy {

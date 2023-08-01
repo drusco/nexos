@@ -75,7 +75,7 @@ describe("Emulator", () => {
         expect(target).toBe(targetFromProxy);
       });
 
-      it("Uses a newtarget from an internal function call on untraceable targets", () => {
+      it("Gets the target from an apply call on the original target", () => {
         const target = "abc";
         const proxy = $.proxy(target);
         const proxy2 = proxy.substring(1);
@@ -84,7 +84,7 @@ describe("Emulator", () => {
       });
     });
 
-    describe("namespace", () => {
+    describe("bind", () => {
       it("Can be accessed through a string namespace", () => {
         const namespace = "test";
         const proxy = $.bind(namespace);
@@ -191,7 +191,7 @@ describe("Proxy", () => {
       expect($.target(proxy.toDelete)).toBe(undefined);
     });
 
-    it("Will not set a value to the original target", () => {
+    it("Will set a value to the original target", () => {
       const proxy = $.proxy();
       const deep = { test: true };
 
@@ -201,7 +201,7 @@ describe("Proxy", () => {
       proxy.set.sub.deep.test = false;
       $.proxy(deep).test = null;
 
-      expect(deep.test).toBe(true);
+      expect(deep.test).toBe(null);
       expect($.target($.proxy(deep).test)).toBe(null);
     });
 

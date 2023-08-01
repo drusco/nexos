@@ -9,7 +9,7 @@ const set = (
   value: unknown,
 ): boolean => {
   const proxy = findProxy(dummy);
-  const { scope, namespace, sandbox } = map.proxies.get(proxy);
+  const { scope, namespace, sandbox, target } = map.proxies.get(proxy);
 
   const origin: Exotic.proxy.origin = {
     action: "set",
@@ -28,7 +28,12 @@ const set = (
     value: newValue,
   });
 
-  // set new value to sandbox only
+  try {
+    target[key] = scope.target(value);
+  } catch (error) {
+    /* empty */
+  }
+
   return Reflect.set(sandbox, key, newValue);
 };
 
