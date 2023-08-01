@@ -17,7 +17,7 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     map.emulators.set(this, data);
   }
 
-  namespace(namespace: Exotic.namespace): Exotic.Proxy {
+  bind(namespace: Exotic.namespace): Exotic.Proxy {
     const data: Exotic.emulator.data = map.emulators.get(this);
     const { bindings } = data;
     const group = bindings[namespace];
@@ -29,13 +29,11 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return createProxy(this, undefined, namespace);
   }
 
-  useProxy(value?: unknown): Exotic.Proxy {
-    const proxy = findProxy(value);
-    if (proxy) return proxy;
+  proxy(value?: unknown): Exotic.Proxy {
     return createProxy(this, value);
   }
 
-  useTarget(value?: any): any {
+  target(value?: any): any {
     const proxy = findProxy(value);
     if (!proxy) return value;
     const { target } = map.proxies.get(proxy);
@@ -59,11 +57,11 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
 
   encode(value: unknown): unknown {
     if (findProxy(value)) {
-      const { id } = map.proxies.get(this.useProxy(value));
+      const { id } = map.proxies.get(this.proxy(value));
       return { id, encoded: true }; // TODO: usar Symbol para saber si es encoded o no
     }
 
-    if (typeof value == "object" && value) {
+    if (typeof value === "object" && value) {
       const copy = Array.isArray(value) ? [] : {};
 
       for (const key in value) {
@@ -116,7 +114,7 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
 
   resolve(value: any): Exotic.proxy.public {
     if (!findProxy(value)) return value;
-    const proxy = this.useProxy(value);
+    const proxy = this.proxy(value);
     const { id, target } = map.proxies.get(proxy);
     return { id, target };
   }

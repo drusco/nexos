@@ -14,8 +14,19 @@ const get = (dummy: Exotic.FunctionLike, key: string): unknown => {
     proxy,
   };
 
+  let protoValue: any;
+  const untraceableTarget = !isTraceable(target);
+
+  if (untraceableTarget) {
+    try {
+      protoValue = target[key];
+    } catch (error) {
+      /* empty */
+    }
+  }
+
   const sandboxKeys = Reflect.ownKeys(sandbox);
-  const newSandboxKey = !sandboxKeys.includes(key);
+  const newSandboxKey = !sandboxKeys.includes(key); //&& !protoValue;
 
   if (newSandboxKey) {
     let newTarget: any;
@@ -29,6 +40,13 @@ const get = (dummy: Exotic.FunctionLike, key: string): unknown => {
       : newTarget;
 
     sandbox[key] = value;
+  }
+
+  if (key === "substring")
+    console.log(2222, newSandboxKey, protoValue, sandbox[key]);
+
+  if (protoValue) {
+    //return protoValue;
   }
 
   return Reflect.get(sandbox, key);
