@@ -21,7 +21,7 @@ const apply = (
   let value: any;
 
   if (typeof target === "function") {
-    value = Reflect.apply(target, scope.target(that), args);
+    value = Reflect.apply(scope.target(target), scope.target(that), args);
   }
 
   const argList = args.map((arg) => createProxy(scope, arg, namespace, origin));

@@ -191,18 +191,20 @@ describe("Proxy", () => {
       expect($.target(proxy.toDelete)).toBe(undefined);
     });
 
-    it("Will set a value to the original target", () => {
+    it("Adds a value to the original target", () => {
       const proxy = $.proxy();
-      const deep = { test: true };
+      const deep = { test: true, prox: true };
 
       proxy.set = { object: true };
       proxy.set.sub = {};
       proxy.set.sub.deep = deep;
       proxy.set.sub.deep.test = false;
       $.proxy(deep).test = null;
+      $.proxy(deep).prox = $.proxy("test");
 
       expect(deep.test).toBe(null);
       expect($.target($.proxy(deep).test)).toBe(null);
+      expect(deep.prox).toBe("test");
     });
 
     it("Can delete a property from a proxy and its original target", () => {
