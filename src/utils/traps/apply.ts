@@ -24,6 +24,9 @@ const apply = (
     value = Reflect.apply(target, scope.target(that), args);
   }
 
+  const argList = args.map((arg) => createProxy(scope, arg, namespace, origin));
+  origin.args = argList;
+
   return createProxy(scope, value, namespace, origin);
 };
 

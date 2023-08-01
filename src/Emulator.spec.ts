@@ -206,7 +206,7 @@ describe("Proxy", () => {
     });
 
     it("Can delete a property from a proxy and its original target", () => {
-      const proxy = $.proxy();
+      const proxy = $.proxy({});
       const deep = { deep: true, property: "test" };
 
       proxy.set = { test: true };

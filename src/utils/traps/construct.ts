@@ -1,7 +1,6 @@
 import Exotic from "../../types/Exotic";
 import createProxy from "../createProxy";
 import findProxy from "../findProxy";
-import isTraceable from "../isTraceable";
 import map from "../map";
 
 const construct = (dummy: Exotic.FunctionLike, args: unknown[]): object => {
@@ -14,17 +13,16 @@ const construct = (dummy: Exotic.FunctionLike, args: unknown[]): object => {
     args,
   };
 
-  let newTarget: any;
+  let value: any;
 
   if (typeof target === "function") {
-    const value = Reflect.construct(dummy, args, target);
-
-    if (isTraceable(value))
-      newTarget = createProxy(scope, value, namespace, origin);
-    else newTarget = value;
+    value = Reflect.construct(target, args);
   }
 
-  return createProxy(scope, newTarget, namespace, origin);
+  const argList = args.map((arg) => createProxy(scope, arg, namespace, origin));
+  origin.args = argList;
+
+  return createProxy(scope, value, namespace, origin);
 };
 
 export default construct;
