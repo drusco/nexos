@@ -67,7 +67,6 @@ declare namespace Exotic {
       bindings: bindings;
       itemCount: number;
       activeItems: number;
-      groupCount: number;
     }
   }
 }

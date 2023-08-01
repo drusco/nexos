@@ -3,6 +3,11 @@ import { findProxy, map, createProxy } from "./utils";
 import { EventEmitter } from "events";
 
 export default class Emulator extends EventEmitter implements Exotic.Emulator {
+  get refs(): Exotic.namespace[] {
+    const { bindings }: Exotic.emulator.data = map.emulators.get(this);
+    return Object.keys(bindings);
+  }
+
   constructor(options: Exotic.emulator.options = {}) {
     super();
 
@@ -11,7 +16,6 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
       bindings: Object.create(null),
       itemCount: 0, // total item count including revoked items, it only increases
       activeItems: 0, // items that are not revoked
-      groupCount: 0,
     };
 
     map.emulators.set(this, data);
@@ -40,9 +44,11 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return target;
   }
 
-  groups(): number {
-    const { groupCount }: Exotic.emulator.data = map.emulators.get(this);
-    return groupCount;
+  parent(value?: any): undefined | Exotic.Proxy {
+    const proxy = findProxy(value);
+    if (!proxy) return;
+    const { origin } = map.proxies.get(proxy);
+    return origin && origin.proxy;
   }
 
   count(): number {
@@ -90,7 +96,6 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
         // delete empty group
         delete bindings[namespace];
         this.emit("unbind", namespace);
-        data.groupCount -= 1;
       }
     }
 

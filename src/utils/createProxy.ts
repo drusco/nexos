@@ -33,10 +33,11 @@ const createProxy = (
       last: proxy,
     };
 
-    data.groupCount += 1;
     bindings[namespace] = group;
     scope.emit("bind", namespace);
   }
+
+  group.last = proxy;
 
   // set the proxy information
   const proxyData: Exotic.proxy.data = {

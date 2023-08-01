@@ -122,14 +122,6 @@ describe("Emulator", () => {
       });
     });
 
-    describe("groups", () => {
-      it("Returns the number of namespaces in the $", () => {
-        const current = $.groups();
-        $.bind(`${Date.now()}`);
-        expect($.groups()).toBe(current + 1);
-      });
-    });
-
     describe("encode", () => {
       it("Encodes a proxy synchronously", () => {
         const proxy = $.proxy();
@@ -148,6 +140,16 @@ describe("Emulator", () => {
 
         const encoded: any = $.encode(map);
         expect(typeof encoded[999]).toBe("object");
+      });
+    });
+  });
+
+  describe("properties", () => {
+    describe("refs", () => {
+      it("Returns a list of namespaces in use", () => {
+        const ref = "refsTest";
+        $.bind(ref);
+        expect($.refs.includes(ref)).toBe(true);
       });
     });
   });
