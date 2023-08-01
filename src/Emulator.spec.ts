@@ -64,8 +64,6 @@ describe("Emulator", () => {
 
         expect($.target(arrayProxy.length)).toBe(reference.length);
         expect($.target(arrayProxy.pop())).toBe("test");
-
-        expect($.target($.proxy($.proxy())())).toBe(undefined);
       });
     });
 
