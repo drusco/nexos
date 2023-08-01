@@ -22,7 +22,7 @@ const apply = (
   let newTarget: any;
 
   if (typeof target === "function") {
-    const value = Reflect.apply(target, that, args);
+    const value = Reflect.apply(scope.target(target), scope.target(that), args);
 
     if (isTraceable(value))
       newTarget = createProxy(scope, value, namespace, origin);

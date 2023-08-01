@@ -1,6 +1,5 @@
 import Exotic from "../../types/Exotic";
 import createProxy from "../createProxy";
-import isTraceable from "../isTraceable";
 import findProxy from "../findProxy";
 import map from "../map";
 
@@ -14,40 +13,19 @@ const get = (dummy: Exotic.FunctionLike, key: string): unknown => {
     proxy,
   };
 
-  let protoValue: any;
-  const untraceableTarget = !isTraceable(target);
+  let value: any = sandbox[key];
 
-  if (untraceableTarget) {
+  // get new target from sandbox
+  if (value === undefined) {
     try {
-      protoValue = target[key];
+      // target may be untraceable
+      value = target[key];
     } catch (error) {
       /* empty */
     }
   }
 
-  const sandboxKeys = Reflect.ownKeys(sandbox);
-  const newSandboxKey = !sandboxKeys.includes(key); //&& !protoValue;
-
-  if (newSandboxKey) {
-    let newTarget: any;
-    const valueExists = map.targets.has(target) && target[key] !== undefined;
-    const traceable = !(valueExists && !isTraceable(target[key]));
-
-    if (valueExists) newTarget = target[key];
-
-    const value = traceable
-      ? createProxy(scope, newTarget, namespace, origin)
-      : newTarget;
-
-    sandbox[key] = value;
-  }
-
-  if (key === "substring")
-    console.log(2222, newSandboxKey, protoValue, sandbox[key]);
-
-  if (protoValue) {
-    //return protoValue;
-  }
+  sandbox[key] = createProxy(scope, value, namespace, origin);
 
   return Reflect.get(sandbox, key);
 };

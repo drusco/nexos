@@ -35,7 +35,7 @@ describe("Emulator", () => {
         const reference = { test: true };
         const proxy = $.proxy(reference);
         expect(proxy).toBe($.proxy(reference));
-        expect(proxy.test).toBe(true);
+        expect($.target(proxy.test)).toBe(true);
       });
 
       it("Returns a proxy function for undefined properties", () => {
@@ -50,17 +50,19 @@ describe("Emulator", () => {
 
         arrayProxy.push("test");
 
-        expect(arrayProxy[0]).toBe(1);
-        expect(arrayProxy[1]).toBe(2);
-        expect(arrayProxy[2]).toBe(3);
+        expect($.target(arrayProxy[0])).toBe(1);
+        expect($.target(arrayProxy[1])).toBe(2);
+        expect($.target(arrayProxy[2])).toBe(3);
         expect(arrayProxy[3]).toBe(reference[3]);
-        expect(arrayProxy[arrayProxy.length - 1]).toBe("test");
+        expect($.target(arrayProxy[$.target(arrayProxy.length) - 1])).toBe(
+          "test",
+        );
         expect(typeof arrayProxy[reference.length - 1]).toBe("function");
 
-        expect(reference.length).toBe(5);
+        expect(reference.length).toBe(6);
         expect(reference[reference.length]).toBe(undefined); // does not change the target
 
-        expect(arrayProxy.length).toBe(reference.length + 1);
+        expect($.target(arrayProxy.length)).toBe(reference.length);
         expect($.target(arrayProxy.pop())).toBe("test");
       });
     });
@@ -71,6 +73,14 @@ describe("Emulator", () => {
         const proxy = $.proxy(target);
         const targetFromProxy = $.target(proxy);
         expect(target).toBe(targetFromProxy);
+      });
+
+      it("Uses a newtarget from an internal function call on untraceable targets", () => {
+        const target = "abc";
+        const proxy = $.proxy(target);
+        const proxy2 = proxy.substring(1);
+        expect(typeof proxy2).toBe("function");
+        expect($.target(proxy2)).toBe("bc");
       });
     });
 
@@ -166,19 +176,19 @@ describe("Proxy", () => {
       delete proxy.toDelete;
 
       expect(typeof proxy.unknown).toBe("function");
-      expect(proxy.number).toBe(100);
-      expect(proxy.null).toBe(null);
-      expect(proxy.boolean).toBe(true);
-      expect(proxy.undefined).toBe(undefined);
+      expect($.target(proxy.number)).toBe(100);
+      expect($.target(proxy.null)).toBe(null);
+      expect($.target(proxy.boolean)).toBe(true);
+      expect($.target(proxy.undefined)).toBe(undefined);
       expect(typeof proxy.object).toBe("function");
       expect(typeof proxy.array).toBe("function");
-      expect(proxy.string).toBe("test");
+      expect($.target(proxy.string)).toBe("test");
       expect($.target(proxy.function())).toBe("test");
-      expect(proxy.object.boolean).toBe(false);
+      expect($.target(proxy.object.boolean)).toBe(false);
       expect(typeof proxy.object.sub).toBe("function");
       expect(proxy.object.sub.deep).toBe($.proxy(deep));
-      expect(proxy.object.sub.deep.test).toBe(true);
-      expect(proxy.toDelete).toBe(undefined);
+      expect($.target(proxy.object.sub.deep.test)).toBe(true);
+      expect($.target(proxy.toDelete)).toBe(undefined);
     });
 
     it("Will not set a value to the original target", () => {
@@ -192,7 +202,7 @@ describe("Proxy", () => {
       $.proxy(deep).test = null;
 
       expect(deep.test).toBe(true);
-      expect($.proxy(deep).test).toBe(null);
+      expect($.target($.proxy(deep).test)).toBe(null);
     });
 
     it("Can delete a property from a proxy and its original target", () => {
@@ -207,7 +217,7 @@ describe("Proxy", () => {
       delete proxy.set;
 
       expect(deep.property).toBe(undefined);
-      expect(proxy.set).toBe(undefined);
+      expect($.target(proxy.set)).toBe(undefined);
     });
   });
 
@@ -235,10 +245,10 @@ describe("Proxy", () => {
       expect(typeof instance).toBe("function");
       expect(typeof value).toBe("function");
       expect(typeof test.unknown).toBe("function");
-      expect(instance.property).toBe(true);
-      expect(test.property).toBe(45);
-      expect(test.traceable[0]).toBe(55);
-      expect(test.inner).toBe(true);
+      expect($.target(instance.property)).toBe(true);
+      expect($.target(test.property)).toBe(45);
+      expect($.target(test.traceable[0])).toBe(55);
+      expect($.target(test.inner)).toBe(true);
       expect(test.value).toBe($.proxy(param));
     });
 
