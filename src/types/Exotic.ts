@@ -6,6 +6,7 @@ declare namespace Exotic {
   type namespace = string | symbol;
 
   interface Emulator extends EventEmitter {
+    refs: namespace[];
     bind(selelctor: namespace): Proxy;
     proxy(value?: any): Proxy;
     target(value?: any): any;

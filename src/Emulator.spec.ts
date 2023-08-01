@@ -144,7 +144,7 @@ describe("Emulator", () => {
     });
   });
 
-  describe("properties", () => {
+  describe("Properties", () => {
     describe("refs", () => {
       it("Returns a list of namespaces in use", () => {
         const ref = "refsTest";
