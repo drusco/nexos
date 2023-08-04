@@ -7,26 +7,27 @@ declare namespace Exotic {
 
   interface Emulator extends EventEmitter {
     refs: namespace[];
-    bind(selelctor: namespace): Proxy;
+    bind(x: namespace): Proxy;
     proxy(value?: any): Proxy;
     target(value?: any): any;
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  interface FunctionLike extends Function {
+  interface FunctionLike {
     (...args: any[]): void;
+    [x: namespace]: any;
+    [Symbol.iterator](): Iterator<any, any, undefined>;
   }
 
   interface Proxy extends FunctionLike {
     [x: namespace]: any;
+    [Symbol.iterator](): Iterator<Proxy, any, undefined>;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace proxy {
     interface group {
       length: number;
-      first: Exotic.Proxy;
-      last: Exotic.Proxy;
+      root: Exotic.Proxy;
     }
 
     interface origin {

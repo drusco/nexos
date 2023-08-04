@@ -3,7 +3,7 @@ import createProxy from "../createProxy";
 import findProxy from "../findProxy";
 import map from "../map";
 
-const get = (dummy: Exotic.FunctionLike, key: string): unknown => {
+const get = (dummy: Exotic.FunctionLike, key: Exotic.namespace): unknown => {
   const proxy = findProxy(dummy);
   const { scope, namespace, target, sandbox } = map.proxies.get(proxy);
 
@@ -12,6 +12,10 @@ const get = (dummy: Exotic.FunctionLike, key: string): unknown => {
     key,
     proxy,
   };
+
+  if (key === Symbol.iterator) {
+    return dummy[key]();
+  }
 
   let value: any = sandbox[key];
 

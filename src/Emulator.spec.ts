@@ -92,6 +92,42 @@ describe("Emulator", () => {
       });
     });
 
+    describe("parent", () => {
+      it("Access a proxy parent", () => {
+        const parent = $.proxy();
+        const child = parent.child;
+        expect($.parent(child)).toBe(parent);
+        expect($.parent(parent)).toBe(undefined);
+      });
+    });
+
+    describe("children", () => {
+      it("Can access all the direct children of a proxy", () => {
+        const parent = $.proxy();
+        parent.girl = 10;
+        parent.boy = 5;
+        parent.alien = NaN;
+        parent.alien.notDirectChild = true;
+
+        expect($.children(parent).length).toBe(3);
+      });
+
+      it("Can use [Symbol.iterator] to access all children as well", () => {
+        const parent = $.proxy();
+
+        parent.girl = 1;
+        parent.boy = 2;
+
+        const children = [...parent];
+
+        for (const proxy of parent) {
+          expect($.parent(proxy)).toBe(parent);
+        }
+
+        expect(children.length).toBe(2);
+      });
+    });
+
     describe("revoke", () => {
       it("Turns a proxy unusable", () => {
         const proxy = $.proxy();
@@ -106,7 +142,7 @@ describe("Emulator", () => {
     });
 
     describe("destroy", () => {
-      it("Destroys the $ and turns it unusable", () => {
+      it("Destroys the emulator and turns it unusable", () => {
         const $ = new Emulator();
         $.destroy();
         expect($.proxy).toThrow();
@@ -115,7 +151,7 @@ describe("Emulator", () => {
     });
 
     describe("count", () => {
-      it("Returns the number of proxies in the $", () => {
+      it("Returns the number of proxies in the emulator", () => {
         const current = $.count();
         $.proxy();
         expect($.count()).toBe(current + 1);

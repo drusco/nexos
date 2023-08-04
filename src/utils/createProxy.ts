@@ -5,6 +5,18 @@ import isTraceable from "./isTraceable";
 import { globalNamespace } from "./constants";
 import traps from "./traps";
 
+const dummyPrototype = Object.assign(Object.create(null), {
+  [Symbol.iterator]() {
+    const proxy = findProxy(this);
+    const { sandbox } = map.proxies.get(proxy);
+    return function* () {
+      for (const key of Reflect.ownKeys(sandbox)) {
+        yield sandbox[key];
+      }
+    };
+  },
+});
+
 const createProxy = (
   scope: Exotic.Emulator,
   target: any,
@@ -19,9 +31,13 @@ const createProxy = (
   const { bindings } = data;
 
   const id = ++data.itemCount;
-  const dummy: Exotic.FunctionLike = function () {};
+  const dummy = function () {} as Exotic.FunctionLike;
+
   const traceable = isTraceable(target);
-  const { proxy, revoke } = Proxy.revocable<Exotic.Proxy>(dummy, traps);
+  const { proxy, revoke } = Proxy.revocable<Exotic.Proxy>(
+    Object.setPrototypeOf(dummy, dummyPrototype),
+    traps,
+  );
 
   let group: Exotic.proxy.group = bindings[namespace];
 
@@ -29,15 +45,12 @@ const createProxy = (
     // create the new group
     group = {
       length: 0,
-      first: proxy,
-      last: proxy,
+      root: proxy,
     };
 
     bindings[namespace] = group;
     scope.emit("bind", namespace);
   }
-
-  group.last = proxy;
 
   // set the proxy information
   const proxyData: Exotic.proxy.data = {

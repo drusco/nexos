@@ -1,1 +1,1 @@
-export const globalNamespace: symbol = Symbol("global");
+export const globalNamespace: symbol = Symbol("GLOBAL");

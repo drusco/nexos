@@ -3,9 +3,11 @@ import { findProxy, map, createProxy } from "./utils";
 import { EventEmitter } from "events";
 
 export default class Emulator extends EventEmitter implements Exotic.Emulator {
+  static iterator = Symbol(90);
+
   get refs(): Exotic.namespace[] {
     const { bindings }: Exotic.emulator.data = map.emulators.get(this);
-    return Object.keys(bindings);
+    return Reflect.ownKeys(bindings);
   }
 
   constructor(options: Exotic.emulator.options = {}) {
@@ -21,19 +23,18 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     map.emulators.set(this, data);
   }
 
-  bind(selector: Exotic.namespace): Exotic.Proxy {
-    const data: Exotic.emulator.data = map.emulators.get(this);
-    const { bindings } = data;
-    const group = bindings[selector];
+  bind(namespace: Exotic.namespace): Exotic.Proxy {
+    const { bindings }: Exotic.emulator.data = map.emulators.get(this);
+    const group = bindings[namespace];
 
     // return the first proxy in the existing group
-    if (group) return group.first;
+    if (group) return group.root;
 
     // create the first proxy for a new group
-    return createProxy(this, undefined, selector);
+    return createProxy(this, undefined, namespace);
   }
 
-  proxy(value?: unknown): Exotic.Proxy {
+  proxy(value?: any): Exotic.Proxy {
     return createProxy(this, value);
   }
 
@@ -44,11 +45,19 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return target;
   }
 
-  parent(value?: any): undefined | Exotic.Proxy {
+  parent(value?: Exotic.traceable): undefined | Exotic.Proxy {
     const proxy = findProxy(value);
     if (!proxy) return;
     const { origin } = map.proxies.get(proxy);
     return origin && origin.proxy;
+  }
+
+  children(value?: Exotic.traceable): Exotic.Proxy[] {
+    const results = [];
+    const proxy = findProxy(value);
+    if (!proxy) return results;
+    const { sandbox } = map.proxies.get(proxy);
+    return Reflect.ownKeys(sandbox).map((key) => sandbox[key]);
   }
 
   count(): number {
