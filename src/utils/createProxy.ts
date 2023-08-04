@@ -19,8 +19,8 @@ const createProxy = (
   const data: Exotic.emulator.data = map.emulators.get(scope);
   const { keys } = data;
 
-  const id = ++data.itemCount;
-  const mock = function () {} as Exotic.Mock;
+  const id = ++data.totalProxies;
+  const mock = function mock() {} as Exotic.Mock;
 
   const traceable = isTraceable(target);
   const { proxy, revoke } = Proxy.revocable<Exotic.Proxy>(
@@ -61,7 +61,7 @@ const createProxy = (
   });
 
   group.length += 1;
-  data.activeItems += 1;
+  data.activeProxies += 1;
 
   map.mocks.set(mock, proxy);
   map.proxies.set(proxy, proxyData);

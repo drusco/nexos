@@ -71,8 +71,8 @@ declare namespace Exotic {
     interface data {
       options: options;
       keys: bindings;
-      itemCount: number;
-      activeItems: number;
+      totalProxies: number;
+      activeProxies: number;
     }
   }
 }

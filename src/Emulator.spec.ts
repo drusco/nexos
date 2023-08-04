@@ -5,6 +5,38 @@ import { isTraceable } from "./utils";
 const $ = new Emulator();
 
 describe("Emulator Class", () => {
+  describe("(getter) keys", () => {
+    it("Returns the list of all binding keys in use", () => {
+      const key = "test";
+      $.bind(key);
+      expect($.keys.includes(key)).toBe(true);
+    });
+  });
+
+  describe("(getter) length", () => {
+    it("Returns the number of built proxies", () => {
+      const total = $.length;
+      $.proxy();
+      expect($.length).toBe(total + 1);
+    });
+  });
+
+  describe("(getter) void", () => {
+    it("Returns the number of revoked proxies", () => {
+      const revoked = $.void;
+      $.revoke($.proxy());
+      expect($.void).toBe(revoked + 1);
+    });
+  });
+
+  describe("(getter) active", () => {
+    it("Returns the number of active proxies", () => {
+      const active = $.active;
+      $.proxy();
+      expect($.active).toBe(active + 1);
+    });
+  });
+
   describe("(method) proxy", () => {
     it(`Always returns a proxy function`, () => {
       expect(typeof $.proxy({})).toBe("function");
@@ -130,19 +162,18 @@ describe("Emulator Class", () => {
   describe("(method) children", () => {
     it("Can access all the direct children of a proxy", () => {
       const parent = $.proxy();
-      parent.girl = 10;
-      parent.boy = 5;
-      parent.alien = NaN;
-      parent.alien.notDirectChild = true;
+      parent.daugter = 25;
+      parent.son = 30;
+      parent.son.parentGrandson = 2;
 
-      expect($.children(parent).length).toBe(3);
+      expect($.children(parent).length).toBe(2);
     });
 
     it("Can use [Symbol.iterator] to access all children as well", () => {
       const parent = $.proxy();
 
-      parent.girl = 1;
-      parent.boy = 2;
+      parent.daughter = 25;
+      parent.son = 30;
 
       const children = [...parent];
 
@@ -151,36 +182,6 @@ describe("Emulator Class", () => {
       }
 
       expect(children.length).toBe(2);
-    });
-  });
-
-  describe("(method) revoke", () => {
-    it("Turns a proxy unusable", () => {
-      const proxy = $.proxy();
-      $.revoke(proxy);
-      expect(proxy).toThrow();
-      expect(() => proxy.property).toThrow();
-      expect(() => (proxy.property = true)).toThrow();
-      expect(() => delete proxy.property).toThrow();
-      expect(() => new proxy().toThrow());
-      expect(() => proxy.method()).toThrow();
-    });
-  });
-
-  describe("(method) destroy", () => {
-    it("Destroys the emulator and turns it unusable", () => {
-      const $ = new Emulator();
-      $.destroy();
-      expect($.proxy).toThrow();
-      expect($.bind).toThrow();
-    });
-  });
-
-  describe("(method) count", () => {
-    it("Returns the number of proxies in the emulator", () => {
-      const current = $.count();
-      $.proxy();
-      expect($.count()).toBe(current + 1);
     });
   });
 
@@ -205,11 +206,25 @@ describe("Emulator Class", () => {
     });
   });
 
-  describe("(getter) keys", () => {
-    it("Returns a list of all keys in use", () => {
-      const ref = "refsTest";
-      $.bind(ref);
-      expect($.keys.includes(ref)).toBe(true);
+  describe("(method) revoke", () => {
+    it("Turns a proxy unusable", () => {
+      const proxy = $.proxy();
+      $.revoke(proxy);
+      expect(proxy).toThrow();
+      expect(() => proxy.property).toThrow();
+      expect(() => (proxy.property = true)).toThrow();
+      expect(() => delete proxy.property).toThrow();
+      expect(() => new proxy().toThrow());
+      expect(() => proxy.method()).toThrow();
+    });
+  });
+
+  describe("(method) destroy", () => {
+    it("Destroys the emulator and turns it unusable", () => {
+      const $ = new Emulator();
+      $.destroy();
+      expect($.proxy).toThrow();
+      expect($.bind).toThrow();
     });
   });
 });

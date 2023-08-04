@@ -9,8 +9,8 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     const data: Exotic.emulator.data = {
       options,
       keys: Object.create(null),
-      itemCount: 0, // total item count including revoked items, it only increases
-      activeItems: 0, // items that are not revoked
+      totalProxies: 0, // total item count including revoked items, it only increases
+      activeProxies: 0, // items that are not revoked
     };
 
     map.emulators.set(this, data);
@@ -19,6 +19,22 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
   get keys(): Exotic.key[] {
     const { keys }: Exotic.emulator.data = map.emulators.get(this);
     return Reflect.ownKeys(keys);
+  }
+
+  get active(): number {
+    const { activeProxies }: Exotic.emulator.data = map.emulators.get(this);
+    return activeProxies;
+  }
+
+  get void(): number {
+    const { activeProxies, totalProxies }: Exotic.emulator.data =
+      map.emulators.get(this);
+    return totalProxies - activeProxies;
+  }
+
+  get length(): number {
+    const { totalProxies }: Exotic.emulator.data = map.emulators.get(this);
+    return totalProxies;
   }
 
   bind(key: Exotic.key): Exotic.Proxy {
@@ -64,16 +80,6 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     if (!proxy) return results;
     const { sandbox } = map.proxies.get(proxy);
     return Reflect.ownKeys(sandbox);
-  }
-
-  count(): number {
-    const { activeItems }: Exotic.emulator.data = map.emulators.get(this);
-    return activeItems;
-  }
-
-  total(): number {
-    const { itemCount }: Exotic.emulator.data = map.emulators.get(this);
-    return itemCount;
   }
 
   encode(value: unknown): unknown {
@@ -122,7 +128,7 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
 
     revoke();
 
-    data.activeItems -= 1;
+    data.activeProxies -= 1;
 
     this.emit("revoke", id);
   }
