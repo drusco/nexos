@@ -60,6 +60,22 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return Reflect.ownKeys(sandbox).map((key) => sandbox[key]);
   }
 
+  ownKeys(value?: Exotic.traceable): Exotic.namespace[] {
+    const results = [];
+    const proxy = findProxy(value);
+    if (!proxy) return results;
+    const { sandbox } = map.proxies.get(proxy);
+    return Reflect.ownKeys(sandbox);
+  }
+
+  keys(value?: Exotic.traceable): string[] {
+    const results = [];
+    const proxy = findProxy(value);
+    if (!proxy) return results;
+    const { sandbox } = map.proxies.get(proxy);
+    return Object.keys(sandbox);
+  }
+
   count(): number {
     const { activeItems }: Exotic.emulator.data = map.emulators.get(this);
     return activeItems;
