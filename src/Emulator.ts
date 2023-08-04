@@ -8,7 +8,7 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
 
     const data: Exotic.emulator.data = {
       options,
-      bindings: Object.create(null),
+      keys: Object.create(null),
       itemCount: 0, // total item count including revoked items, it only increases
       activeItems: 0, // items that are not revoked
     };
@@ -16,20 +16,20 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     map.emulators.set(this, data);
   }
 
-  get refs(): Exotic.namespace[] {
-    const { bindings }: Exotic.emulator.data = map.emulators.get(this);
-    return Reflect.ownKeys(bindings);
+  get keys(): Exotic.key[] {
+    const { keys }: Exotic.emulator.data = map.emulators.get(this);
+    return Reflect.ownKeys(keys);
   }
 
-  bind(namespace: Exotic.namespace): Exotic.Proxy {
-    const { bindings }: Exotic.emulator.data = map.emulators.get(this);
-    const group = bindings[namespace];
+  bind(key: Exotic.key): Exotic.Proxy {
+    const { keys }: Exotic.emulator.data = map.emulators.get(this);
+    const group = keys[key];
 
     // return the first proxy in the existing group
     if (group) return group.root;
 
     // create the first proxy for a new group
-    return createProxy(this, undefined, namespace);
+    return createProxy(this, undefined, key);
   }
 
   proxy(value?: any): Exotic.Proxy {
@@ -58,20 +58,12 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return Reflect.ownKeys(sandbox).map((key) => sandbox[key]);
   }
 
-  ownKeys(value?: Exotic.traceable): Exotic.namespace[] {
+  ownKeys(value?: Exotic.traceable): Exotic.key[] {
     const results = [];
     const proxy = findProxy(value);
     if (!proxy) return results;
     const { sandbox } = map.proxies.get(proxy);
     return Reflect.ownKeys(sandbox);
-  }
-
-  keys(value?: Exotic.traceable): string[] {
-    const results = [];
-    const proxy = findProxy(value);
-    if (!proxy) return results;
-    const { sandbox } = map.proxies.get(proxy);
-    return Object.keys(sandbox);
   }
 
   count(): number {
@@ -107,24 +99,24 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     const proxy = findProxy(value);
     if (!proxy) return;
 
-    const { id, namespace, dummy, revoke, target } = map.proxies.get(proxy);
+    const { id, binding, mock, revoke, target } = map.proxies.get(proxy);
     const data = map.emulators.get(this);
-    const { bindings } = data;
-    const group = bindings[namespace];
+    const { keys } = data;
+    const group = keys[binding];
 
     if (group) {
       group.length -= 1;
 
       if (!group.length) {
         // delete empty group
-        delete bindings[namespace];
-        this.emit("unbind", namespace);
+        delete keys[binding];
+        this.emit("unbind", binding);
       }
     }
 
     // remove item references
 
-    map.dummies.delete(dummy);
+    map.mocks.delete(mock);
     map.targets.delete(target);
     map.proxies.delete(proxy);
 

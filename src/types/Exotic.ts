@@ -3,23 +3,23 @@ import { EventEmitter } from "events";
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace Exotic {
   type traceable = object | FunctionLike;
-  type namespace = string | symbol;
+  type key = string | symbol;
 
   interface Emulator extends EventEmitter {
-    refs: namespace[];
-    bind(x: namespace): Proxy;
+    keys: key[];
+    bind(x: key): Proxy;
     proxy(value?: any): Proxy;
     target(value?: any): any;
   }
 
-  interface FunctionLike {
-    (...args: any[]): void;
-    [x: namespace]: any;
+  type FunctionLike = (...args: any[]) => void;
+
+  interface Mock extends FunctionLike {
+    [x: key]: any;
     [Symbol.iterator](): Iterator<any, any, undefined>;
   }
 
-  interface Proxy extends FunctionLike {
-    [x: namespace]: any;
+  interface Proxy extends Mock {
     [Symbol.iterator](): Iterator<Proxy, any, undefined>;
   }
 
@@ -30,10 +30,14 @@ declare namespace Exotic {
       root: Exotic.Proxy;
     }
 
+    interface sandbox {
+      [x: key]: any;
+    }
+
     interface origin {
       action: "get" | "set" | "construct" | "apply";
       proxy: Proxy;
-      key?: namespace;
+      key?: key;
       value?: any;
       that?: any;
       args?: any[];
@@ -46,11 +50,11 @@ declare namespace Exotic {
 
     interface data extends public {
       revoke(): void;
-      dummy: FunctionLike;
+      mock: Mock;
       origin?: proxy.origin;
       scope: Emulator;
-      sandbox: { [x: namespace]: any };
-      namespace: namespace;
+      sandbox: sandbox;
+      binding: key;
     }
   }
 
@@ -61,12 +65,12 @@ declare namespace Exotic {
     }
 
     interface bindings {
-      [ns: namespace]: proxy.group;
+      [x: key]: proxy.group;
     }
 
     interface data {
       options: options;
-      bindings: bindings;
+      keys: bindings;
       itemCount: number;
       activeItems: number;
     }

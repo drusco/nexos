@@ -3,9 +3,9 @@ import createProxy from "../createProxy";
 import findProxy from "../findProxy";
 import map from "../map";
 
-const get = (dummy: Exotic.FunctionLike, key: Exotic.namespace): unknown => {
-  const proxy = findProxy(dummy);
-  const { scope, namespace, target, sandbox } = map.proxies.get(proxy);
+const get = (mock: Exotic.Mock, key: Exotic.key): any => {
+  const proxy = findProxy(mock);
+  const { scope, binding, target, sandbox } = map.proxies.get(proxy);
 
   const origin: Exotic.proxy.origin = {
     action: "get",
@@ -14,22 +14,24 @@ const get = (dummy: Exotic.FunctionLike, key: Exotic.namespace): unknown => {
   };
 
   if (key === Symbol.iterator) {
-    return dummy[key]();
+    return mock[key]();
   }
 
-  let value: any = sandbox[key];
+  let value: any;
 
-  // get new target from sandbox
+  // get value from original target
+  // target may be untraceable
+  try {
+    value = target[key];
+  } catch (error) {
+    /* empty */
+  }
+
   if (value === undefined) {
-    try {
-      // target may be untraceable
-      value = target[key];
-    } catch (error) {
-      /* empty */
-    }
+    value = sandbox[key];
   }
 
-  sandbox[key] = createProxy(scope, value, namespace, origin);
+  sandbox[key] = createProxy(scope, value, binding, origin);
 
   return Reflect.get(sandbox, key);
 };

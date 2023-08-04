@@ -3,13 +3,9 @@ import createProxy from "../createProxy";
 import findProxy from "../findProxy";
 import map from "../map";
 
-const set = (
-  dummy: Exotic.FunctionLike,
-  key: string,
-  value: unknown,
-): boolean => {
-  const proxy = findProxy(dummy);
-  const { scope, namespace, sandbox, target } = map.proxies.get(proxy);
+const set = (mock: Exotic.Mock, key: Exotic.key, value: any): boolean => {
+  const proxy = findProxy(mock);
+  const { scope, binding, sandbox, target } = map.proxies.get(proxy);
 
   const origin: Exotic.proxy.origin = {
     action: "set",
@@ -18,7 +14,7 @@ const set = (
     value,
   };
 
-  const newValue = createProxy(scope, value, namespace, origin);
+  const newValue = createProxy(scope, value, binding, origin);
   origin.value = newValue;
 
   scope.emit("action", {

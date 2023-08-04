@@ -3,9 +3,9 @@ import createProxy from "../createProxy";
 import findProxy from "../findProxy";
 import map from "../map";
 
-const construct = (dummy: Exotic.FunctionLike, args: unknown[]): object => {
-  const proxy = findProxy(dummy);
-  const { scope, namespace, target } = map.proxies.get(proxy);
+const construct = (mock: Exotic.Mock, args: any[]): object => {
+  const proxy = findProxy(mock);
+  const { scope, binding, target } = map.proxies.get(proxy);
 
   const origin: Exotic.proxy.origin = {
     action: "construct",
@@ -19,10 +19,10 @@ const construct = (dummy: Exotic.FunctionLike, args: unknown[]): object => {
     value = Reflect.construct(target, args);
   }
 
-  const argList = args.map((arg) => createProxy(scope, arg, namespace, origin));
+  const argList = args.map((arg) => createProxy(scope, arg, binding, origin));
   origin.args = argList;
 
-  return createProxy(scope, value, namespace, origin);
+  return createProxy(scope, value, binding, origin);
 };
 
 export default construct;

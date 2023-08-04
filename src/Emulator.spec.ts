@@ -1,192 +1,215 @@
 import { describe, it, expect } from "@jest/globals";
 import Emulator from "./Emulator";
+import { isTraceable } from "./utils";
 
 const $ = new Emulator();
 
-describe("Emulator", () => {
-  describe("Methods", () => {
-    describe("proxy", () => {
-      it(`Returns a proxy function`, () => {
-        expect(typeof $.proxy({})).toBe("function");
-        expect(typeof $.proxy([])).toBe("function");
-        expect(typeof $.proxy(() => {})).toBe("function");
-        expect(typeof $.proxy(async () => {})).toBe("function");
-        expect(typeof $.proxy("string")).toBe("function");
-        expect(typeof $.proxy(undefined)).toBe("function");
-        expect(typeof $.proxy(true)).toBe("function");
-        expect(typeof $.proxy(false)).toBe("function");
-        expect(typeof $.proxy(null)).toBe("function");
-        expect(typeof $.proxy(NaN)).toBe("function");
-        expect(typeof $.proxy(Infinity)).toBe("function");
-        expect(typeof $.proxy(100)).toBe("function");
-        expect(typeof $.proxy(Symbol("sym"))).toBe("function");
-        expect(typeof $.proxy(new Date())).toBe("function");
-        expect(typeof $.proxy($)).toBe("function");
-        expect(typeof $.proxy($.proxy())).toBe("function");
-      });
-
-      it("Creates unique proxies when targets are not objects", () => {
-        const proxyA = $.proxy("");
-        const proxyB = $.proxy("");
-        expect(proxyA).not.toBe(proxyB);
-      });
-
-      it("Can be referenced by an object", () => {
-        const reference = { test: true };
-        const proxy = $.proxy(reference);
-        expect(proxy).toBe($.proxy(reference));
-        expect($.target(proxy.test)).toBe(true);
-      });
-
-      it("Returns a proxy function for undefined properties", () => {
-        const reference = {};
-        const proxy = $.proxy(reference);
-        expect(typeof proxy.test).toBe("function");
-      });
-
-      it("Can be referenced by an array object", () => {
-        const reference = [1, 2, 3, $.proxy(), {}];
-        const arrayProxy = $.proxy(reference);
-
-        arrayProxy.push("test");
-
-        expect($.target(arrayProxy[0])).toBe(1);
-        expect($.target(arrayProxy[1])).toBe(2);
-        expect($.target(arrayProxy[2])).toBe(3);
-        expect(arrayProxy[3]).toBe(reference[3]);
-        expect($.target(arrayProxy[$.target(arrayProxy.length) - 1])).toBe(
-          "test",
-        );
-        expect(typeof arrayProxy[reference.length - 1]).toBe("function");
-
-        expect(reference.length).toBe(6);
-        expect(reference[reference.length]).toBe(undefined); // does not change the target
-
-        expect($.target(arrayProxy.length)).toBe(reference.length);
-        expect($.target(arrayProxy.pop())).toBe("test");
-      });
+describe("Emulator Class", () => {
+  describe("(method) proxy", () => {
+    it(`Always returns a proxy function`, () => {
+      expect(typeof $.proxy({})).toBe("function");
+      expect(typeof $.proxy([])).toBe("function");
+      expect(typeof $.proxy(() => {})).toBe("function");
+      expect(typeof $.proxy(async () => {})).toBe("function");
+      expect(typeof $.proxy("string")).toBe("function");
+      expect(typeof $.proxy(undefined)).toBe("function");
+      expect(typeof $.proxy(true)).toBe("function");
+      expect(typeof $.proxy(false)).toBe("function");
+      expect(typeof $.proxy(null)).toBe("function");
+      expect(typeof $.proxy(NaN)).toBe("function");
+      expect(typeof $.proxy(Infinity)).toBe("function");
+      expect(typeof $.proxy(100)).toBe("function");
+      expect(typeof $.proxy(Symbol("sym"))).toBe("function");
+      expect(typeof $.proxy(new Date())).toBe("function");
+      expect(typeof $.proxy($)).toBe("function");
+      expect(typeof $.proxy($.proxy())).toBe("function");
+      expect(typeof $.proxy("abc").substring(1)).toBe("function");
     });
 
-    describe("target", () => {
-      it("Returns the target used by a proxy", () => {
-        const target = "$%&Test";
-        const proxy = $.proxy(target);
-        const targetFromProxy = $.target(proxy);
-        expect(target).toBe(targetFromProxy);
-      });
+    it("Creates unique proxies when targets are not traceable", () => {
+      const targets = [
+        null,
+        undefined,
+        "string",
+        $.proxy(),
+        10,
+        NaN,
+        Infinity,
+        true,
+        false,
+        Symbol(),
+      ];
+      const traceable = targets.some(isTraceable);
 
-      it("Gets the target from an apply call on the original target", () => {
-        const target = "abc";
-        const proxy = $.proxy(target);
-        const proxy2 = proxy.substring(1);
-        expect(typeof proxy2).toBe("function");
-        expect($.target(proxy2)).toBe("bc");
-      });
+      const proxyA = $.proxy(targets[0]);
+      const proxyB = $.proxy(targets[0]);
+
+      expect(proxyA).not.toBe(proxyB);
+      expect(traceable).toBe(false);
     });
 
-    describe("bind", () => {
-      it("Can be accessed through a string namespace", () => {
-        const namespace = "test";
-        const proxy = $.bind(namespace);
-        expect(proxy).toBe($.bind(namespace));
-      });
+    it("Can be referenced by an ObjectLike, ArrayLike or FunctionLike", () => {
+      const ObjectLike = {};
+      const ArrayLike = [];
+      const FunctionLike = () => {};
+
+      const ObjectLikeProxy = $.proxy(ObjectLike);
+      const ArrayLikeProxy = $.proxy(ArrayLike);
+      const FunctionLikeProxy = $.proxy(FunctionLike);
+
+      expect(ObjectLikeProxy).toBe($.proxy(ObjectLike));
+      expect(ArrayLikeProxy).toBe($.proxy(ArrayLike));
+      expect(FunctionLikeProxy).toBe($.proxy(FunctionLike));
     });
 
-    describe("parent", () => {
-      it("Access a proxy parent", () => {
-        const parent = $.proxy();
-        const child = parent.child;
-        expect($.parent(child)).toBe(parent);
-        expect($.parent(parent)).toBe(undefined);
-      });
-    });
-
-    describe("children", () => {
-      it("Can access all the direct children of a proxy", () => {
-        const parent = $.proxy();
-        parent.girl = 10;
-        parent.boy = 5;
-        parent.alien = NaN;
-        parent.alien.notDirectChild = true;
-
-        expect($.children(parent).length).toBe(3);
-      });
-
-      it("Can use [Symbol.iterator] to access all children as well", () => {
-        const parent = $.proxy();
-
-        parent.girl = 1;
-        parent.boy = 2;
-
-        const children = [...parent];
-
-        for (const proxy of parent) {
-          expect($.parent(proxy)).toBe(parent);
-        }
-
-        expect(children.length).toBe(2);
-      });
-    });
-
-    describe("revoke", () => {
-      it("Turns a proxy unusable", () => {
-        const proxy = $.proxy();
-        $.revoke(proxy);
-        expect(proxy).toThrow();
-        expect(() => proxy.property).toThrow();
-        expect(() => (proxy.property = true)).toThrow();
-        expect(() => delete proxy.property).toThrow();
-        expect(() => new proxy().toThrow());
-        expect(() => proxy.method()).toThrow();
-      });
-    });
-
-    describe("destroy", () => {
-      it("Destroys the emulator and turns it unusable", () => {
-        const $ = new Emulator();
-        $.destroy();
-        expect($.proxy).toThrow();
-        expect($.bind).toThrow();
-      });
-    });
-
-    describe("count", () => {
-      it("Returns the number of proxies in the emulator", () => {
-        const current = $.count();
-        $.proxy();
-        expect($.count()).toBe(current + 1);
-      });
-    });
-
-    describe("encode", () => {
-      it("Encodes a proxy synchronously", () => {
-        const proxy = $.proxy();
-        expect(typeof proxy).toBe("function");
-        expect(typeof $.encode(proxy)).toBe("object");
-      });
-
-      it("Encodes multiple proxies deeply", () => {
-        let times = 1000;
-        const map: unknown[] = [];
-
-        while (times) {
-          map.push($.proxy());
-          times -= 1;
-        }
-
-        const encoded: any = $.encode(map);
-        expect(typeof encoded[999]).toBe("object");
-      });
+    it("Returns a proxy function for undefined properties", () => {
+      const proxy = $.proxy();
+      expect(typeof proxy.undefined).toBe("function");
     });
   });
 
-  describe("Properties", () => {
-    describe("refs", () => {
-      it("Returns a list of namespaces in use", () => {
-        const ref = "refsTest";
-        $.bind(ref);
-        expect($.refs.includes(ref)).toBe(true);
-      });
+  describe("(method) target", () => {
+    it("Returns the target used by a proxy", () => {
+      const target = "$%&Test";
+      const proxy = $.proxy(target);
+      const targetFromProxy = $.target(proxy);
+      expect(target).toBe(targetFromProxy);
+    });
+
+    it("Returns the target from an apply call on the original target", () => {
+      const proxy = $.proxy("abc");
+      const proxy2 = proxy.substring(1);
+
+      expect($.target(proxy2)).toBe("bc");
+    });
+
+    it("Returns the target from inner properties", () => {
+      const reference = [1, 2, 3, $.proxy(), {}];
+      const proxy = $.proxy(reference);
+
+      proxy.push("test");
+
+      expect($.target(proxy[0])).toBe(1);
+      expect($.target(proxy[1])).toBe(2);
+      expect($.target(proxy[2])).toBe(3);
+      expect(proxy[3]).toBe(reference[3]);
+      expect($.target(proxy[$.target(proxy.length) - 1])).toBe("test");
+      expect(typeof proxy[reference.length - 1]).toBe("function");
+
+      expect(reference.length).toBe(6);
+      expect($.target(proxy.length)).toBe(reference.length);
+      expect($.target(proxy.pop())).toBe("test");
+      expect(reference.length).toBe(5);
+      expect($.target(proxy.length)).toBe(reference.length);
+    });
+  });
+
+  describe("(method) bind", () => {
+    it("Can access a proxy using a string", () => {
+      const key = "test";
+      const proxy = $.bind(key);
+      expect(proxy).toBe($.bind(key));
+    });
+
+    it("Can access a proxy using a symbol", () => {
+      const key = Symbol();
+      const proxy = $.bind(key);
+      expect(proxy).toBe($.bind(key));
+    });
+  });
+
+  describe("(method) parent", () => {
+    it("Access a proxy parent", () => {
+      const parent = $.proxy();
+      const child = parent.child;
+      expect($.parent(child)).toBe(parent);
+      expect($.parent(parent)).toBe(undefined);
+    });
+  });
+
+  describe("(method) children", () => {
+    it("Can access all the direct children of a proxy", () => {
+      const parent = $.proxy();
+      parent.girl = 10;
+      parent.boy = 5;
+      parent.alien = NaN;
+      parent.alien.notDirectChild = true;
+
+      expect($.children(parent).length).toBe(3);
+    });
+
+    it("Can use [Symbol.iterator] to access all children as well", () => {
+      const parent = $.proxy();
+
+      parent.girl = 1;
+      parent.boy = 2;
+
+      const children = [...parent];
+
+      for (const proxy of parent) {
+        expect($.parent(proxy)).toBe(parent);
+      }
+
+      expect(children.length).toBe(2);
+    });
+  });
+
+  describe("(method) revoke", () => {
+    it("Turns a proxy unusable", () => {
+      const proxy = $.proxy();
+      $.revoke(proxy);
+      expect(proxy).toThrow();
+      expect(() => proxy.property).toThrow();
+      expect(() => (proxy.property = true)).toThrow();
+      expect(() => delete proxy.property).toThrow();
+      expect(() => new proxy().toThrow());
+      expect(() => proxy.method()).toThrow();
+    });
+  });
+
+  describe("(method) destroy", () => {
+    it("Destroys the emulator and turns it unusable", () => {
+      const $ = new Emulator();
+      $.destroy();
+      expect($.proxy).toThrow();
+      expect($.bind).toThrow();
+    });
+  });
+
+  describe("(method) count", () => {
+    it("Returns the number of proxies in the emulator", () => {
+      const current = $.count();
+      $.proxy();
+      expect($.count()).toBe(current + 1);
+    });
+  });
+
+  describe("(method) encode", () => {
+    it("Encodes a proxy synchronously", () => {
+      const proxy = $.proxy();
+      expect(typeof proxy).toBe("function");
+      expect(typeof $.encode(proxy)).toBe("object");
+    });
+
+    it("Encodes multiple proxies deeply", () => {
+      let times = 1000;
+      const map: unknown[] = [];
+
+      while (times) {
+        map.push($.proxy());
+        times -= 1;
+      }
+
+      const encoded: any = $.encode(map);
+      expect(typeof encoded[999]).toBe("object");
+    });
+  });
+
+  describe("(getter) keys", () => {
+    it("Returns a list of all keys in use", () => {
+      const ref = "refsTest";
+      $.bind(ref);
+      expect($.keys.includes(ref)).toBe(true);
     });
   });
 });
