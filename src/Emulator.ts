@@ -3,13 +3,6 @@ import { findProxy, map, createProxy } from "./utils";
 import { EventEmitter } from "events";
 
 export default class Emulator extends EventEmitter implements Exotic.Emulator {
-  static iterator = Symbol(90);
-
-  get refs(): Exotic.namespace[] {
-    const { bindings }: Exotic.emulator.data = map.emulators.get(this);
-    return Reflect.ownKeys(bindings);
-  }
-
   constructor(options: Exotic.emulator.options = {}) {
     super();
 
@@ -21,6 +14,11 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     };
 
     map.emulators.set(this, data);
+  }
+
+  get refs(): Exotic.namespace[] {
+    const { bindings }: Exotic.emulator.data = map.emulators.get(this);
+    return Reflect.ownKeys(bindings);
   }
 
   bind(namespace: Exotic.namespace): Exotic.Proxy {
