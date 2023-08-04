@@ -3,19 +3,8 @@ import map from "./map";
 import findProxy from "./findProxy";
 import isTraceable from "./isTraceable";
 import { globalNamespace } from "./constants";
+import dummyPrototype from "./dummyPrototype";
 import traps from "./traps";
-
-const dummyPrototype = Object.assign(Object.create(null), {
-  [Symbol.iterator]() {
-    const proxy = findProxy(this);
-    const { sandbox } = map.proxies.get(proxy);
-    return function* () {
-      for (const key of Reflect.ownKeys(sandbox)) {
-        yield sandbox[key];
-      }
-    };
-  },
-});
 
 const createProxy = (
   scope: Exotic.Emulator,
