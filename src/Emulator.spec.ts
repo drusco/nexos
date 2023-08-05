@@ -7,7 +7,7 @@ const $ = new Emulator();
 describe("Emulator Class", () => {
   describe("(method) proxy", () => {
     it(`Always returns a proxy function`, () => {
-      expect(typeof $.use({})).toBe("function");
+      expect(typeof $.use({ test: "wawa" })).toBe("function");
       expect(typeof $.use([])).toBe("function");
       expect(typeof $.use(() => {})).toBe("function");
       expect(typeof $.use(async () => {})).toBe("function");
@@ -219,9 +219,12 @@ describe("Emulator Class", () => {
       // const property = (proxy.property = true);
       // const propertyInner = (proxy.property.inner = true);
 
-      for (const prox of $.entries()) {
-        console.log($.target(prox));
-      }
+      console.log({
+        active: $.active,
+        entries: [...$.entries()].length,
+        revoked: $.void,
+        total: $.length,
+      });
 
       // $.revokeAll(proxy);
 
@@ -239,7 +242,7 @@ describe("Emulator Class", () => {
 
   describe("(getter) refs", () => {
     it("Returns an Array of all binding keys in use", () => {
-      const reference = "test";
+      const reference = Date.now().toString();
       $.useRef(reference);
       expect($.refs.includes(reference)).toBe(true);
     });

@@ -4,6 +4,8 @@ import { symbols } from "./utils/constants";
 import { EventEmitter } from "events";
 
 export default class Emulator extends EventEmitter implements Exotic.Emulator {
+  public static symbols = symbols;
+
   constructor(options: Exotic.emulator.options = {}) {
     super();
 
@@ -82,25 +84,6 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return Reflect.ownKeys(sandbox);
   }
 
-  encode(value: unknown): unknown {
-    if (findProxy(value)) {
-      const { id } = map.proxies.get(this.use(value));
-      return { id, encoded: true }; // TODO: usar Symbol para saber si es encoded o no
-    }
-
-    if (typeof value === "object" && value) {
-      const copy = Array.isArray(value) ? [] : {};
-
-      for (const key in value) {
-        copy[key] = this.encode(value[key]);
-      }
-
-      value = copy;
-    }
-
-    return value;
-  }
-
   revoke(value: Exotic.traceable): void {
     const proxy = findProxy(value);
     if (!proxy) return;
@@ -123,6 +106,7 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     if (origin) {
       const { action, key, proxy: parentProxy } = origin;
       if (action === "get" || action === "set") {
+        // delete from parent proxy and target
         if (parentProxy) delete parentProxy[key];
       }
     }
@@ -187,9 +171,28 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     }
   }
 
+  encode(value: unknown): unknown {
+    if (findProxy(value)) {
+      const { id } = map.proxies.get(this.use(value));
+      return { id, encoded: true }; // TODO: usar Symbol para saber si es encoded o no
+    }
+
+    if (typeof value === "object" && value) {
+      const copy = Array.isArray(value) ? [] : {};
+
+      for (const key in value) {
+        copy[key] = this.encode(value[key]);
+      }
+
+      value = copy;
+    }
+
+    return value;
+  }
+
   resolve(value: any): Exotic.proxy.public {
-    if (!findProxy(value)) return value;
-    const proxy = this.use(value);
+    const proxy = findProxy(value);
+    if (!proxy) return value;
     const { id, target } = map.proxies.get(proxy);
     return { id, target, [symbols.PROXY]: true };
   }

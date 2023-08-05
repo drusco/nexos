@@ -21,14 +21,17 @@ const createProxy = (
 
   const id = ++data.totalProxies;
   const mock = function mock() {} as Exotic.Mock;
-
+  let group: Exotic.proxy.group = refs[refKey];
   const traceable = isTraceable(target);
+
   const { proxy, revoke } = Proxy.revocable<Exotic.Proxy>(
     Object.setPrototypeOf(mock, mockPrototype),
     traps,
   );
 
-  let group: Exotic.proxy.group = refs[refKey];
+  if (traceable) {
+    map.targets.set(target, proxy);
+  }
 
   if (!group) {
     // create the new group
@@ -42,7 +45,6 @@ const createProxy = (
   }
 
   const previousProxy = group.last === proxy ? undefined : group.last;
-
   // set the proxy information
   const proxyData: Exotic.proxy.data = {
     id,
@@ -78,10 +80,6 @@ const createProxy = (
 
   map.mocks.set(mock, proxy);
   map.proxies.set(proxy, proxyData);
-
-  if (traceable) {
-    map.targets.set(target, proxy);
-  }
 
   return proxy;
 };
