@@ -1,5 +1,11 @@
 import Exotic from "./types/Exotic";
-import { findProxy, map, createProxy } from "./utils";
+import {
+  findProxy,
+  map,
+  createProxy,
+  proxyGenerator,
+  revokeProxy,
+} from "./utils";
 import { symbols } from "./utils/constants";
 import { EventEmitter } from "events";
 
@@ -84,46 +90,8 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return Reflect.ownKeys(sandbox);
   }
 
-  revoke(value: Exotic.traceable): void {
-    const proxy = findProxy(value);
-    if (!proxy) return;
-
-    const proxyData = map.proxies.get(proxy);
-    const data = map.emulators.get(this);
-
-    const { id, refKey, mock, revoke, target, origin } = proxyData;
-    const { refs } = data;
-    const group = refs[refKey];
-
-    if (group.root === proxy) {
-      // delete group
-      delete refs[refKey];
-      this.emit("unbind", refKey);
-    }
-
-    // remove item references
-
-    if (origin) {
-      const { action, key, proxy: parentProxy } = origin;
-      if (action === "get" || action === "set") {
-        // delete from parent proxy and target
-        if (parentProxy) delete parentProxy[key];
-      }
-    }
-
-    map.mocks.delete(mock);
-    map.targets.delete(target);
-
-    // keep proxy in map
-    // to prevent proxy out of revoked proxy (throws error)
-    //map.proxies.delete(proxy);
-
-    revoke();
-
-    proxyData.revoked = true;
-    data.activeProxies -= 1;
-
-    this.emit("revoke", id);
+  revoke(value: Exotic.traceable): boolean {
+    return revokeProxy(this, value);
   }
 
   revoked(value: Exotic.traceable): boolean {
@@ -133,41 +101,21 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return revoked;
   }
 
-  //revokeAll(value?: Exotic.traceable): void {
-  // const proxy = findProxy(value);
-  // if (!proxy) {
-  //   this.keys.forEach(key => this.revoke())
-  //   return;
-  // }
-  //}
-
-  *entries(value?: Exotic.traceable): Iterable<Exotic.Proxy> {
-    if (value === undefined) {
-      for (const ref of this.refs) {
-        for (const proxy of this.entries(this.useRef(ref))) {
-          if (!this.revoked(proxy)) {
-            yield proxy;
-          }
-        }
-      }
-      return;
-    }
-
-    const proxy = findProxy(value);
-    if (!proxy) return;
-
-    if (!this.revoked(proxy)) {
+  *entries(): Iterable<Exotic.Proxy> {
+    for (const proxy of proxyGenerator(this)) {
       yield proxy;
     }
+  }
 
-    const { next } = map.proxies.get(proxy);
+  *entriesBefore(value: Exotic.traceable): Iterable<Exotic.Proxy> {
+    for (const proxy of proxyGenerator(this, value, true)) {
+      yield proxy;
+    }
+  }
 
-    if (next) {
-      for (const proxy of this.entries(next)) {
-        if (!this.revoked(proxy)) {
-          yield proxy;
-        }
-      }
+  *entriesAfter(value: Exotic.traceable): Iterable<Exotic.Proxy> {
+    for (const proxy of proxyGenerator(this, value, false)) {
+      yield proxy;
     }
   }
 

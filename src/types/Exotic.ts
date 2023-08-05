@@ -6,10 +6,11 @@ declare namespace Exotic {
   type key = string | symbol;
 
   interface Emulator extends EventEmitter {
-    refs: key[];
+    revoked(proxy: Proxy): boolean;
     useRef(ref: key): Proxy;
     use(value?: any): Proxy;
     target(value?: any): any;
+    refs: key[];
   }
 
   type FunctionLike = (...args: any[]) => void;

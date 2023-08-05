@@ -1,6 +1,7 @@
 import { describe, it, expect } from "@jest/globals";
 import Emulator from "./Emulator";
 import { isTraceable } from "./utils";
+import Exotic from "./types/Exotic";
 
 const $ = new Emulator();
 
@@ -208,31 +209,29 @@ describe("Emulator Class", () => {
     });
   });
 
-  describe("(method) revokeAll", () => {
-    it("Revokes a proxy and all of its child proxies", () => {
+  describe("(method) entries", () => {
+    it("Returns an iterator that contains the active (non revoked) proxies", () => {
+      const activeProxies = $.active;
+      const entries = [...$.entries()].length;
       const proxy = $.use();
+      const newProxies: Exotic.Proxy[] = [proxy];
 
-      proxy.aaa;
+      newProxies.push(proxy.child, proxy.inner, proxy.inner.child);
 
-      // const inner = (proxy.inner = true);
-      // const child = (proxy.child = true);
-      // const property = (proxy.property = true);
-      // const propertyInner = (proxy.property.inner = true);
+      expect(activeProxies).toBe(entries);
+      expect($.active).toBe(entries + newProxies.length);
+      expect([...$.entries()].length).toBe(entries + newProxies.length);
+    });
+  });
 
-      console.log({
-        active: $.active,
-        entries: [...$.entries()].length,
-        revoked: $.void,
-        total: $.length,
-      });
+  describe("(method) entriesAfter", () => {
+    it("Returns an iterator that contains the active proxies created after a certain proxy", () => {
+      const proxy = $.use();
+      const newProxies: Exotic.Proxy[] = [proxy];
 
-      // $.revokeAll(proxy);
+      newProxies.push(proxy.child, proxy.inner, proxy.inner.child);
 
-      // expect(proxy).toThrow();
-      // expect(inner).toThrow();
-      // expect(child).toThrow();
-      // expect(property).toThrow();
-      // expect(propertyInner).toThrow();
+      expect([...$.entriesAfter(proxy)].length).toBe(newProxies.length);
     });
   });
 
