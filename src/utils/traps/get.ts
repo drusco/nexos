@@ -5,7 +5,7 @@ import map from "../map";
 
 const get = (mock: Exotic.Mock, key: Exotic.key): any => {
   const proxy = findProxy(mock);
-  const { scope, binding, target, sandbox } = map.proxies.get(proxy);
+  const { scope, refKey, target, sandbox } = map.proxies.get(proxy);
 
   const origin: Exotic.proxy.origin = {
     action: "get",
@@ -14,7 +14,7 @@ const get = (mock: Exotic.Mock, key: Exotic.key): any => {
   };
 
   if (key === Symbol.iterator) {
-    return mock[key]();
+    return mock[key];
   }
 
   let value: any;
@@ -31,7 +31,7 @@ const get = (mock: Exotic.Mock, key: Exotic.key): any => {
     value = sandbox[key];
   }
 
-  sandbox[key] = createProxy(scope, value, binding, origin);
+  sandbox[key] = createProxy(scope, value, refKey, origin);
 
   return Reflect.get(sandbox, key);
 };

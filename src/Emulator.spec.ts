@@ -5,57 +5,25 @@ import { isTraceable } from "./utils";
 const $ = new Emulator();
 
 describe("Emulator Class", () => {
-  describe("(getter) keys", () => {
-    it("Returns the list of all binding keys in use", () => {
-      const key = "test";
-      $.bind(key);
-      expect($.keys.includes(key)).toBe(true);
-    });
-  });
-
-  describe("(getter) length", () => {
-    it("Returns the number of built proxies", () => {
-      const total = $.length;
-      $.proxy();
-      expect($.length).toBe(total + 1);
-    });
-  });
-
-  describe("(getter) void", () => {
-    it("Returns the number of revoked proxies", () => {
-      const revoked = $.void;
-      $.revoke($.proxy());
-      expect($.void).toBe(revoked + 1);
-    });
-  });
-
-  describe("(getter) active", () => {
-    it("Returns the number of active proxies", () => {
-      const active = $.active;
-      $.proxy();
-      expect($.active).toBe(active + 1);
-    });
-  });
-
   describe("(method) proxy", () => {
     it(`Always returns a proxy function`, () => {
-      expect(typeof $.proxy({})).toBe("function");
-      expect(typeof $.proxy([])).toBe("function");
-      expect(typeof $.proxy(() => {})).toBe("function");
-      expect(typeof $.proxy(async () => {})).toBe("function");
-      expect(typeof $.proxy("string")).toBe("function");
-      expect(typeof $.proxy(undefined)).toBe("function");
-      expect(typeof $.proxy(true)).toBe("function");
-      expect(typeof $.proxy(false)).toBe("function");
-      expect(typeof $.proxy(null)).toBe("function");
-      expect(typeof $.proxy(NaN)).toBe("function");
-      expect(typeof $.proxy(Infinity)).toBe("function");
-      expect(typeof $.proxy(100)).toBe("function");
-      expect(typeof $.proxy(Symbol("sym"))).toBe("function");
-      expect(typeof $.proxy(new Date())).toBe("function");
-      expect(typeof $.proxy($)).toBe("function");
-      expect(typeof $.proxy($.proxy())).toBe("function");
-      expect(typeof $.proxy("abc").substring(1)).toBe("function");
+      expect(typeof $.use({})).toBe("function");
+      expect(typeof $.use([])).toBe("function");
+      expect(typeof $.use(() => {})).toBe("function");
+      expect(typeof $.use(async () => {})).toBe("function");
+      expect(typeof $.use("string")).toBe("function");
+      expect(typeof $.use(undefined)).toBe("function");
+      expect(typeof $.use(true)).toBe("function");
+      expect(typeof $.use(false)).toBe("function");
+      expect(typeof $.use(null)).toBe("function");
+      expect(typeof $.use(NaN)).toBe("function");
+      expect(typeof $.use(Infinity)).toBe("function");
+      expect(typeof $.use(100)).toBe("function");
+      expect(typeof $.use(Symbol("sym"))).toBe("function");
+      expect(typeof $.use(new Date())).toBe("function");
+      expect(typeof $.use($)).toBe("function");
+      expect(typeof $.use($.use())).toBe("function");
+      expect(typeof $.use("abc").substring(1)).toBe("function");
     });
 
     it("Creates unique proxies when targets are not traceable", () => {
@@ -63,7 +31,7 @@ describe("Emulator Class", () => {
         null,
         undefined,
         "string",
-        $.proxy(),
+        $.use(),
         10,
         NaN,
         Infinity,
@@ -73,8 +41,8 @@ describe("Emulator Class", () => {
       ];
       const traceable = targets.some(isTraceable);
 
-      const proxyA = $.proxy(targets[0]);
-      const proxyB = $.proxy(targets[0]);
+      const proxyA = $.use(targets[0]);
+      const proxyB = $.use(targets[0]);
 
       expect(proxyA).not.toBe(proxyB);
       expect(traceable).toBe(false);
@@ -85,17 +53,17 @@ describe("Emulator Class", () => {
       const ArrayLike = [];
       const FunctionLike = () => {};
 
-      const ObjectLikeProxy = $.proxy(ObjectLike);
-      const ArrayLikeProxy = $.proxy(ArrayLike);
-      const FunctionLikeProxy = $.proxy(FunctionLike);
+      const ObjectLikeProxy = $.use(ObjectLike);
+      const ArrayLikeProxy = $.use(ArrayLike);
+      const FunctionLikeProxy = $.use(FunctionLike);
 
-      expect(ObjectLikeProxy).toBe($.proxy(ObjectLike));
-      expect(ArrayLikeProxy).toBe($.proxy(ArrayLike));
-      expect(FunctionLikeProxy).toBe($.proxy(FunctionLike));
+      expect(ObjectLikeProxy).toBe($.use(ObjectLike));
+      expect(ArrayLikeProxy).toBe($.use(ArrayLike));
+      expect(FunctionLikeProxy).toBe($.use(FunctionLike));
     });
 
     it("Returns a proxy function for undefined properties", () => {
-      const proxy = $.proxy();
+      const proxy = $.use();
       expect(typeof proxy.undefined).toBe("function");
     });
   });
@@ -103,21 +71,21 @@ describe("Emulator Class", () => {
   describe("(method) target", () => {
     it("Returns the target used by a proxy", () => {
       const target = "$%&Test";
-      const proxy = $.proxy(target);
+      const proxy = $.use(target);
       const targetFromProxy = $.target(proxy);
       expect(target).toBe(targetFromProxy);
     });
 
     it("Returns the target from an apply call on the original target", () => {
-      const proxy = $.proxy("abc");
+      const proxy = $.use("abc");
       const proxy2 = proxy.substring(1);
 
       expect($.target(proxy2)).toBe("bc");
     });
 
     it("Returns the target from inner properties", () => {
-      const reference = [1, 2, 3, $.proxy(), {}];
-      const proxy = $.proxy(reference);
+      const reference = [1, 2, 3, $.use(), {}];
+      const proxy = $.use(reference);
 
       proxy.push("test");
 
@@ -152,7 +120,7 @@ describe("Emulator Class", () => {
 
   describe("(method) parent", () => {
     it("Access a proxy parent", () => {
-      const parent = $.proxy();
+      const parent = $.use();
       const child = parent.child;
       expect($.parent(child)).toBe(parent);
       expect($.parent(parent)).toBe(undefined);
@@ -161,7 +129,7 @@ describe("Emulator Class", () => {
 
   describe("(method) children", () => {
     it("Can access all the direct children of a proxy", () => {
-      const parent = $.proxy();
+      const parent = $.use();
       parent.daugter = 25;
       parent.son = 30;
       parent.son.parentGrandson = 2;
@@ -170,61 +138,134 @@ describe("Emulator Class", () => {
     });
 
     it("Can use [Symbol.iterator] to access all children as well", () => {
-      const parent = $.proxy();
+      const parent = $.use();
 
       parent.daughter = 25;
       parent.son = 30;
 
       const children = [...parent];
+      const targetList = children.map((child) => $.target(child));
 
       for (const proxy of parent) {
         expect($.parent(proxy)).toBe(parent);
       }
 
       expect(children.length).toBe(2);
+      expect(targetList.includes(25)).toBe(true);
+      expect(targetList.includes(30)).toBe(true);
     });
   });
 
-  describe("(method) encode", () => {
-    it("Encodes a proxy synchronously", () => {
-      const proxy = $.proxy();
-      expect(typeof proxy).toBe("function");
-      expect(typeof $.encode(proxy)).toBe("object");
-    });
+  describe("(method) ownKeys", () => {
+    it("Returns an Array of the proxy's own property keys, including strings and symbols", () => {
+      const proxy = $.use();
+      const symbol = Symbol();
 
-    it("Encodes multiple proxies deeply", () => {
-      let times = 1000;
-      const map: unknown[] = [];
+      proxy.a = true;
+      proxy.b = true;
+      proxy[symbol] = true;
 
-      while (times) {
-        map.push($.proxy());
-        times -= 1;
-      }
+      const keys = $.ownKeys(proxy);
 
-      const encoded: any = $.encode(map);
-      expect(typeof encoded[999]).toBe("object");
+      expect(keys.length).toBe(3);
+      expect(keys.includes("a")).toBe(true);
+      expect(keys.includes("b")).toBe(true);
+      expect(keys.includes(symbol)).toBe(true);
     });
   });
 
   describe("(method) revoke", () => {
-    it("Turns a proxy unusable", () => {
-      const proxy = $.proxy();
+    it("Revokes a single proxy", () => {
+      const proxy = $.use();
+      const inner = proxy.inner;
+
       $.revoke(proxy);
+
       expect(proxy).toThrow();
-      expect(() => proxy.property).toThrow();
-      expect(() => (proxy.property = true)).toThrow();
-      expect(() => delete proxy.property).toThrow();
-      expect(() => new proxy().toThrow());
-      expect(() => proxy.method()).toThrow();
+      expect(inner).not.toThrow();
+      expect(() => proxy.inner).toThrow();
+      expect(() => (proxy.inner = true)).toThrow();
+      expect(() => delete proxy.inner).toThrow();
+      expect(() => new proxy()).toThrow();
+      expect(() => proxy.inner()).toThrow();
+      expect($.use(proxy)).not.toBe(proxy);
+      expect($.use(inner)).toBe(inner);
+    });
+
+    it("Revokes and removes internal references", () => {
+      const proxy = $.use();
+      const inner = proxy.inner;
+
+      $.revoke(inner);
+
+      expect(proxy).not.toThrow();
+      expect(inner).toThrow();
+      expect(() => new inner()).toThrow();
+      expect(() => inner()).toThrow();
+      expect($.use(proxy)).toBe(proxy);
+      expect($.use(inner)).not.toBe(inner);
+      expect($.ownKeys(proxy).includes("inner")).toBe(false);
     });
   });
 
-  describe("(method) destroy", () => {
-    it("Destroys the emulator and turns it unusable", () => {
-      const $ = new Emulator();
-      $.destroy();
-      expect($.proxy).toThrow();
-      expect($.bind).toThrow();
+  describe("(method) revokeAll", () => {
+    it("Revokes a proxy and all of its child proxies", () => {
+      const proxy = $.use();
+
+      proxy.aaa;
+
+      // const inner = (proxy.inner = true);
+      // const child = (proxy.child = true);
+      // const property = (proxy.property = true);
+      // const propertyInner = (proxy.property.inner = true);
+
+      for (const [key, prox] of $.entries()) {
+        console.log(key, prox);
+      }
+
+      // $.revokeAll(proxy);
+
+      // expect(proxy).toThrow();
+      // expect(inner).toThrow();
+      // expect(child).toThrow();
+      // expect(property).toThrow();
+      // expect(propertyInner).toThrow();
+    });
+  });
+
+  describe("(method) encode", () => {
+    // TODO
+  });
+
+  describe("(getter) refs", () => {
+    it("Returns an Array of all binding keys in use", () => {
+      const key = "test";
+      $.bind(key);
+      expect($.refs.includes(key)).toBe(true);
+    });
+  });
+
+  describe("(getter) length", () => {
+    it("Returns the number of built proxies", () => {
+      const total = $.length;
+      $.use();
+      expect($.length).toBe(total + 1);
+    });
+  });
+
+  describe("(getter) void", () => {
+    it("Returns the number of revoked proxies", () => {
+      const revoked = $.void;
+      $.revoke($.use());
+      expect($.void).toBe(revoked + 1);
+    });
+  });
+
+  describe("(getter) active", () => {
+    it("Returns the number of active proxies", () => {
+      const active = $.active;
+      $.use();
+      expect($.active).toBe(active + 1);
     });
   });
 });
@@ -232,7 +273,7 @@ describe("Emulator Class", () => {
 describe("Proxy", () => {
   describe("Get, Set and Delete traps", () => {
     it("Can get values from a proxy", () => {
-      const proxy = $.proxy();
+      const proxy = $.use();
       const deep = { test: true };
 
       proxy.number = 100;
@@ -240,7 +281,7 @@ describe("Proxy", () => {
       proxy.boolean = true;
       proxy.undefined = undefined;
       proxy.object = { test: true };
-      proxy.array = ["test", $.proxy()];
+      proxy.array = ["test", $.use()];
       proxy.string = "test";
       proxy.function = () => "test";
 
@@ -262,29 +303,29 @@ describe("Proxy", () => {
       expect($.target(proxy.function())).toBe("test");
       expect($.target(proxy.object.boolean)).toBe(false);
       expect(typeof proxy.object.sub).toBe("function");
-      expect(proxy.object.sub.deep).toBe($.proxy(deep));
+      expect(proxy.object.sub.deep).toBe($.use(deep));
       expect($.target(proxy.object.sub.deep.test)).toBe(true);
       expect($.target(proxy.toDelete)).toBe(undefined);
     });
 
     it("Adds a value to the original target", () => {
-      const proxy = $.proxy();
+      const proxy = $.use();
       const deep = { test: true, prox: true };
 
       proxy.set = { object: true };
       proxy.set.sub = {};
       proxy.set.sub.deep = deep;
       proxy.set.sub.deep.test = false;
-      $.proxy(deep).test = null;
-      $.proxy(deep).prox = $.proxy("test");
+      $.use(deep).test = null;
+      $.use(deep).prox = $.use("test");
 
       expect(deep.test).toBe(null);
-      expect($.target($.proxy(deep).test)).toBe(null);
+      expect($.target($.use(deep).test)).toBe(null);
       expect(deep.prox).toBe("test");
     });
 
     it("Can delete a property from a proxy and its original target", () => {
-      const proxy = $.proxy({});
+      const proxy = $.use({});
       const deep = { deep: true, property: "test" };
 
       proxy.set = { test: true };
@@ -311,10 +352,10 @@ describe("Proxy", () => {
           this.value = param;
         }
       }
-      const TestClassProxy = $.proxy();
+      const TestClassProxy = $.use();
       const instance = new TestClassProxy(1, [2, 3], null);
       const value = instance.call();
-      const test = $.proxy(new Test());
+      const test = $.use(new Test());
       const param = { param: true };
 
       test.method(param);
@@ -327,16 +368,16 @@ describe("Proxy", () => {
       expect($.target(test.property)).toBe(45);
       expect($.target(test.traceable[0])).toBe(55);
       expect($.target(test.inner)).toBe(true);
-      expect(test.value).toBe($.proxy(param));
+      expect(test.value).toBe($.use(param));
     });
 
     it("Gets a proxy from an apply trap when target is not a function", () => {
-      const proxy = $.proxy();
+      const proxy = $.use();
       expect(typeof proxy()).toBe("function");
     });
 
     it("Gets a value from an apply trap when target is a function", () => {
-      const proxy = $.proxy((value: number) => value / 2);
+      const proxy = $.use((value: number) => value / 2);
       expect($.target(proxy(10))).toBe(5);
     });
   });

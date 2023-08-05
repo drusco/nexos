@@ -1,1 +1,4 @@
-export const globalKey: symbol = Symbol("GLOBAL");
+export const symbols = {
+  GLOBAL: Symbol("GLOBAL"),
+  PROXY: Symbol("PROXY"),
+};

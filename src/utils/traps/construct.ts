@@ -5,7 +5,7 @@ import map from "../map";
 
 const construct = (mock: Exotic.Mock, args: any[]): object => {
   const proxy = findProxy(mock);
-  const { scope, binding, target } = map.proxies.get(proxy);
+  const { scope, refKey, target } = map.proxies.get(proxy);
 
   const origin: Exotic.proxy.origin = {
     action: "construct",
@@ -19,10 +19,10 @@ const construct = (mock: Exotic.Mock, args: any[]): object => {
     value = Reflect.construct(target, args);
   }
 
-  const argList = args.map((arg) => createProxy(scope, arg, binding, origin));
+  const argList = args.map((arg) => createProxy(scope, arg, refKey, origin));
   origin.args = argList;
 
-  return createProxy(scope, value, binding, origin);
+  return createProxy(scope, value, refKey, origin);
 };
 
 export default construct;

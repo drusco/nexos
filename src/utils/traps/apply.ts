@@ -5,7 +5,7 @@ import map from "../map";
 
 const apply = (mock: Exotic.Mock, that?: any, args?: any[]): any => {
   const proxy = findProxy(mock);
-  const { scope, binding, target } = map.proxies.get(proxy);
+  const { scope, refKey, target } = map.proxies.get(proxy);
 
   const origin: Exotic.proxy.origin = {
     action: "apply",
@@ -20,10 +20,10 @@ const apply = (mock: Exotic.Mock, that?: any, args?: any[]): any => {
     value = Reflect.apply(scope.target(target), scope.target(that), args);
   }
 
-  const argList = args.map((arg) => createProxy(scope, arg, binding, origin));
+  const argList = args.map((arg) => createProxy(scope, arg, refKey, origin));
   origin.args = argList;
 
-  return createProxy(scope, value, binding, origin);
+  return createProxy(scope, value, refKey, origin);
 };
 
 export default apply;

@@ -2,14 +2,14 @@ import Exotic from "../types/Exotic";
 import map from "./map";
 import findProxy from "./findProxy";
 import isTraceable from "./isTraceable";
-import { globalKey } from "./constants";
+import { symbols } from "./constants";
 import mockPrototype from "./mockPrototype";
 import traps from "./traps";
 
 const createProxy = (
   scope: Exotic.Emulator,
   target: any,
-  binding: Exotic.key = globalKey,
+  refKey: Exotic.key = symbols.GLOBAL,
   origin?: Exotic.proxy.origin, // the action used to create the proxy
 ): Exotic.Proxy => {
   // target is already a proxy; no proxy out of proxy; no duplicates
@@ -17,7 +17,7 @@ const createProxy = (
   if (currentProxy) return currentProxy;
 
   const data: Exotic.emulator.data = map.emulators.get(scope);
-  const { keys } = data;
+  const { refs } = data;
 
   const id = ++data.totalProxies;
   const mock = function mock() {} as Exotic.Mock;
@@ -28,18 +28,20 @@ const createProxy = (
     traps,
   );
 
-  let group: Exotic.proxy.group = keys[binding];
+  let group: Exotic.proxy.group = refs[refKey];
 
   if (!group) {
     // create the new group
     group = {
-      length: 0,
       root: proxy,
+      last: proxy,
     };
 
-    keys[binding] = group;
-    scope.emit("bind", binding);
+    refs[refKey] = group;
+    scope.emit("bind", refKey);
   }
+
+  const previousProxy = group.last === proxy ? undefined : group.last;
 
   // set the proxy information
   const proxyData: Exotic.proxy.data = {
@@ -50,17 +52,27 @@ const createProxy = (
     revoke,
     scope,
     sandbox: Object.create(null),
-    binding,
+    refKey,
+    prev: previousProxy,
+    next: undefined,
   };
+
+  if (previousProxy) {
+    // update previous proxy
+    const prevData = map.proxies.get(previousProxy);
+    if (prevData) {
+      prevData.next = proxy;
+    }
+  }
 
   scope.emit("proxy", {
     id,
     proxy,
     origin,
-    binding,
+    ref: refKey,
   });
 
-  group.length += 1;
+  group.last = proxy;
   data.activeProxies += 1;
 
   map.mocks.set(mock, proxy);

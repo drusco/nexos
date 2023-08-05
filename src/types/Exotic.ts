@@ -6,9 +6,9 @@ declare namespace Exotic {
   type key = string | symbol;
 
   interface Emulator extends EventEmitter {
-    keys: key[];
+    refs: key[];
     bind(x: key): Proxy;
-    proxy(value?: any): Proxy;
+    use(value?: any): Proxy;
     target(value?: any): any;
   }
 
@@ -26,8 +26,8 @@ declare namespace Exotic {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace proxy {
     interface group {
-      length: number;
       root: Exotic.Proxy;
+      last: Exotic.Proxy;
     }
 
     interface sandbox {
@@ -51,10 +51,12 @@ declare namespace Exotic {
     interface data extends public {
       revoke(): void;
       mock: Mock;
-      origin?: proxy.origin;
+      origin?: proxy.origin | undefined;
       scope: Emulator;
       sandbox: sandbox;
-      binding: key;
+      refKey: key;
+      next?: Proxy;
+      prev?: Proxy;
     }
   }
 
@@ -64,13 +66,13 @@ declare namespace Exotic {
       [x: string]: any;
     }
 
-    interface bindings {
+    interface refs {
       [x: key]: proxy.group;
     }
 
     interface data {
       options: options;
-      keys: bindings;
+      refs: refs;
       totalProxies: number;
       activeProxies: number;
     }
