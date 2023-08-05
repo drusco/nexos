@@ -107,14 +107,14 @@ describe("Emulator Class", () => {
   describe("(method) bind", () => {
     it("Can access a proxy using a string", () => {
       const key = "test";
-      const proxy = $.bind(key);
-      expect(proxy).toBe($.bind(key));
+      const proxy = $.useRef(key);
+      expect(proxy).toBe($.useRef(key));
     });
 
     it("Can access a proxy using a symbol", () => {
       const key = Symbol();
-      const proxy = $.bind(key);
-      expect(proxy).toBe($.bind(key));
+      const proxy = $.useRef(key);
+      expect(proxy).toBe($.useRef(key));
     });
   });
 
@@ -181,14 +181,14 @@ describe("Emulator Class", () => {
 
       $.revoke(proxy);
 
-      expect(proxy).toThrow();
       expect(inner).not.toThrow();
+      expect(proxy).toThrow();
+      expect($.use(proxy)).toThrow();
       expect(() => proxy.inner).toThrow();
       expect(() => (proxy.inner = true)).toThrow();
       expect(() => delete proxy.inner).toThrow();
       expect(() => new proxy()).toThrow();
       expect(() => proxy.inner()).toThrow();
-      expect($.use(proxy)).not.toBe(proxy);
       expect($.use(inner)).toBe(inner);
     });
 
@@ -200,10 +200,10 @@ describe("Emulator Class", () => {
 
       expect(proxy).not.toThrow();
       expect(inner).toThrow();
+      expect($.use(inner)).toThrow();
       expect(() => new inner()).toThrow();
       expect(() => inner()).toThrow();
       expect($.use(proxy)).toBe(proxy);
-      expect($.use(inner)).not.toBe(inner);
       expect($.ownKeys(proxy).includes("inner")).toBe(false);
     });
   });
@@ -219,8 +219,8 @@ describe("Emulator Class", () => {
       // const property = (proxy.property = true);
       // const propertyInner = (proxy.property.inner = true);
 
-      for (const [key, prox] of $.entries()) {
-        console.log(key, prox);
+      for (const prox of $.entries()) {
+        console.log($.target(prox));
       }
 
       // $.revokeAll(proxy);
@@ -239,9 +239,9 @@ describe("Emulator Class", () => {
 
   describe("(getter) refs", () => {
     it("Returns an Array of all binding keys in use", () => {
-      const key = "test";
-      $.bind(key);
-      expect($.refs.includes(key)).toBe(true);
+      const reference = "test";
+      $.useRef(reference);
+      expect($.refs.includes(reference)).toBe(true);
     });
   });
 

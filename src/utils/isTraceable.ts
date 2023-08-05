@@ -1,4 +1,4 @@
-import find from "./findProxy";
+import findProxy from "./findProxy";
 
 const isTraceable = (value: any): boolean => {
   const isObject = typeof value === "object";
@@ -6,7 +6,7 @@ const isTraceable = (value: any): boolean => {
 
   if (!isObject && !isFunction) return false;
   if (value === null) return false;
-  if (find(value)) return false;
+  if (findProxy(value)) return false;
 
   return true;
 };

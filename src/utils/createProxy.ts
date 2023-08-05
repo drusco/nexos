@@ -55,6 +55,7 @@ const createProxy = (
     refKey,
     prev: previousProxy,
     next: undefined,
+    revoked: false,
   };
 
   if (previousProxy) {

@@ -7,7 +7,7 @@ declare namespace Exotic {
 
   interface Emulator extends EventEmitter {
     refs: key[];
-    bind(x: key): Proxy;
+    useRef(ref: key): Proxy;
     use(value?: any): Proxy;
     target(value?: any): any;
   }
@@ -50,6 +50,7 @@ declare namespace Exotic {
 
     interface data extends public {
       revoke(): void;
+      revoked: boolean;
       mock: Mock;
       origin?: proxy.origin | undefined;
       scope: Emulator;

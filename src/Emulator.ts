@@ -38,7 +38,7 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return totalProxies;
   }
 
-  bind(key: Exotic.key): Exotic.Proxy {
+  useRef(key: Exotic.key): Exotic.Proxy {
     const { refs }: Exotic.emulator.data = map.emulators.get(this);
     const group = refs[key];
 
@@ -105,8 +105,10 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     const proxy = findProxy(value);
     if (!proxy) return;
 
-    const { id, refKey, mock, revoke, target, origin } = map.proxies.get(proxy);
+    const proxyData = map.proxies.get(proxy);
     const data = map.emulators.get(this);
+
+    const { id, refKey, mock, revoke, target, origin } = proxyData;
     const { refs } = data;
     const group = refs[refKey];
 
@@ -127,13 +129,24 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
 
     map.mocks.delete(mock);
     map.targets.delete(target);
-    map.proxies.delete(proxy);
+
+    // keep proxy in map
+    // to prevent proxy out of revoked proxy (throws error)
+    //map.proxies.delete(proxy);
 
     revoke();
 
+    proxyData.revoked = true;
     data.activeProxies -= 1;
 
     this.emit("revoke", id);
+  }
+
+  revoked(value: Exotic.traceable): boolean {
+    const proxy = findProxy(value);
+    if (!proxy) return false;
+    const { revoked } = map.proxies.get(proxy);
+    return revoked;
   }
 
   //revokeAll(value?: Exotic.traceable): void {
@@ -144,24 +157,33 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
   // }
   //}
 
-  *entries(value?: Exotic.traceable): Iterable<[Exotic.key, Exotic.Proxy]> {
+  *entries(value?: Exotic.traceable): Iterable<Exotic.Proxy> {
     if (value === undefined) {
       for (const ref of this.refs) {
-        console.log("--ref", ref, this.ownKeys(this.bind(ref)));
-        this.entries(this.bind(ref));
+        for (const proxy of this.entries(this.useRef(ref))) {
+          if (!this.revoked(proxy)) {
+            yield proxy;
+          }
+        }
       }
       return;
     }
 
-    console.log("prox", value);
-
     const proxy = findProxy(value);
     if (!proxy) return;
 
-    const { sandbox } = map.proxies.get(proxy);
+    if (!this.revoked(proxy)) {
+      yield proxy;
+    }
 
-    for (const key of Reflect.ownKeys(sandbox)) {
-      yield [key, sandbox[key]];
+    const { next } = map.proxies.get(proxy);
+
+    if (next) {
+      for (const proxy of this.entries(next)) {
+        if (!this.revoked(proxy)) {
+          yield proxy;
+        }
+      }
     }
   }
 
