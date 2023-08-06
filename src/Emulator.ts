@@ -127,6 +127,8 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     }
   }
 
+  // faltando
+
   encode(value: unknown): unknown {
     if (findProxy(value)) {
       const { id } = map.proxies.get(this.use(value));

@@ -6,11 +6,21 @@ declare namespace Exotic {
   type key = string | symbol;
 
   interface Emulator extends EventEmitter {
-    revoked(proxy: Proxy): boolean;
     useRef(ref: key): Proxy;
     use(value?: any): Proxy;
     target(value?: any): any;
+    parent(value?: traceable): undefined | Proxy;
+    children(value?: traceable): Proxy[];
+    ownKeys(value?: Exotic.traceable): Exotic.key[];
+    revoke(value: Exotic.traceable): boolean;
+    revoked(value: Exotic.traceable): boolean;
+    entries(): Iterable<Exotic.Proxy>;
+    entriesBefore(value: Exotic.traceable): Iterable<Exotic.Proxy>;
+    entriesAfter(value: Exotic.traceable): Iterable<Exotic.Proxy>;
     refs: key[];
+    active: number;
+    void: number;
+    length: number;
   }
 
   type FunctionLike = (...args: any[]) => void;

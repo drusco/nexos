@@ -6,7 +6,7 @@ import Exotic from "./types/Exotic";
 const $ = new Emulator();
 
 describe("Emulator Class", () => {
-  describe("(method) proxy", () => {
+  describe("(method) use", () => {
     it(`Always returns a proxy function`, () => {
       expect(typeof $.use({ test: "wawa" })).toBe("function");
       expect(typeof $.use([])).toBe("function");
@@ -105,7 +105,7 @@ describe("Emulator Class", () => {
     });
   });
 
-  describe("(method) bind", () => {
+  describe("(method) useRef", () => {
     it("Can access a proxy using a string", () => {
       const key = "test";
       const proxy = $.useRef(key);
@@ -206,6 +206,18 @@ describe("Emulator Class", () => {
       expect(() => inner()).toThrow();
       expect($.use(proxy)).toBe(proxy);
       expect($.ownKeys(proxy).includes("inner")).toBe(false);
+    });
+  });
+
+  describe("(method) revoked", () => {
+    it("Returns a boolean indicating whether a proxy is revoked or not", () => {
+      const proxy = $.use();
+      const inner = proxy.inner;
+
+      $.revoke(proxy);
+
+      expect($.revoked(proxy)).toBe(true);
+      expect($.revoked(inner)).toBe(false);
     });
   });
 

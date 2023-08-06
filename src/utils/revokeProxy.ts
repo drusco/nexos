@@ -44,6 +44,16 @@ const revokeProxy = (
   proxyData.revoked = true;
   data.activeProxies -= 1;
 
+  if (data.activeProxies === 0) {
+    // clean internal state
+    Object.assign(data, {
+      firstProxy: undefined,
+      lastProxy: undefined,
+      totalProxies: 0,
+      refs: Object.create(null),
+    });
+  }
+
   scope.emit("revoke", id);
   return true;
 };
