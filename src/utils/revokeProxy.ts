@@ -14,10 +14,10 @@ const revokeProxy = (
 
   const { id, refKey, mock, revoke, target, origin } = proxyData;
   const { refs } = data;
-  const group = refs[refKey];
+  const proxyRef = refs[refKey];
 
-  if (group.root === proxy) {
-    // delete group
+  if (proxyRef === proxy) {
+    // delete reference
     delete refs[refKey];
     scope.emit("unbind", refKey);
   }

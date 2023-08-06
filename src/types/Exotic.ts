@@ -26,11 +26,6 @@ declare namespace Exotic {
 
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace proxy {
-    interface group {
-      root: Exotic.Proxy;
-      last: Exotic.Proxy;
-    }
-
     interface sandbox {
       [x: key]: any;
     }
@@ -69,7 +64,7 @@ declare namespace Exotic {
     }
 
     interface refs {
-      [x: key]: proxy.group;
+      [x: key]: Proxy;
     }
 
     interface data {
@@ -77,6 +72,8 @@ declare namespace Exotic {
       refs: refs;
       totalProxies: number;
       activeProxies: number;
+      firstProxy?: Proxy;
+      lastProxy?: Proxy;
     }
   }
 }

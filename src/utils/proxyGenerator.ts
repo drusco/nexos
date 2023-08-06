@@ -8,11 +8,13 @@ const proxyGenerator = function* (
   reverse: boolean = false,
 ): Iterable<Exotic.Proxy> {
   if (value === undefined) {
-    for (const ref of scope.refs) {
-      for (const proxy of proxyGenerator(scope, scope.useRef(ref))) {
-        if (!scope.revoked(proxy)) {
-          yield proxy;
-        }
+    const { firstProxy } = map.emulators.get(scope);
+
+    if (!firstProxy) return;
+
+    for (const proxy of proxyGenerator(scope, firstProxy, false)) {
+      if (!scope.revoked(proxy)) {
+        yield proxy;
       }
     }
     return;

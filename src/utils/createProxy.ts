@@ -17,34 +17,33 @@ const createProxy = (
   if (currentProxy) return currentProxy;
 
   const data: Exotic.emulator.data = map.emulators.get(scope);
-  const { refs } = data;
+  const { refs, firstProxy, lastProxy } = data;
 
   const id = ++data.totalProxies;
   const mock = function mock() {} as Exotic.Mock;
-  let group: Exotic.proxy.group = refs[refKey];
   const traceable = isTraceable(target);
+  let proxyRef: Exotic.Proxy | undefined = refs[refKey];
 
   const { proxy, revoke } = Proxy.revocable<Exotic.Proxy>(
     Object.setPrototypeOf(mock, mockPrototype),
     traps,
   );
 
+  if (!firstProxy) {
+    data.firstProxy = proxy;
+  }
+
   if (traceable) {
     map.targets.set(target, proxy);
   }
 
-  if (!group) {
-    // create the new group
-    group = {
-      root: proxy,
-      last: proxy,
-    };
-
-    refs[refKey] = group;
+  if (!proxyRef) {
+    // create the new reference
+    proxyRef = proxy;
+    refs[refKey] = proxyRef;
     scope.emit("bind", refKey);
   }
 
-  const previousProxy = group.last === proxy ? undefined : group.last;
   // set the proxy information
   const proxyData: Exotic.proxy.data = {
     id,
@@ -55,16 +54,16 @@ const createProxy = (
     scope,
     sandbox: Object.create(null),
     refKey,
-    prev: previousProxy,
+    prev: lastProxy,
     next: undefined,
     revoked: false,
   };
 
-  if (previousProxy) {
+  if (lastProxy) {
     // update previous proxy
-    const prevData = map.proxies.get(previousProxy);
-    if (prevData) {
-      prevData.next = proxy;
+    const lastProxyData = map.proxies.get(lastProxy);
+    if (lastProxyData) {
+      lastProxyData.next = proxy;
     }
   }
 
@@ -75,7 +74,7 @@ const createProxy = (
     ref: refKey,
   });
 
-  group.last = proxy;
+  data.lastProxy = proxy;
   data.activeProxies += 1;
 
   map.mocks.set(mock, proxy);

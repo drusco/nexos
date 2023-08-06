@@ -20,6 +20,8 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
       refs: Object.create(null),
       totalProxies: 0, // total item count including revoked items, it only increases
       activeProxies: 0, // items that are not revoked
+      firstProxy: undefined,
+      lastProxy: undefined,
     };
 
     map.emulators.set(this, data);
@@ -48,12 +50,12 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
 
   useRef(key: Exotic.key): Exotic.Proxy {
     const { refs }: Exotic.emulator.data = map.emulators.get(this);
-    const group = refs[key];
+    const proxyRef = refs[key];
 
-    // return the first proxy in the existing group
-    if (group) return group.root;
+    // return proxy by reference
+    if (proxyRef) return proxyRef;
 
-    // create the first proxy for a new group
+    // create a proxy by reference key
     return createProxy(this, undefined, key);
   }
 
@@ -108,14 +110,20 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
   }
 
   *entriesBefore(value: Exotic.traceable): Iterable<Exotic.Proxy> {
+    const currentProxy = findProxy(value);
     for (const proxy of proxyGenerator(this, value, true)) {
-      yield proxy;
+      if (proxy !== currentProxy) {
+        yield proxy;
+      }
     }
   }
 
   *entriesAfter(value: Exotic.traceable): Iterable<Exotic.Proxy> {
+    const currentProxy = findProxy(value);
     for (const proxy of proxyGenerator(this, value, false)) {
-      yield proxy;
+      if (proxy !== currentProxy) {
+        yield proxy;
+      }
     }
   }
 

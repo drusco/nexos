@@ -227,11 +227,20 @@ describe("Emulator Class", () => {
   describe("(method) entriesAfter", () => {
     it("Returns an iterator that contains the active proxies created after a certain proxy", () => {
       const proxy = $.use();
-      const newProxies: Exotic.Proxy[] = [proxy];
+      const newProxies: Exotic.Proxy[] = [];
 
       newProxies.push(proxy.child, proxy.inner, proxy.inner.child);
 
       expect([...$.entriesAfter(proxy)].length).toBe(newProxies.length);
+    });
+  });
+
+  describe("(method) entriesBefore", () => {
+    it("Returns an iterator that contains the active proxies created before a certain proxy", () => {
+      const activeProxies = $.active;
+      const proxy = $.use();
+
+      expect([...$.entriesBefore(proxy)].length).toBe(activeProxies);
     });
   });
 
@@ -240,7 +249,7 @@ describe("Emulator Class", () => {
   });
 
   describe("(getter) refs", () => {
-    it("Returns an Array of all binding keys in use", () => {
+    it("Returns an array of all reference keys in use", () => {
       const reference = Date.now().toString();
       $.useRef(reference);
       expect($.refs.includes(reference)).toBe(true);
