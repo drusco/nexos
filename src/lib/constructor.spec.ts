@@ -8,6 +8,15 @@ describe("(constructor)", () => {
     const emulator = new Emulator(config);
     const data: Record<string, any> = map.emulators.get(emulator) || {};
 
+    const dataProps = [
+      "options",
+      "refs",
+      "totalProxies",
+      "activeProxies",
+      "firstProxy",
+      "lastProxy",
+    ];
+
     const {
       options,
       refs,
@@ -18,6 +27,7 @@ describe("(constructor)", () => {
     } = data;
 
     expect(map.emulators.has(emulator)).toBe(true);
+    expect(Object.keys(data)).toEqual(dataProps);
     expect(options).toBe(config);
     expect(Reflect.ownKeys(refs).length).toBe(0);
     expect(totalProxies).toBe(0);
