@@ -1,133 +1,77 @@
+import lib from "./lib";
 import Exotic from "./types/Exotic";
-import {
-  findProxy,
-  map,
-  createProxy,
-  proxyGenerator,
-  revokeProxy,
-} from "./utils";
-import { symbols } from "./utils/constants";
+import { findProxy, map } from "./utils";
 import { EventEmitter } from "events";
 
 export default class Emulator extends EventEmitter implements Exotic.Emulator {
-  public static symbols = symbols;
-
   constructor(options: Exotic.emulator.options = {}) {
     super();
-
-    const data: Exotic.emulator.data = {
-      options,
-      refs: Object.create(null),
-      totalProxies: 0, // total item count including revoked items, it only increases
-      activeProxies: 0, // items that are not revoked
-      firstProxy: undefined,
-      lastProxy: undefined,
-    };
-
-    map.emulators.set(this, data);
+    lib.constructor(this, options);
   }
 
   get refs(): Exotic.key[] {
-    const { refs }: Exotic.emulator.data = map.emulators.get(this);
-    return Reflect.ownKeys(refs);
+    return lib.getters.refs(this);
   }
 
   get active(): number {
-    const { activeProxies }: Exotic.emulator.data = map.emulators.get(this);
-    return activeProxies;
+    return lib.getters.active(this);
   }
 
-  get void(): number {
-    const { activeProxies, totalProxies }: Exotic.emulator.data =
-      map.emulators.get(this);
-    return totalProxies - activeProxies;
+  get revoked(): number {
+    return lib.getters.revoked(this);
   }
 
   get length(): number {
-    const { totalProxies }: Exotic.emulator.data = map.emulators.get(this);
-    return totalProxies;
+    return lib.getters.length(this);
   }
 
   useRef(key: Exotic.key): Exotic.Proxy {
-    const { refs }: Exotic.emulator.data = map.emulators.get(this);
-    const proxyRef = refs[key];
-
-    // return proxy by reference
-    if (proxyRef) return proxyRef;
-
-    // create a proxy by reference key
-    return createProxy(this, undefined, key);
+    return lib.methods.useRef(this, key);
   }
 
   use(value?: any): Exotic.Proxy {
-    return createProxy(this, value);
+    return lib.methods.use(this, value);
   }
 
   target(value?: any): any {
-    const proxy = findProxy(value);
-    if (!proxy) return value;
-    const { target } = map.proxies.get(proxy);
-    return target;
+    return lib.methods.target(this, value);
   }
 
   parent(value?: Exotic.traceable): undefined | Exotic.Proxy {
-    const proxy = findProxy(value);
-    if (!proxy) return;
-    const { origin } = map.proxies.get(proxy);
-    return origin && origin.proxy;
+    return lib.methods.parent(this, value);
   }
 
   children(value?: Exotic.traceable): Exotic.Proxy[] {
-    const results = [];
-    const proxy = findProxy(value);
-    if (!proxy) return results;
-    const { sandbox } = map.proxies.get(proxy);
-    return Reflect.ownKeys(sandbox).map((key) => sandbox[key]);
+    return lib.methods.children(this, value);
   }
 
   ownKeys(value?: Exotic.traceable): Exotic.key[] {
-    const proxy = findProxy(value);
-    if (!proxy) return [];
-    const { sandbox } = map.proxies.get(proxy);
-    return Reflect.ownKeys(sandbox);
+    return lib.methods.ownKeys(this, value);
   }
 
   revoke(value: Exotic.traceable): boolean {
-    return revokeProxy(this, value);
+    return lib.methods.revoke(this, value);
   }
 
-  revoked(value: Exotic.traceable): boolean {
-    const proxy = findProxy(value);
-    if (!proxy) return false;
-    const { revoked } = map.proxies.get(proxy);
-    return revoked;
+  isRevoked(value: Exotic.traceable): boolean {
+    return lib.methods.isRevoked(this, value);
   }
 
-  *entries(): Iterable<Exotic.Proxy> {
-    for (const proxy of proxyGenerator(this)) {
-      yield proxy;
-    }
+  entries(): Iterable<Exotic.Proxy> {
+    return lib.methods.entries(this);
   }
 
-  *entriesBefore(value: Exotic.traceable): Iterable<Exotic.Proxy> {
-    const currentProxy = findProxy(value);
-    for (const proxy of proxyGenerator(this, value, true)) {
-      if (proxy !== currentProxy) {
-        yield proxy;
-      }
-    }
+  entriesBefore(value: Exotic.traceable): Iterable<Exotic.Proxy> {
+    return lib.methods.entriesBefore(this, value);
   }
 
-  *entriesAfter(value: Exotic.traceable): Iterable<Exotic.Proxy> {
-    const currentProxy = findProxy(value);
-    for (const proxy of proxyGenerator(this, value, false)) {
-      if (proxy !== currentProxy) {
-        yield proxy;
-      }
-    }
+  entriesAfter(value: Exotic.traceable): Iterable<Exotic.Proxy> {
+    return lib.methods.entriesAfter(this, value);
   }
 
   // faltando
+
+  useId() {}
 
   encode(value: unknown): unknown {
     if (findProxy(value)) {
@@ -152,6 +96,6 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     const proxy = findProxy(value);
     if (!proxy) return value;
     const { id, target } = map.proxies.get(proxy);
-    return { id, target, [symbols.PROXY]: true };
+    return { id, target };
   }
 }

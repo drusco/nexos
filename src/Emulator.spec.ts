@@ -216,8 +216,8 @@ describe("Emulator Class", () => {
 
       $.revoke(proxy);
 
-      expect($.revoked(proxy)).toBe(true);
-      expect($.revoked(inner)).toBe(false);
+      expect($.isRevoked(proxy)).toBe(true);
+      expect($.isRevoked(inner)).toBe(false);
     });
   });
 
@@ -272,11 +272,11 @@ describe("Emulator Class", () => {
     });
   });
 
-  describe("(getter) void", () => {
+  describe("(getter) revoked", () => {
     it("Returns the number of revoked proxies", () => {
-      const revoked = $.void;
+      const revoked = $.revoked;
       $.revoke($.use());
-      expect($.void).toBe(revoked + 1);
+      expect($.revoked).toBe(revoked + 1);
     });
   });
 

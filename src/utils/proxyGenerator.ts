@@ -13,7 +13,7 @@ const proxyGenerator = function* (
     if (!firstProxy) return;
 
     for (const proxy of proxyGenerator(scope, firstProxy, false)) {
-      if (!scope.revoked(proxy)) {
+      if (!scope.isRevoked(proxy)) {
         yield proxy;
       }
     }
@@ -23,7 +23,7 @@ const proxyGenerator = function* (
   const proxy = findProxy(value);
   if (!proxy) return;
 
-  if (!scope.revoked(proxy)) {
+  if (!scope.isRevoked(proxy)) {
     yield proxy;
   }
 
@@ -32,7 +32,7 @@ const proxyGenerator = function* (
 
   if (item) {
     for (const proxy of proxyGenerator(scope, item, reverse)) {
-      if (!scope.revoked(proxy)) {
+      if (!scope.isRevoked(proxy)) {
         yield proxy;
       }
     }
