@@ -6,8 +6,9 @@ declare namespace Exotic {
   type key = string | symbol;
 
   interface Emulator extends EventEmitter {
-    useRef(ref: key): Proxy;
     use(value?: any): Proxy;
+    useRef(ref: key): Proxy;
+    getId(value: traceable): number;
     target(value?: any): any;
     parent(value?: traceable): undefined | Proxy;
     children(value?: traceable): Proxy[];
@@ -17,7 +18,6 @@ declare namespace Exotic {
     entries(): Iterable<Proxy>;
     entriesBefore(value: traceable): Iterable<Proxy>;
     entriesAfter(value: traceable): Iterable<Proxy>;
-    getId(value: traceable): number;
     refs: key[];
     active: number;
     revoked: number;
@@ -53,7 +53,6 @@ declare namespace Exotic {
     interface data {
       id: number;
       target?: any;
-      revoke(): void;
       revoked: boolean;
       mock: Mock;
       origin?: origin | undefined;
@@ -62,6 +61,7 @@ declare namespace Exotic {
       refKey: key;
       next?: Proxy;
       prev?: Proxy;
+      revoke(): void;
     }
   }
 

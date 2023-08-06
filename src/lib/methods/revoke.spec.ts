@@ -33,4 +33,18 @@ describe("(method) revoke", () => {
     expect($.use(proxy)).toBe(proxy);
     expect($.ownKeys(proxy).includes("inner")).toBe(false);
   });
+
+  it("Removes the reference linked to a proxy", () => {
+    const ref = Symbol();
+    const proxy = $.useRef(ref);
+    const inner = proxy.inner;
+    const deep = proxy.inner.inner;
+
+    $.revoke(proxy);
+
+    expect($.refs.includes(ref)).toBe(false);
+    expect($.useRef(ref)).not.toBe(proxy);
+    expect($.useRef(ref)).not.toBe(inner);
+    expect($.useRef(ref)).not.toBe(deep);
+  });
 });

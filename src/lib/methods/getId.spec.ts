@@ -10,4 +10,12 @@ describe("(method) getId", () => {
     expect($.getId(proxy)).toBe(totalProxies + 1);
     expect($.getId(another)).toBe(totalProxies + 2);
   });
+
+  it("Returns NaN when the value is not linked to an identifier", () => {
+    const totalProxies = $.length;
+    const value = ["not_a_proxy"];
+
+    expect($.getId(value)).toBe(NaN);
+    expect($.length).toBe(totalProxies);
+  });
 });

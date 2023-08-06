@@ -24,12 +24,16 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return lib.getters.length(this);
   }
 
+  use(value?: any): Exotic.Proxy {
+    return lib.methods.use(this, value);
+  }
+
   useRef(key: Exotic.key): Exotic.Proxy {
     return lib.methods.useRef(this, key);
   }
 
-  use(value?: any): Exotic.Proxy {
-    return lib.methods.use(this, value);
+  getId(value: Exotic.traceable): number {
+    return lib.methods.getId(this, value);
   }
 
   target(value?: any): any {
@@ -66,9 +70,5 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
 
   entriesAfter(value: Exotic.traceable): Iterable<Exotic.Proxy> {
     return lib.methods.entriesAfter(this, value);
-  }
-
-  getId(value: Exotic.traceable): number {
-    return lib.methods.getId(this, value);
   }
 }
