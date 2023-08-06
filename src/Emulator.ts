@@ -1,6 +1,5 @@
 import lib from "./lib";
 import Exotic from "./types/Exotic";
-import { findProxy, map } from "./utils";
 import { EventEmitter } from "events";
 
 export default class Emulator extends EventEmitter implements Exotic.Emulator {
@@ -69,33 +68,7 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return lib.methods.entriesAfter(this, value);
   }
 
-  // faltando
-
-  useId() {}
-
-  encode(value: unknown): unknown {
-    if (findProxy(value)) {
-      const { id } = map.proxies.get(this.use(value));
-      return { id, encoded: true }; // TODO: usar Symbol para saber si es encoded o no
-    }
-
-    if (typeof value === "object" && value) {
-      const copy = Array.isArray(value) ? [] : {};
-
-      for (const key in value) {
-        copy[key] = this.encode(value[key]);
-      }
-
-      value = copy;
-    }
-
-    return value;
-  }
-
-  resolve(value: any): Exotic.proxy.public {
-    const proxy = findProxy(value);
-    if (!proxy) return value;
-    const { id, target } = map.proxies.get(proxy);
-    return { id, target };
+  getId(value: Exotic.traceable): number {
+    return lib.methods.getId(this, value);
   }
 }

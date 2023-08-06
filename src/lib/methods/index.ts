@@ -9,6 +9,7 @@ import isRevoked from "./isRevoked";
 import entries from "./entries";
 import entriesBefore from "./entriesBefore";
 import entriesAfter from "./entriesAfter";
+import getId from "./getId";
 
 export default {
   useRef,
@@ -22,4 +23,5 @@ export default {
   entries,
   entriesBefore,
   entriesAfter,
+  getId,
 };

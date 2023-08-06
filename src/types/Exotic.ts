@@ -11,12 +11,13 @@ declare namespace Exotic {
     target(value?: any): any;
     parent(value?: traceable): undefined | Proxy;
     children(value?: traceable): Proxy[];
-    ownKeys(value?: Exotic.traceable): Exotic.key[];
-    revoke(value: Exotic.traceable): boolean;
-    isRevoked(value: Exotic.traceable): boolean;
-    entries(): Iterable<Exotic.Proxy>;
-    entriesBefore(value: Exotic.traceable): Iterable<Exotic.Proxy>;
-    entriesAfter(value: Exotic.traceable): Iterable<Exotic.Proxy>;
+    ownKeys(value?: traceable): key[];
+    revoke(value: traceable): boolean;
+    isRevoked(value: traceable): boolean;
+    entries(): Iterable<Proxy>;
+    entriesBefore(value: traceable): Iterable<Proxy>;
+    entriesAfter(value: traceable): Iterable<Proxy>;
+    getId(value: traceable): number;
     refs: key[];
     active: number;
     revoked: number;
@@ -49,16 +50,13 @@ declare namespace Exotic {
       args?: any[];
     }
 
-    interface public {
+    interface data {
       id: number;
       target?: any;
-    }
-
-    interface data extends public {
       revoke(): void;
       revoked: boolean;
       mock: Mock;
-      origin?: proxy.origin | undefined;
+      origin?: origin | undefined;
       scope: Emulator;
       sandbox: sandbox;
       refKey: key;
@@ -69,13 +67,8 @@ declare namespace Exotic {
 
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace emulator {
-    interface options {
-      [x: string]: any;
-    }
-
-    interface refs {
-      [x: key]: Proxy;
-    }
+    type options = Record<string, any>;
+    type refs = Record<key, Proxy>;
 
     interface data {
       options: options;
