@@ -22,7 +22,7 @@ describe("(constructor)", () => {
     expect(Reflect.ownKeys(refs).length).toBe(0);
     expect(totalProxies).toBe(0);
     expect(activeProxies).toBe(0);
-    expect(firstProxy).toBe(undefined);
-    expect(lastProxy).toBe(undefined);
+    expect(firstProxy).toBeUndefined();
+    expect(lastProxy).toBeUndefined();
   });
 });

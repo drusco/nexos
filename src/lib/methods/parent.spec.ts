@@ -6,6 +6,6 @@ describe("(method) parent", () => {
     const parent = $.use();
     const child = parent.child;
     expect($.parent(child)).toBe(parent);
-    expect($.parent(parent)).toBe(undefined);
+    expect($.parent(parent)).toBeUndefined();
   });
 });

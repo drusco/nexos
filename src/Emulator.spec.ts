@@ -29,7 +29,7 @@ describe("Proxy", () => {
       expect($.target(proxy.number)).toBe(100);
       expect($.target(proxy.null)).toBe(null);
       expect($.target(proxy.boolean)).toBe(true);
-      expect($.target(proxy.undefined)).toBe(undefined);
+      expect($.target(proxy.undefined)).toBeUndefined();
       expect(typeof proxy.object).toBe("function");
       expect(typeof proxy.array).toBe("function");
       expect($.target(proxy.string)).toBe("test");
@@ -38,7 +38,7 @@ describe("Proxy", () => {
       expect(typeof proxy.object.sub).toBe("function");
       expect(proxy.object.sub.deep).toBe($.use(deep));
       expect($.target(proxy.object.sub.deep.test)).toBe(true);
-      expect($.target(proxy.toDelete)).toBe(undefined);
+      expect($.target(proxy.toDelete)).toBeUndefined();
     });
 
     it("Adds a value to the original target", () => {
@@ -68,8 +68,8 @@ describe("Proxy", () => {
       delete proxy.set.sub.deep.property;
       delete proxy.set;
 
-      expect(deep.property).toBe(undefined);
-      expect($.target(proxy.set)).toBe(undefined);
+      expect(deep.property).toBeUndefined();
+      expect($.target(proxy.set)).toBeUndefined();
     });
   });
 
