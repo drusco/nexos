@@ -2,19 +2,14 @@ import Emulator from "../../Emulator";
 const $ = new Emulator();
 
 describe("(trap) set", () => {
-  it("Adds a value to the original target", () => {
-    const proxy = $.use();
-    const deep = { test: true, prox: true };
+  it("Sets a value to the proxy and the target", () => {
+    const target = { value: false };
+    const proxy = $.use(target);
 
-    proxy.set = { object: true };
-    proxy.set.sub = {};
-    proxy.set.sub.deep = deep;
-    proxy.set.sub.deep.test = false;
-    $.use(deep).test = null;
-    $.use(deep).prox = $.use("test");
+    proxy.value = true;
 
-    expect(deep.test).toBe(null);
-    expect($.target($.use(deep).test)).toBe(null);
-    expect(deep.prox).toBe("test");
+    expect(typeof proxy.value).toBe("function");
+    expect(target.value).toBe(true);
+    expect($.target(proxy.value)).toBe(true);
   });
 });

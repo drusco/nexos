@@ -2,13 +2,22 @@ import Emulator from "../../Emulator";
 const $ = new Emulator();
 
 describe("(trap) apply", () => {
-  it("Gets a proxy from an apply trap when target is not a function", () => {
+  it("Returns a new proxy from a proxy's function call when the target isn't a function", () => {
     const proxy = $.use();
-    expect(typeof proxy()).toBe("function");
+    const currentProxies = $.active;
+    const returnValue = proxy();
+
+    expect(typeof returnValue).toBe("function");
+    expect($.active).toBe(currentProxies + 1);
   });
 
-  it("Gets a value from an apply trap when target is a function", () => {
-    const proxy = $.use((value: number) => value / 2);
-    expect($.target(proxy(10))).toBe(5);
+  it("Returns a proxy from the target's return value when the target is a function", () => {
+    const target = (value: number) => value / 2;
+    const proxy = $.use(target);
+    const five = proxy(10);
+
+    expect(typeof proxy).toBe("function");
+    expect(typeof five).toBe("function");
+    expect($.target(five)).toBe(5);
   });
 });

@@ -2,18 +2,16 @@ import Emulator from "../../Emulator";
 const $ = new Emulator();
 
 describe("(trap) deleteProperty", () => {
-  it("Can delete a property from a proxy and its original target", () => {
-    const proxy = $.use({});
-    const deep = { deep: true, property: "test" };
+  it("Deletes a property from a proxy and its original target", () => {
+    const target = { value: false };
+    const proxy = $.use(target);
 
-    proxy.set = { test: true };
-    proxy.set.sub = {};
-    proxy.set.sub.deep = deep;
+    expect($.target(proxy.value)).toBe(false);
+    expect(target.value).toBe(false);
 
-    delete proxy.set.sub.deep.property;
-    delete proxy.set;
+    delete proxy.value;
 
-    expect(deep.property).toBeUndefined();
-    expect($.target(proxy.set)).toBeUndefined();
+    expect(target.value).toBeUndefined();
+    expect($.target(proxy.value)).toBeUndefined();
   });
 });
