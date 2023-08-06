@@ -49,7 +49,6 @@ const revokeProxy = (
     Object.assign(data, {
       firstProxy: undefined,
       lastProxy: undefined,
-      totalProxies: 0,
       refs: Object.create(null),
     });
   }

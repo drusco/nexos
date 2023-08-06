@@ -4,7 +4,7 @@ import { map } from "../utils";
 export default function constructor(
   scope: Exotic.Emulator,
   options: Exotic.emulator.options,
-): Exotic.Emulator {
+): void {
   const data: Exotic.emulator.data = {
     options,
     refs: Object.create(null),
@@ -15,6 +15,4 @@ export default function constructor(
   };
 
   map.emulators.set(scope, data);
-
-  return scope;
 }
