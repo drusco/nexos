@@ -69,6 +69,20 @@ describe("Emulator Class", () => {
     });
   });
 
+  describe("(method) useRef", () => {
+    it("Can access a proxy using a string", () => {
+      const key = "test";
+      const proxy = $.useRef(key);
+      expect(proxy).toBe($.useRef(key));
+    });
+
+    it("Can access a proxy using a symbol", () => {
+      const key = Symbol();
+      const proxy = $.useRef(key);
+      expect(proxy).toBe($.useRef(key));
+    });
+  });
+
   describe("(method) target", () => {
     it("Returns the target used by a proxy", () => {
       const target = "$%&Test";
@@ -102,20 +116,6 @@ describe("Emulator Class", () => {
       expect($.target(proxy.pop())).toBe("test");
       expect(reference.length).toBe(5);
       expect($.target(proxy.length)).toBe(reference.length);
-    });
-  });
-
-  describe("(method) useRef", () => {
-    it("Can access a proxy using a string", () => {
-      const key = "test";
-      const proxy = $.useRef(key);
-      expect(proxy).toBe($.useRef(key));
-    });
-
-    it("Can access a proxy using a symbol", () => {
-      const key = Symbol();
-      const proxy = $.useRef(key);
-      expect(proxy).toBe($.useRef(key));
     });
   });
 
@@ -254,10 +254,6 @@ describe("Emulator Class", () => {
 
       expect([...$.entriesBefore(proxy)].length).toBe(activeProxies);
     });
-  });
-
-  describe("(method) encode", () => {
-    // TODO
   });
 
   describe("(getter) refs", () => {
