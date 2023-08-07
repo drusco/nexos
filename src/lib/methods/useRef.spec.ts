@@ -13,4 +13,10 @@ describe("(method) $.useRef", () => {
     const proxy = $.useRef(key);
     expect(proxy).toBe($.useRef(key));
   });
+
+  it("Allows empty string as reference key", () => {
+    const key = "";
+    const proxy = $.useRef(key);
+    expect(proxy).toBe($.useRef(key));
+  });
 });

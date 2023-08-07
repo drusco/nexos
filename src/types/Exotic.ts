@@ -28,11 +28,11 @@ declare namespace Exotic {
 
   interface Mock extends FunctionLike {
     [x: key]: any;
-    [Symbol.iterator](): Iterator<any, any, undefined>;
+    [Symbol.iterator](): Iterator<any>;
   }
 
   interface Proxy extends Mock {
-    [Symbol.iterator](): Iterator<Proxy, any, undefined>;
+    [Symbol.iterator](): Iterator<Proxy>;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-namespace

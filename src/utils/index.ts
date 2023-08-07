@@ -5,7 +5,6 @@ import proxyGenerator from "./proxyGenerator";
 import revokeProxy from "./revokeProxy";
 import map from "./map";
 import * as traps from "./traps";
-import * as constants from "./constants";
 
 export {
   isTraceable,
@@ -15,5 +14,4 @@ export {
   createProxy,
   revokeProxy,
   traps,
-  constants,
 };

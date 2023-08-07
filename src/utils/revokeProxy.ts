@@ -7,25 +7,30 @@ const revokeProxy = (
   value: Exotic.traceable,
 ): boolean => {
   const proxy = findProxy(value);
-  if (!proxy) return false;
+
+  if (!proxy) {
+    return false;
+  }
 
   const proxyData = map.proxies.get(proxy);
+  const { id, mock, revoke, target, origin, revoked, refKey } = proxyData;
 
-  if (proxyData.revoked) return true;
+  if (revoked) {
+    return true;
+  }
 
   const data = map.emulators.get(scope);
   const { refs } = data;
-  const { id, mock, revoke, target, origin } = proxyData;
-  const hasRefKey = proxyData.refKey !== undefined;
+  const validRefKey = refKey !== undefined;
 
-  if (hasRefKey) {
+  if (validRefKey) {
     // refKey is binded to proxy
     // delete refKey from refs object
-    delete refs[proxyData.refKey];
+    delete refs[refKey];
     // delete refKey from proxy
     proxyData.refKey = undefined;
     // inform
-    scope.emit("unbind", proxyData.refKey);
+    scope.emit("unbind", refKey);
   }
 
   if (origin) {
