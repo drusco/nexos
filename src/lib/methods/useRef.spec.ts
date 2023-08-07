@@ -1,7 +1,7 @@
 import Emulator from "../../Emulator";
 const $ = new Emulator();
 
-describe("(method) $.useRef", () => {
+describe("(method) useRef", () => {
   it("Can access a proxy using a string", () => {
     const key = "test";
     const proxy = $.useRef(key);
