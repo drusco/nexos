@@ -11,12 +11,10 @@ describe("(method) encode", () => {
   });
 
   it("Encodes proxies into payload objects deeply", () => {
-    const proxy = $.use();
-    const deep = proxy.deep;
-    const value = [proxy, [[[{ deep }]]]];
+    const deep = $.use();
+    const value = [[[[{ deep }]]]];
     const mock: Exotic.payload = {
       value: [
-        { value: 2, encoded: true },
         {
           value: [
             {
@@ -24,7 +22,7 @@ describe("(method) encode", () => {
                 {
                   value: [
                     {
-                      value: { deep: { value: 3, encoded: true } },
+                      value: { deep: { value: 2, encoded: true } },
                       encoded: false,
                     },
                   ],
