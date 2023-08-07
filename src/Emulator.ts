@@ -71,4 +71,8 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
   entriesAfter(value: Exotic.traceable): Iterable<Exotic.Proxy> {
     return lib.methods.entriesAfter(this, value);
   }
+
+  encode(value: any): Exotic.payload {
+    return lib.methods.encode(this, value);
+  }
 }

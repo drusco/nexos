@@ -10,6 +10,7 @@ import entries from "./entries";
 import entriesBefore from "./entriesBefore";
 import entriesAfter from "./entriesAfter";
 import getId from "./getId";
+import encode from "./encode";
 
 export default {
   useRef,
@@ -24,4 +25,5 @@ export default {
   entriesBefore,
   entriesAfter,
   getId,
+  encode,
 };

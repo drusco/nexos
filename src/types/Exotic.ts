@@ -2,8 +2,13 @@ import { EventEmitter } from "events";
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace Exotic {
-  type traceable = object | FunctionLike;
+  type traceable = object;
   type key = string | symbol;
+
+  interface payload {
+    proxy: boolean;
+    value: any;
+  }
 
   interface Emulator extends EventEmitter {
     use(value?: any): Proxy;
@@ -18,6 +23,7 @@ declare namespace Exotic {
     entries(): Iterable<Proxy>;
     entriesBefore(value: traceable): Iterable<Proxy>;
     entriesAfter(value: traceable): Iterable<Proxy>;
+    encode(value: any): Exotic.payload;
     refs: key[];
     active: number;
     revoked: number;
