@@ -1,37 +1,44 @@
 import Emulator from "../../Emulator";
 import Exotic from "../../types/Exotic";
 
-let $: Exotic.Emulator;
-
-const payload = (value?: any, encoded: boolean = true): Exotic.payload => {
-  return { value, encoded };
-};
+const $ = new Emulator();
 
 describe("(method) encode", () => {
   it("Encodes a proxy into a payload object", () => {
     const proxy = $.use();
-    const mock: Exotic.payload = payload(1);
+    const mock: Exotic.payload = { value: 1, encoded: true };
     expect($.encode(proxy)).toEqual(mock);
   });
 
   it("Encodes proxies into payload objects deeply", () => {
     const proxy = $.use();
-    const second = proxy.second;
-    const third = proxy.second.third;
-    const value = [proxy, second, third, [[[third.fourth]]]];
-    const mock: Exotic.payload = payload(
-      [
-        payload(1),
-        payload(2),
-        payload(3),
-        payload([payload([payload([payload(4)], false)], false)], false),
+    const deep = proxy.deep;
+    const value = [proxy, [[[{ deep }]]]];
+    const mock: Exotic.payload = {
+      value: [
+        { value: 2, encoded: true },
+        {
+          value: [
+            {
+              value: [
+                {
+                  value: [
+                    {
+                      value: { deep: { value: 3, encoded: true } },
+                      encoded: false,
+                    },
+                  ],
+                  encoded: false,
+                },
+              ],
+              encoded: false,
+            },
+          ],
+          encoded: false,
+        },
       ],
-      false,
-    );
+      encoded: false,
+    };
     expect($.encode(value)).toEqual(mock);
   });
-});
-
-beforeEach(() => {
-  $ = new Emulator();
 });

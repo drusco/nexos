@@ -1,19 +1,13 @@
 import Exotic from "../../types/Exotic";
-import { findProxy, map } from "../../utils";
+import { getPayload } from "../../utils";
 
 export default function encode(
   scope: Exotic.Emulator,
   value: any,
 ): Exotic.payload {
-  const proxy = findProxy(value);
   const isObject = value !== null && typeof value === "object";
   const isArray = Array.isArray(value);
-  const result: Exotic.payload = { value, encoded: false };
-
-  if (proxy) {
-    result.encoded = true;
-    result.value = map.proxies.get(proxy).id;
-  }
+  const result: Exotic.payload = getPayload(scope, value);
 
   if (isObject) {
     const copy = isArray ? [] : {};

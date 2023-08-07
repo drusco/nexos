@@ -3,6 +3,7 @@ import findProxy from "./findProxy";
 import createProxy from "./createProxy";
 import proxyGenerator from "./proxyGenerator";
 import revokeProxy from "./revokeProxy";
+import getPayload from "./getPayload";
 import map from "./map";
 import * as traps from "./traps";
 
@@ -14,4 +15,5 @@ export {
   createProxy,
   revokeProxy,
   traps,
+  getPayload,
 };
