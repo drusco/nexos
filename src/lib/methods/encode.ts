@@ -17,10 +17,12 @@ export default function encode(
 
   if (isObject) {
     const copy = isArray ? [] : {};
-    result.value = copy;
+
     for (const key in value) {
       copy[key] = encode(scope, value[key]);
     }
+
+    result.value = copy;
   }
 
   return result;
