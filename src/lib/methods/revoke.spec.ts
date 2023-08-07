@@ -34,7 +34,7 @@ describe("(method) revoke", () => {
     expect($.ownKeys(proxy).includes("inner")).toBe(false);
   });
 
-  it("Removes the reference linked to a proxy", () => {
+  it("Removes the reference binded to a proxy", () => {
     const ref = Symbol();
     const proxy = $.useRef(ref);
     const inner = proxy.inner;

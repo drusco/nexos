@@ -51,17 +51,17 @@ declare namespace Exotic {
     }
 
     interface data {
+      revoke(): void;
       id: number;
-      target?: any;
       revoked: boolean;
       mock: Mock;
-      origin?: origin | undefined;
       scope: Emulator;
       sandbox: sandbox;
-      refKey: key;
+      target?: any;
+      origin?: origin;
+      refKey?: key;
       next?: Proxy;
       prev?: Proxy;
-      revoke(): void;
     }
   }
 

@@ -5,7 +5,7 @@ import map from "../map";
 
 const get = (mock: Exotic.Mock, key: Exotic.key): any => {
   const proxy = findProxy(mock);
-  const { scope, refKey, target, sandbox } = map.proxies.get(proxy);
+  const { scope, target, sandbox } = map.proxies.get(proxy);
 
   const origin: Exotic.proxy.origin = {
     action: "get",
@@ -31,7 +31,7 @@ const get = (mock: Exotic.Mock, key: Exotic.key): any => {
     value = sandbox[key];
   }
 
-  sandbox[key] = createProxy(scope, value, refKey, origin);
+  sandbox[key] = createProxy(scope, value, origin);
 
   return Reflect.get(sandbox, key);
 };

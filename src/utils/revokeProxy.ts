@@ -10,32 +10,22 @@ const revokeProxy = (
   if (!proxy) return false;
 
   const proxyData = map.proxies.get(proxy);
+
+  if (proxyData.revoked) return true;
+
   const data = map.emulators.get(scope);
   const { refs } = data;
-
-  let { refKey } = proxyData;
-  let proxyRef = refs[refKey];
-
   const { id, mock, revoke, target, origin } = proxyData;
+  const hasRefKey = proxyData.refKey !== undefined;
 
-  if (proxyRef === proxy) {
-    // proxy is linked to refKey
+  if (hasRefKey) {
+    // refKey is binded to proxy
+    // delete refKey from refs object
+    delete refs[proxyData.refKey];
     // delete refKey from proxy
     proxyData.refKey = undefined;
-    // delete refKey from proxies created after this proxy
-    for (const proxyUsingRef of scope.entriesAfter(proxy)) {
-      const refData = map.proxies.get(proxyUsingRef);
-      if (refData.refKey === refKey) {
-        refData.refKey = undefined;
-      }
-    }
-    // delete refKey from refs object
-    delete refs[refKey];
-    // delete from variable
-    refKey = undefined;
-    proxyRef = undefined;
     // inform
-    scope.emit("unbind", refKey);
+    scope.emit("unbind", proxyData.refKey);
   }
 
   if (origin) {
