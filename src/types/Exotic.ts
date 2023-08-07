@@ -6,8 +6,8 @@ declare namespace Exotic {
   type key = string | symbol;
 
   interface payload {
-    proxy: boolean;
     value: any;
+    encoded: boolean;
   }
 
   interface Emulator extends EventEmitter {
@@ -43,10 +43,6 @@ declare namespace Exotic {
 
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace proxy {
-    interface sandbox {
-      [x: key]: any;
-    }
-
     interface origin {
       action: "get" | "set" | "construct" | "apply";
       proxy: Proxy;
@@ -62,7 +58,7 @@ declare namespace Exotic {
       revoked: boolean;
       mock: Mock;
       scope: Emulator;
-      sandbox: sandbox;
+      sandbox: Record<key, any>;
       target?: any;
       origin?: origin;
       refKey?: key;

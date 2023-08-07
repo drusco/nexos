@@ -8,10 +8,10 @@ export default function encode(
   const proxy = findProxy(value);
   const isObject = value !== null && typeof value === "object";
   const isArray = Array.isArray(value);
-  const result: Exotic.payload = { proxy: false, value: undefined };
+  const result: Exotic.payload = { value, encoded: false };
 
   if (proxy) {
-    result.proxy = true;
+    result.encoded = true;
     result.value = map.proxies.get(proxy).id;
   }
 
