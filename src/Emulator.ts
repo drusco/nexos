@@ -27,8 +27,8 @@ export default class Emulator extends EventTarget implements Exotic.Emulator {
     return lib.methods.use(this, value);
   }
 
-  useRef(key: Exotic.key): Exotic.Proxy {
-    return lib.methods.useRef(this, key);
+  useRef(key: Exotic.key, value?: any): Exotic.Proxy {
+    return lib.methods.useRef(this, key, value);
   }
 
   getId(value: Exotic.traceable): number {
