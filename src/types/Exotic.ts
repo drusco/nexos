@@ -1,16 +1,14 @@
-import { EventEmitter } from "events";
-
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace Exotic {
   type traceable = object;
   type key = string | symbol;
 
-  interface payload {
+  type payload = {
     value: any;
     encoded: boolean;
-  }
+  };
 
-  interface Emulator extends EventEmitter {
+  interface Emulator extends EventTarget {
     use(value?: any): Proxy;
     useRef(ref: key): Proxy;
     getId(value: traceable): number;
@@ -30,9 +28,24 @@ declare namespace Exotic {
     length: number;
   }
 
-  type FunctionLike = (...args: any[]) => void;
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace emulator {
+    interface options {
+      [x: string]: any;
+    }
 
-  interface Mock extends FunctionLike {
+    interface data {
+      options: options;
+      refs: Record<key, Proxy>;
+      totalProxies: number;
+      activeProxies: number;
+      firstProxy?: Proxy;
+      lastProxy?: Proxy;
+    }
+  }
+
+  interface Mock {
+    (...args: any[]): void;
     [x: key]: any;
     [Symbol.iterator](): Iterator<any>;
   }
@@ -64,21 +77,6 @@ declare namespace Exotic {
       refKey?: key;
       next?: Proxy;
       prev?: Proxy;
-    }
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace emulator {
-    type options = Record<string, any>;
-    type refs = Record<key, Proxy>;
-
-    interface data {
-      options: options;
-      refs: refs;
-      totalProxies: number;
-      activeProxies: number;
-      firstProxy?: Proxy;
-      lastProxy?: Proxy;
     }
   }
 }

@@ -13,7 +13,7 @@ const revokeProxy = (
   }
 
   const proxyData = map.proxies.get(proxy);
-  const { id, mock, revoke, target, origin, revoked, refKey } = proxyData;
+  const { mock, revoke, target, origin, revoked, refKey } = proxyData;
 
   if (revoked) {
     return true;
@@ -30,7 +30,7 @@ const revokeProxy = (
     // delete refKey from proxy
     proxyData.refKey = undefined;
     // inform
-    scope.emit("unbind", refKey);
+    scope.dispatchEvent(new Event("unbind"));
   }
 
   if (origin) {
@@ -63,7 +63,7 @@ const revokeProxy = (
     });
   }
 
-  scope.emit("revoke", id);
+  scope.dispatchEvent(new Event("revoke"));
   return true;
 };
 

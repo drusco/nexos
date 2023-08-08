@@ -9,11 +9,7 @@ const deleteProperty = (mock: Exotic.Mock, key: Exotic.key): boolean => {
   try {
     // delete from original target too
     delete target[key];
-    scope.emit("action", {
-      action: "delete",
-      proxy,
-      key,
-    });
+    scope.dispatchEvent(new Event("deleteProperty"));
   } catch (error) {
     /* empty */
   }

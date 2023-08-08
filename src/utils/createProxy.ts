@@ -7,7 +7,7 @@ import traps from "./traps";
 
 const createProxy = (
   scope: Exotic.Emulator,
-  target: any,
+  target?: any,
   origin?: Exotic.proxy.origin,
   refKey?: Exotic.key,
 ): Exotic.Proxy => {
@@ -46,7 +46,7 @@ const createProxy = (
   if (validRefKey) {
     // create unique reference
     refs[reference] = proxy;
-    scope.emit("bind", reference, proxy);
+    scope.dispatchEvent(new Event("bind"));
   }
 
   // proxy information
@@ -72,12 +72,7 @@ const createProxy = (
     }
   }
 
-  scope.emit("proxy", {
-    id,
-    proxy,
-    origin,
-    ref: reference,
-  });
+  scope.dispatchEvent(new Event("proxy"));
 
   if (!firstProxy) {
     data.firstProxy = proxy;

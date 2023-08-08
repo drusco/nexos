@@ -7,6 +7,8 @@ const apply = (mock: Exotic.Mock, that?: any, args?: any[]): any => {
   const proxy = findProxy(mock);
   const { scope, target } = map.proxies.get(proxy);
 
+  scope.dispatchEvent(new Event("apply"));
+
   const origin: Exotic.proxy.origin = {
     action: "apply",
     proxy,

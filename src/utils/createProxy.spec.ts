@@ -1,5 +1,11 @@
+import Emulator from "../Emulator";
+import createProxy from "./createProxy";
+
+const scope = new Emulator();
+
 describe("(function) createProxy", () => {
-  it("Runs an exotic proxy emulator", () => {
-    expect(true).toBeTruthy();
+  it("Requires a scope parameter that represents the emulator instance", () => {
+    const proxy = createProxy(scope);
+    expect(typeof proxy).toBe("function");
   });
 });

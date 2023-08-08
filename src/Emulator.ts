@@ -1,8 +1,7 @@
 import lib from "./lib";
 import Exotic from "./types/Exotic";
-import { EventEmitter } from "events";
 
-export default class Emulator extends EventEmitter implements Exotic.Emulator {
+export default class Emulator extends EventTarget implements Exotic.Emulator {
   constructor(options: Exotic.emulator.options = {}) {
     super();
     lib.constructor(this, options);

@@ -17,12 +17,7 @@ const set = (mock: Exotic.Mock, key: Exotic.key, value: any): boolean => {
   const newValue = createProxy(scope, value, origin);
   origin.value = newValue;
 
-  scope.emit("action", {
-    action: "set",
-    proxy,
-    key,
-    value: newValue,
-  });
+  scope.dispatchEvent(new Event("set"));
 
   try {
     target[key] = scope.target(value);
