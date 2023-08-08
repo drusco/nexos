@@ -18,9 +18,9 @@ declare namespace Exotic {
     ownKeys(value?: traceable): key[];
     revoke(value: traceable): boolean;
     isRevoked(value: traceable): boolean;
-    entries(): Iterable<Proxy>;
-    entriesBefore(value: traceable): Iterable<Proxy>;
-    entriesAfter(value: traceable): Iterable<Proxy>;
+    entries(): IterableIterator<Exotic.Proxy>;
+    entriesBefore(value: traceable): IterableIterator<Exotic.Proxy>;
+    entriesAfter(value: traceable): IterableIterator<Exotic.Proxy>;
     encode(value: any): Exotic.payload;
     refs: key[];
     active: number;
@@ -47,11 +47,11 @@ declare namespace Exotic {
   interface Mock {
     (...args: any[]): void;
     [x: key]: any;
-    [Symbol.iterator](): Iterator<any>;
+    [Symbol.iterator](): IterableIterator<any>;
   }
 
   interface Proxy extends Mock {
-    [Symbol.iterator](): Iterator<Proxy>;
+    [Symbol.iterator](): IterableIterator<Proxy>;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-namespace

@@ -34,14 +34,14 @@ const createProxy = (
   // create new proxy
 
   const id = ++data.totalProxies;
-  const mock = function mock() {} as Exotic.Mock;
+  const mock = Object.setPrototypeOf(
+    function mock() {},
+    mockPrototype,
+  ) as Exotic.Mock;
   const sandbox = Object.create(null);
   const traceable = isTraceable(target);
 
-  const { proxy, revoke } = Proxy.revocable<Exotic.Proxy>(
-    Object.setPrototypeOf(mock, mockPrototype),
-    traps,
-  );
+  const { proxy, revoke } = Proxy.revocable<Exotic.Proxy>(mock, traps);
 
   if (validRefKey) {
     // create unique reference

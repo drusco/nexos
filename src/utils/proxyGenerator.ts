@@ -6,13 +6,14 @@ const proxyGenerator = function* (
   scope: Exotic.Emulator,
   value?: Exotic.traceable,
   reverse: boolean = false,
-): Iterable<Exotic.Proxy> {
+): IterableIterator<Exotic.Proxy> {
   if (value === undefined) {
-    const { firstProxy } = map.emulators.get(scope);
+    const { firstProxy, lastProxy } = map.emulators.get(scope);
+    const item = reverse ? lastProxy : firstProxy;
 
-    if (!firstProxy) return;
+    if (!item) return;
 
-    for (const proxy of proxyGenerator(scope, firstProxy, false)) {
+    for (const proxy of proxyGenerator(scope, item, reverse)) {
       if (!scope.isRevoked(proxy)) {
         yield proxy;
       }
@@ -21,7 +22,10 @@ const proxyGenerator = function* (
   }
 
   const proxy = findProxy(value);
-  if (!proxy) return;
+
+  if (!proxy) {
+    return;
+  }
 
   if (!scope.isRevoked(proxy)) {
     yield proxy;

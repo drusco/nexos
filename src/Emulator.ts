@@ -59,15 +59,15 @@ export default class Emulator extends EventTarget implements Exotic.Emulator {
     return lib.methods.isRevoked(this, value);
   }
 
-  entries(): Iterable<Exotic.Proxy> {
+  entries(): IterableIterator<Exotic.Proxy> {
     return lib.methods.entries(this);
   }
 
-  entriesBefore(value: Exotic.traceable): Iterable<Exotic.Proxy> {
+  entriesBefore(value: Exotic.traceable): IterableIterator<Exotic.Proxy> {
     return lib.methods.entriesBefore(this, value);
   }
 
-  entriesAfter(value: Exotic.traceable): Iterable<Exotic.Proxy> {
+  entriesAfter(value: Exotic.traceable): IterableIterator<Exotic.Proxy> {
     return lib.methods.entriesAfter(this, value);
   }
 
