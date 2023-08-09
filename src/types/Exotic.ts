@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace Exotic {
   type traceable = object;
   type key = string | symbol;
@@ -28,7 +27,6 @@ declare namespace Exotic {
     length: number;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace emulator {
     interface options {
       [x: string]: any;
@@ -54,7 +52,6 @@ declare namespace Exotic {
     [Symbol.iterator](): IterableIterator<Proxy>;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace proxy {
     interface origin {
       action: "get" | "set" | "construct" | "apply";

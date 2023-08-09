@@ -1,18 +1,27 @@
 import Emulator from "./Emulator";
 
-const $ = new Emulator();
+const nodejs = new Emulator();
+const browser = new Emulator();
+
+const $window = {
+  innerWidth: 600,
+  innerHeight: 1000,
+};
+
+// the browser's emulator sets the 'window' ref
+// with the actual window object
+browser.useRef("window", $window);
+
+// the api informs the browser context to create a new ref 'window'
+// since the 'window' ref exists in the browser already it will use the existing proxy
+// every handler trap call on the api will correspond to the real value in the browser
+const window = nodejs.useRef("window", global);
 
 describe("(lib) Emulator", () => {
   it("Can simulate a browser window's context", () => {
-    const window = $.useRef("window", global);
-
-    (function component($: any) {
-      $.use(() => {
-        const width = window.width;
-        console.log(width * 50);
-      });
-
+    // api component
+    (function component() {
       expect(this).toBe(window);
-    }).call(window, $);
+    }).call(window, nodejs);
   });
 });
