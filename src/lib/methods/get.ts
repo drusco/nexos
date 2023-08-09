@@ -7,5 +7,6 @@ export default async function get(
 ): Promise<any> {
   const proxy = findProxy(value);
   if (!proxy) return value;
+
   return 600;
 }

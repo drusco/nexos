@@ -35,8 +35,8 @@ const createProxy = (
 
   const id = ++data.totalProxies;
   const mock = Object.setPrototypeOf(
-    function mock() {},
-    mockPrototype,
+    function () {},
+    mockPrototype.prototype,
   ) as Exotic.Mock;
   const sandbox = Object.create(null);
   const traceable = isTraceable(target);
@@ -46,7 +46,6 @@ const createProxy = (
   if (validRefKey) {
     // create unique reference
     refs[reference] = proxy;
-    scope.dispatchEvent(new Event("bind"));
   }
 
   // proxy information
@@ -72,8 +71,6 @@ const createProxy = (
     }
   }
 
-  scope.dispatchEvent(new Event("proxy"));
-
   if (!firstProxy) {
     data.firstProxy = proxy;
   }
@@ -87,6 +84,14 @@ const createProxy = (
   if (traceable) {
     map.targets.set(target, proxy);
   }
+
+  // const mockInstance = new mock();
+
+  // mockInstance.addEventListener("proxy", (event: Event) => {
+  //   scope.dispatchEvent(event);
+  // });
+
+  // mock.dispatchEvent(new Event("proxy"));
 
   return proxy;
 };

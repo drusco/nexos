@@ -29,8 +29,6 @@ const revokeProxy = (
     delete refs[refKey];
     // delete refKey from proxy
     proxyData.refKey = undefined;
-    // inform
-    scope.dispatchEvent(new Event("unbind"));
   }
 
   if (origin) {
@@ -63,7 +61,6 @@ const revokeProxy = (
     });
   }
 
-  scope.dispatchEvent(new Event("revoke"));
   return true;
 };
 
