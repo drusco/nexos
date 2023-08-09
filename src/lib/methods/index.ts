@@ -2,7 +2,7 @@ import useRef from "./useRef";
 import use from "./use";
 import target from "./target";
 import parent from "./parent";
-import children from "./children";
+import values from "./values";
 import ownKeys from "./ownKeys";
 import revoke from "./revoke";
 import isRevoked from "./isRevoked";
@@ -11,13 +11,14 @@ import entriesBefore from "./entriesBefore";
 import entriesAfter from "./entriesAfter";
 import getId from "./getId";
 import encode from "./encode";
+import get from "./get";
 
 export default {
   useRef,
   use,
   target,
   parent,
-  children,
+  values,
   ownKeys,
   revoke,
   isRevoked,
@@ -26,4 +27,5 @@ export default {
   entriesAfter,
   getId,
   encode,
+  get,
 };

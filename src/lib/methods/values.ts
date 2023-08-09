@@ -1,7 +1,7 @@
 import Exotic from "../../types/Exotic";
 import { findProxy, map } from "../../utils";
 
-export default function children(
+export default function values(
   scope: Exotic.Emulator,
   value?: Exotic.traceable,
 ): Exotic.Proxy[] {

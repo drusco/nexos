@@ -43,8 +43,8 @@ export default class Emulator extends EventTarget implements Exotic.Emulator {
     return lib.methods.parent(this, value);
   }
 
-  children(value?: Exotic.traceable): Exotic.Proxy[] {
-    return lib.methods.children(this, value);
+  values(value?: Exotic.traceable): Exotic.Proxy[] {
+    return lib.methods.values(this, value);
   }
 
   ownKeys(value?: Exotic.traceable): Exotic.key[] {
@@ -73,5 +73,9 @@ export default class Emulator extends EventTarget implements Exotic.Emulator {
 
   encode(value: any): Exotic.payload {
     return lib.methods.encode(this, value);
+  }
+
+  get(value?: any): Promise<any> {
+    return lib.methods.get(this, value);
   }
 }

@@ -9,11 +9,11 @@ declare namespace Exotic {
 
   interface Emulator extends EventTarget {
     use(value?: any): Proxy;
-    useRef(ref: key): Proxy;
+    useRef(ref: key, value?: any): Proxy;
     getId(value: traceable): number;
     target(value?: any): any;
     parent(value?: traceable): undefined | Proxy;
-    children(value?: traceable): Proxy[];
+    values(value?: traceable): Proxy[];
     ownKeys(value?: traceable): key[];
     revoke(value: traceable): boolean;
     isRevoked(value: traceable): boolean;
@@ -21,6 +21,7 @@ declare namespace Exotic {
     entriesBefore(value: traceable): IterableIterator<Exotic.Proxy>;
     entriesAfter(value: traceable): IterableIterator<Exotic.Proxy>;
     encode(value: any): Exotic.payload;
+    get(value?: any): Promise<any>;
     refs: key[];
     active: number;
     revoked: number;

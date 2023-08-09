@@ -1,30 +1,30 @@
 import Emulator from "../../Emulator";
 const $ = new Emulator();
 
-describe("(method) children", () => {
-  it("Can access all the direct children of a proxy", () => {
+describe("(method) values", () => {
+  it("Can access all the direct values of a proxy", () => {
     const parent = $.use();
     parent.daugter = 25;
     parent.son = 30;
     parent.son.parentGrandson = 2;
 
-    expect($.children(parent).length).toBe(2);
+    expect($.values(parent).length).toBe(2);
   });
 
-  it("Can use [Symbol.iterator] to access all children as well", () => {
+  it("Can use [Symbol.iterator] to access all values as well", () => {
     const parent = $.use();
 
     parent.daughter = 25;
     parent.son = 30;
 
-    const children = [...parent];
-    const targetList = children.map((child) => $.target(child));
+    const values = [...parent];
+    const targetList = values.map((child) => $.target(child));
 
     for (const proxy of parent) {
       expect($.parent(proxy)).toBe(parent);
     }
 
-    expect(children.length).toBe(2);
+    expect(values.length).toBe(2);
     expect(targetList.includes(25)).toBe(true);
     expect(targetList.includes(30)).toBe(true);
   });
