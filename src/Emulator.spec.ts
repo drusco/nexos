@@ -18,7 +18,7 @@ browser.useRef("window", win);
 const window = nodejs.useRef("window", global);
 
 describe("(lib) Emulator", () => {
-  it("Can simulate a browser window's context", async () => {
+  it("Can simulate a browser window's context", () => {
     // nodejs.addEventListener("proxy", (evt: any) => {
     //   console.log("proxy event", evt, evt.target);
     // });

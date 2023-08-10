@@ -43,14 +43,13 @@ declare namespace Exotic {
     }
   }
 
-  interface Mock extends EventTarget {
-    [Symbol.iterator](): IterableIterator<any>;
+  interface Mock {
+    [Symbol.iterator](): IterableIterator<Proxy>;
     (...args: any[]): void;
-    [x: key]: any;
   }
 
   interface Proxy extends Mock {
-    [Symbol.iterator](): IterableIterator<Proxy>;
+    [x: key]: any;
   }
 
   namespace proxy {

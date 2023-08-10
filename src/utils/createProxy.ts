@@ -5,6 +5,26 @@ import isTraceable from "./isTraceable";
 import mockPrototype from "./mockPrototype";
 import traps from "./traps";
 
+// class EmulatorEvent extends Event {
+//   data: any;
+//   constructor(type: string, data?: any) {
+//     super(type, {});
+//     this.data = data;
+//   }
+// }
+
+// class MockTarget extends EventTarget {
+//   #mock: Exotic.Mock;
+//   constructor(mock: Exotic.Mock) {
+//     super();
+//     this.#mock = mock;
+//   }
+
+//   get mock() {
+//     return this.#mock;
+//   }
+// }
+
 const createProxy = (
   scope: Exotic.Emulator,
   target?: any,
@@ -36,8 +56,9 @@ const createProxy = (
   const id = ++data.totalProxies;
   const mock = Object.setPrototypeOf(
     function () {},
-    mockPrototype.prototype,
+    mockPrototype,
   ) as Exotic.Mock;
+  // const mockTarget = new MockTarget(mock);
   const sandbox = Object.create(null);
   const traceable = isTraceable(target);
 
@@ -85,13 +106,9 @@ const createProxy = (
     map.targets.set(target, proxy);
   }
 
-  // const mockInstance = new mock();
+  //mockTarget.addEventListener("proxy", (event: EmulatorEvent) => {});
 
-  // mockInstance.addEventListener("proxy", (event: Event) => {
-  //   scope.dispatchEvent(event);
-  // });
-
-  // mock.dispatchEvent(new Event("proxy"));
+  // mockTarget.dispatchEvent(new EmulatorEvent("proxy", proxy));
 
   return proxy;
 };
