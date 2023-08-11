@@ -56,7 +56,7 @@ declare namespace Exotic {
   namespace proxy {
     interface origin {
       action: "get" | "set" | "construct" | "apply";
-      proxy: Proxy;
+      proxy: WeakRef<Proxy>;
       key?: key;
       value?: any;
       that?: any;

@@ -9,7 +9,7 @@ const construct = (mock: Exotic.Mock, args: any[]): object => {
 
   const origin: Exotic.proxy.origin = {
     action: "construct",
-    proxy,
+    proxy: new WeakRef(proxy),
     args,
   };
 

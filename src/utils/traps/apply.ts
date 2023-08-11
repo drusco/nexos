@@ -9,7 +9,7 @@ const apply = (mock: Exotic.Mock, that?: any, args?: any[]): any => {
 
   const origin: Exotic.proxy.origin = {
     action: "apply",
-    proxy,
+    proxy: new WeakRef(proxy),
     that,
     args,
   };

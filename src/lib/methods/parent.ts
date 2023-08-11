@@ -8,5 +8,5 @@ export default function parent(
   const proxy = findProxy(value);
   if (!proxy) return;
   const { origin } = map.proxies.get(proxy);
-  return origin && origin.proxy;
+  return origin && origin.proxy.deref();
 }
