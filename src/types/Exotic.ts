@@ -7,7 +7,7 @@ declare namespace Exotic {
     encoded: boolean;
   };
 
-  interface Emulator extends EventTarget {
+  interface Emulator {
     use(value?: any): Proxy;
     useRef(ref: key, value?: any): Proxy;
     getId(value: traceable): number;
