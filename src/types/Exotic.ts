@@ -1,6 +1,7 @@
 declare namespace Exotic {
   type traceable = object;
   type key = string | symbol;
+  type FunctionLike = (...args: any[]) => any;
 
   type payload = {
     value: any;
@@ -17,10 +18,10 @@ declare namespace Exotic {
     ownKeys(value?: traceable): key[];
     revoke(value: traceable): boolean;
     isRevoked(value: traceable): boolean;
-    entries(): IterableIterator<Exotic.Proxy>;
-    entriesBefore(value: traceable): IterableIterator<Exotic.Proxy>;
-    entriesAfter(value: traceable): IterableIterator<Exotic.Proxy>;
-    encode(value: any): Exotic.payload;
+    entries(): IterableIterator<Proxy>;
+    entriesBefore(value: traceable): IterableIterator<Proxy>;
+    entriesAfter(value: traceable): IterableIterator<Proxy>;
+    encode(value: any): payload;
     get(value?: any): Promise<any>;
     refs: key[];
     active: number;
@@ -38,17 +39,17 @@ declare namespace Exotic {
       refs: Record<key, Proxy>;
       totalProxies: number;
       activeProxies: number;
-      firstProxy?: Proxy;
-      lastProxy?: Proxy;
+      firstProxy?: WeakRef<Proxy>;
+      lastProxy?: WeakRef<Proxy>;
     }
   }
 
-  interface Mock {
+  interface Mock extends FunctionLike {
     [Symbol.iterator](): IterableIterator<Proxy>;
-    (...args: any[]): void;
   }
 
   interface Proxy extends Mock {
+    (...args: any[]): void;
     [x: key]: any;
   }
 
@@ -72,8 +73,8 @@ declare namespace Exotic {
       target?: any;
       origin?: origin;
       refKey?: key;
-      next?: Proxy;
-      prev?: Proxy;
+      next?: WeakRef<Proxy>;
+      prev?: WeakRef<Proxy>;
     }
   }
 }

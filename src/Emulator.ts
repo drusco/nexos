@@ -1,9 +1,8 @@
 import lib from "./lib";
 import Exotic from "./types/Exotic";
 
-export default class Emulator extends EventTarget implements Exotic.Emulator {
+export default class Emulator implements Exotic.Emulator {
   constructor(options: Exotic.emulator.options = {}) {
-    super();
     lib.constructor(this, options);
   }
 

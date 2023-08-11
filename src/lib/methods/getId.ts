@@ -6,7 +6,9 @@ export default function getId(
   value: Exotic.traceable,
 ): number {
   const proxy = findProxy(value);
-  if (!proxy) return NaN;
+  if (!proxy) {
+    return NaN;
+  }
   const { id } = map.proxies.get(proxy);
   return id;
 }
