@@ -15,7 +15,7 @@ const proxyGenerator = function* (
       return;
     }
 
-    for (const proxy of proxyGenerator(scope, proxyRef.deref(), reverse)) {
+    for (const proxy of proxyGenerator(scope, proxyRef, reverse)) {
       if (!scope.isRevoked(proxy)) {
         yield proxy;
       }
@@ -37,7 +37,7 @@ const proxyGenerator = function* (
   const proxyRef = reverse ? prev : next;
 
   if (proxyRef) {
-    for (const proxy of proxyGenerator(scope, proxyRef.deref(), reverse)) {
+    for (const proxy of proxyGenerator(scope, proxyRef, reverse)) {
       if (!scope.isRevoked(proxy)) {
         yield proxy;
       }

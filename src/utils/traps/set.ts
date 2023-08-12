@@ -9,7 +9,7 @@ const set = (mock: Exotic.Mock, key: Exotic.key, value: any): boolean => {
 
   const origin: Exotic.proxy.origin = {
     action: "set",
-    proxy: new WeakRef(proxy),
+    proxy,
     key,
     value,
   };

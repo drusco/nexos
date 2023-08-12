@@ -35,7 +35,7 @@ const revokeProxy = (
     // remove from proxy's parent references
     const { action, key, proxy: parentProxyRef } = origin;
     if (action === "get" || action === "set") {
-      const parentProxy = parentProxyRef.deref();
+      const parentProxy = parentProxyRef;
       // delete from parent proxy and target
       if (parentProxy) delete parentProxy[key];
     }

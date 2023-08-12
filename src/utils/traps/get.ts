@@ -10,7 +10,7 @@ const get = (mock: Exotic.Mock, key: Exotic.key): any => {
   const origin: Exotic.proxy.origin = {
     action: "get",
     key,
-    proxy: new WeakRef(proxy),
+    proxy,
   };
 
   if (key === Symbol.iterator) {

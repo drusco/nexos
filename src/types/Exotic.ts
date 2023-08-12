@@ -39,8 +39,8 @@ declare namespace Exotic {
       refs: Record<key, Proxy>;
       totalProxies: number;
       activeProxies: number;
-      firstProxy?: WeakRef<Proxy>;
-      lastProxy?: WeakRef<Proxy>;
+      firstProxy?: Proxy;
+      lastProxy?: Proxy;
     }
   }
 
@@ -56,7 +56,7 @@ declare namespace Exotic {
   namespace proxy {
     interface origin {
       action: "get" | "set" | "construct" | "apply";
-      proxy: WeakRef<Proxy>;
+      proxy: Proxy;
       key?: key;
       value?: any;
       that?: any;
@@ -73,8 +73,8 @@ declare namespace Exotic {
       target?: any;
       origin?: origin;
       refKey?: key;
-      next?: WeakRef<Proxy>;
-      prev?: WeakRef<Proxy>;
+      next?: Proxy;
+      prev?: Proxy;
     }
   }
 }
