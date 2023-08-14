@@ -19,28 +19,35 @@ const createProxy = (
   }
 
   const data: Exotic.emulator.data = map.emulators.get(scope);
-  const { refs, firstProxy, lastProxy } = data;
+  const { refs } = data;
   const validRefKey = refKey !== undefined;
   const reference = validRefKey ? refKey : undefined;
 
   if (validRefKey) {
     // proxy reference exists
-    const refProxy = refs[reference];
-    if (refProxy) {
-      return refProxy;
+    const proxyRef = refs[reference];
+    if (proxyRef) {
+      return proxyRef;
     }
   }
 
   // create new proxy
 
-  const id = ++data.totalProxies;
   const mock = Object.setPrototypeOf(
     function () {},
     mockPrototype,
   ) as Exotic.Mock;
+
+  let { proxy, revoke } = Proxy.revocable<Exotic.Proxy>(mock, traps);
+
+  const id = ++data.totalProxies;
   const sandbox = Object.create(null);
-  const traceable = isTraceable(target);
-  const { proxy, revoke } = Proxy.revocable<Exotic.Proxy>(mock, traps);
+
+  const revokeFunction = () => {
+    revoke && revoke();
+    proxy = null;
+    revoke = null;
+  };
 
   if (validRefKey) {
     // create unique reference
@@ -53,34 +60,20 @@ const createProxy = (
     mock,
     origin,
     target,
-    revoke,
+    revoke: revokeFunction,
     scope,
     sandbox,
-    refKey: reference,
-    prev: lastProxy,
-    next: undefined,
+    key: reference,
     revoked: false,
   };
 
-  if (lastProxy) {
-    // update previous proxy
-    const lastProxyData = map.proxies.get(lastProxy);
-    if (lastProxyData) {
-      lastProxyData.next = proxy;
-    }
-  }
-
-  if (!firstProxy) {
-    data.firstProxy = proxy;
-  }
-
-  data.lastProxy = proxy;
   data.activeProxies += 1;
 
   map.mocks.set(mock, proxy);
   map.proxies.set(proxy, proxyData);
+  map.proxySet.add(proxy);
 
-  if (traceable) {
+  if (isTraceable(target)) {
     map.targets.set(target, proxy);
   }
 

@@ -27,5 +27,6 @@ for (let i = 0; i < 1000000; i++) {
   p();
   p();
   p();
+  $.kill();
 }
 console.log("the end");

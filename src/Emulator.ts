@@ -31,15 +31,15 @@ export default class Emulator implements Exotic.Emulator {
   }
 
   getId(value: Exotic.traceable): number {
-    return lib.methods.getId(this, value);
+    return lib.methods.getId(value);
   }
 
   target(value?: any): any {
-    return lib.methods.target(this, value);
+    return lib.methods.target(value);
   }
 
   parent(value?: Exotic.traceable): undefined | Exotic.Proxy {
-    return lib.methods.parent(this, value);
+    return lib.methods.parent(value);
   }
 
   values(value?: Exotic.traceable): Exotic.Proxy[] {
@@ -51,23 +51,19 @@ export default class Emulator implements Exotic.Emulator {
   }
 
   revoke(value: Exotic.traceable): boolean {
-    return lib.methods.revoke(this, value);
+    return lib.methods.revoke(value);
   }
 
   isRevoked(value: Exotic.traceable): boolean {
-    return lib.methods.isRevoked(this, value);
+    return lib.methods.isRevoked(value);
+  }
+
+  [Symbol.iterator](): IterableIterator<Exotic.Proxy> {
+    return lib.methods.entries();
   }
 
   entries(): IterableIterator<Exotic.Proxy> {
-    return lib.methods.entries(this);
-  }
-
-  entriesBefore(value: Exotic.traceable): IterableIterator<Exotic.Proxy> {
-    return lib.methods.entriesBefore(this, value);
-  }
-
-  entriesAfter(value: Exotic.traceable): IterableIterator<Exotic.Proxy> {
-    return lib.methods.entriesAfter(this, value);
+    return lib.methods.entries();
   }
 
   encode(value: any): Exotic.payload {
@@ -76,5 +72,9 @@ export default class Emulator implements Exotic.Emulator {
 
   get(value?: any): Promise<any> {
     return lib.methods.get(this, value);
+  }
+
+  kill(): void {
+    return lib.methods.kill(this);
   }
 }

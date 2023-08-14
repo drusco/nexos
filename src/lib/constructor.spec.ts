@@ -7,24 +7,8 @@ describe("(constructor)", () => {
     const config: Exotic.emulator.options = {};
     const emulator = new Emulator(config);
     const data: Record<string, any> = map.emulators.get(emulator) || {};
-
-    const dataProps = [
-      "options",
-      "refs",
-      "totalProxies",
-      "activeProxies",
-      "firstProxy",
-      "lastProxy",
-    ];
-
-    const {
-      options,
-      refs,
-      totalProxies,
-      activeProxies,
-      firstProxy,
-      lastProxy,
-    } = data;
+    const dataProps = ["options", "refs", "totalProxies", "activeProxies"];
+    const { options, refs, totalProxies, activeProxies } = data;
 
     expect(map.emulators.has(emulator)).toBe(true);
     expect(Object.keys(data)).toEqual(dataProps);
@@ -32,7 +16,5 @@ describe("(constructor)", () => {
     expect(Reflect.ownKeys(refs).length).toBe(0);
     expect(totalProxies).toBe(0);
     expect(activeProxies).toBe(0);
-    expect(firstProxy).toBeUndefined();
-    expect(lastProxy).toBeUndefined();
   });
 });

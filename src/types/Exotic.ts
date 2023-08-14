@@ -19,14 +19,14 @@ declare namespace Exotic {
     revoke(value: traceable): boolean;
     isRevoked(value: traceable): boolean;
     entries(): IterableIterator<Proxy>;
-    entriesBefore(value: traceable): IterableIterator<Proxy>;
-    entriesAfter(value: traceable): IterableIterator<Proxy>;
     encode(value: any): payload;
     get(value?: any): Promise<any>;
+    kill(): void;
     refs: key[];
     active: number;
     revoked: number;
     length: number;
+    [Symbol.iterator](): IterableIterator<Proxy>;
   }
 
   namespace emulator {
@@ -39,8 +39,6 @@ declare namespace Exotic {
       refs: Record<key, Proxy>;
       totalProxies: number;
       activeProxies: number;
-      firstProxy?: Proxy;
-      lastProxy?: Proxy;
     }
   }
 
@@ -56,7 +54,7 @@ declare namespace Exotic {
   namespace proxy {
     interface origin {
       action: "get" | "set" | "construct" | "apply";
-      proxy: Proxy;
+      proxy?: Proxy;
       key?: key;
       value?: any;
       that?: any;
@@ -72,9 +70,7 @@ declare namespace Exotic {
       sandbox: Record<key, any>;
       target?: any;
       origin?: origin;
-      refKey?: key;
-      next?: Proxy;
-      prev?: Proxy;
+      key?: key;
     }
   }
 }

@@ -1,8 +1,9 @@
 import Exotic from "../types/Exotic";
 
-const emulators = new WeakMap<Exotic.Emulator, Exotic.emulator.data>();
-const mocks = new WeakMap<Exotic.Mock, Exotic.Proxy>();
-const targets = new WeakMap<Exotic.traceable, Exotic.Proxy>();
-const proxies = new WeakMap<Exotic.Proxy, Exotic.proxy.data>();
+const emulators: WeakMap<Exotic.Emulator, Exotic.emulator.data> = new WeakMap();
+const targets: WeakMap<Exotic.traceable, Exotic.Proxy> = new WeakMap();
+const mocks: WeakMap<Exotic.Mock, Exotic.Proxy> = new WeakMap();
+const proxies: WeakMap<Exotic.Proxy, Exotic.proxy.data> = new WeakMap();
+const proxySet: Set<Exotic.Proxy> = new Set();
 
-export default { emulators, mocks, targets, proxies };
+export default { emulators, mocks, targets, proxies, proxySet };

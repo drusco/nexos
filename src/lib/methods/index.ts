@@ -7,11 +7,10 @@ import ownKeys from "./ownKeys";
 import revoke from "./revoke";
 import isRevoked from "./isRevoked";
 import entries from "./entries";
-import entriesBefore from "./entriesBefore";
-import entriesAfter from "./entriesAfter";
 import getId from "./getId";
 import encode from "./encode";
 import get from "./get";
+import kill from "./kill";
 
 export default {
   useRef,
@@ -23,9 +22,8 @@ export default {
   revoke,
   isRevoked,
   entries,
-  entriesBefore,
-  entriesAfter,
   getId,
   encode,
   get,
+  kill,
 };

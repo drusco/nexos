@@ -2,10 +2,7 @@ import Exotic from "../types/Exotic";
 import findProxy from "./findProxy";
 import map from "./map";
 
-const revokeProxy = (
-  scope: Exotic.Emulator,
-  value: Exotic.traceable,
-): boolean => {
+const revokeProxy = (value: Exotic.traceable): boolean => {
   const proxy = findProxy(value);
 
   if (!proxy) {
@@ -13,7 +10,7 @@ const revokeProxy = (
   }
 
   const proxyData = map.proxies.get(proxy);
-  const { mock, revoke, target, origin, revoked, refKey } = proxyData;
+  const { mock, revoke, target, origin, revoked, key, scope } = proxyData;
 
   if (revoked) {
     return true;
@@ -21,31 +18,33 @@ const revokeProxy = (
 
   const data = map.emulators.get(scope);
   const { refs } = data;
-  const validRefKey = refKey !== undefined;
+  const validKey = key !== undefined;
 
-  if (validRefKey) {
-    // refKey is binded to proxy
-    // delete refKey from refs object
-    delete refs[refKey];
-    // delete refKey from proxy
-    proxyData.refKey = undefined;
+  if (validKey) {
+    // key is binded to proxy
+    // delete key from refs object
+    delete refs[key];
+    // delete key from proxy
+    proxyData.key = undefined;
   }
 
   if (origin) {
     // remove from proxy's parent references
-    const { action, key, proxy: parentProxyRef } = origin;
+    const { action, key, proxy: parentProxy } = origin;
     if (action === "get" || action === "set") {
-      const parentProxy = parentProxyRef;
       // delete from parent proxy and target
-      if (parentProxy) delete parentProxy[key];
+      if (parentProxy) {
+        delete parentProxy[key];
+      }
     }
   }
 
   map.mocks.delete(mock);
   map.targets.delete(target);
+  map.proxySet.delete(proxy);
 
   // keep in proxies map
-  // prevents proxy out of revoked proxy (throws error)
+  // prevents proxy out of revoked proxy (throws)
   //map.proxies.delete(proxy);
 
   revoke();
@@ -56,8 +55,6 @@ const revokeProxy = (
   if (data.activeProxies === 0) {
     // clean internal state
     Object.assign(data, {
-      firstProxy: undefined,
-      lastProxy: undefined,
       refs: Object.create(null),
     });
   }

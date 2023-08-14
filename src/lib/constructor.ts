@@ -10,8 +10,6 @@ export default function constructor(
     refs: Object.create(null),
     totalProxies: 0, // total item count including revoked items, it only increases
     activeProxies: 0, // items that are not revoked
-    firstProxy: undefined,
-    lastProxy: undefined,
   };
 
   map.emulators.set(scope, data);
