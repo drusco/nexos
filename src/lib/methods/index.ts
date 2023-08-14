@@ -5,12 +5,12 @@ import parent from "./parent";
 import values from "./values";
 import ownKeys from "./ownKeys";
 import revoke from "./revoke";
+import revokeAll from "./revokeAll";
 import isRevoked from "./isRevoked";
 import entries from "./entries";
 import getId from "./getId";
 import encode from "./encode";
 import get from "./get";
-import kill from "./kill";
 
 export default {
   useRef,
@@ -20,10 +20,10 @@ export default {
   values,
   ownKeys,
   revoke,
+  revokeAll,
   isRevoked,
   entries,
   getId,
   encode,
   get,
-  kill,
 };

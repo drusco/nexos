@@ -17,11 +17,11 @@ declare namespace Exotic {
     values(value?: traceable): Proxy[];
     ownKeys(value?: traceable): key[];
     revoke(value: traceable): boolean;
+    revokeAll(): void;
     isRevoked(value: traceable): boolean;
     entries(): IterableIterator<Proxy>;
     encode(value: any): payload;
     get(value?: any): Promise<any>;
-    kill(): void;
     refs: key[];
     active: number;
     revoked: number;

@@ -74,7 +74,7 @@ export default class Emulator implements Exotic.Emulator {
     return lib.methods.get(this, value);
   }
 
-  kill(): void {
-    return lib.methods.kill(this);
+  revokeAll(): void {
+    return lib.methods.revokeAll(this);
   }
 }
