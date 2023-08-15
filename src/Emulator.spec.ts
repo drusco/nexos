@@ -14,7 +14,7 @@ describe("(lib) Emulator", () => {
     // with the actual window object
     browser.useRef("window", win);
 
-    // the api informs the browser context to create a new ref 'window'
+    // the emulator informs the browser context to create a new ref 'window'
     // since the 'window' ref exists in the browser already it will use the existing proxy
     // every handler trap call on the api will correspond to the real window target in the browser
     const window = nodejs.useRef("window", global);

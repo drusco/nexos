@@ -1,4 +1,5 @@
 import Exotic from "../types/Exotic";
+import decode from "./decode";
 import findProxy from "./findProxy";
 import map from "./map";
 
@@ -28,9 +29,11 @@ const revokeProxy = (value: Exotic.traceable): boolean => {
     proxyData.key = undefined;
   }
 
-  if (origin) {
+  const decodedOrigin = decode(scope, origin) as Exotic.proxy.origin;
+
+  if (decodedOrigin) {
     // remove from proxy's parent references
-    const { action, key, proxy: parentProxy } = origin;
+    const { action, key, proxy: parentProxy } = decodedOrigin;
     if (action === "get" || action === "set") {
       // delete from parent proxy and target
       if (parentProxy) {

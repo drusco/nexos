@@ -66,8 +66,8 @@ export default class Emulator implements Exotic.Emulator {
     return lib.methods.entries();
   }
 
-  encode(value: any): Exotic.payload {
-    return lib.methods.encode(this, value);
+  encode(value: any): any {
+    return lib.methods.encode(value);
   }
 
   get(value?: any): Promise<any> {

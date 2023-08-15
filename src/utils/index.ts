@@ -3,8 +3,8 @@ import findProxy from "./findProxy";
 import createProxy from "./createProxy";
 import proxyIterator from "./proxyIterator";
 import revokeProxy from "./revokeProxy";
-import getPayload from "./getPayload";
 import map from "./map";
+import encode from "./encode";
 import * as traps from "./traps";
 
 export {
@@ -15,5 +15,5 @@ export {
   createProxy,
   revokeProxy,
   traps,
-  getPayload,
+  encode,
 };
