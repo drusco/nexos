@@ -1,14 +1,7 @@
 import Exotic from "../types/Exotic";
 import findProxy from "./findProxy";
 import findProxyById from "./findProxyById";
-
-function isPayload(value: any): boolean {
-  if (!Array.isArray(value)) return false;
-  if (!value.length || value.length > 2) return false;
-  const [noBreak] = value;
-  if (noBreak !== "⁠") return false;
-  return true;
-}
+import isPayload from "./isPayload";
 
 export default function decode(scope: Exotic.Emulator, value: any): any {
   const isObject = value !== null && typeof value === "object";

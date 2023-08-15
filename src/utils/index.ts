@@ -1,3 +1,4 @@
+import * as traps from "./traps";
 import isTraceable from "./isTraceable";
 import findProxy from "./findProxy";
 import createProxy from "./createProxy";
@@ -5,7 +6,9 @@ import proxyIterator from "./proxyIterator";
 import revokeProxy from "./revokeProxy";
 import map from "./map";
 import encode from "./encode";
-import * as traps from "./traps";
+import decode from "./decode";
+import isPayload from "./isPayload";
+import findProxyById from "./findProxyById";
 
 export {
   isTraceable,
@@ -16,4 +19,7 @@ export {
   revokeProxy,
   traps,
   encode,
+  isPayload,
+  decode,
+  findProxyById,
 };

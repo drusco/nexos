@@ -2,12 +2,10 @@ declare namespace Exotic {
   type traceable = object;
   type key = string | symbol;
   type FunctionLike = (...args: any[]) => any;
-  type ProxyPayload = [noBreak: "⁠", proxyId: number];
 
   interface Emulator {
     use(value?: any): Proxy;
     useRef(ref: key, value?: any): Proxy;
-    getId(value: traceable): number;
     target(value?: any): any;
     parent(value?: traceable): undefined | Proxy;
     values(value?: traceable): Proxy[];
@@ -48,6 +46,8 @@ declare namespace Exotic {
   }
 
   namespace proxy {
+    type payload = [noBreak: "⁠", proxyId: number];
+
     interface origin {
       action: "get" | "set" | "construct" | "apply";
       proxy?: Proxy;
@@ -65,7 +65,7 @@ declare namespace Exotic {
       scope: Emulator;
       sandbox: Record<key, any>;
       target?: any;
-      origin?: ProxyPayload;
+      origin?: origin;
       key?: key;
     }
   }

@@ -6,7 +6,7 @@ const $ = new Emulator();
 describe("(method) encode", () => {
   it("Encodes a proxy into a payload object", () => {
     const proxy = $.use();
-    const mock: Exotic.ProxyPayload = ["⁠", 1];
+    const mock: Exotic.proxy.payload = ["⁠", 1];
     expect($.encode(proxy)).toEqual(mock);
   });
 

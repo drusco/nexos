@@ -30,10 +30,6 @@ export default class Emulator implements Exotic.Emulator {
     return lib.methods.useRef(this, key, value);
   }
 
-  getId(value: Exotic.traceable): number {
-    return lib.methods.getId(value);
-  }
-
   target(value?: any): any {
     return lib.methods.target(value);
   }

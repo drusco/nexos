@@ -10,7 +10,7 @@ export default function encode(value: any): any {
   let result = value;
 
   if (proxy) {
-    result = ["⁠", map.proxies.get(proxy).id] as Exotic.ProxyPayload;
+    result = ["⁠", map.proxies.get(proxy).id] as Exotic.proxy.payload;
   } else if (isObject) {
     const copy = isArray ? [] : {};
 

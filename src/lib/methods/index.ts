@@ -8,7 +8,6 @@ import revoke from "./revoke";
 import revokeAll from "./revokeAll";
 import isRevoked from "./isRevoked";
 import entries from "./entries";
-import getId from "./getId";
 import encode from "./encode";
 import get from "./get";
 
@@ -23,7 +22,6 @@ export default {
   revokeAll,
   isRevoked,
   entries,
-  getId,
   encode,
   get,
 };

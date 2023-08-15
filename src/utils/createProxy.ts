@@ -8,7 +8,7 @@ import traps from "./traps";
 const createProxy = (
   scope: Exotic.Emulator,
   target?: any,
-  origin?: Exotic.ProxyPayload,
+  origin?: Exotic.proxy.origin,
   refKey?: Exotic.key,
 ): Exotic.Proxy => {
   const usableProxy = findProxy(target);
