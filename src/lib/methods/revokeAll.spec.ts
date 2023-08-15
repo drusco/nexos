@@ -4,9 +4,10 @@ const $ = new Emulator();
 describe("(method) revokeAll", () => {
   it("Revokes all proxies from the instance", () => {
     const revocables = 10;
+    let last: any;
 
     for (let i = 0; i < revocables; i++) {
-      $.use();
+      last = $.use();
     }
 
     $.revokeAll();
@@ -14,5 +15,6 @@ describe("(method) revokeAll", () => {
     expect($.length).toBe(revocables);
     expect($.revoked).toBe(revocables);
     expect($.active).toBe(0);
+    expect(last).toThrow();
   });
 });
