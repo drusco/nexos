@@ -1,25 +1,47 @@
 import Exotic from "../types/Exotic";
 import findProxy from "./findProxy";
 import map from "./map";
+import isTraceable from "./isTraceable";
 
-export default function encode(value: any): any {
-  const isObject = value !== null && typeof value === "object";
-  const isArray = Array.isArray(value);
+export default function encode(
+  value: any,
+  visited: WeakSet<Exotic.traceable> = new WeakSet(),
+): any {
+  const traceable = isTraceable(value);
   const proxy = findProxy(value);
 
-  let result = value;
-
   if (proxy) {
-    result = ["⁠", map.proxies.get(proxy).id] as Exotic.proxy.payload;
-  } else if (isObject) {
-    const copy = isArray ? [] : {};
-
-    for (const key in value) {
-      copy[key] = encode(value[key]);
-    }
-
-    result = copy;
+    return ["⁠", map.proxies.get(proxy).id] as Exotic.proxy.payload;
   }
 
-  return result;
+  if (traceable) {
+    if (typeof value === "function") {
+      return value;
+    }
+
+    if (visited.has(value)) {
+      // Handle circular reference by returning the original value
+      return value;
+    }
+
+    visited.add(value);
+
+    const isArray = Array.isArray(value);
+    const copy = isArray ? [] : {};
+    const keys = Object.keys(value);
+
+    if (isArray) {
+      for (let i = 0; i < value.length; i++) {
+        (copy as any[]).push(encode(value[i], visited));
+      }
+    } else {
+      for (const key of keys) {
+        copy[key] = encode(value[key], visited);
+      }
+    }
+
+    return copy;
+  }
+
+  return value;
 }

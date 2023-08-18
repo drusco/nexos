@@ -2,7 +2,6 @@ import Exotic from "../../types/Exotic";
 import createProxy from "../createProxy";
 import findProxy from "../findProxy";
 import map from "../map";
-import encode from "../encode";
 
 const get = (mock: Exotic.Mock, key: Exotic.key): any => {
   const proxy = findProxy(mock);
@@ -32,7 +31,7 @@ const get = (mock: Exotic.Mock, key: Exotic.key): any => {
     value = sandbox[key];
   }
 
-  sandbox[key] = createProxy(scope, value, encode(origin));
+  sandbox[key] = createProxy(scope, origin, value);
 
   return Reflect.get(sandbox, key);
 };

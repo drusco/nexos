@@ -6,14 +6,20 @@ const $ = new Emulator();
 describe("(function) createProxy", () => {
   it("Returns an existing proxy", () => {
     const proxy = $.use();
-    const sameProxy = createProxy($, proxy);
+    const sameProxy = createProxy($, undefined, proxy);
     expect(proxy).toBe(sameProxy);
   });
 
   it("Returns an existing proxy by reference key", () => {
     const refKey = "test";
     const proxy = $.useRef(refKey);
-    const sameProxy = createProxy($, proxy, undefined, refKey);
+    const sameProxy = createProxy(
+      $,
+      {
+        ref: refKey,
+      },
+      proxy,
+    );
 
     expect(proxy).toBe(sameProxy);
   });
@@ -22,7 +28,9 @@ describe("(function) createProxy", () => {
     const refKey = "new";
     const refKeyExisted = $.refs.includes(refKey);
 
-    createProxy($, undefined, undefined, refKey);
+    createProxy($, {
+      ref: refKey,
+    });
 
     expect(refKeyExisted).toBe(false);
     expect($.refs.includes(refKey)).toBe(true);
@@ -30,7 +38,7 @@ describe("(function) createProxy", () => {
 
   it("Adds any target value to a proxy", () => {
     const target = "target";
-    const proxy = createProxy($, target);
+    const proxy = createProxy($, undefined, target);
 
     expect($.target(proxy)).toBe(target);
   });

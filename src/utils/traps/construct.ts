@@ -2,7 +2,6 @@ import Exotic from "../../types/Exotic";
 import createProxy from "../createProxy";
 import findProxy from "../findProxy";
 import map from "../map";
-import encode from "../encode";
 
 const construct = (mock: Exotic.Mock, args: any[]): object => {
   const proxy = findProxy(mock);
@@ -20,10 +19,10 @@ const construct = (mock: Exotic.Mock, args: any[]): object => {
     value = Reflect.construct(target, args);
   }
 
-  const argList = args.map((arg) => createProxy(scope, arg));
+  const argList = args.map((arg) => createProxy(scope, undefined, arg));
   origin.args = argList;
 
-  return createProxy(scope, value, encode(origin));
+  return createProxy(scope, origin, value);
 };
 
 export default construct;

@@ -7,5 +7,5 @@ export default function useRef(
   value?: any,
 ): Exotic.Proxy {
   // create a proxy by reference key
-  return createProxy(scope, value, undefined, key);
+  return createProxy(scope, { ref: key }, value);
 }

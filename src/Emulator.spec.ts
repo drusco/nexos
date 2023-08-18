@@ -1,25 +1,40 @@
 import Emulator from "./Emulator";
+import Exotic from "./types/Exotic";
 
 describe("(lib) Emulator", () => {
   it("Can simulate a browser window's context", async () => {
-    const nodejs = new Emulator();
+    const external = new Emulator();
     const browser = new Emulator();
 
     const win = {
-      innerWidth: 600,
-      innerHeight: 1000,
+      innerWidth: 1000,
+      innerHeight: 600,
     };
 
-    // the browser's emulator sets the 'window' ref
-    // with the actual window object
-    browser.useRef("window", win);
+    external.addListener(
+      "proxy",
+      (origin: Exotic.proxy.origin, target: any) => {
+        browser.include(origin, target);
+      },
+    );
 
-    // the emulator informs the browser context to create a new ref 'window'
-    // since the 'window' ref exists in the browser already it will use the existing proxy
-    // every handler trap call on the api will correspond to the real window target in the browser
-    const window = nodejs.useRef("window", global);
+    browser.addListener(
+      "reference",
+      (ref: string, use: Exotic.FunctionLike) => {
+        let value: any;
+        if (ref === "window") {
+          value = win;
+        }
+        use(value);
+      },
+    );
 
-    expect(window).toBeTruthy();
+    const window = external.useRef("window", global);
+
+    window.test = true;
+
+    expect(browser.target(browser.useRef("window").test)).toBe(true);
+    //expect(true).toBeTruthy();
   });
 
   it("Cannot leak memory with proper use", () => {

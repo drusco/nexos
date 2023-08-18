@@ -1,11 +1,14 @@
+import EventEmitter from "events";
+
 declare namespace Exotic {
-  type traceable = object;
+  type traceable = object | FunctionLike;
   type key = string | symbol;
   type FunctionLike = (...args: any[]) => any;
 
-  interface Emulator {
+  interface Emulator extends EventEmitter {
     use(value?: any): Proxy;
     useRef(ref: key, value?: any): Proxy;
+    include(origin: proxy.origin, target?: any): void;
     target(value?: any): any;
     parent(value?: traceable): undefined | Proxy;
     values(value?: traceable): Proxy[];
@@ -15,6 +18,7 @@ declare namespace Exotic {
     isRevoked(value: traceable): boolean;
     entries(): IterableIterator<Proxy>;
     encode(value: any): any;
+    decode(value: any): any;
     get(value?: any): Promise<any>;
     refs: key[];
     active: number;
@@ -49,12 +53,13 @@ declare namespace Exotic {
     type payload = [noBreak: "⁠", proxyId: number];
 
     interface origin {
-      action: "get" | "set" | "construct" | "apply";
+      action?: "get" | "set" | "construct" | "apply";
       proxy?: Proxy;
       key?: key;
       value?: any;
       that?: any;
       args?: any[];
+      ref?: key;
     }
 
     interface data {

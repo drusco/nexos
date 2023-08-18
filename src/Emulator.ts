@@ -1,8 +1,10 @@
 import lib from "./lib";
 import Exotic from "./types/Exotic";
+import EventEmitter from "events";
 
-export default class Emulator implements Exotic.Emulator {
+export default class Emulator extends EventEmitter implements Exotic.Emulator {
   constructor(options: Exotic.emulator.options = {}) {
+    super();
     lib.constructor(this, options);
   }
 
@@ -66,11 +68,19 @@ export default class Emulator implements Exotic.Emulator {
     return lib.methods.encode(value);
   }
 
+  decode(value: any): any {
+    return lib.methods.decode(this, value);
+  }
+
   get(value?: any): Promise<any> {
     return lib.methods.get(this, value);
   }
 
   revokeAll(): void {
     return lib.methods.revokeAll(this);
+  }
+
+  include(origin: Exotic.proxy.origin, target?: any): void {
+    return lib.methods.include(this, origin, target);
   }
 }

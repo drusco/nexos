@@ -4,12 +4,12 @@ import findProxy from "./findProxy";
 import isTraceable from "./isTraceable";
 import mockPrototype from "./mockPrototype";
 import traps from "./traps";
+import encode from "./encode";
 
 const createProxy = (
   scope: Exotic.Emulator,
+  origin: Exotic.proxy.origin = {},
   target?: any,
-  origin?: Exotic.proxy.origin,
-  refKey?: Exotic.key,
 ): Exotic.Proxy => {
   const usableProxy = findProxy(target);
 
@@ -20,6 +20,8 @@ const createProxy = (
 
   const data: Exotic.emulator.data = map.emulators.get(scope);
   const { refs } = data;
+  const encodedOrigin = encode(origin);
+  const refKey = origin?.ref;
   const validRefKey = refKey !== undefined;
   const reference = validRefKey ? refKey : undefined;
 
@@ -58,7 +60,7 @@ const createProxy = (
   const proxyData: Exotic.proxy.data = {
     id,
     mock,
-    origin,
+    origin: encodedOrigin,
     target,
     revoke: revokeFunction,
     scope,
@@ -76,6 +78,8 @@ const createProxy = (
   if (isTraceable(target)) {
     map.targets.set(target, proxy);
   }
+
+  scope.emit("proxy", encodedOrigin, encode(target));
 
   return proxy;
 };

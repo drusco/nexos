@@ -1,4 +1,4 @@
-import * as traps from "./traps";
+import traps from "./traps";
 import isTraceable from "./isTraceable";
 import findProxy from "./findProxy";
 import createProxy from "./createProxy";

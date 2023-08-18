@@ -2,7 +2,6 @@ import Exotic from "../../types/Exotic";
 import createProxy from "../createProxy";
 import findProxy from "../findProxy";
 import map from "../map";
-import encode from "../encode";
 
 const set = (mock: Exotic.Mock, key: Exotic.key, value: any): boolean => {
   const proxy = findProxy(mock);
@@ -15,8 +14,7 @@ const set = (mock: Exotic.Mock, key: Exotic.key, value: any): boolean => {
     value,
   };
 
-  const newValue = createProxy(scope, value, encode(origin));
-  //  origin.value = newValue;
+  const newValue = createProxy(scope, origin, value);
 
   try {
     target[key] = scope.target(value);
