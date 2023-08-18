@@ -63,7 +63,7 @@ const createProxy = (
   const proxyData: Exotic.proxy.data = {
     id,
     mock,
-    origin: encodedOrigin,
+    origin,
     target,
     revoke: revokeFunction,
     scope,

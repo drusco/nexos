@@ -1,10 +1,7 @@
 import Exotic from "../../types/Exotic";
 import { findProxy, map } from "../../utils";
 
-export default function values(
-  scope: Exotic.Emulator,
-  value?: Exotic.traceable,
-): Exotic.Proxy[] {
+export default function values(value?: Exotic.traceable): Exotic.Proxy[] {
   const results = [];
   const proxy = findProxy(value);
   if (!proxy) return results;
