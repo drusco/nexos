@@ -29,7 +29,7 @@ declare namespace Exotic {
 
   namespace emulator {
     interface options {
-      [x: string]: any;
+      getTimeout: number;
     }
 
     interface data {

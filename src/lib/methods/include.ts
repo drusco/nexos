@@ -7,6 +7,7 @@ export default function include(
   target?: any,
 ): void {
   const decodedOrigin = decode(scope, origin);
+  const decodedTarget = decode(scope, target);
   const { action, proxy, key, value, that, args, ref } = decodedOrigin;
 
   if (ref) {
@@ -20,7 +21,7 @@ export default function include(
   }
 
   if (!action) {
-    createProxy(scope, decodedOrigin, target);
+    createProxy(scope, decodedOrigin, decodedTarget);
     return;
   }
 

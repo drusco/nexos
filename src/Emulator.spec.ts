@@ -7,16 +7,14 @@ describe("(lib) Emulator", () => {
     const browser = new Emulator();
 
     const win = {
-      innerWidth: 1000,
-      innerHeight: 600,
-    };
-
-    external.addListener(
-      "proxy",
-      (origin: Exotic.proxy.origin, target: any) => {
-        browser.include(origin, target);
+      width: 1000,
+      height: 600,
+      test: "",
+      test2: "",
+      method: () => {
+        return "test";
       },
-    );
+    };
 
     browser.addListener(
       "reference",
@@ -29,15 +27,35 @@ describe("(lib) Emulator", () => {
       },
     );
 
+    external.addListener(
+      "proxy",
+      (origin: Exotic.proxy.origin, target: any) => {
+        browser.include(origin, target);
+      },
+    );
+
+    external.addListener(
+      "get",
+      (value: Exotic.proxy.payload, use: Exotic.FunctionLike) => {
+        use(browser.target(browser.decode(value)));
+      },
+    );
+
     const window = external.useRef("window", global);
+    const browserWindow = browser.useRef("window");
 
-    window.test = true;
+    window.test = "connected";
+    window.test2 = window.method();
+    const width = await external.get(window.width);
 
-    expect(browser.target(browser.useRef("window").test)).toBe(true);
-    //expect(true).toBeTruthy();
+    expect(browser.target(browserWindow.test)).toBe("connected");
+    expect(browser.target(browserWindow.test2)).toBe("test");
+    expect(win.test).toBe("connected");
+    expect(win.test2).toBe("test");
+    expect(win.width).toBe(width);
   });
 
-  it("Cannot leak memory with proper use", () => {
+  it("Can avoid memory leaks by calling revokeAll", () => {
     const $ = new Emulator();
     const revocables = 1000000;
 

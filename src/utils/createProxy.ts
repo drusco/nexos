@@ -12,15 +12,17 @@ const createProxy = (
   target?: any,
 ): Exotic.Proxy => {
   const usableProxy = findProxy(target);
+  const encodedOrigin = encode(origin);
+  const encodedTarget = encode(target);
 
   if (usableProxy) {
     // proxy already exists
+    scope.emit("proxy", encodedOrigin, encodedTarget);
     return usableProxy;
   }
 
   const data: Exotic.emulator.data = map.emulators.get(scope);
   const { refs } = data;
-  const encodedOrigin = encode(origin);
   const refKey = origin?.ref;
   const validRefKey = refKey !== undefined;
   const reference = validRefKey ? refKey : undefined;
@@ -29,6 +31,7 @@ const createProxy = (
     // proxy reference exists
     const proxyRef = refs[reference];
     if (proxyRef) {
+      scope.emit("proxy", encodedOrigin, encodedTarget);
       return proxyRef;
     }
   }
@@ -79,7 +82,7 @@ const createProxy = (
     map.targets.set(target, proxy);
   }
 
-  scope.emit("proxy", encodedOrigin, encode(target));
+  scope.emit("proxy", encodedOrigin, encodedTarget);
 
   return proxy;
 };
