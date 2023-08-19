@@ -7,16 +7,15 @@ export default async function get(
 ): Promise<any> {
   const proxy = findProxy(value);
   const { options } = map.emulators.get(scope);
-  if (!proxy) return value;
 
-  const promise = new Promise((resolve, reject) => {
+  if (!proxy) {
+    return value;
+  }
+
+  return await new Promise((resolve) => {
     scope.emit("get", encode(value), (result: any) => {
       resolve(result);
     });
-    setTimeout(reject, options.getTimeout);
+    setTimeout(resolve, options.responseTimeout);
   });
-
-  const result = await promise.catch(() => {});
-
-  return result;
 }

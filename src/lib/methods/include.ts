@@ -1,52 +1,55 @@
 import Exotic from "../../types/Exotic";
-import { map, traps, createProxy, decode } from "../../utils";
+import { map, traps, createProxy, decode, findProxy } from "../../utils";
 
 export default function include(
   scope: Exotic.Emulator,
   origin: Exotic.proxy.origin,
   target?: any,
-): void {
+): any {
   const decodedOrigin = decode(scope, origin);
   const decodedTarget = decode(scope, target);
+  const targetProxy = findProxy(decodedTarget);
+  const newTarget = targetProxy ? targetProxy : target;
   const { action, proxy, key, value, that, args, ref } = decodedOrigin;
+  const { options } = map.emulators.get(scope);
 
   if (ref) {
-    new Promise((resolve) => {
+    // creates proxy by reference
+    return new Promise((resolve) => {
       scope.emit("reference", ref, (target: any) => {
         createProxy(scope, decodedOrigin, target);
         resolve(undefined);
       });
+      setTimeout(() => {
+        createProxy(scope, decodedOrigin, newTarget);
+        resolve(undefined);
+      }, options.responseTimeout);
     });
-    return;
   }
 
   if (!action) {
-    createProxy(scope, decodedOrigin, decodedTarget);
+    // creates proxy by target
+    return createProxy(scope, decodedOrigin, newTarget);
+  }
+
+  const originData = map.proxies.get(proxy);
+
+  if (!originData) {
     return;
   }
 
-  const originProxy = map.proxies.get(proxy);
-
-  if (!originProxy) {
-    return;
-  }
-
-  const { mock } = originProxy;
+  const { mock } = originData;
 
   switch (action) {
     case "get":
       if (!key) return;
-      traps.get(mock, key);
-      break;
+      return traps.get(mock, key);
     case "set":
-      if (!key) return;
-      traps.set(mock, key, value);
-      break;
+      if (!key) return false;
+      return traps.set(mock, key, value);
     case "apply":
-      traps.apply(mock, that, args);
-      break;
+      return traps.apply(mock, that, args);
     case "construct":
-      traps.construct(mock, args);
-      break;
+      return traps.construct(mock, args);
   }
 }

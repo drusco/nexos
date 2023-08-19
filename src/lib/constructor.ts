@@ -5,7 +5,7 @@ export default function constructor(
   scope: Exotic.Emulator,
   options?: Exotic.emulator.options,
 ): void {
-  const config = { getTimeout: 3000 };
+  const config = { responseTimeout: 2500 };
   if (options) {
     Object.assign(config, options);
   }

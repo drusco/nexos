@@ -80,7 +80,7 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return lib.methods.revokeAll(this);
   }
 
-  include(origin: Exotic.proxy.origin, target?: any): void {
+  include(origin: Exotic.proxy.origin, target?: any): any {
     return lib.methods.include(this, origin, target);
   }
 }

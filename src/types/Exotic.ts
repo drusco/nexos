@@ -8,7 +8,7 @@ declare namespace Exotic {
   interface Emulator extends EventEmitter {
     use(value?: any): Proxy;
     useRef(ref: key, value?: any): Proxy;
-    include(origin: proxy.origin, target?: any): void;
+    include(origin: proxy.origin, target?: any): any;
     target(value?: any): any;
     parent(value?: traceable): undefined | Proxy;
     values(value?: traceable): Proxy[];
@@ -29,7 +29,7 @@ declare namespace Exotic {
 
   namespace emulator {
     interface options {
-      getTimeout: number;
+      responseTimeout: number;
     }
 
     interface data {
