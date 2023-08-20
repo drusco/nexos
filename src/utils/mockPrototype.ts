@@ -1,5 +1,5 @@
-import findProxy from "./findProxy";
-import map from "./map";
+import findProxy from "./findProxy.js";
+import map from "./map.js";
 
 export default Object.create({
   *[Symbol.iterator]() {

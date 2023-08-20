@@ -1,4 +1,4 @@
-import { findProxy, map } from "../../utils";
+import { findProxy, map } from "../../utils/index.js";
 
 export default function target(value?: any): any {
   const proxy = findProxy(value);

@@ -1,8 +1,8 @@
-import Exotic from "../types/Exotic";
-import findProxy from "./findProxy";
-import findProxyById from "./findProxyById";
-import isPayload from "./isPayload";
-import isTraceable from "./isTraceable";
+import Exotic from "../types/Exotic.js";
+import findProxy from "./findProxy.js";
+import findProxyById from "./findProxyById.js";
+import isPayload from "./isPayload.js";
+import isTraceable from "./isTraceable.js";
 
 export default function decode(
   scope: Exotic.Emulator,

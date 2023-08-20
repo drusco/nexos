@@ -1,5 +1,5 @@
-import constructor from "./constructor";
-import getters from "./getters";
-import methods from "./methods";
+import constructor from "./constructor.js";
+import getters from "./getters/index.js";
+import methods from "./methods/index.js";
 
 export default { constructor, getters, methods };

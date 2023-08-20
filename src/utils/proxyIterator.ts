@@ -1,5 +1,5 @@
-import Exotic from "../types/Exotic";
-import map from "./map";
+import Exotic from "../types/Exotic.js";
+import map from "./map.js";
 
 const proxyIterator = function* (): IterableIterator<Exotic.Proxy> {
   for (const proxy of map.proxySet) {

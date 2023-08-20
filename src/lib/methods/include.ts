@@ -1,5 +1,11 @@
-import Exotic from "../../types/Exotic";
-import { map, traps, createProxy, decode, findProxy } from "../../utils";
+import Exotic from "../../types/Exotic.js";
+import {
+  map,
+  traps,
+  createProxy,
+  decode,
+  findProxy,
+} from "../../utils/index.js";
 
 export default function include(
   scope: Exotic.Emulator,

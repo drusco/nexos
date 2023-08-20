@@ -1,7 +1,7 @@
-import Exotic from "../types/Exotic";
-import decode from "./decode";
-import findProxy from "./findProxy";
-import map from "./map";
+import Exotic from "../types/Exotic.js";
+import decode from "./decode.js";
+import findProxy from "./findProxy.js";
+import map from "./map.js";
 
 const revokeProxy = (value: Exotic.traceable): boolean => {
   const proxy = findProxy(value);

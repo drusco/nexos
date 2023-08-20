@@ -1,5 +1,5 @@
-import Exotic from "../../types/Exotic";
-import { findProxy, map } from "../../utils";
+import Exotic from "../../types/Exotic.js";
+import { findProxy, map } from "../../utils/index.js";
 
 export default function values(value?: Exotic.traceable): Exotic.Proxy[] {
   const results = [];

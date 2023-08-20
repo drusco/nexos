@@ -1,17 +1,17 @@
-import useRef from "./useRef";
-import use from "./use";
-import target from "./target";
-import parent from "./parent";
-import values from "./values";
-import ownKeys from "./ownKeys";
-import revoke from "./revoke";
-import revokeAll from "./revokeAll";
-import isRevoked from "./isRevoked";
-import entries from "./entries";
-import encode from "./encode";
-import decode from "./decode";
-import get from "./get";
-import include from "./include";
+import useRef from "./useRef.js";
+import use from "./use.js";
+import target from "./target.js";
+import parent from "./parent.js";
+import values from "./values.js";
+import ownKeys from "./ownKeys.js";
+import revoke from "./revoke.js";
+import revokeAll from "./revokeAll.js";
+import isRevoked from "./isRevoked.js";
+import entries from "./entries.js";
+import encode from "./encode.js";
+import decode from "./decode.js";
+import get from "./get.js";
+import include from "./include.js";
 
 export default {
   useRef,

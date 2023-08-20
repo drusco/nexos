@@ -1,6 +1,6 @@
-import Exotic from "../../types/Exotic";
-import map from "../map";
-import findProxy from "../findProxy";
+import Exotic from "../../types/Exotic.js";
+import map from "../map.js";
+import findProxy from "../findProxy.js";
 
 const deleteProperty = (mock: Exotic.Mock, key: Exotic.key): boolean => {
   const proxy = findProxy(mock);

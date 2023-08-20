@@ -1,4 +1,4 @@
-import Exotic from "../types/Exotic";
+import Exotic from "../types/Exotic.js";
 
 const emulators: WeakMap<Exotic.Emulator, Exotic.emulator.data> = new WeakMap();
 const targets: WeakMap<Exotic.traceable, Exotic.Proxy> = new WeakMap();

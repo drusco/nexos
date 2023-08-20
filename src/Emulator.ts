@@ -1,8 +1,8 @@
-import lib from "./lib";
-import Exotic from "./types/Exotic";
+import lib from "./lib/index.js";
+import Exotic from "./types/Exotic.js";
 import EventEmitter from "events";
 
-export default class Emulator extends EventEmitter implements Exotic.Emulator {
+class Emulator extends EventEmitter implements Exotic.Emulator {
   constructor(options?: Exotic.emulator.options) {
     super();
     lib.constructor(this, options);
@@ -84,3 +84,5 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return lib.methods.include(this, origin, target);
   }
 }
+
+export default Emulator;

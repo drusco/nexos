@@ -1,5 +1,5 @@
-import Exotic from "../../types/Exotic";
-import { findProxy, encode, map } from "../../utils";
+import Exotic from "../../types/Exotic.js";
+import { findProxy, encode, map } from "../../utils/index.js";
 
 export default async function get(
   scope: Exotic.Emulator,

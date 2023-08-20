@@ -1,7 +1,7 @@
-import Exotic from "../types/Exotic";
-import findProxy from "./findProxy";
-import map from "./map";
-import isTraceable from "./isTraceable";
+import Exotic from "../types/Exotic.js";
+import findProxy from "./findProxy.js";
+import map from "./map.js";
+import isTraceable from "./isTraceable.js";
 
 export default function encode(
   value: any,

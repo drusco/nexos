@@ -1,7 +1,7 @@
-import Exotic from "../../types/Exotic";
-import createProxy from "../createProxy";
-import findProxy from "../findProxy";
-import map from "../map";
+import Exotic from "../../types/Exotic.js";
+import createProxy from "../createProxy.js";
+import findProxy from "../findProxy.js";
+import map from "../map.js";
 
 const set = (mock: Exotic.Mock, key: Exotic.key, value: any): boolean => {
   const proxy = findProxy(mock);

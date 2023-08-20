@@ -1,5 +1,5 @@
-import Exotic from "../types/Exotic";
-import { map } from "../utils";
+import Exotic from "../types/Exotic.js";
+import { map } from "../utils/index.js";
 
 export default function constructor(
   scope: Exotic.Emulator,

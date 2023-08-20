@@ -4,7 +4,7 @@
   "description": "test emulation",
   "main": "dist/index.js",
   "private": true,
-  "type": "commonjs",
+  "type": "module",
   "license": "UNLICENSED",
   "scripts": {
     "prepare": "husky install",
