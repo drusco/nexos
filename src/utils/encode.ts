@@ -11,7 +11,7 @@ export default function encode(
   const proxy = findProxy(value);
 
   if (proxy) {
-    return ["⁠", map.proxies.get(proxy).id] as Exotic.proxy.payload;
+    return `⁠${map.proxies.get(proxy).id}`;
   }
 
   if (traceable) {

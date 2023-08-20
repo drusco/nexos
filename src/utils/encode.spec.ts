@@ -8,7 +8,7 @@ describe("(function) encode", () => {
     const proxy = $.use();
     const payload = encode(proxy);
 
-    expect(payload).toEqual(["⁠", 1]);
+    expect(payload).toEqual("⁠1");
   });
 
   it("Returns a payload object from a non proxy value", () => {

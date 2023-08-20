@@ -50,8 +50,6 @@ declare namespace Exotic {
   }
 
   namespace proxy {
-    type payload = [noBreak: "⁠", proxyId: number];
-
     interface origin {
       action?: "get" | "set" | "construct" | "apply";
       proxy?: Proxy;

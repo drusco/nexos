@@ -18,7 +18,7 @@ export default function decode(
   }
 
   if (payload) {
-    return findProxyById(scope, value[1]);
+    return findProxyById(scope, parseInt(value.substring(1)));
   }
 
   if (traceable) {
