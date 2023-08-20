@@ -1,1 +1,2 @@
-export { default } from "./Emulator";
+import Emulator from "./Emulator";
+export { Emulator };
