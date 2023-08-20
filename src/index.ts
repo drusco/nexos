@@ -1,2 +1,1 @@
-import Emulator from "./Emulator.js";
-export default Emulator;
+export { default } from "./Emulator.js";

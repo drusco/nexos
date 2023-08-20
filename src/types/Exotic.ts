@@ -24,7 +24,6 @@ declare namespace Exotic {
     active: number;
     revoked: number;
     length: number;
-    [Symbol.iterator](): IterableIterator<Proxy>;
   }
 
   namespace emulator {

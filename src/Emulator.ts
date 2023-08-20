@@ -2,7 +2,7 @@ import lib from "./lib/index.js";
 import Exotic from "./types/Exotic.js";
 import EventEmitter from "events";
 
-class Emulator extends EventEmitter implements Exotic.Emulator {
+export default class Emulator extends EventEmitter implements Exotic.Emulator {
   constructor(options?: Exotic.emulator.options) {
     super();
     lib.constructor(this, options);
@@ -56,10 +56,6 @@ class Emulator extends EventEmitter implements Exotic.Emulator {
     return lib.methods.isRevoked(value);
   }
 
-  [Symbol.iterator](): IterableIterator<Exotic.Proxy> {
-    return lib.methods.entries();
-  }
-
   entries(): IterableIterator<Exotic.Proxy> {
     return lib.methods.entries();
   }
@@ -84,5 +80,3 @@ class Emulator extends EventEmitter implements Exotic.Emulator {
     return lib.methods.include(this, origin, target);
   }
 }
-
-export default Emulator;
