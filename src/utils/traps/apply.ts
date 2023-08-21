@@ -11,17 +11,18 @@ const apply = (mock: Exotic.Mock, that?: any, args?: any[]): any => {
     action: "apply",
     proxy,
     that,
-    args,
+    args: args.map((arg) => createProxy(scope, undefined, arg)),
   };
 
   let value: any;
 
   if (typeof target === "function") {
-    value = Reflect.apply(scope.target(target), scope.target(that), args);
+    value = Reflect.apply(
+      scope.target(target),
+      scope.target(that),
+      args.map((arg) => scope.target(arg)),
+    );
   }
-
-  const argList = args.map((arg) => createProxy(scope, undefined, arg));
-  origin.args = argList;
 
   return createProxy(scope, origin, value);
 };
