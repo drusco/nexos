@@ -22,7 +22,6 @@ declare namespace Exotic {
     get(value?: any): Promise<any>;
     refs: key[];
     active: number;
-    revoked: number;
     length: number;
   }
 

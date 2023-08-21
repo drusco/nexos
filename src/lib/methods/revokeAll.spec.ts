@@ -13,7 +13,6 @@ describe("(method) revokeAll", () => {
     $.revokeAll();
 
     expect($.length).toBe(revocables);
-    expect($.revoked).toBe(revocables);
     expect($.active).toBe(0);
     expect(last).toThrow();
   });

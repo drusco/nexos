@@ -16,10 +16,6 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return lib.getters.active(this);
   }
 
-  get revoked(): number {
-    return lib.getters.revoked(this);
-  }
-
   get length(): number {
     return lib.getters.length(this);
   }

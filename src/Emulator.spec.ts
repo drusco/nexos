@@ -65,7 +65,6 @@ describe("(lib) Emulator", () => {
     }
 
     expect($.length).toBe(revocables);
-    expect($.revoked).toBe(revocables);
     expect($.active).toBe(0);
   });
 });

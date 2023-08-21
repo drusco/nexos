@@ -37,7 +37,10 @@ const revokeProxy = (value: Exotic.traceable): boolean => {
     if (action === "get" || action === "set") {
       // delete from parent proxy and target
       if (parentProxy) {
-        delete parentProxy[key];
+        const data = map.proxies.get(parentProxy);
+        if (data && !data.revoked) {
+          delete parentProxy[key];
+        }
       }
     }
   }
