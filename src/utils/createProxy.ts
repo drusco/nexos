@@ -6,6 +6,8 @@ import mockPrototype from "./mockPrototype.js";
 import traps from "./traps/index.js";
 import encode from "./encode.js";
 
+Error.stackTraceLimit = 3;
+
 const createProxy = (
   scope: Exotic.Emulator,
   origin: Exotic.proxy.origin = {},
@@ -14,10 +16,11 @@ const createProxy = (
   const usableProxy = findProxy(target);
   const encodedOrigin = encode(origin);
   const encodedTarget = encode(target);
+  const error = new Error();
 
   if (usableProxy) {
     // proxy already exists
-    scope.emit("proxy", encodedOrigin, encodedTarget);
+    scope.emit("proxy", encodedOrigin, encodedTarget, error);
     return usableProxy;
   }
 
@@ -31,7 +34,7 @@ const createProxy = (
     // proxy reference exists
     const proxyRef = refs[reference];
     if (proxyRef) {
-      scope.emit("proxy", encodedOrigin, encodedTarget);
+      scope.emit("proxy", encodedOrigin, encodedTarget, error);
       return proxyRef;
     }
   }
@@ -82,7 +85,7 @@ const createProxy = (
     map.targets.set(target, proxy);
   }
 
-  scope.emit("proxy", encodedOrigin, encodedTarget);
+  scope.emit("proxy", encodedOrigin, encodedTarget, error);
 
   return proxy;
 };

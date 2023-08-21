@@ -17,19 +17,19 @@ export default function include(
   const targetProxy = findProxy(decodedTarget);
   const newTarget = targetProxy ? targetProxy : target;
   const { action, proxy, key, value, that, args, ref } = decodedOrigin;
-  const { options } = map.emulators.get(scope);
 
   if (ref) {
     // creates proxy by reference
     return new Promise((resolve) => {
+      let done = false;
       scope.emit("reference", ref, (target: any) => {
+        done = true;
         createProxy(scope, decodedOrigin, target);
         resolve(undefined);
       });
-      setTimeout(() => {
-        createProxy(scope, decodedOrigin, newTarget);
-        resolve(undefined);
-      }, options.responseTimeout);
+      if (done) return;
+      createProxy(scope, decodedOrigin, newTarget);
+      resolve(undefined);
     });
   }
 

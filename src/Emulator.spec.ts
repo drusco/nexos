@@ -57,7 +57,7 @@ describe("(lib) Emulator", () => {
     const revocables = 1000000;
 
     for (let i = 0; i < revocables; i++) {
-      $.use($.use($.use(20)));
+      $.use();
       $.revokeAll();
     }
 

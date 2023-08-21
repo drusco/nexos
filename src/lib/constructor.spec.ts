@@ -4,7 +4,7 @@ import { map } from "../utils";
 
 describe("(constructor)", () => {
   it("Creates a new emulator", () => {
-    const config: Exotic.emulator.options = { responseTimeout: 1000 };
+    const config: Exotic.emulator.options = {};
     const emulator = new Emulator(config);
     const data: Record<string, any> = map.emulators.get(emulator) || {};
     const dataProps = ["options", "refs", "totalProxies", "activeProxies"];

@@ -26,9 +26,7 @@ declare namespace Exotic {
   }
 
   namespace emulator {
-    interface options {
-      responseTimeout: number;
-    }
+    interface options {}
 
     interface data {
       options: options;

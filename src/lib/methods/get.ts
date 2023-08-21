@@ -1,21 +1,20 @@
 import Exotic from "../../types/Exotic.js";
-import { findProxy, encode, map } from "../../utils/index.js";
+import { findProxy, encode } from "../../utils/index.js";
 
-export default async function get(
+export default function get(
   scope: Exotic.Emulator,
-  value?: any,
+  ...args: any[]
 ): Promise<any> {
-  const proxy = findProxy(value);
-  const { options } = map.emulators.get(scope);
+  const values = args.map(findProxy);
 
-  if (!proxy) {
-    return value;
-  }
+  return new Promise((resolve) => {
+    if (!args.length) {
+      return resolve(undefined);
+    }
+    const payload = args.length > 1 ? values : values[0];
 
-  return await new Promise((resolve) => {
-    scope.emit("get", encode(value), (result: any) => {
+    scope.emit("get", encode(payload), (result: any) => {
       resolve(result);
     });
-    setTimeout(resolve, options.responseTimeout);
   });
 }
