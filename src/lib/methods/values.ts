@@ -2,9 +2,8 @@ import Exotic from "../../types/Exotic.js";
 import { findProxy, map } from "../../utils/index.js";
 
 export default function values(value?: Exotic.traceable): Exotic.Proxy[] {
-  const results = [];
   const proxy = findProxy(value);
-  if (!proxy) return results;
+  if (!proxy) return [];
   const { sandbox } = map.proxies.get(proxy);
-  return Object.keys(sandbox).map((key) => sandbox[key]);
+  return Object.values(sandbox);
 }

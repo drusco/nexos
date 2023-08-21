@@ -34,12 +34,9 @@ describe("(lib) Emulator", () => {
       },
     );
 
-    external.addListener(
-      "get",
-      (value: Exotic.proxy.payload, use: Exotic.FunctionLike) => {
-        use(browser.target(browser.decode(value)));
-      },
-    );
+    external.addListener("get", (value: string, use: Exotic.FunctionLike) => {
+      use(browser.target(browser.decode(value)));
+    });
 
     const window = external.useRef("window", global);
     const browserWindow = browser.useRef("window");
