@@ -19,7 +19,7 @@ declare namespace Exotic {
     entries(): IterableIterator<Proxy>;
     encode(value: any): any;
     decode(value: any): any;
-    get(value?: any): Promise<any>;
+    get(...values: any[]): Promise<any[]>;
     refs: key[];
     active: number;
     length: number;

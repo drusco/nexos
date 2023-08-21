@@ -34,8 +34,8 @@ describe("(lib) Emulator", () => {
       },
     );
 
-    external.addListener("get", (value: string, use: Exotic.FunctionLike) => {
-      use(browser.target(browser.decode(value)));
+    external.addListener("get", (values: any[], use: Exotic.FunctionLike) => {
+      use(browser.decode(values).map((arg: any) => browser.target(arg)));
     });
 
     const window = external.useRef("window", global);
@@ -43,7 +43,7 @@ describe("(lib) Emulator", () => {
 
     window.test = "connected";
     window.test2 = window.method();
-    const width = await external.get(window.width);
+    const [width] = await external.get(window.width);
 
     expect(browser.target(browserWindow.test)).toBe("connected");
     expect(browser.target(browserWindow.test2)).toBe("test");

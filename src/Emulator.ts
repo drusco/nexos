@@ -64,8 +64,8 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return lib.methods.decode(this, value);
   }
 
-  get(value?: any): Promise<any> {
-    return lib.methods.get(this, value);
+  get(...values: any[]): Promise<any[]> {
+    return lib.methods.get(this, ...values);
   }
 
   revokeAll(): void {
