@@ -5,7 +5,7 @@ export default Object.create({
   *[Symbol.iterator]() {
     const proxy = findProxy(this);
     const { sandbox } = map.proxies.get(proxy);
-    for (const key of Reflect.ownKeys(sandbox)) {
+    for (const key of Object.keys(sandbox)) {
       yield sandbox[key];
     }
   },

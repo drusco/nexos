@@ -3,7 +3,11 @@ import createProxy from "../createProxy.js";
 import findProxy from "../findProxy.js";
 import map from "../map.js";
 
-const get = (mock: Exotic.Mock, key: Exotic.key): any => {
+const get = (mock: Exotic.Mock, key: any): any => {
+  if (key === Symbol.iterator) {
+    return mock[key];
+  }
+
   const proxy = findProxy(mock);
   const { scope, target, sandbox } = map.proxies.get(proxy);
 
@@ -12,10 +16,6 @@ const get = (mock: Exotic.Mock, key: Exotic.key): any => {
     key,
     proxy,
   };
-
-  if (key === Symbol.iterator) {
-    return mock[key];
-  }
 
   let value: any;
 

@@ -31,11 +31,11 @@ describe("(method) revoke", () => {
     expect(() => new inner()).toThrow();
     expect(() => inner()).toThrow();
     expect($.use(proxy)).toBe(proxy);
-    expect($.ownKeys(proxy).includes("inner")).toBe(false);
+    expect($.keys(proxy).includes("inner")).toBe(false);
   });
 
   it("Removes the reference binded to a proxy", () => {
-    const ref = Symbol();
+    const ref = "myref";
     const proxy = $.useRef(ref);
     const inner = proxy.inner;
     const deep = proxy.inner.inner;

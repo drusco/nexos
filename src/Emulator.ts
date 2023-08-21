@@ -40,8 +40,8 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return lib.methods.values(value);
   }
 
-  ownKeys(value?: Exotic.traceable): Exotic.key[] {
-    return lib.methods.ownKeys(value);
+  keys(value?: Exotic.traceable): Exotic.key[] {
+    return lib.methods.keys(value);
   }
 
   revoke(value: Exotic.traceable): boolean {

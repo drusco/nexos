@@ -3,7 +3,7 @@ import use from "./use.js";
 import target from "./target.js";
 import parent from "./parent.js";
 import values from "./values.js";
-import ownKeys from "./ownKeys.js";
+import keys from "./keys.js";
 import revoke from "./revoke.js";
 import revokeAll from "./revokeAll.js";
 import isRevoked from "./isRevoked.js";
@@ -19,7 +19,7 @@ export default {
   target,
   parent,
   values,
-  ownKeys,
+  keys,
   revoke,
   revokeAll,
   isRevoked,

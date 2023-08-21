@@ -6,5 +6,5 @@ export default function values(value?: Exotic.traceable): Exotic.Proxy[] {
   const proxy = findProxy(value);
   if (!proxy) return results;
   const { sandbox } = map.proxies.get(proxy);
-  return Reflect.ownKeys(sandbox).map((key) => sandbox[key]);
+  return Object.keys(sandbox).map((key) => sandbox[key]);
 }

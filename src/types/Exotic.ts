@@ -2,7 +2,7 @@ import EventEmitter from "events";
 
 declare namespace Exotic {
   type traceable = object | FunctionLike;
-  type key = string | symbol;
+  type key = string;
   type FunctionLike = (...args: any[]) => any;
 
   interface Emulator extends EventEmitter {
@@ -12,7 +12,7 @@ declare namespace Exotic {
     target(value?: any): any;
     parent(value?: traceable): undefined | Proxy;
     values(value?: traceable): Proxy[];
-    ownKeys(value?: traceable): key[];
+    keys(value?: traceable): key[];
     revoke(value: traceable): boolean;
     revokeAll(): void;
     isRevoked(value: traceable): boolean;
