@@ -6,7 +6,7 @@ export default function constructor(
   options?: Exotic.emulator.options,
 ): void {
   // set config defaults
-  const config = {};
+  const config = { traceErrors: false };
   if (options) {
     Object.assign(config, options);
   }

@@ -26,7 +26,9 @@ declare namespace Exotic {
   }
 
   namespace emulator {
-    interface options {}
+    interface options {
+      traceErrors: boolean;
+    }
 
     interface data {
       options: options;

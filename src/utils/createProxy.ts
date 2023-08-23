@@ -6,17 +6,16 @@ import mockPrototype from "./mockPrototype.js";
 import traps from "./traps/index.js";
 import encode from "./encode.js";
 
-Error.stackTraceLimit = 3;
-
 const createProxy = (
   scope: Exotic.Emulator,
   origin: Exotic.proxy.origin = {},
   target?: any,
 ): Exotic.Proxy => {
+  const { options } = map.emulators.get(scope);
   const usableProxy = findProxy(target);
   const encodedOrigin = encode(origin);
   const encodedTarget = encode(target);
-  const error = new Error();
+  const error = options.traceErrors ? new Error() : undefined;
 
   if (usableProxy) {
     // proxy already exists

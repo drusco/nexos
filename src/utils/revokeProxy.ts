@@ -55,8 +55,16 @@ const revokeProxy = (value: Exotic.traceable): boolean => {
 
   revoke();
 
-  proxyData.revoked = true;
   data.activeProxies -= 1;
+  Object.assign(proxyData, {
+    revoked: true,
+    mock: null,
+    origin: null,
+    revoke: null,
+    sandbox: null,
+    scope: null,
+    target: null,
+  } as Exotic.proxy.data);
 
   if (data.activeProxies === 0) {
     // clean internal state

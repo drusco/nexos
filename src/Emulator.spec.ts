@@ -52,13 +52,12 @@ describe("(lib) Emulator", () => {
     expect(win.width).toBe(width);
   });
 
-  it("Can avoid memory leaks by calling revokeAll", () => {
+  it("Avoids memory allocation limits by revoking unused proxies", () => {
     const $ = new Emulator();
     const revocables = 1000000;
 
     for (let i = 0; i < revocables; i++) {
-      $.use();
-      $.revokeAll();
+      $.revoke($.use());
     }
 
     expect($.length).toBe(revocables);
