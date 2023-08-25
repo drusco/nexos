@@ -44,15 +44,16 @@ export default function include(
     return;
   }
 
-  const { mock } = originData;
+  const { mock, sandbox } = originData;
 
   switch (action) {
     case "get":
       if (!key) return;
       return traps.get(mock, key);
     case "set":
-      if (!key) return false;
-      return traps.set(mock, key, value);
+      if (!key) return;
+      traps.set(mock, key, value);
+      return sandbox[key];
     case "apply":
       return traps.apply(mock, that, args);
     case "construct":

@@ -20,6 +20,7 @@ declare namespace Exotic {
     encode(value: any): any;
     decode(value: any): any;
     get(...values: any[]): Promise<any[]>;
+    getId(value: any): number;
     refs: key[];
     length: number;
   }

@@ -69,7 +69,8 @@ const revokeProxy = (value: Exotic.traceable): boolean => {
     // clean internal state
     Object.assign(data, {
       refs: Object.create(null),
-    });
+      counter: 0,
+    } as Exotic.emulator.data);
   }
 
   return true;

@@ -1,6 +1,8 @@
 import lib from "./lib/index.js";
 import Exotic from "./types/Exotic.js";
 import EventEmitter from "events";
+import findProxy from "./utils/findProxy.js";
+import map from "./utils/map.js";
 
 export default class Emulator extends EventEmitter implements Exotic.Emulator {
   constructor(options?: Exotic.emulator.options) {
@@ -70,5 +72,11 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
 
   include(origin: Exotic.proxy.origin, target?: any): any {
     return lib.methods.include(this, origin, target);
+  }
+
+  getId(value: any): number {
+    const proxy = findProxy(value);
+    if (!proxy) return -1;
+    return map.proxies.get(proxy).id;
   }
 }

@@ -5,26 +5,36 @@ import isTraceable from "./isTraceable.js";
 import mockPrototype from "./mockPrototype.js";
 import traps from "./traps/index.js";
 import encode from "./encode.js";
+//import decode from "./decode.js";
 
 const createProxy = (
   scope: Exotic.Emulator,
   origin: Exotic.proxy.origin = {},
   target?: any,
 ): Exotic.Proxy => {
-  const { options, proxySet } = map.emulators.get(scope);
+  const data: Exotic.emulator.data = map.emulators.get(scope);
+  const { refs, options, proxySet } = data;
+  //const decodedTarget = decode(scope, target);
   const usableProxy = findProxy(target);
-  const encodedOrigin = encode(origin);
-  const encodedTarget = encode(target);
   const error = options.traceErrors ? new Error() : undefined;
+
+  // console.log("[createProxy]", data.counter + 1);
+
+  scope.emit("proxy", encode(origin), encode(target), error);
 
   if (usableProxy) {
     // proxy already exists
-    scope.emit("proxy", encodedOrigin, encodedTarget, error);
+    if (
+      origin.action === "apply" ||
+      origin.action === "construct" ||
+      origin.action === "get" ||
+      origin.action === "set"
+    ) {
+      data.counter++;
+    }
     return usableProxy;
   }
 
-  const data: Exotic.emulator.data = map.emulators.get(scope);
-  const { refs } = data;
   const refKey = origin?.ref;
   const validRefKey = refKey !== undefined;
   const reference = validRefKey ? refKey : undefined;
@@ -33,7 +43,6 @@ const createProxy = (
     // proxy reference exists
     const proxyRef = refs[reference];
     if (proxyRef) {
-      scope.emit("proxy", encodedOrigin, encodedTarget, error);
       return proxyRef;
     }
   }
@@ -81,8 +90,6 @@ const createProxy = (
   if (isTraceable(target)) {
     map.targets.set(target, proxy);
   }
-
-  scope.emit("proxy", encodedOrigin, encodedTarget, error);
 
   return proxy;
 };

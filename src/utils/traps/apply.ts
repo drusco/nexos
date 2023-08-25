@@ -20,9 +20,18 @@ const apply = (mock: Exotic.Mock, that?: any, args?: any[]): any => {
     value = Reflect.apply(
       scope.target(target),
       scope.target(that),
-      args.map((arg) => scope.target(arg)),
+      origin.args.map((arg) => scope.target(arg)),
     );
+    // console.log(
+    //   scope.target(target),
+    //   scope.target(that),
+    //   args,
+    //   origin.args,
+    //   origin.args.map((arg) => scope.target(arg)),
+    // );
   }
+
+  //console.log("[trap_apply]", args, scope.encode(origin), value);
 
   return createProxy(scope, origin, value);
 };
