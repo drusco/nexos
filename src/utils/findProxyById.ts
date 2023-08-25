@@ -6,9 +6,9 @@ export default function findProxyById(
   scope: Exotic.Emulator,
   id: number,
 ): void | Exotic.Proxy {
-  for (const proxy of proxyIterator()) {
-    const { scope: proxyScope, id: proxyId } = map.proxies.get(proxy);
-    if (scope === proxyScope && id === proxyId) {
+  for (const proxy of proxyIterator(scope)) {
+    const { id: proxyId } = map.proxies.get(proxy);
+    if (id === proxyId) {
       return proxy;
     }
   }

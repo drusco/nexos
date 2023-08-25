@@ -4,6 +4,5 @@ const emulators: WeakMap<Exotic.Emulator, Exotic.emulator.data> = new WeakMap();
 const targets: WeakMap<Exotic.traceable, Exotic.Proxy> = new WeakMap();
 const mocks: WeakMap<Exotic.Mock, Exotic.Proxy> = new WeakMap();
 const proxies: WeakMap<Exotic.Proxy, Exotic.proxy.data> = new WeakMap();
-const proxySet: Set<Exotic.Proxy> = new Set();
 
-export default { emulators, mocks, targets, proxies, proxySet };
+export default { emulators, mocks, targets, proxies };

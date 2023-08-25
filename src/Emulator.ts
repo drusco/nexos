@@ -12,10 +12,6 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return lib.getters.refs(this);
   }
 
-  get active(): number {
-    return lib.getters.active(this);
-  }
-
   get length(): number {
     return lib.getters.length(this);
   }
@@ -53,7 +49,7 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
   }
 
   entries(): IterableIterator<Exotic.Proxy> {
-    return lib.methods.entries();
+    return lib.methods.entries(this);
   }
 
   encode(value: any): any {

@@ -21,7 +21,6 @@ declare namespace Exotic {
     decode(value: any): any;
     get(...values: any[]): Promise<any[]>;
     refs: key[];
-    active: number;
     length: number;
   }
 
@@ -33,8 +32,8 @@ declare namespace Exotic {
     interface data {
       options: options;
       refs: Record<key, Proxy>;
-      totalProxies: number;
-      activeProxies: number;
+      counter: number;
+      proxySet: Set<Proxy>;
     }
   }
 

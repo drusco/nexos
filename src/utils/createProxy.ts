@@ -11,7 +11,7 @@ const createProxy = (
   origin: Exotic.proxy.origin = {},
   target?: any,
 ): Exotic.Proxy => {
-  const { options } = map.emulators.get(scope);
+  const { options, proxySet } = map.emulators.get(scope);
   const usableProxy = findProxy(target);
   const encodedOrigin = encode(origin);
   const encodedTarget = encode(target);
@@ -47,7 +47,7 @@ const createProxy = (
 
   let { proxy, revoke } = Proxy.revocable<Exotic.Proxy>(mock, traps);
 
-  const id = ++data.totalProxies;
+  const id = ++data.counter;
   const sandbox = Object.create(null);
 
   const revokeFunction = () => {
@@ -74,11 +74,9 @@ const createProxy = (
     revoked: false,
   };
 
-  data.activeProxies += 1;
-
   map.mocks.set(mock, proxy);
   map.proxies.set(proxy, proxyData);
-  map.proxySet.add(proxy);
+  proxySet.add(proxy);
 
   if (isTraceable(target)) {
     map.targets.set(target, proxy);

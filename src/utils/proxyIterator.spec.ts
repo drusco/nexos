@@ -9,7 +9,7 @@ const proxyC = $.use();
 
 describe("(function*) proxyIterator", () => {
   it("Returns an IterableIterator of all non-revoked proxies in the emulator instance", () => {
-    const iterator = proxyIterator();
+    const iterator = proxyIterator($);
 
     expect(iterator.next().value).toBe(proxyA);
     expect(iterator.next().value).toBe(proxyB);

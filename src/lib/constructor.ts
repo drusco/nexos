@@ -13,8 +13,8 @@ export default function constructor(
   const data: Exotic.emulator.data = {
     options: config,
     refs: Object.create(null),
-    totalProxies: 0, // total item count including revoked items, it only increases
-    activeProxies: 0, // items that are not revoked
+    counter: 0,
+    proxySet: new Set(),
   };
 
   map.emulators.set(scope, data);
