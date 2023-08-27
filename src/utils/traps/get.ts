@@ -3,7 +3,7 @@ import createProxy from "../createProxy.js";
 import findProxy from "../findProxy.js";
 import map from "../map.js";
 
-const get = (mock: Exotic.Mock, key: any): any => {
+const get = (mock: Exotic.Mock, key: any): Exotic.Proxy => {
   if (key === Symbol.iterator) {
     return mock[key];
   }

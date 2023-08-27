@@ -3,7 +3,7 @@ import createProxy from "../createProxy.js";
 import findProxy from "../findProxy.js";
 import map from "../map.js";
 
-const apply = (mock: Exotic.Mock, that?: any, args?: any[]): any => {
+const apply = (mock: Exotic.Mock, that?: any, args?: any[]): Exotic.Proxy => {
   const proxy = findProxy(mock);
   const { scope, target } = map.proxies.get(proxy);
 
@@ -22,16 +22,7 @@ const apply = (mock: Exotic.Mock, that?: any, args?: any[]): any => {
       scope.target(that),
       origin.args.map((arg) => scope.target(arg)),
     );
-    // console.log(
-    //   scope.target(target),
-    //   scope.target(that),
-    //   args,
-    //   origin.args,
-    //   origin.args.map((arg) => scope.target(arg)),
-    // );
   }
-
-  //console.log("[trap_apply]", args, scope.encode(origin), value);
 
   return createProxy(scope, origin, value);
 };

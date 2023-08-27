@@ -3,7 +3,7 @@ import createProxy from "../createProxy.js";
 import findProxy from "../findProxy.js";
 import map from "../map.js";
 
-const construct = (mock: Exotic.Mock, args: any[]): object => {
+const construct = (mock: Exotic.Mock, args: any[]): Exotic.Proxy => {
   const proxy = findProxy(mock);
   const { scope, target } = map.proxies.get(proxy);
 
@@ -18,7 +18,7 @@ const construct = (mock: Exotic.Mock, args: any[]): object => {
   if (typeof target === "function") {
     value = Reflect.construct(
       scope.target(target),
-      args.map((arg) => scope.target(arg)),
+      origin.args.map((arg) => scope.target(arg)),
     );
   }
 

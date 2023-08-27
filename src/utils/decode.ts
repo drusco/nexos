@@ -3,6 +3,7 @@ import findProxy from "./findProxy.js";
 import findProxyById from "./findProxyById.js";
 import isPayload from "./isPayload.js";
 import isTraceable from "./isTraceable.js";
+import map from "./map.js";
 
 export default function decode(
   scope: Exotic.Emulator,
@@ -12,13 +13,15 @@ export default function decode(
   const traceable = isTraceable(value);
   const proxy = findProxy(value);
   const payload = isPayload(value);
+  const { links } = map.emulators.get(scope);
 
   if (proxy) {
     return proxy;
   }
 
   if (payload) {
-    return findProxyById(scope, parseInt(value.substring(1)));
+    const link = links[value] || value;
+    return findProxyById(scope, parseInt(link.substring(1)));
   }
 
   if (traceable) {

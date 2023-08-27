@@ -6,13 +6,16 @@ export default function constructor(
   options?: Exotic.emulator.options,
 ): void {
   // set config defaults
-  const config = { traceErrors: false };
+  const config: Exotic.emulator.options = {
+    traceErrors: false,
+  };
   if (options) {
     Object.assign(config, options);
   }
   const data: Exotic.emulator.data = {
     options: config,
     refs: Object.create(null),
+    links: Object.create(null),
     counter: 0,
     proxySet: new Set(),
   };
