@@ -28,6 +28,7 @@ declare namespace Exotic {
   namespace emulator {
     interface options {
       traceErrors?: boolean;
+      stackTraceLimit?: number;
     }
 
     interface data {

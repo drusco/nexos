@@ -9,6 +9,7 @@ import encode from "./encode.js";
 import decode from "./decode.js";
 import isPayload from "./isPayload.js";
 import findProxyById from "./findProxyById.js";
+import constants from "./constants.js";
 
 export {
   isTraceable,
@@ -22,4 +23,5 @@ export {
   isPayload,
   decode,
   findProxyById,
+  constants,
 };
