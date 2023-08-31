@@ -1,6 +1,6 @@
-import Emulator from "../Emulator";
-import encode from "./encode";
-import decode from "./decode";
+import Emulator from "../Emulator.js";
+import encode from "./encode.js";
+import decode from "./decode.js";
 const $ = new Emulator();
 
 describe("(function) decode", () => {

@@ -1,5 +1,5 @@
-import Emulator from "../Emulator";
-import findProxyById from "./findProxyById";
+import Emulator from "../Emulator.js";
+import findProxyById from "./findProxyById.js";
 
 describe("(function) findProxyById", () => {
   it("Gets the proxy's id number", () => {

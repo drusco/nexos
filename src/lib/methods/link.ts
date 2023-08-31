@@ -1,11 +1,11 @@
 import Exotic from "../../types/Exotic.js";
 import { createProxy } from "../../utils/index.js";
 
-export default function useRef(
+export default function link(
   scope: Exotic.Emulator,
   key: Exotic.key,
   value?: any,
 ): Exotic.Proxy {
   // create a proxy by reference key
-  return createProxy(scope, { ref: key }, value);
+  return createProxy(scope, { action: "link", key }, value);
 }

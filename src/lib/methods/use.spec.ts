@@ -1,5 +1,5 @@
-import { isTraceable } from "../../utils";
-import Emulator from "../../Emulator";
+import { isTraceable } from "../../utils/index.js";
+import Emulator from "../../Emulator.js";
 
 const $ = new Emulator();
 

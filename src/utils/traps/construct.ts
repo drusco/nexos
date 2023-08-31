@@ -8,7 +8,7 @@ const construct = (mock: Exotic.Mock, args: any[]): Exotic.Proxy => {
   const { scope, target } = map.proxies.get(proxy);
 
   const origin: Exotic.proxy.origin = {
-    action: "construct",
+    action: "build",
     proxy,
     args: args.map((arg) => createProxy(scope, undefined, arg)),
   };

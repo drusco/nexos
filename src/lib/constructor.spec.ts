@@ -1,6 +1,6 @@
-import Emulator from "../Emulator";
-import Exotic from "../types/Exotic";
-import { map, constants } from "../utils";
+import Emulator from "../Emulator.js";
+import Exotic from "../types/Exotic.js";
+import { map, constants } from "../utils/index.js";
 
 describe("(constructor)", () => {
   it("Creates a new emulator", () => {

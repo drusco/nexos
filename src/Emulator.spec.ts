@@ -1,5 +1,5 @@
-import Emulator from "./Emulator";
-import Exotic from "./types/Exotic";
+import Emulator from "./Emulator.js";
+import Exotic from "./types/Exotic.js";
 
 describe("(lib) Emulator", () => {
   it("Can simulate a browser window's context", async () => {
@@ -29,8 +29,8 @@ describe("(lib) Emulator", () => {
 
     external.addListener(
       "proxy",
-      (origin: Exotic.proxy.origin, target: any) => {
-        browser.include(origin, target);
+      (encodedProxy: string, origin: Exotic.proxy.origin, target: any) => {
+        browser.include(encodedProxy, origin, target);
       },
     );
 
@@ -38,8 +38,8 @@ describe("(lib) Emulator", () => {
       use(browser.decode(values).map((arg: any) => browser.target(arg)));
     });
 
-    const window = external.useRef("window", global);
-    const browserWindow = browser.useRef("window");
+    const window = external.link("window", global);
+    const browserWindow = browser.link("window");
 
     window.test = "connected";
     window.test2 = window.method();

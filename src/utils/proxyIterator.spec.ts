@@ -1,5 +1,5 @@
-import Emulator from "../Emulator";
-import proxyIterator from "./proxyIterator";
+import Emulator from "../Emulator.js";
+import proxyIterator from "./proxyIterator.js";
 
 const $ = new Emulator();
 

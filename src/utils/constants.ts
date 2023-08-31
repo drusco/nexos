@@ -5,4 +5,7 @@ const CONFIG: Exotic.emulator.options = {
   stackTraceLimit: 3,
 };
 
-export default { CONFIG };
+const IS_PROXY_ID_REGEXP = /^⁠\d+$/;
+const HAS_PROXY_ID_REGEXP = /(⁠\d+)/g;
+
+export default { CONFIG, IS_PROXY_ID_REGEXP, HAS_PROXY_ID_REGEXP };

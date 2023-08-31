@@ -1,5 +1,5 @@
-import Emulator from "../../Emulator";
-import Exotic from "../../types/Exotic";
+import Emulator from "../../Emulator.js";
+import Exotic from "../../types/Exotic.js";
 
 describe("(method) get", () => {
   it("Gets the external value of a single proxy", async () => {

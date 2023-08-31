@@ -7,7 +7,8 @@ declare namespace Exotic {
 
   interface Emulator extends EventEmitter {
     use(value?: any): Proxy;
-    useRef(ref: key, value?: any): Proxy;
+    link(ref: key, value?: any): Proxy;
+    exec(value: FunctionLike, map: Record<string, Proxy>): any;
     include(encodedProxy: string, origin: proxy.origin, target?: any): any;
     target(value?: any): any;
     parent(value?: traceable): undefined | Proxy;
@@ -20,7 +21,6 @@ declare namespace Exotic {
     encode(value: any): any;
     decode(value: any): any;
     get(...values: any[]): Promise<any[]>;
-    getId(value: any): number;
     refs: key[];
     length: number;
   }
@@ -51,13 +51,12 @@ declare namespace Exotic {
 
   namespace proxy {
     interface origin {
-      action?: "get" | "set" | "construct" | "apply";
+      action?: "get" | "set" | "build" | "apply" | "exec" | "link";
       proxy?: Proxy;
       key?: key;
       value?: any;
       that?: any;
       args?: any[];
-      ref?: key;
     }
 
     interface data {

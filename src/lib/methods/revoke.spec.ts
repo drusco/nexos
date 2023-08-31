@@ -1,4 +1,4 @@
-import Emulator from "../../Emulator";
+import Emulator from "../../Emulator.js";
 const $ = new Emulator();
 
 describe("(method) revoke", () => {
@@ -36,15 +36,15 @@ describe("(method) revoke", () => {
 
   it("Removes the reference binded to a proxy", () => {
     const ref = "myref";
-    const proxy = $.useRef(ref);
+    const proxy = $.link(ref);
     const inner = proxy.inner;
     const deep = proxy.inner.inner;
 
     $.revoke(proxy);
 
     expect($.refs.includes(ref)).toBe(false);
-    expect($.useRef(ref)).not.toBe(proxy);
-    expect($.useRef(ref)).not.toBe(inner);
-    expect($.useRef(ref)).not.toBe(deep);
+    expect($.link(ref)).not.toBe(proxy);
+    expect($.link(ref)).not.toBe(inner);
+    expect($.link(ref)).not.toBe(deep);
   });
 });

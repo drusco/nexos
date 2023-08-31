@@ -34,7 +34,7 @@ const createProxy = (
     return usableProxy;
   }
 
-  const refKey = origin?.ref;
+  const refKey = origin.action === "link" ? origin.key : undefined;
   const validRefKey = refKey !== undefined;
   const reference = validRefKey ? refKey : undefined;
 

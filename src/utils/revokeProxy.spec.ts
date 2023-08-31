@@ -1,5 +1,5 @@
-import Emulator from "../Emulator";
-import revokeProxy from "./revokeProxy";
+import Emulator from "../Emulator.js";
+import revokeProxy from "./revokeProxy.js";
 
 const $ = new Emulator();
 

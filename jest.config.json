@@ -1,6 +1,6 @@
 {
   "transform": {
-    "^.+\\.ts$": "@swc/jest"
+    "^.+\\.(t|j)sx?$": "@swc/jest"
   },
   "runtime": "@side/jest-runtime",
   "moduleNameMapper": {

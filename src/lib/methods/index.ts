@@ -1,4 +1,4 @@
-import useRef from "./useRef.js";
+import link from "./link.js";
 import use from "./use.js";
 import target from "./target.js";
 import parent from "./parent.js";
@@ -12,9 +12,10 @@ import encode from "./encode.js";
 import decode from "./decode.js";
 import get from "./get.js";
 import include from "./include.js";
+import exec from "./exec.js";
 
 export default {
-  useRef,
+  link,
   use,
   target,
   parent,
@@ -28,4 +29,5 @@ export default {
   decode,
   get,
   include,
+  exec,
 };

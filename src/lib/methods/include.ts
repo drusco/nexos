@@ -14,17 +14,17 @@ export default function include(
   origin: Exotic.proxy.origin,
   target?: any,
 ): any {
-  const decodedOrigin = decode(scope, origin);
+  const decodedOrigin: Exotic.proxy.origin = decode(scope, origin);
   const decodedTarget = decode(scope, target);
   const proxyAsTarget = findProxy(decodedTarget);
   const newTarget = proxyAsTarget ? proxyAsTarget : target;
-  const { action, proxy, key, value, that, args, ref } = decodedOrigin;
+  const { action, proxy, key, value, that, args } = decodedOrigin;
 
-  if (ref) {
+  if (action === "link") {
     // creates proxy by reference
     return new Promise((resolve) => {
       let done = false;
-      scope.emit("reference", ref, (target: any) => {
+      scope.emit("reference", key, (target: any) => {
         done = true;
         createProxy(scope, decodedOrigin, target);
         resolve(undefined);
@@ -33,6 +33,11 @@ export default function include(
       createProxy(scope, decodedOrigin, newTarget);
       resolve(undefined);
     });
+  }
+
+  if (action === "exec") {
+    const program = new Function("$", `return (${decodedTarget})($)`);
+    return createProxy(scope, decodedOrigin, program(scope));
   }
 
   if (!action) {
@@ -61,7 +66,7 @@ export default function include(
     case "apply":
       proxyFromTrap = traps.apply(mock, that, args);
       break;
-    case "construct":
+    case "build":
       proxyFromTrap = traps.construct(mock, args);
       break;
   }

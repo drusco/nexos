@@ -1,5 +1,5 @@
-import Emulator from "../Emulator";
-import encode from "./encode";
+import Emulator from "../Emulator.js";
+import encode from "./encode.js";
 
 const $ = new Emulator();
 

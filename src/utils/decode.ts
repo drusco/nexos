@@ -4,6 +4,7 @@ import findProxyById from "./findProxyById.js";
 import isPayload from "./isPayload.js";
 import isTraceable from "./isTraceable.js";
 import map from "./map.js";
+import constants from "./constants.js";
 
 export default function decode(
   scope: Exotic.Emulator,
@@ -51,6 +52,13 @@ export default function decode(
     }
 
     return copy;
+  }
+
+  if (typeof value === "string" && constants.HAS_PROXY_ID_REGEXP.test(value)) {
+    return value.replace(
+      constants.HAS_PROXY_ID_REGEXP,
+      "($.target($.decode('$1')))",
+    );
   }
 
   return value;

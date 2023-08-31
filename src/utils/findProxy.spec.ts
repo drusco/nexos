@@ -1,5 +1,5 @@
-import Emulator from "../Emulator";
-import findProxy from "./findProxy";
+import Emulator from "../Emulator.js";
+import findProxy from "./findProxy.js";
 
 const $ = new Emulator();
 

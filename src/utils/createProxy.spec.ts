@@ -1,5 +1,5 @@
-import Emulator from "../Emulator";
-import createProxy from "./createProxy";
+import Emulator from "../Emulator.js";
+import createProxy from "./createProxy.js";
 
 const $ = new Emulator();
 
@@ -12,11 +12,12 @@ describe("(function) createProxy", () => {
 
   it("Returns an existing proxy by reference key", () => {
     const refKey = "test";
-    const proxy = $.useRef(refKey);
+    const proxy = $.link(refKey);
     const sameProxy = createProxy(
       $,
       {
-        ref: refKey,
+        action: "link",
+        key: refKey,
       },
       proxy,
     );
@@ -25,11 +26,12 @@ describe("(function) createProxy", () => {
   });
 
   it("Adds a new reference key", () => {
-    const refKey = "new";
+    const refKey = "test2";
     const refKeyExisted = $.refs.includes(refKey);
 
     createProxy($, {
-      ref: refKey,
+      action: "link",
+      key: refKey,
     });
 
     expect(refKeyExisted).toBe(false);

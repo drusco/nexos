@@ -1,5 +1,5 @@
-import Emulator from "../../Emulator";
-import Exotic from "../../types/Exotic";
+import Emulator from "../../Emulator.js";
+import Exotic from "../../types/Exotic.js";
 
 const $ = new Emulator();
 
@@ -14,18 +14,18 @@ describe("(method) include", () => {
   it("Creates a proxy from a reference key with default target", async () => {
     const reference = "test";
     const target = ["example"];
-    const origin: Exotic.proxy.origin = { ref: reference };
+    const origin: Exotic.proxy.origin = { action: "link", key: reference };
 
     await $.include("", origin, target);
 
     expect($.refs.includes(reference)).toBe(true);
-    expect($.useRef(reference)).toBe($.use(target));
+    expect($.link(reference)).toBe($.use(target));
   });
 
   it("Creates a proxy from a reference key using a target listener", async () => {
     const reference = "listener";
     const target = {};
-    const origin: Exotic.proxy.origin = { ref: reference };
+    const origin: Exotic.proxy.origin = { action: "link", key: reference };
 
     $.on("reference", (ref: Exotic.key, use: Exotic.FunctionLike) => {
       if (ref === "listener") {
@@ -37,7 +37,7 @@ describe("(method) include", () => {
     await $.include("", origin, target);
 
     expect($.refs.includes(reference)).toBe(true);
-    expect($.useRef(reference)).toBe($.use(target));
+    expect($.link(reference)).toBe($.use(target));
   });
 
   it("Creates a proxy from an origin with a 'set' action", () => {
@@ -69,7 +69,7 @@ describe("(method) include", () => {
     class MyClass {}
     const proxy = $.use(MyClass);
     const origin: Exotic.proxy.origin = {
-      action: "construct",
+      action: "build",
       proxy,
       args: [10],
     };
