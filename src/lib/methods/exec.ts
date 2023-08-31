@@ -5,7 +5,7 @@ import createProxy from "../../utils/createProxy.js";
 export default function exec(
   scope: Exotic.Emulator,
   func: Exotic.FunctionLike,
-  map: Record<string, Exotic.Proxy>,
+  map: Record<string, Exotic.Proxy> = {},
 ): Exotic.Proxy {
   let target = func.toString();
   const keys = Object.keys(map);

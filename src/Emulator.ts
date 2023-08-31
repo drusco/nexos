@@ -76,7 +76,7 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return lib.methods.include(this, encodedProxy, origin, target);
   }
 
-  exec(func: Exotic.FunctionLike, map: Record<string, Exotic.Proxy>): any {
+  exec(func: Exotic.FunctionLike, map?: Record<string, Exotic.Proxy>): any {
     return lib.methods.exec(this, func, map);
   }
 }

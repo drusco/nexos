@@ -8,7 +8,7 @@ declare namespace Exotic {
   interface Emulator extends EventEmitter {
     use(value?: any): Proxy;
     link(ref: key, value?: any): Proxy;
-    exec(value: FunctionLike, map: Record<string, Proxy>): any;
+    exec(value: FunctionLike, map?: Record<string, Proxy>): any;
     include(encodedProxy: string, origin: proxy.origin, target?: any): any;
     target(value?: any): any;
     parent(value?: traceable): undefined | Proxy;
