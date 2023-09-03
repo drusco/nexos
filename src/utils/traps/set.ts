@@ -16,6 +16,8 @@ const set = (mock: Exotic.Mock, key: Exotic.key, value: any): boolean => {
 
   const newValue = createProxy(scope, origin, value);
 
+  // try to set the value to the original target
+  // also catch because the target may be untraceable
   try {
     target[key] = scope.target(value);
   } catch (error) {

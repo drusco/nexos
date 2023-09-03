@@ -42,7 +42,7 @@ describe("(method) revoke", () => {
 
     $.revoke(proxy);
 
-    expect($.refs.includes(ref)).toBe(false);
+    expect($.links.includes(ref)).toBe(false);
     expect($.link(ref)).not.toBe(proxy);
     expect($.link(ref)).not.toBe(inner);
     expect($.link(ref)).not.toBe(deep);

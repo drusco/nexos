@@ -19,8 +19,9 @@ const get = (mock: Exotic.Mock, key: any): Exotic.Proxy => {
 
   let value: any;
 
-  // get value from original target
-  // target may be untraceable
+  // try to get the value from the original target first
+  // because the value may have changed
+  // also catch because the target may be untraceable
   try {
     value = target[key];
   } catch (error) {

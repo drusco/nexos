@@ -10,7 +10,6 @@ import isRevoked from "./isRevoked.js";
 import entries from "./entries.js";
 import encode from "./encode.js";
 import decode from "./decode.js";
-import get from "./get.js";
 import include from "./include.js";
 import exec from "./exec.js";
 
@@ -27,7 +26,6 @@ export default {
   entries,
   encode,
   decode,
-  get,
   include,
   exec,
 };

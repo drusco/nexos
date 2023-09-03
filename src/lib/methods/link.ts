@@ -6,6 +6,6 @@ export default function link(
   key: Exotic.key,
   value?: any,
 ): Exotic.Proxy {
-  // create a proxy by reference key
+  // create a proxy by link reference
   return createProxy(scope, { action: "link", key }, value);
 }

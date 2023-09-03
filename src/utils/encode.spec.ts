@@ -4,17 +4,32 @@ import encode from "./encode.js";
 const $ = new Emulator();
 
 describe("(function) encode", () => {
-  it("Returns a payload object from a proxy", () => {
+  it("Returns a string that represents a proxy", () => {
     const proxy = $.use();
-    const payload = encode(proxy);
+    const result = encode(proxy);
 
-    expect(payload).toEqual("⁠1");
+    expect(result).toEqual("⁠1");
   });
 
-  it("Returns a payload object from a non proxy value", () => {
-    const value = null;
-    const payload = encode(value);
+  it("Returns the same input when the value is not traceable", () => {
+    const untraceable = null;
+    const result = encode(untraceable);
 
-    expect(payload).toEqual(null);
+    expect(result).toEqual(untraceable);
+  });
+
+  it("Returns a shallow copy of the original input when the value is traceable", () => {
+    const traceable = [];
+    const result = encode(traceable);
+
+    expect(result).toEqual([]);
+    expect(result).not.toBe(traceable);
+  });
+
+  it("Returns the same input when the value is a function", () => {
+    const traceable = () => {};
+    const result = encode(traceable);
+
+    expect(result).toBe(traceable);
   });
 });

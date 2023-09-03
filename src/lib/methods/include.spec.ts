@@ -11,32 +11,26 @@ describe("(method) include", () => {
     expect($.target(proxy)).toBe(target);
   });
 
-  it("Creates a proxy from a reference key with default target", async () => {
+  it("Creates a proxy from a reference key with default target", () => {
     const reference = "test";
     const target = ["example"];
     const origin: Exotic.proxy.origin = { action: "link", key: reference };
 
-    await $.include("", origin, target);
+    $.include("", origin, target);
 
-    expect($.refs.includes(reference)).toBe(true);
+    expect($.links.includes(reference)).toBe(true);
     expect($.link(reference)).toBe($.use(target));
   });
 
-  it("Creates a proxy from a reference key using a target listener", async () => {
+  it("Creates a proxy from a reference key using a linked target", () => {
     const reference = "listener";
     const target = {};
     const origin: Exotic.proxy.origin = { action: "link", key: reference };
 
-    $.on("reference", (ref: Exotic.key, use: Exotic.FunctionLike) => {
-      if (ref === "listener") {
-        return use(target);
-      }
-      use();
-    });
+    $.link(reference, target);
+    $.include("", origin);
 
-    await $.include("", origin, target);
-
-    expect($.refs.includes(reference)).toBe(true);
+    expect($.links.includes(reference)).toBe(true);
     expect($.link(reference)).toBe($.use(target));
   });
 
@@ -50,6 +44,7 @@ describe("(method) include", () => {
       proxy,
     };
     $.include("", origin);
+
     expect($.target(proxy.test)).toBe(value);
   });
 
@@ -62,6 +57,7 @@ describe("(method) include", () => {
       args: [10],
     };
     const newProxy = $.include("", origin);
+
     expect($.target(newProxy)).toBe("test10");
   });
 
@@ -74,6 +70,7 @@ describe("(method) include", () => {
       args: [10],
     };
     const instance = $.include("", origin);
+
     expect($.target(instance) instanceof MyClass).toBe(true);
   });
 
@@ -86,6 +83,7 @@ describe("(method) include", () => {
       key: "test",
     };
     const proxyFromGet = $.include("", origin);
+
     expect($.target(proxyFromGet)).toBe(array);
   });
 
@@ -96,9 +94,10 @@ describe("(method) include", () => {
       proxy,
       key: "test",
     };
-    const proxyLink = $.encode(proxy);
-    const newProxy = $.include(proxyLink, origin);
-    expect($.decode(proxyLink)).toBe(newProxy);
+    const id = $.encode(proxy);
+    const newProxy = $.include(id, origin);
+
+    expect($.decode(id)).toBe(newProxy);
     expect(proxy).not.toBe(newProxy);
   });
 });

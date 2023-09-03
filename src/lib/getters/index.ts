@@ -1,4 +1,4 @@
 import length from "./length.js";
-import refs from "./refs.js";
+import links from "./links.js";
 
-export default { length, refs };
+export default { length, links };

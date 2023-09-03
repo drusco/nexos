@@ -18,21 +18,17 @@ export default function include(
   const decodedTarget = decode(scope, target);
   const proxyAsTarget = findProxy(decodedTarget);
   const newTarget = proxyAsTarget ? proxyAsTarget : target;
+  const { links } = map.emulators.get(scope);
   const { action, proxy, key, value, that, args } = decodedOrigin;
+  const originData = map.proxies.get(proxy);
 
   if (action === "link") {
     // creates proxy by reference
-    return new Promise((resolve) => {
-      let done = false;
-      scope.emit("reference", key, (target: any) => {
-        done = true;
-        createProxy(scope, decodedOrigin, target);
-        resolve(undefined);
-      });
-      if (done) return;
-      createProxy(scope, decodedOrigin, newTarget);
-      resolve(undefined);
-    });
+    return createProxy(
+      scope,
+      decodedOrigin,
+      links[key] === undefined ? target : links[key],
+    );
   }
 
   if (action === "exec") {
@@ -44,9 +40,6 @@ export default function include(
     // creates proxy by target
     return createProxy(scope, decodedOrigin, newTarget);
   }
-
-  const originData = map.proxies.get(proxy);
-  const { links } = map.emulators.get(scope);
 
   if (!originData) {
     return;

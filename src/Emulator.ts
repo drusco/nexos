@@ -8,8 +8,8 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     lib.constructor(this, options);
   }
 
-  get refs(): Exotic.key[] {
-    return lib.getters.refs(this);
+  get links(): Exotic.key[] {
+    return lib.getters.links(this);
   }
 
   get length(): number {
@@ -60,23 +60,18 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return lib.methods.decode(this, value);
   }
 
-  get(...values: any[]): Promise<any[]> {
-    return lib.methods.get(this, ...values);
-  }
-
   revokeAll(): void {
     return lib.methods.revokeAll(this);
   }
 
-  include(
-    encodedProxy: string,
-    origin: Exotic.proxy.origin,
-    target?: any,
-  ): any {
-    return lib.methods.include(this, encodedProxy, origin, target);
+  include(id: string, origin: Exotic.proxy.origin, target?: any): any {
+    return lib.methods.include(this, id, origin, target);
   }
 
-  exec(func: Exotic.FunctionLike, map?: Record<string, Exotic.Proxy>): any {
-    return lib.methods.exec(this, func, map);
+  exec(
+    method: Exotic.FunctionLike,
+    dependencies?: Record<string, Exotic.Proxy>,
+  ): Exotic.Proxy {
+    return lib.methods.exec(this, method, dependencies);
   }
 }

@@ -27,7 +27,7 @@ describe("(function) createProxy", () => {
 
   it("Adds a new reference key", () => {
     const refKey = "test2";
-    const refKeyExisted = $.refs.includes(refKey);
+    const refKeyExisted = $.links.includes(refKey);
 
     createProxy($, {
       action: "link",
@@ -35,7 +35,7 @@ describe("(function) createProxy", () => {
     });
 
     expect(refKeyExisted).toBe(false);
-    expect($.refs.includes(refKey)).toBe(true);
+    expect($.links.includes(refKey)).toBe(true);
   });
 
   it("Adds any target value to a proxy", () => {
