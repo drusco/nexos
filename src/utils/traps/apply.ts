@@ -11,7 +11,7 @@ const apply = (mock: Exotic.Mock, that?: any, args?: any[]): Exotic.Proxy => {
     action: "apply",
     proxy,
     that,
-    args: args.map((arg) => createProxy(scope, undefined, arg)),
+    args: args.map((arg) => createProxy(scope, {}, arg)),
   };
 
   let value: any;

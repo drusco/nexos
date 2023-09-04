@@ -10,7 +10,7 @@ const construct = (mock: Exotic.Mock, args: any[]): Exotic.Proxy => {
   const origin: Exotic.proxy.origin = {
     action: "build",
     proxy,
-    args: args.map((arg) => createProxy(scope, undefined, arg)),
+    args: args.map((arg) => createProxy(scope, {}, arg)),
   };
 
   let value: any;

@@ -10,7 +10,7 @@ import findProxyById from "./findProxyById.js";
 
 const createProxy = (
   scope: Exotic.Emulator,
-  origin: Exotic.proxy.origin = {},
+  origin: Exotic.proxy.origin,
   target?: any,
 ): Exotic.Proxy => {
   // find proxy by id
@@ -27,7 +27,6 @@ const createProxy = (
   const error = options.traceErrors ? new Error() : undefined;
   const link = origin.action === "link" ? origin.key : undefined;
   const validLink = link !== undefined;
-  const usableProxy = findProxy(target);
   const encodedOrigin = encode(origin);
   const encodedTarget = encode(target);
 
@@ -38,7 +37,7 @@ const createProxy = (
     if (proxyRef) {
       scope.emit(
         "proxy",
-        encode(proxyRef),
+        `⁠${map.proxies.get(proxyRef).id}`,
         encodedOrigin,
         encodedTarget,
         error,
@@ -49,13 +48,15 @@ const createProxy = (
 
   // find a proxy that already exists
 
+  const usableProxy = findProxy(target);
+
   if (usableProxy) {
     if (origin.action) {
       data.counter++;
     }
     scope.emit(
       "proxy",
-      encode(usableProxy),
+      `⁠${map.proxies.get(usableProxy).id}`,
       encodedOrigin,
       encodedTarget,
       error,
@@ -72,15 +73,6 @@ const createProxy = (
 
   let { proxy, revoke } = Proxy.revocable<Exotic.Proxy>(mock, traps);
 
-  const id = `${++data.counter}`;
-  const sandbox = Object.create(null);
-
-  const revokeFunction = () => {
-    revoke && revoke();
-    proxy = null;
-    revoke = null;
-  };
-
   if (validLink) {
     // create unique reference
     links[link] = proxy;
@@ -88,15 +80,19 @@ const createProxy = (
 
   // add information about this proxy
   const proxyData: Exotic.proxy.data = {
-    id,
+    id: `${++data.counter}`,
     mock,
     origin,
     target,
-    revoke: revokeFunction,
     scope,
-    sandbox,
     key: link,
     revoked: false,
+    sandbox: Object.create(null),
+    revoke() {
+      revoke && revoke();
+      proxy = null;
+      revoke = null;
+    },
   };
 
   map.mocks.set(mock, proxy);
@@ -107,7 +103,7 @@ const createProxy = (
     map.targets.set(target, proxy);
   }
 
-  scope.emit("proxy", encode(proxy), encodedOrigin, encodedTarget, error);
+  scope.emit("proxy", `⁠${proxyData.id}`, encodedOrigin, encodedTarget, error);
   return proxy;
 };
 
