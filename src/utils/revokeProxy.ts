@@ -1,4 +1,5 @@
 import Exotic from "../types/Exotic.js";
+import encode from "./encode.js";
 import findProxy from "./findProxy.js";
 import map from "./map.js";
 
@@ -38,7 +39,7 @@ const revokeProxy = (value: Exotic.traceable): boolean => {
   map.mocks.delete(mock);
   map.targets.delete(target);
   proxySet.delete(proxy);
-  delete links[`⁠${id}`];
+  delete links[encode(proxy)];
 
   revoke();
 

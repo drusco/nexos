@@ -1,5 +1,4 @@
 import Emulator from "../../Emulator.js";
-
 const $ = new Emulator();
 
 describe("(method) encode", () => {

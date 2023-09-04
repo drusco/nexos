@@ -6,7 +6,7 @@ const $ = new Emulator();
 describe("(function) createProxy", () => {
   it("Returns an existing proxy", () => {
     const proxy = $.use();
-    const sameProxy = createProxy($, {}, proxy);
+    const sameProxy = createProxy($, undefined, proxy);
     expect(proxy).toBe(sameProxy);
   });
 
@@ -40,7 +40,7 @@ describe("(function) createProxy", () => {
 
   it("Adds any target value to a proxy", () => {
     const target = "target";
-    const proxy = createProxy($, {}, target);
+    const proxy = createProxy($, undefined, target);
 
     expect($.target(proxy)).toBe(target);
   });

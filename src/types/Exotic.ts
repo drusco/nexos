@@ -9,7 +9,7 @@ declare namespace Exotic {
     use(value?: any): Proxy;
     link(key: key, value?: any): Proxy;
     exec(method: FunctionLike, dependencies?: Record<string, Proxy>): Proxy;
-    include(id: string, origin: proxy.origin, target?: any): any;
+    include(id: string, origin: proxy.origin, target?: any): Proxy;
     target(value?: any): any;
     parent(value?: traceable): undefined | Proxy;
     values(value?: traceable): Proxy[];

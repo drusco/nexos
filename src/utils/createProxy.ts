@@ -10,7 +10,7 @@ import findProxyById from "./findProxyById.js";
 
 const createProxy = (
   scope: Exotic.Emulator,
-  origin: Exotic.proxy.origin,
+  origin: Exotic.proxy.origin = {},
   target?: any,
 ): Exotic.Proxy => {
   // find proxy by id
@@ -37,7 +37,7 @@ const createProxy = (
     if (proxyRef) {
       scope.emit(
         "proxy",
-        `⁠${map.proxies.get(proxyRef).id}`,
+        encode(proxyRef),
         encodedOrigin,
         encodedTarget,
         error,
@@ -56,7 +56,7 @@ const createProxy = (
     }
     scope.emit(
       "proxy",
-      `⁠${map.proxies.get(usableProxy).id}`,
+      encode(usableProxy),
       encodedOrigin,
       encodedTarget,
       error,
@@ -103,7 +103,7 @@ const createProxy = (
     map.targets.set(target, proxy);
   }
 
-  scope.emit("proxy", `⁠${proxyData.id}`, encodedOrigin, encodedTarget, error);
+  scope.emit("proxy", encode(proxy), encodedOrigin, encodedTarget, error);
   return proxy;
 };
 
