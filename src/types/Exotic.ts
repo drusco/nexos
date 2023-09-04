@@ -32,8 +32,8 @@ declare namespace Exotic {
 
     interface data {
       options: options;
-      refs: Record<key, Proxy>;
       links: Record<key, key>;
+      refs: Record<key, Proxy>;
       counter: number;
       proxySet: Set<Proxy>;
     }

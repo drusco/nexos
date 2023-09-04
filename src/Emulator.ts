@@ -20,8 +20,8 @@ export default class Emulator extends EventEmitter implements Exotic.Emulator {
     return lib.methods.use(this, value);
   }
 
-  link(key: Exotic.key, value?: any): Exotic.Proxy {
-    return lib.methods.link(this, key, value);
+  link(link: Exotic.key, value?: any): Exotic.Proxy {
+    return lib.methods.link(this, link, value);
   }
 
   target(value?: any): any {
