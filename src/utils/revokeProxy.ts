@@ -19,15 +19,13 @@ const revokeProxy = (value: Exotic.traceable): boolean => {
   }
 
   const data = map.emulators.get(scope);
-  const { refs, links, proxySet } = data;
+  const { links, proxySet } = data;
   const validKey = key !== undefined;
 
   if (validKey) {
-    // key is binded to proxy
-    // delete key from refs object
+    // the key is linked to a proxy
+    // delete this key from the links
     delete links[key];
-    // delete key from proxy
-    proxyData.key = undefined;
   }
 
   const decodedOrigin = decode(scope, origin) as Exotic.proxy.origin;
@@ -49,7 +47,6 @@ const revokeProxy = (value: Exotic.traceable): boolean => {
   map.mocks.delete(mock);
   map.targets.delete(target);
   proxySet.delete(proxy);
-  delete refs[key];
   delete links[encode(proxy)];
 
   // !! keep in proxies map
@@ -72,7 +69,6 @@ const revokeProxy = (value: Exotic.traceable): boolean => {
     // clean internal state
     Object.assign(data, {
       links: Object.create(null),
-      refs: Object.create(null),
       counter: 0,
     } as Exotic.emulator.data);
   }

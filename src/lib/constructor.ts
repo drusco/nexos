@@ -12,7 +12,6 @@ export default function constructor(
 
   const data: Exotic.emulator.data = {
     options: config,
-    refs: Object.create(null),
     links: Object.create(null),
     counter: 0,
     proxySet: new Set(),

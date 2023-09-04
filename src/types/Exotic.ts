@@ -32,8 +32,7 @@ declare namespace Exotic {
 
     interface data {
       options: options;
-      links: Record<key, key>;
-      refs: Record<key, Proxy>;
+      links: Record<key, Proxy>;
       counter: number;
       proxySet: Set<Proxy>;
     }
@@ -60,11 +59,11 @@ declare namespace Exotic {
 
     interface data {
       revoke(): void;
-      id: number;
+      id: string;
       revoked: boolean;
       mock: Mock;
       scope: Emulator;
-      sandbox: Record<key, any>;
+      sandbox: Record<key, Proxy>;
       target?: any;
       origin?: origin;
       key?: key;

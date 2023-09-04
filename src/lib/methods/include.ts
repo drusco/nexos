@@ -1,12 +1,5 @@
 import Exotic from "../../types/Exotic.js";
-import {
-  map,
-  traps,
-  createProxy,
-  decode,
-  encode,
-  findProxy,
-} from "../../utils/index.js";
+import { map, traps, createProxy, decode, encode } from "../../utils/index.js";
 
 export default function include(
   scope: Exotic.Emulator,
@@ -15,30 +8,24 @@ export default function include(
   target?: any,
 ): any {
   const decodedOrigin: Exotic.proxy.origin = decode(scope, origin);
-  const decodedTarget = decode(scope, target);
-  const proxyAsTarget = findProxy(decodedTarget);
-  const newTarget = proxyAsTarget ? proxyAsTarget : target;
   const { links } = map.emulators.get(scope);
   const { action, proxy, key, value, that, args } = decodedOrigin;
   const originData = map.proxies.get(proxy);
 
   if (action === "link") {
     // creates proxy by reference
-    return createProxy(
-      scope,
-      decodedOrigin,
-      links[key] === undefined ? target : links[key],
-    );
+    return createProxy(scope, decodedOrigin, links[key] || target);
   }
 
   if (action === "exec") {
+    const decodedTarget = decode(scope, target);
     const program = new Function("$", `return (${decodedTarget})($)`);
     return createProxy(scope, decodedOrigin, program(scope));
   }
 
   if (!action) {
     // creates proxy by target
-    return createProxy(scope, decodedOrigin, newTarget);
+    return createProxy(scope, decodedOrigin, target);
   }
 
   if (!originData) {
@@ -65,9 +52,8 @@ export default function include(
   }
 
   if (proxyFromTrap) {
-    const localEncodedProxy = encode(proxyFromTrap);
-    if (localEncodedProxy !== encodedProxy) {
-      links[encodedProxy] = localEncodedProxy;
+    if (encode(proxyFromTrap) !== encodedProxy) {
+      links[encodedProxy] = proxyFromTrap;
     }
   }
 
