@@ -24,13 +24,14 @@ export default function include(
   }
 
   if (action === "exec") {
-    const lib = "_$x";
+    const prefix = "_$x";
+
     const code = target.replace(
       constants.HAS_PROXY_ID_REGEXP,
-      `(${lib}.target(${lib}.decode('$1')))`,
+      `(${prefix}.target(${prefix}.decode('$1')))`,
     );
 
-    const program = new Function(lib, `return (${code})(${lib})`);
+    const program = new Function(prefix, `return (${code})(${prefix})`);
     return createProxy(scope, decodedOrigin, program(scope));
   }
 

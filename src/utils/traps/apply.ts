@@ -18,7 +18,7 @@ const apply = (mock: Exotic.Mock, that?: any, args?: any[]): Exotic.Proxy => {
 
   if (typeof target === "function") {
     value = Reflect.apply(
-      scope.target(target),
+      target,
       scope.target(that),
       origin.args.map((arg) => scope.target(arg)),
     );
