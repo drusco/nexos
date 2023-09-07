@@ -1,11 +1,11 @@
-import Exotic from "../types/Exotic.js";
+const NO_BREAK = "⁠";
+const IS_PROXY_ID_REGEXP = new RegExp(`^${NO_BREAK}\\d+$`);
+const HAS_PROXY_ID_REGEXP = new RegExp(`(${NO_BREAK}\\d+)`, "g");
+const FUNCTION_TARGET = `${NO_BREAK}function`;
 
-const CONFIG: Exotic.emulator.options = {
-  traceErrors: false,
-  stackTraceLimit: 3,
+export default {
+  IS_PROXY_ID_REGEXP,
+  HAS_PROXY_ID_REGEXP,
+  FUNCTION_TARGET,
+  NO_BREAK,
 };
-
-const IS_PROXY_ID_REGEXP = /^⁠\d+$/;
-const HAS_PROXY_ID_REGEXP = /(⁠\d+)/g;
-
-export default { CONFIG, IS_PROXY_ID_REGEXP, HAS_PROXY_ID_REGEXP };

@@ -6,6 +6,7 @@ import {
   decode,
   encode,
   constants,
+  findProxy,
 } from "../../utils/index.js";
 
 export default function include(
@@ -28,7 +29,15 @@ export default function include(
 
     const code = target.replace(
       constants.HAS_PROXY_ID_REGEXP,
-      `(${prefix}.target(${prefix}.decode('$1')))`,
+      (match: string, $1: string) => {
+        const proxy = findProxy(decode(scope, $1));
+        if (!proxy) return match;
+        const { target } = map.proxies.get(proxy);
+        if (target === constants.FUNCTION_TARGET) {
+          return `(${prefix}.decode('${$1}'))`;
+        }
+        return `(${prefix}.target(${prefix}.decode('${$1}')))`;
+      },
     );
 
     const program = new Function(prefix, `return (${code})(${prefix})`);

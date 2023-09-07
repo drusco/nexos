@@ -1,13 +1,16 @@
 import Exotic from "../types/Exotic.js";
-import { map, constants } from "../utils/index.js";
+import { map } from "../utils/index.js";
 
 export default function constructor(
   scope: Exotic.Emulator,
   options: Exotic.emulator.options = {},
 ): void {
-  // set config defaults
-  const config: Exotic.emulator.options = constants.CONFIG;
-  Object.assign(config, options);
+  const config = {
+    traceErrors: false,
+    stackTraceLimit: 3,
+    ...options,
+  };
+
   Error.stackTraceLimit = config.stackTraceLimit;
 
   const data: Exotic.emulator.data = {

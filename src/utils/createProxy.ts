@@ -7,6 +7,7 @@ import mockPrototype from "./mockPrototype.js";
 import traps from "./traps/index.js";
 import encode from "./encode.js";
 import findProxyById from "./findProxyById.js";
+import constants from "./constants.js";
 
 const createProxy = (
   scope: Exotic.Emulator,
@@ -28,7 +29,7 @@ const createProxy = (
   const link = origin.action === "link" ? origin.key : undefined;
   const validLink = link !== undefined;
   const encodedOrigin = encode(origin);
-  const encodedTarget = encode(target);
+  let encodedTarget = encode(target);
 
   // find proxy by link reference
 
@@ -71,12 +72,7 @@ const createProxy = (
     mockPrototype,
   ) as Exotic.Mock;
 
-  let { proxy, revoke } = Proxy.revocable<Exotic.Proxy>(mock, traps);
-
-  if (validLink) {
-    // create unique reference
-    links[link] = proxy;
-  }
+  const { proxy, revoke } = Proxy.revocable<Exotic.Proxy>(mock, traps);
 
   // add information about this proxy
   const proxyData: Exotic.proxy.data = {
@@ -85,14 +81,10 @@ const createProxy = (
     origin,
     target,
     scope,
-    key: link,
+    link,
     revoked: false,
     sandbox: Object.create(null),
-    revoke() {
-      revoke && revoke();
-      proxy = null;
-      revoke = null;
-    },
+    revoke,
   };
 
   map.mocks.set(mock, proxy);
@@ -103,7 +95,22 @@ const createProxy = (
     map.targets.set(target, proxy);
   }
 
-  scope.emit("proxy", encode(proxy), encodedOrigin, encodedTarget, error);
+  if (validLink) {
+    // create unique reference
+    links[link] = proxy;
+  }
+
+  if (typeof target === "function") {
+    encodedTarget = constants.FUNCTION_TARGET;
+  }
+
+  scope.emit(
+    "proxy",
+    `${constants.NO_BREAK + proxyData.id}`,
+    encodedOrigin,
+    encodedTarget,
+    error,
+  );
   return proxy;
 };
 

@@ -1,6 +1,7 @@
 import Emulator from "../Emulator.js";
 import encode from "./encode.js";
 import decode from "./decode.js";
+import constants from "./constants.js";
 const $ = new Emulator();
 
 describe("(function) decode", () => {
@@ -9,7 +10,7 @@ describe("(function) decode", () => {
     const encoded = encode(proxy);
     const decoded = decode($, encoded);
 
-    expect(encoded).toEqual("⁠1");
+    expect(encoded).toEqual(`${constants.NO_BREAK}1`);
     expect(decoded).toBe(proxy);
   });
 

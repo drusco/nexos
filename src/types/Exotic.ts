@@ -66,7 +66,7 @@ declare namespace Exotic {
       sandbox: Record<key, Proxy>;
       target?: any;
       origin?: origin;
-      key?: key;
+      link?: key;
     }
   }
 }

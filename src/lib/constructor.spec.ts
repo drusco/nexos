@@ -1,10 +1,12 @@
 import Emulator from "../Emulator.js";
-import Exotic from "../types/Exotic.js";
-import { map, constants } from "../utils/index.js";
+import { map } from "../utils/index.js";
 
 describe("(constructor)", () => {
   it("Creates a new emulator", () => {
-    const config: Exotic.emulator.options = constants.CONFIG;
+    const config = {
+      traceErrors: false,
+      stackTraceLimit: 3,
+    };
     const emulator = new Emulator(config);
     const data: Record<string, any> = map.emulators.get(emulator) || {};
     const dataProps = ["options", "links", "counter", "proxySet"];

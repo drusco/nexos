@@ -1,4 +1,5 @@
 import Emulator from "../Emulator.js";
+import constants from "./constants.js";
 import encode from "./encode.js";
 
 const $ = new Emulator();
@@ -8,7 +9,7 @@ describe("(function) encode", () => {
     const proxy = $.use();
     const result = encode(proxy);
 
-    expect(result).toEqual("⁠1");
+    expect(result).toEqual(`${constants.NO_BREAK}1`);
   });
 
   it("Returns the same input when the value is not traceable", () => {
