@@ -1,4 +1,5 @@
 import Emulator from "../../Emulator.js";
+import constants from "../../utils/constants.js";
 const $ = new Emulator();
 
 describe("(method) exec", () => {
@@ -24,5 +25,27 @@ describe("(method) exec", () => {
         .replace("proxyReference", $.encode(proxyReference))
         .replace("anotherProxy", $.encode(anotherProxy)),
     );
+  });
+
+  it("Calls a return function once the proxy gets revoked", () => {
+    const mock = jest.fn();
+    const callback = $.use(mock);
+
+    $.on("proxy", (id, origin, target) => {
+      if (target === constants.FUNCTION_TARGET) return;
+      const proxy = $.include(id, origin, target);
+      $.revoke(proxy);
+    });
+
+    $.exec(
+      () => {
+        return () => {
+          callback();
+        };
+      },
+      { callback },
+    );
+
+    expect(mock).toHaveBeenCalledTimes(1);
   });
 });

@@ -33,7 +33,11 @@ const revokeProxy = (value: Exotic.traceable): boolean => {
 
   // call cleanup function for proxy created with 'exec' action
   if (targetIsFunction && origin.action === "exec") {
-    target();
+    try {
+      target();
+    } catch (error: any) {
+      /* error */
+    }
   }
 
   // remove proxy weak references
