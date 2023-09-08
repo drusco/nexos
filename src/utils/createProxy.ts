@@ -73,6 +73,7 @@ const createProxy = (
   ) as Exotic.Mock;
 
   const { proxy, revoke } = Proxy.revocable<Exotic.Proxy>(mock, traps);
+  const targetIsFunction = typeof target === "function";
 
   // add information about this proxy
   const proxyData: Exotic.proxy.data = {
@@ -100,7 +101,7 @@ const createProxy = (
     links[link] = proxy;
   }
 
-  if (typeof target === "function") {
+  if (targetIsFunction) {
     encodedTarget = constants.FUNCTION_TARGET;
   }
 

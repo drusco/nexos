@@ -17,6 +17,7 @@ const revokeProxy = (value: Exotic.traceable): boolean => {
     return true;
   }
 
+  const targetIsFunction = typeof target === "function";
   const data = map.emulators.get(scope);
   const { links, proxySet, options } = data;
 
@@ -30,8 +31,18 @@ const revokeProxy = (value: Exotic.traceable): boolean => {
     }
   }
 
+  // call cleanup function for proxy created with 'exec' action
+  if (targetIsFunction && origin.action === "exec") {
+    target();
+  }
+
+  // remove proxy weak references
+
   map.mocks.delete(mock);
   map.targets.delete(target);
+
+  // remove proxy strong references
+
   proxySet.delete(proxy);
   delete links[`${constants.NO_BREAK + id}`];
 
@@ -40,10 +51,11 @@ const revokeProxy = (value: Exotic.traceable): boolean => {
     delete links[link];
   }
 
+  // revoke proxy
   revoke();
 
-  // !! keep in proxies map
-  // prevent proxy out of revoked proxy error
+  // keep weak reference in proxies map
+  // prevents proxy out of revoked proxy error
 
   map.proxies.set(proxy, {
     id,
