@@ -12,6 +12,7 @@ import encode from "./encode.js";
 import decode from "./decode.js";
 import include from "./include.js";
 import exec from "./exec.js";
+import find from "./find.js";
 
 export default {
   link,
@@ -28,4 +29,5 @@ export default {
   decode,
   include,
   exec,
+  find,
 };

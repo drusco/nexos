@@ -9,6 +9,7 @@ declare namespace Exotic {
     use(value?: any): Proxy;
     link(key: key, value?: any): Proxy;
     exec(method: FunctionLike, dependencies?: Record<string, Proxy>): Proxy;
+    find(value: string | Exotic.traceable): undefined | Proxy;
     include(id: string, origin: proxy.origin, target?: any): Proxy;
     target(value?: any): any;
     parent(value?: traceable): undefined | Proxy;
@@ -42,6 +43,12 @@ declare namespace Exotic {
     [Symbol.iterator](): IterableIterator<Proxy>;
   }
 
+  namespace mock {
+    interface prototype {
+      [Symbol.iterator](): IterableIterator<Proxy>;
+    }
+  }
+
   interface Proxy extends Mock {
     (...args: any[]): void;
     [x: key]: any;
@@ -55,6 +62,7 @@ declare namespace Exotic {
       value?: any;
       that?: any;
       args?: any[];
+      external?: boolean;
     }
 
     interface data {
