@@ -16,7 +16,7 @@ const createProxy = (
 ): Exotic.Proxy => {
   // find proxy by id
 
-  if (isPayload(target)) {
+  if (typeof target === "string" && isPayload(target)) {
     const proxyFromPayload = findProxyById(scope, target);
     if (proxyFromPayload) {
       return proxyFromPayload;

@@ -10,7 +10,7 @@ export default function decode(
   value: any,
   visited: WeakSet<Exotic.traceable> = new WeakSet(),
 ): any {
-  if (isPayload(value)) {
+  if (typeof value === "string" && isPayload(value)) {
     const { links } = map.emulators.get(scope);
     return links[value] || findProxyById(scope, value);
   }
