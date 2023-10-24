@@ -1,7 +1,7 @@
-const NO_BREAK = "⁠";
-const IS_PROXY_ID_REGEXP = new RegExp(`^${NO_BREAK}\\d+$`);
-const HAS_PROXY_ID_REGEXP = new RegExp(`(${NO_BREAK}\\d+)`, "g");
-const FUNCTION_TARGET = `${NO_BREAK}function`;
+const NO_BREAK: string = "⁠";
+const FUNCTION_TARGET: string = `${NO_BREAK}function`;
+const IS_PROXY_ID_REGEXP: RegExp = new RegExp(`^${NO_BREAK}\\d+$`);
+const HAS_PROXY_ID_REGEXP: RegExp = new RegExp(`(${NO_BREAK}\\d+)`, "g");
 
 export default {
   IS_PROXY_ID_REGEXP,
