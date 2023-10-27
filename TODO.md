@@ -2,24 +2,9 @@ AJUSTES EN ORDEN DE PRIORIDAD
 
 1. UTILS
 
-   **WIP**- dejar claro cuales son los tipos de entrada y salida esperados para cada utilidad.
+    - **WIP** simplifica lo que cada util hace, preferentemente una unica cosa (atomic)
 
-   **decode** OK
-   **encode** OK
-   **encodeProxy** OK
-   **findProxy** OK
-   **isMock** OK
-   **isPayload** OK
-   **isProxy** OK
-   **isTarget** OK
-   **isTraceable** OK
-   **mockPrototype** OK
-   **proxyIterator** OK
-   **revokeProxy** OK
-   
-
-
-    - simplifica lo que cada util hace, preferentemente una unica cosa
+    - dejar claro cuales son los tipos de entrada y salida esperados para cada utilidad.
 
     - ajustar los testes unitarios para testar todos los escenarios
     posibles de retorno de cada funcion util.
