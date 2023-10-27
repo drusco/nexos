@@ -5,7 +5,7 @@ const $ = new Emulator();
 
 describe("(function) findProxy", () => {
   it("Returns undefined when a proxy is not found", () => {
-    const param = "notProxy_notTarget";
+    const param = ["notProxy_notTarget"];
     const proxy = findProxy(param);
 
     expect(proxy).toBeUndefined();

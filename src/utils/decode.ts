@@ -1,24 +1,21 @@
 import Exotic from "../types/Exotic.js";
-import findProxy from "./findProxy.js";
 import findProxyById from "./findProxyById.js";
-import isPayload from "./isPayload.js";
+import findProxyByLink from "./findProxyByLink.js";
+import isProxyPayload from "./isProxyPayload.js";
 import isTraceable from "./isTraceable.js";
-import map from "./map.js";
 
-export default function decode(
+// Intenta decodificar un string a proxy
+// devuelve un objeto que incluye proxys convertidos de string a proxy
+
+export default function decode<Type>(
   scope: Exotic.Emulator,
-  value: any,
+  value: Type,
   visited: WeakSet<Exotic.traceable> = new WeakSet(),
-): any {
-  if (typeof value === "string" && isPayload(value)) {
-    const { links } = map.emulators.get(scope);
-    return links[value] || findProxyById(scope, value);
-  }
-
-  const proxy = findProxy(value);
-
-  if (proxy) {
-    return proxy;
+): Type | Exotic.Proxy {
+  if (isProxyPayload(value)) {
+    const proxyById = findProxyById(scope, value);
+    const proxyByLink = findProxyByLink(scope, value);
+    return proxyByLink || proxyById || value;
   }
 
   if (!isTraceable(value)) {
@@ -36,7 +33,7 @@ export default function decode(
 
   visited.add(value);
 
-  const copy = Array.isArray(value) ? [] : {};
+  const copy = (Array.isArray(value) ? [] : {}) as Type;
   const keys = Object.keys(value);
 
   for (let i = 0; i < keys.length; i++) {

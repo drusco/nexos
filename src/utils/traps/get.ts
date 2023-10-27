@@ -8,7 +8,7 @@ const get = (mock: Exotic.Mock, key: any): Exotic.Proxy => {
     return mock[key];
   }
 
-  const proxy = findProxy(mock);
+  const proxy = findProxy(mock) as Exotic.Proxy;
   const { scope, target, sandbox } = map.proxies.get(proxy);
 
   const origin: Exotic.proxy.origin = {

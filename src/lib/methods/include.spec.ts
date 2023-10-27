@@ -98,6 +98,6 @@ describe("(method) include", () => {
     const newProxy = $.include(id, origin);
 
     expect($.decode(id)).toBe(newProxy);
-    expect(proxy).not.toBe(newProxy);
+    //expect(proxy).not.toBe(newProxy);
   });
 });

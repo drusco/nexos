@@ -2,7 +2,7 @@ import Exotic from "../types/Exotic.js";
 import map from "./map.js";
 import findProxy from "./findProxy.js";
 import isTraceable from "./isTraceable.js";
-import isPayload from "./isPayload.js";
+import isProxyPayload from "./isProxyPayload.js";
 import mockPrototype from "./mockPrototype.js";
 import traps from "./traps/index.js";
 import encode from "./encode.js";
@@ -12,15 +12,13 @@ import constants from "./constants.js";
 const createProxy = (
   scope: Exotic.Emulator,
   origin: Exotic.proxy.origin = {},
-  target?: any,
+  target?: unknown,
 ): Exotic.Proxy => {
-  // find proxy by id
+  // find proxy by payload
 
-  if (typeof target === "string" && isPayload(target)) {
-    const proxyFromPayload = findProxyById(scope, target);
-    if (proxyFromPayload) {
-      return proxyFromPayload;
-    }
+  if (isProxyPayload(target)) {
+    const proxyById = findProxyById(scope, target);
+    if (proxyById) return proxyById;
   }
 
   const data: Exotic.emulator.data = map.emulators.get(scope);

@@ -3,13 +3,15 @@ import EventEmitter from "events";
 declare namespace Exotic {
   type traceable = object | FunctionLike;
   type key = string;
+  type proxyPayload = string;
+  type payload = string;
   type FunctionLike = (...args: any[]) => any;
 
   interface Emulator extends EventEmitter {
     use(value?: any): Proxy;
     link(key: key, value?: any): Proxy;
     exec(method: FunctionLike, dependencies?: Record<string, Proxy>): Proxy;
-    find(value: string | Exotic.traceable): undefined | Proxy;
+    find(value: string | Exotic.traceable): void | Proxy;
     include(id: string, origin: proxy.origin, target?: any): Proxy;
     target(value?: any): any;
     parent(value?: traceable): undefined | Proxy;
@@ -33,7 +35,7 @@ declare namespace Exotic {
 
     interface data {
       options: options;
-      links: Record<key, Proxy>;
+      links: Record<payload, Proxy>;
       counter: number;
       proxySet: Set<Proxy>;
     }

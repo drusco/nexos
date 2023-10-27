@@ -1,6 +1,6 @@
 import Exotic from "../types/Exotic.js";
-import constants from "./constants.js";
 import findProxy from "./findProxy.js";
+import encodeProxy from "./encodeProxy.js";
 import map from "./map.js";
 
 const revokeProxy = (value: Exotic.traceable): boolean => {
@@ -48,7 +48,7 @@ const revokeProxy = (value: Exotic.traceable): boolean => {
   // remove proxy strong references
 
   proxySet.delete(proxy);
-  delete links[`${constants.NO_BREAK + id}`];
+  delete links[encodeProxy(proxy)];
 
   if (link !== undefined) {
     // has link to a proxy

@@ -6,7 +6,7 @@ import {
   decode,
   encode,
   constants,
-  findProxy,
+  findProxyById,
 } from "../../utils/index.js";
 
 export default function include(
@@ -15,7 +15,7 @@ export default function include(
   origin: Exotic.proxy.origin,
   target?: any,
 ): Exotic.Proxy {
-  const decodedOrigin: Exotic.proxy.origin = decode(scope, origin);
+  const decodedOrigin = decode(scope, origin) as Exotic.proxy.origin;
   const { links } = map.emulators.get(scope);
   const { action, proxy, key, value, that, args } = decodedOrigin;
 
@@ -30,7 +30,7 @@ export default function include(
     const code = target.replace(
       constants.HAS_PROXY_ID_REGEXP,
       (match: string, $1: string) => {
-        const proxy = findProxy(decode(scope, $1));
+        const proxy = findProxyById(scope, $1);
         if (!proxy) return match;
         const { target } = map.proxies.get(proxy);
         if (target === constants.FUNCTION_TARGET) {
@@ -68,7 +68,7 @@ export default function include(
       break;
   }
 
-  if (encode(proxyFromTrap) !== encodedProxy) {
+  if (encodedProxy && encode(proxyFromTrap) !== encodedProxy) {
     links[encodedProxy] = proxyFromTrap;
   }
 

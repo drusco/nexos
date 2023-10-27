@@ -4,7 +4,7 @@ import { createProxy } from "../../utils/index.js";
 export default function link(
   scope: Exotic.Emulator,
   key: Exotic.key,
-  value?: any,
+  value?: unknown,
 ): Exotic.Proxy {
   // create a proxy by link reference
   return createProxy(scope, { action: "link", key }, value);
