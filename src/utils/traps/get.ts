@@ -1,5 +1,5 @@
 import Exotic from "../../types/Exotic.js";
-import createProxy from "../createProxy.js";
+import tryProxy from "../tryProxy.js";
 import findProxy from "../findProxy.js";
 import map from "../map.js";
 
@@ -11,11 +11,11 @@ const get = (mock: Exotic.Mock, key: any): Exotic.Proxy => {
   const proxy = findProxy(mock) as Exotic.Proxy;
   const { scope, target, sandbox } = map.proxies.get(proxy);
 
-  const origin: Exotic.proxy.origin = {
-    action: "get",
-    key,
-    proxy,
-  };
+  // const origin: Exotic.proxy.origin = {
+  //   action: "get",
+  //   key,
+  //   proxy,
+  // };
 
   let value: any;
 
@@ -32,7 +32,7 @@ const get = (mock: Exotic.Mock, key: any): Exotic.Proxy => {
     value = sandbox[key];
   }
 
-  sandbox[key] = createProxy(scope, origin, value);
+  sandbox[key] = tryProxy(scope, value);
 
   return Reflect.get(sandbox, key);
 };

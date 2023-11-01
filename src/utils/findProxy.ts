@@ -9,7 +9,7 @@ import isMock from "./isMock.js";
 //  - value puede ser el target de un proxy
 //  - value puede ser la funcion mock de un proxy
 
-const findProxy = (value: any): void | Exotic.Proxy => {
+const findProxy = (value: unknown): void | Exotic.Proxy => {
   if (isProxy(value)) return value;
   if (isTarget(value)) return map.targets.get(value);
   if (isMock(value)) return map.mocks.get(value);

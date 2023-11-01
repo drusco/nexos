@@ -1,7 +1,7 @@
 import traps from "./traps/index.js";
 import isTraceable from "./isTraceable.js";
 import findProxy from "./findProxy.js";
-import createProxy from "./createProxy.js";
+import tryProxy from "./tryProxy.js";
 import proxyIterator from "./proxyIterator.js";
 import revokeProxy from "./revokeProxy.js";
 import map from "./map.js";
@@ -15,18 +15,18 @@ import constants from "./constants.js";
 import isProxy from "./isProxy.js";
 import isMock from "./isMock.js";
 import isTarget from "./isTarget.js";
-import encodeProxy from "./encodeProxy.js";
+import getProxyPayload from "./getProxyPayload.js";
 
 export {
   isTraceable,
   findProxy,
   proxyIterator,
   map,
-  createProxy,
+  tryProxy,
   revokeProxy,
   traps,
   encode,
-  encodeProxy,
+  getProxyPayload,
   isProxyPayload,
   isPayload,
   decode,

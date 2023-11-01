@@ -4,9 +4,6 @@ import findProxyByLink from "./findProxyByLink.js";
 import isProxyPayload from "./isProxyPayload.js";
 import isTraceable from "./isTraceable.js";
 
-// Intenta decodificar un string a proxy
-// devuelve un objeto que incluye proxys convertidos de string a proxy
-
 export default function decode<Type>(
   scope: Exotic.Emulator,
   value: Type,

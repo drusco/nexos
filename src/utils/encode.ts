@@ -1,7 +1,7 @@
 import Exotic from "../types/Exotic.js";
 import findProxy from "./findProxy.js";
 import isTraceable from "./isTraceable.js";
-import encodeProxy from "./encodeProxy.js";
+import getProxyPayload from "./getProxyPayload.js";
 
 // Intenta codificar un proxy a su representacion en string
 // devuelve un objeto que incluye string representando proxys codificados
@@ -13,7 +13,7 @@ export default function encode<Type>(
   const proxy = findProxy(value);
 
   if (proxy) {
-    return encodeProxy(proxy);
+    return getProxyPayload(proxy);
   }
 
   if (!isTraceable(value)) {

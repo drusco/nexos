@@ -1,5 +1,5 @@
 import Exotic from "../../types/Exotic.js";
-import createProxy from "../createProxy.js";
+import tryProxy from "../tryProxy.js";
 import findProxy from "../findProxy.js";
 import map from "../map.js";
 
@@ -11,7 +11,7 @@ const apply = (mock: Exotic.Mock, that?: any, args?: any[]): Exotic.Proxy => {
     action: "apply",
     proxy,
     that,
-    args: args.map((arg) => createProxy(scope, undefined, arg)),
+    args: args.map((arg) => tryProxy(scope, arg)),
   };
 
   let value: any;
@@ -24,7 +24,7 @@ const apply = (mock: Exotic.Mock, that?: any, args?: any[]): Exotic.Proxy => {
     );
   }
 
-  return createProxy(scope, origin, value);
+  return tryProxy(scope, value);
 };
 
 export default apply;

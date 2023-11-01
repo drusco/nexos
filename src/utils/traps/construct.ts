@@ -1,5 +1,5 @@
 import Exotic from "../../types/Exotic.js";
-import createProxy from "../createProxy.js";
+import tryProxy from "../tryProxy.js";
 import findProxy from "../findProxy.js";
 import map from "../map.js";
 
@@ -10,7 +10,7 @@ const construct = (mock: Exotic.Mock, args: any[]): Exotic.Proxy => {
   const origin: Exotic.proxy.origin = {
     action: "build",
     proxy,
-    args: args.map((arg) => createProxy(scope, undefined, arg)),
+    args: args.map((arg) => tryProxy(scope, arg)),
   };
 
   let value: any;
@@ -22,7 +22,7 @@ const construct = (mock: Exotic.Mock, args: any[]): Exotic.Proxy => {
     );
   }
 
-  return createProxy(scope, origin, value);
+  return tryProxy(scope, value);
 };
 
 export default construct;
