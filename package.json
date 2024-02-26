@@ -9,12 +9,12 @@
   "scripts": {
     "prepare": "husky install",
     "dev": "tsc --watch",
-    "check": "tsc --project .",
     "build": "npm run clean && tsc --project src",
     "clean": "rm -rf dist",
+    "lint": "eslint --fix --ext .js,.ts,.json .",
+    "check": "tsc --project .",
     "test": "jest --passWithNoTests",
-    "memtest": "node --expose-gc ./node_modules/.bin/jest --runInBand --logHeapUsage",
-    "lint": "eslint --fix --ext .js,.ts,.json ."
+    "test:memory": "node --expose-gc ./node_modules/.bin/jest --runInBand --logHeapUsage"
   },
   "author": {
     "name": "Pedro Gallardo",
