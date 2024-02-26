@@ -1,29 +1,29 @@
-# Installation
+## Installation
 
-### Install dependencies
+#### Install dependencies
 
 `npm i`
 
-### Run husky script
+#### Run husky script
 
 `npm run prepare`
 
-# Development
+## Development
 
-### Typscript compiler watch mode
+#### Typscript compiler watch mode
 
 `npm run dev`
 
-### Compile to javascript
+#### Compile to javascript
 
 files will be available on the dist directory
 
 `npm run build`
 
-### Run Unit Tests
+#### Run Unit Tests
 
-`npm run test`
+`npm test`
 
-### Lint files
+#### Lint files
 
 `npm run lint`
