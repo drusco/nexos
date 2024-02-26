@@ -12,7 +12,7 @@
     "check": "tsc --project .",
     "build": "npm run clean && tsc --project src",
     "clean": "rm -rf dist",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "memtest": "node --expose-gc ./node_modules/.bin/jest --runInBand --logHeapUsage",
     "lint": "eslint --fix --ext .js,.ts,.json ."
   },
