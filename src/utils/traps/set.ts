@@ -3,7 +3,7 @@ import tryProxy from "../tryProxy.js";
 import findProxy from "../findProxy.js";
 import map from "../map.js";
 
-const set = (mock: Exotic.Mock, key: Exotic.key, value: any): boolean => {
+const set = (mock: Exotic.Mock, key: string, value: any): boolean => {
   const proxy = findProxy(mock) as Exotic.Proxy;
   const { scope, sandbox, target } = map.proxies.get(proxy);
 

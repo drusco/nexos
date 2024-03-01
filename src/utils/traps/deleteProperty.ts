@@ -2,7 +2,7 @@ import Exotic from "../../types/Exotic.js";
 import map from "../map.js";
 import findProxy from "../findProxy.js";
 
-const deleteProperty = (mock: Exotic.Mock, key: Exotic.key): boolean => {
+const deleteProperty = (mock: Exotic.Mock, key: string): boolean => {
   const proxy = findProxy(mock) as Exotic.Proxy;
   const { target, sandbox } = map.proxies.get(proxy);
 

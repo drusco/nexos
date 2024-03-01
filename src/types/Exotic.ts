@@ -1,9 +1,6 @@
 declare namespace Exotic {
-  type traceable = object | FunctionLike;
-  type key = string;
-  type proxyPayload = string;
-  type payload = string;
   type FunctionLike = (...args: unknown[]) => unknown;
+  type traceable = object | FunctionLike;
 
   interface Emulator {}
 
@@ -15,7 +12,7 @@ declare namespace Exotic {
 
     interface data {
       options: options;
-      links: Record<payload, Proxy>;
+      links: Record<string, Proxy>;
       counter: number;
       proxySet: Set<Proxy>;
     }
@@ -33,14 +30,14 @@ declare namespace Exotic {
 
   interface Proxy extends Mock {
     (...args: any[]): void;
-    [x: key]: any;
+    [x: string]: any;
   }
 
   namespace proxy {
     interface origin {
       action?: "get" | "set" | "build" | "apply" | "exec" | "link";
       proxy?: Proxy;
-      key?: key;
+      key?: string;
       value?: any;
       that?: any;
       args?: any[];
@@ -53,10 +50,10 @@ declare namespace Exotic {
       revoked: boolean;
       mock: Mock;
       scope: any;
-      sandbox: Record<key, Proxy>;
+      sandbox: Record<string, Proxy>;
       target?: any;
       origin?: origin;
-      link?: key;
+      link?: string;
     }
   }
 }
