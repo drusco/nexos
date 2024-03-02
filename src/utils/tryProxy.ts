@@ -45,7 +45,10 @@ const tryProxy = <Target>(
     mockPrototype,
   );
 
-  const { proxy, revoke } = Proxy.revocable<Exotic.Proxy>(mock, traps);
+  const { proxy, revoke } = Proxy.revocable<Exotic.Proxy>(
+    mock as Exotic.Proxy,
+    traps,
+  );
 
   // add information about this proxy
   const proxyData: Exotic.proxy.data = {

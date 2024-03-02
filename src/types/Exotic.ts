@@ -25,8 +25,8 @@ declare namespace Exotic {
   }
 
   interface Proxy extends Mock {
-    (...args: any[]): void;
-    [x: string]: any;
+    (...args: unknown[]): unknown;
+    [x: string]: unknown;
   }
 
   namespace proxy {
