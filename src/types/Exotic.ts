@@ -5,10 +5,7 @@ declare namespace Exotic {
   interface Emulator {}
 
   namespace emulator {
-    interface options {
-      traceErrors: boolean;
-      stackTraceLimit: number;
-    }
+    interface options {}
 
     interface data {
       options: options;
