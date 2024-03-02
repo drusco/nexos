@@ -10,7 +10,7 @@ declare namespace Exotic {
     interface data {
       options: options;
       counter: number;
-      proxySet: Set<Proxy>;
+      proxyMap: Map<string, WeakRef<Proxy>>;
     }
   }
 

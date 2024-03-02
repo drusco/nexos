@@ -12,7 +12,7 @@ const tryProxy = <Target>(
   target?: Target,
 ): Target | Exotic.Proxy => {
   const data: Exotic.emulator.data = map.emulators.get(scope);
-  const { proxySet } = data;
+  const { proxyMap } = data;
 
   // find proxy by proxyPayload
 
@@ -62,7 +62,7 @@ const tryProxy = <Target>(
   map.proxies.set(proxy, proxyData);
   map.targets.set(target, proxy);
 
-  proxySet.add(proxy);
+  proxyMap.set(proxyData.id, new WeakRef(proxy));
 
   return proxy;
 };

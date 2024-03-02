@@ -4,9 +4,9 @@ import map from "./map.js";
 const proxyIterator = function* (
   scope: Exotic.Emulator,
 ): IterableIterator<Exotic.Proxy> {
-  const { proxySet } = map.emulators.get(scope);
-  for (const proxy of proxySet) {
-    yield proxy;
+  const { proxyMap } = map.emulators.get(scope);
+  for (const [, ref] of proxyMap) {
+    yield ref.deref();
   }
 };
 
