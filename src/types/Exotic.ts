@@ -9,7 +9,6 @@ declare namespace Exotic {
 
     interface data {
       options: options;
-      links: Record<string, Proxy>;
       counter: number;
       proxySet: Set<Proxy>;
     }

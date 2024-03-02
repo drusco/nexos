@@ -1,6 +1,5 @@
 import Exotic from "../types/Exotic.js";
 import findProxy from "./findProxy.js";
-import getProxyPayload from "./getProxyPayload.js";
 import map from "./map.js";
 
 const revokeProxy = (value: Exotic.traceable): boolean => {
@@ -10,7 +9,7 @@ const revokeProxy = (value: Exotic.traceable): boolean => {
     return false;
   }
 
-  const { id, mock, revoke, target, origin, revoked, link, scope } =
+  const { id, mock, revoke, target, origin, revoked, scope } =
     map.proxies.get(proxy);
 
   if (revoked) {
@@ -19,7 +18,7 @@ const revokeProxy = (value: Exotic.traceable): boolean => {
 
   const targetIsFunction = typeof target === "function";
   const data = map.emulators.get(scope);
-  const { links, proxySet, options } = data;
+  const { proxySet, options } = data;
 
   // remove from proxy's parent references
   const { action, key: property, proxy: parentProxy } = origin;
@@ -48,12 +47,6 @@ const revokeProxy = (value: Exotic.traceable): boolean => {
   // remove proxy strong references
 
   proxySet.delete(proxy);
-  delete links[getProxyPayload(proxy)];
-
-  if (link !== undefined) {
-    // has link to a proxy
-    delete links[link];
-  }
 
   // revoke proxy
   revoke();
@@ -75,7 +68,6 @@ const revokeProxy = (value: Exotic.traceable): boolean => {
     map.emulators.set(scope, {
       options,
       proxySet,
-      links: Object.create(null),
       counter: 0,
     });
   }

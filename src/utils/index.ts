@@ -10,7 +10,6 @@ import decode from "./decode.js";
 import isProxyPayload from "./isProxyPayload.js";
 import isPayload from "./isPayload.js";
 import findProxyById from "./findProxyById.js";
-import findProxyByLink from "./findProxyByLink.js";
 import constants from "./constants.js";
 import isProxy from "./isProxy.js";
 import isMock from "./isMock.js";
@@ -31,7 +30,6 @@ export {
   isPayload,
   decode,
   findProxyById,
-  findProxyByLink,
   constants,
   isMock,
   isTarget,

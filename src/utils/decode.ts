@@ -1,6 +1,5 @@
 import Exotic from "../types/Exotic.js";
 import findProxyById from "./findProxyById.js";
-import findProxyByLink from "./findProxyByLink.js";
 import isProxyPayload from "./isProxyPayload.js";
 import isTraceable from "./isTraceable.js";
 
@@ -11,8 +10,7 @@ export default function decode<Type>(
 ): Type | Exotic.Proxy {
   if (isProxyPayload(value)) {
     const proxyById = findProxyById(scope, value);
-    const proxyByLink = findProxyByLink(scope, value);
-    return proxyByLink || proxyById || value;
+    return proxyById || value;
   }
 
   if (!isTraceable(value)) {
