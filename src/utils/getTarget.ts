@@ -1,10 +1,7 @@
 import findProxy from "./findProxy.js";
-import unlockRef from "./unlockRef.js";
 import map from "./map.js";
 
 const getTarget = (value: unknown, resolveProxy: boolean = false): unknown => {
-  value = unlockRef(value);
-
   const proxy = findProxy(value);
 
   if (!proxy) {
@@ -17,7 +14,9 @@ const getTarget = (value: unknown, resolveProxy: boolean = false): unknown => {
 
   const { target } = map.proxies.get(proxy);
 
-  return unlockRef(target);
+  if (target) {
+    return target.deref();
+  }
 };
 
 export default getTarget;

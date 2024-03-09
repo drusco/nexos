@@ -59,7 +59,7 @@ declare namespace Nexo {
 
     interface data {
       id: string;
-      target: unknown;
+      target: WeakRef<traceable> | void;
       scope: WeakRef<Emulator>;
       sandbox: Map<objectKey, unknown>;
     }
