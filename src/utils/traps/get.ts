@@ -22,7 +22,6 @@ const get = (mock: Nexo.Mock, key: Nexo.objectKey): unknown => {
   const proxyTarget = getTarget(target);
 
   // try getting the value from the original target
-  // the target's current value may have changed
   // catch when the target is untraceable
   try {
     value = proxyTarget[key];
