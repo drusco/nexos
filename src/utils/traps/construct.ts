@@ -8,11 +8,11 @@ const construct = (mock: Nexo.Mock, args: unknown[]): Nexo.Proxy => {
   const data = map.proxies.get(proxy);
   const { scope } = data;
 
-  const origin: Nexo.proxy.origin.construct = {
-    name: "construct",
-    proxy,
-    args,
-  };
+  // const origin: Nexo.proxy.origin.construct = {
+  //   name: "construct",
+  //   proxy,
+  //   args,
+  // };
 
   let value: unknown;
   const target = getTarget(data.target);
@@ -20,7 +20,7 @@ const construct = (mock: Nexo.Mock, args: unknown[]): Nexo.Proxy => {
   if (typeof target === "function") {
     value = Reflect.construct(
       target,
-      origin.args.map((arg) => getTarget(arg)),
+      args.map((arg) => getTarget(arg)),
     );
   }
 
