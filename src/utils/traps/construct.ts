@@ -5,7 +5,8 @@ import map from "../map.js";
 
 const construct = (mock: Nexo.Mock, args: unknown[]): Nexo.Proxy => {
   const proxy = map.tracables.get(mock);
-  const { scope, target } = map.proxies.get(proxy);
+  const data = map.proxies.get(proxy);
+  const { scope } = data;
 
   const origin: Nexo.proxy.origin.construct = {
     name: "construct",
@@ -14,11 +15,11 @@ const construct = (mock: Nexo.Mock, args: unknown[]): Nexo.Proxy => {
   };
 
   let value: unknown;
-  const proxyTarget = getTarget(target);
+  const target = getTarget(data.target);
 
-  if (typeof proxyTarget === "function") {
+  if (typeof target === "function") {
     value = Reflect.construct(
-      proxyTarget,
+      target,
       origin.args.map((arg) => getTarget(arg)),
     );
   }
