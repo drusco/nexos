@@ -6,7 +6,8 @@ import map from "../map.js";
 
 const get = (mock: Nexo.Mock, key: Nexo.objectKey): unknown => {
   const proxy = map.tracables.get(mock);
-  const { scope, target, sandbox } = map.proxies.get(proxy);
+  const data = map.proxies.get(proxy);
+  const { sandbox, scope } = data;
 
   // const origin: Nexo.proxy.origin.get = {
   //   name: "get",
@@ -14,20 +15,34 @@ const get = (mock: Nexo.Mock, key: Nexo.objectKey): unknown => {
   //   key,
   // };
 
+  let value: unknown;
+  const target = getTarget(data.target);
+
+  try {
+    // get value from the original target
+    value = getTarget(target[key], true);
+  } catch (error) {
+    // target is untraceable
+  }
+
   if (sandbox.has(key)) {
+    const savedValue = getTarget(sandbox.get(key), true);
+
+    if (savedValue !== value) {
+      // original value changed
+
+      if (isTraceable(value)) {
+        sandbox.set(key, new WeakRef(value));
+      } else {
+        sandbox.set(key, value);
+      }
+    }
+
     return getTarget(sandbox.get(key), true);
   }
 
-  let value: unknown;
-  const proxyTarget = getTarget(target);
-
-  // try getting the value from the original target
-  // catch when the target is untraceable
-  try {
-    value = proxyTarget[key];
-  } catch (error) {
-    // empty
-  }
+  // proxy's handler.set was not called ever
+  // proxy's handler.get is being called for the first time
 
   if (!isTraceable(value)) {
     return value;

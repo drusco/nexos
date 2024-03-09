@@ -14,9 +14,13 @@ const set = (mock: Nexo.Mock, key: Nexo.objectKey, value: unknown): boolean => {
   //   value,
   // };
 
-  const target = getTarget(value);
+  const target = getTarget(value, true);
 
-  sandbox.set(key, isTraceable(target) ? new WeakRef(target) : target);
+  if (isTraceable(target)) {
+    sandbox.set(key, new WeakRef(target));
+  } else {
+    sandbox.set(key, target);
+  }
 
   return true;
 };
