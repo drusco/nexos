@@ -2,6 +2,10 @@ import findProxy from "./findProxy.js";
 import map from "./map.js";
 
 const getTarget = (value: unknown, resolveProxy: boolean = false): unknown => {
+  if (value instanceof WeakRef) {
+    value = value.deref();
+  }
+
   const proxy = findProxy(value);
 
   if (!proxy) {
