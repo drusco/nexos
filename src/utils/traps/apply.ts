@@ -9,23 +9,24 @@ const apply = (
   args?: unknown[],
 ): Nexo.Proxy => {
   const proxy = map.tracables.get(mock);
-  const { target, scope } = map.proxies.get(proxy);
+  const data = map.proxies.get(proxy);
+  const { scope } = data;
 
-  const origin: Nexo.proxy.origin.apply = {
-    name: "apply",
-    proxy,
-    that,
-    args,
-  };
+  // const origin: Nexo.proxy.origin.apply = {
+  //   name: "apply",
+  //   proxy,
+  //   that,
+  //   args,
+  // };
 
   let value: unknown;
-  const proxyTarget = getTarget(target);
+  const target = getTarget(data.target);
 
-  if (typeof proxyTarget === "function") {
+  if (typeof target === "function") {
     value = Reflect.apply(
-      proxyTarget,
+      target,
       getTarget(that),
-      origin.args.map((arg) => getTarget(arg)),
+      args.map((arg) => getTarget(arg)),
     );
   }
 
