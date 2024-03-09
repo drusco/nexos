@@ -9,7 +9,7 @@ import getProxyPayload from "./getProxyPayload.js";
 export default function encode<Type>(
   value: Type,
   visited: WeakSet<Nexo.traceable> = new WeakSet(),
-): any {
+): unknown {
   const proxy = findProxy(value);
 
   if (proxy) {

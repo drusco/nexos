@@ -3,14 +3,9 @@ import getProxy from "../getProxy.js";
 import getTarget from "../getTarget.js";
 import map from "../map.js";
 
-const apply = (
-  mock: Nexo.Mock,
-  that?: unknown,
-  args?: unknown[],
-): Nexo.Proxy => {
+const apply = (mock: Nexo.Mock, that?: unknown, args?: unknown[]): unknown => {
   const proxy = map.tracables.get(mock);
   const data = map.proxies.get(proxy);
-  const { scope } = data;
 
   // const origin: Nexo.proxy.origin.apply = {
   //   name: "apply",
@@ -19,18 +14,22 @@ const apply = (
   //   args,
   // };
 
-  let value: unknown;
   const target = getTarget(data.target);
+  const scope = data.scope.deref();
 
   if (typeof target === "function") {
-    value = Reflect.apply(
+    // get the value from the original target
+
+    const value: unknown = Reflect.apply(
       target,
       getTarget(that),
       args.map((arg) => getTarget(arg)),
     );
+
+    return value;
   }
 
-  return getProxy(scope.deref(), value);
+  return getProxy(scope);
 };
 
 export default apply;

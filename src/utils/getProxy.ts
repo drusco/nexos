@@ -3,13 +3,14 @@ import map from "./map.js";
 import findProxy from "./findProxy.js";
 import isTraceable from "./isTraceable.js";
 import traps from "./traps/index.js";
-import getTarget from "./getTarget.js";
 
-const getProxy = (scope: Nexo.Emulator, target?: unknown): Nexo.Proxy => {
+const getProxy = (
+  scope: Nexo.Emulator,
+  target: Nexo.traceable | void,
+): Nexo.Proxy => {
   // find proxy by target
 
-  const targetValue = getTarget(target, true);
-  const usableProxy = findProxy(targetValue);
+  const usableProxy = findProxy(target);
 
   if (usableProxy) {
     return usableProxy;
@@ -17,7 +18,7 @@ const getProxy = (scope: Nexo.Emulator, target?: unknown): Nexo.Proxy => {
 
   // create proxy
 
-  const traceable = isTraceable(targetValue);
+  const traceable = isTraceable(target);
   const data: Nexo.emulator.data = map.emulators.get(scope);
   const { proxyMap } = data;
   const mock: Nexo.Mock = function () {};
@@ -29,7 +30,7 @@ const getProxy = (scope: Nexo.Emulator, target?: unknown): Nexo.Proxy => {
 
   const proxyData: Nexo.proxy.data = {
     id: proxyId,
-    target: traceable ? new WeakRef(targetValue) : targetValue,
+    target: traceable ? new WeakRef(target) : target,
     scope: new WeakRef(scope),
     sandbox: new Map(),
   };
@@ -38,7 +39,7 @@ const getProxy = (scope: Nexo.Emulator, target?: unknown): Nexo.Proxy => {
   map.tracables.set(mock, proxy);
 
   if (traceable) {
-    map.tracables.set(targetValue, proxy);
+    map.tracables.set(target, proxy);
   }
 
   proxyMap.set(proxyId, new WeakRef(proxy));
