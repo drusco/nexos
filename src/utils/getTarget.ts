@@ -1,14 +1,14 @@
 import findProxy from "./findProxy.js";
 import map from "./map.js";
 
-const getTarget = (value: unknown, resolveProxy: boolean = false): unknown => {
+const getTarget = (value: unknown, getProxy: boolean = false): unknown => {
   const proxy = findProxy(value);
 
   if (!proxy) {
     return value;
   }
 
-  if (proxy && resolveProxy) {
+  if (proxy && getProxy) {
     return proxy;
   }
 
