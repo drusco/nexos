@@ -1,13 +1,13 @@
-import Exotic from "../types/Exotic.js";
+import Nexo from "../types/Nexo.js";
 import findProxyById from "./findProxyById.js";
 import isProxyPayload from "./isProxyPayload.js";
 import isTraceable from "./isTraceable.js";
 
 export default function decode<Type>(
-  scope: Exotic.Emulator,
+  scope: Nexo.Emulator,
   value: Type,
-  visited: WeakSet<Exotic.traceable> = new WeakSet(),
-): Type | Exotic.Proxy {
+  visited: WeakSet<Nexo.traceable> = new WeakSet(),
+): Type | Nexo.Proxy {
   if (isProxyPayload(value)) {
     const proxyById = findProxyById(scope, value);
     return proxyById || value;

@@ -1,12 +1,13 @@
-import Exotic from "../types/Exotic.js";
+import Nexo from "../types/Nexo.js";
 import map from "./map.js";
 
 const proxyIterator = function* (
-  scope: Exotic.Emulator,
-): IterableIterator<Exotic.Proxy> {
+  scope: Nexo.Emulator,
+): IterableIterator<Nexo.Proxy> {
   const { proxyMap } = map.emulators.get(scope);
   for (const [, ref] of proxyMap) {
-    yield ref.deref();
+    const proxy = ref.deref();
+    if (proxy) yield proxy;
   }
 };
 

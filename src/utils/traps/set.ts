@@ -1,30 +1,24 @@
-import Exotic from "../../types/Exotic.js";
-import tryProxy from "../tryProxy.js";
-import findProxy from "../findProxy.js";
+import Nexo from "../../types/Nexo.js";
+import getTarget from "../getTarget.js";
+import isTraceable from "../isTraceable.js";
 import map from "../map.js";
 
-const set = (mock: Exotic.Mock, key: string, value: any): boolean => {
-  const proxy = findProxy(mock) as Exotic.Proxy;
-  const { scope, sandbox, target } = map.proxies.get(proxy);
+const set = (mock: Nexo.Mock, key: Nexo.objectKey, value: unknown): boolean => {
+  const proxy = map.tracables.get(mock);
+  const { sandbox } = map.proxies.get(proxy);
 
-  // const origin: Exotic.proxy.origin = {
-  //   action: "set",
+  // const origin: Nexo.proxy.origin.set = {
+  //   name: "set",
   //   proxy,
   //   key,
   //   value,
   // };
 
-  const newValue = tryProxy(scope, value);
+  const target = getTarget(value);
 
-  // try to set the value to the original target
-  // also catch because the target may be untraceable
-  try {
-    target[key] = scope.target(value);
-  } catch (error) {
-    /* empty */
-  }
+  sandbox.set(key, isTraceable(target) ? new WeakRef(target) : target);
 
-  return Reflect.set(sandbox, key, newValue);
+  return true;
 };
 
 export default set;

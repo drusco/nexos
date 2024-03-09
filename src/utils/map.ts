@@ -1,8 +1,7 @@
-import Exotic from "../types/Exotic.js";
+import Nexo from "../types/Nexo.js";
 
-const emulators: WeakMap<Exotic.Emulator, Exotic.emulator.data> = new WeakMap();
-const targets: WeakMap<Exotic.traceable, Exotic.Proxy> = new WeakMap();
-const mocks: WeakMap<Exotic.Mock, Exotic.Proxy> = new WeakMap();
-const proxies: WeakMap<Exotic.Proxy, Exotic.proxy.data> = new WeakMap();
+const emulators: WeakMap<Nexo.Emulator, Nexo.emulator.data> = new WeakMap();
+const tracables: WeakMap<Nexo.traceable, Nexo.Proxy> = new WeakMap();
+const proxies: WeakMap<Nexo.Proxy, Nexo.proxy.data> = new WeakMap();
 
-export default { emulators, mocks, targets, proxies };
+export default { emulators, tracables, proxies };

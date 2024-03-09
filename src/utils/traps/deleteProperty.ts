@@ -1,20 +1,17 @@
-import Exotic from "../../types/Exotic.js";
+import Nexo from "../../types/Nexo.js";
 import map from "../map.js";
-import findProxy from "../findProxy.js";
 
-const deleteProperty = (mock: Exotic.Mock, key: string): boolean => {
-  const proxy = findProxy(mock) as Exotic.Proxy;
-  const { target, sandbox } = map.proxies.get(proxy);
+const deleteProperty = (mock: Nexo.Mock, key: Nexo.objectKey): boolean => {
+  const proxy = map.tracables.get(mock);
+  const { sandbox } = map.proxies.get(proxy);
 
-  // try to delete the value from the original target as well
-  // also catch because the target may be untraceable
-  try {
-    delete target[key];
-  } catch (error) {
-    /* empty */
-  }
+  // const origin: Nexo.proxy.origin.deleteProperty = {
+  //   name: "deleteProperty",
+  //   proxy,
+  //   key,
+  // };
 
-  return Reflect.deleteProperty(sandbox, key);
+  return sandbox.delete(key);
 };
 
 export default deleteProperty;

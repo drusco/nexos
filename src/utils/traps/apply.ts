@@ -1,30 +1,35 @@
-import Exotic from "../../types/Exotic.js";
-import tryProxy from "../tryProxy.js";
-import findProxy from "../findProxy.js";
+import Nexo from "../../types/Nexo.js";
+import getProxy from "../getProxy.js";
+import getTarget from "../getTarget.js";
 import map from "../map.js";
 
-const apply = (mock: Exotic.Mock, that?: any, args?: any[]): Exotic.Proxy => {
-  const proxy = findProxy(mock) as Exotic.Proxy;
-  const { scope, target } = map.proxies.get(proxy);
+const apply = (
+  mock: Nexo.Mock,
+  that?: unknown,
+  args?: unknown[],
+): Nexo.Proxy => {
+  const proxy = map.tracables.get(mock);
+  const { target, scope } = map.proxies.get(proxy);
 
-  const origin: Exotic.proxy.origin = {
-    action: "apply",
+  const origin: Nexo.proxy.origin.apply = {
+    name: "apply",
     proxy,
     that,
-    args: args.map((arg) => tryProxy(scope, arg)),
+    args,
   };
 
-  let value: any;
+  let value: unknown;
+  const proxyTarget = getTarget(target);
 
-  if (typeof target === "function") {
+  if (typeof proxyTarget === "function") {
     value = Reflect.apply(
-      target,
-      scope.target(that),
-      origin.args.map((arg) => scope.target(arg)),
+      proxyTarget,
+      getTarget(that),
+      origin.args.map((arg) => getTarget(arg)),
     );
   }
 
-  return tryProxy(scope, value);
+  return getProxy(scope.deref(), value);
 };
 
 export default apply;

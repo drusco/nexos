@@ -1,4 +1,4 @@
-import Exotic from "../types/Exotic.js";
+import Nexo from "../types/Nexo.js";
 import findProxy from "./findProxy.js";
 import isTraceable from "./isTraceable.js";
 import getProxyPayload from "./getProxyPayload.js";
@@ -8,7 +8,7 @@ import getProxyPayload from "./getProxyPayload.js";
 
 export default function encode<Type>(
   value: Type,
-  visited: WeakSet<Exotic.traceable> = new WeakSet(),
+  visited: WeakSet<Nexo.traceable> = new WeakSet(),
 ): any {
   const proxy = findProxy(value);
 

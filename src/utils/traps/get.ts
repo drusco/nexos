@@ -1,40 +1,40 @@
-import Exotic from "../../types/Exotic.js";
-import tryProxy from "../tryProxy.js";
-import findProxy from "../findProxy.js";
+import Nexo from "../../types/Nexo.js";
+import getProxy from "../getProxy.js";
+import getTarget from "../getTarget.js";
+import isTraceable from "../isTraceable.js";
 import map from "../map.js";
 
-const get = (mock: Exotic.Mock, key: any): Exotic.Proxy => {
-  if (key === Symbol.iterator) {
-    return mock[key];
-  }
-
-  const proxy = findProxy(mock) as Exotic.Proxy;
+const get = (mock: Nexo.Mock, key: Nexo.objectKey): unknown => {
+  const proxy = map.tracables.get(mock);
   const { scope, target, sandbox } = map.proxies.get(proxy);
 
-  // const origin: Exotic.proxy.origin = {
-  //   action: "get",
-  //   key,
+  // const origin: Nexo.proxy.origin.get = {
+  //   name: "get",
   //   proxy,
+  //   key,
   // };
 
-  let value: any;
+  if (sandbox.has(key)) {
+    return getTarget(sandbox.get(key), true);
+  }
 
-  // try to get the value from the original target first
-  // because the value may have changed
-  // also catch because the target may be untraceable
+  let value: unknown;
+  const proxyTarget = getTarget(target);
+
+  // try getting the value from the original target
+  // the target's current value may have changed
+  // catch when the target is untraceable
   try {
-    value = target[key];
+    value = proxyTarget[key];
   } catch (error) {
-    /* empty */
+    // empty
   }
 
-  if (value === undefined) {
-    value = sandbox[key];
+  if (!isTraceable(value)) {
+    return value;
   }
 
-  sandbox[key] = tryProxy(scope, value);
-
-  return Reflect.get(sandbox, key);
+  return getProxy(scope.deref(), value);
 };
 
 export default get;
