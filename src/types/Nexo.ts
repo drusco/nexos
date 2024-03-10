@@ -1,8 +1,11 @@
 import Nexo from "../Nexo.js";
+import PxEvent from "../events/ProxyEvent.js";
+
 declare namespace Nexo {
   type functionLike = (...args: unknown[]) => unknown;
   type traceable = object | functionLike;
   type objectKey = string | symbol;
+  type ProxyEvent = PxEvent;
 
   interface options {}
 
@@ -20,45 +23,47 @@ declare namespace Nexo {
   }
 
   namespace proxy {
-    namespace origin {
-      interface proxyOrigin {
-        name: string;
-        proxy: Proxy;
-      }
-
-      interface get extends proxyOrigin {
-        name: "get";
-        key: objectKey;
-      }
-
-      interface set extends proxyOrigin {
-        name: "set";
-        key: objectKey;
-        value: unknown;
-      }
-
-      interface deleteProperty extends proxyOrigin {
-        name: "deleteProperty";
-        key: objectKey;
-      }
-
-      interface apply extends proxyOrigin {
-        name: "apply";
-        args: unknown[];
-        that: unknown;
-      }
-
-      interface construct extends proxyOrigin {
-        name: "construct";
-        args: unknown[];
-      }
-    }
-
     interface data {
       id: string;
       target: WeakRef<traceable> | void;
       scope: WeakRef<Nexo>;
       sandbox: Map<objectKey, unknown>;
+    }
+  }
+
+  namespace events {
+    type name =
+      | "handler.get"
+      | "handler.set"
+      | "handler.deleteProperty"
+      | "handler.apply"
+      | "handler.construct";
+
+    interface getHandler extends ProxyEvent {
+      name: "handler.get";
+      key: objectKey;
+    }
+
+    interface setHandler extends ProxyEvent {
+      name: "handler.set";
+      key: objectKey;
+      value: unknown;
+    }
+
+    interface deletePropertyHandler extends ProxyEvent {
+      name: "handler.deleteProperty";
+      key: objectKey;
+    }
+
+    interface applyHandler extends ProxyEvent {
+      name: "handler.apply";
+      args: unknown[];
+      that: unknown;
+    }
+
+    interface constructHandler extends ProxyEvent {
+      name: "handler.construct";
+      args: unknown[];
     }
   }
 }

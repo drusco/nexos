@@ -1,7 +1,7 @@
-import traps from "./traps/index.js";
 import isTraceable from "./isTraceable.js";
 import findProxy from "./findProxy.js";
 import getProxy from "./getProxy.js";
+import getTarget from "./getTarget.js";
 import proxyIterator from "./proxyIterator.js";
 import map from "./map.js";
 import encode from "./encode.js";
@@ -19,7 +19,7 @@ export {
   proxyIterator,
   map,
   getProxy,
-  traps,
+  getTarget,
   encode,
   getProxyPayload,
   isProxyPayload,

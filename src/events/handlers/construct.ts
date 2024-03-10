@@ -1,7 +1,5 @@
 import Nexo from "../../types/Nexo.js";
-import getProxy from "../getProxy.js";
-import getTarget from "../getTarget.js";
-import map from "../map.js";
+import { getProxy, getTarget, map } from "../../utils/index.js";
 
 const construct = (mock: Nexo.Mock, args: unknown[]): Nexo.Proxy => {
   const proxy = map.tracables.get(mock);

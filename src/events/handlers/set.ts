@@ -1,7 +1,5 @@
 import Nexo from "../../types/Nexo.js";
-import getTarget from "../getTarget.js";
-import isTraceable from "../isTraceable.js";
-import map from "../map.js";
+import { getTarget, isTraceable, map } from "../../utils/index.js";
 
 const set = (mock: Nexo.Mock, key: Nexo.objectKey, value: unknown): boolean => {
   const proxy = map.tracables.get(mock);
