@@ -1,10 +1,9 @@
-import NexoClass from "../Nexo.js";
+import Nexo from "../Nexo.js";
 
 declare namespace Nexo {
   type functionLike = (...args: unknown[]) => unknown;
   type traceable = object | functionLike;
   type objectKey = string | symbol;
-  type instance = { new (): NexoClass };
 
   interface options {}
 
@@ -59,7 +58,7 @@ declare namespace Nexo {
     interface data {
       id: string;
       target: WeakRef<traceable> | void;
-      scope: WeakRef<Nexo.instance>;
+      scope: WeakRef<Nexo>;
       sandbox: Map<objectKey, unknown>;
     }
   }

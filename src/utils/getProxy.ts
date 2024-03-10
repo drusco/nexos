@@ -4,10 +4,7 @@ import findProxy from "./findProxy.js";
 import isTraceable from "./isTraceable.js";
 import traps from "./traps/index.js";
 
-const getProxy = (
-  scope: Nexo.instance,
-  target: Nexo.traceable | void,
-): Nexo.Proxy => {
+const getProxy = (scope: Nexo, target: Nexo.traceable | void): Nexo.Proxy => {
   // find proxy by target
 
   const usableProxy = findProxy(target);

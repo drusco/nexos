@@ -6,7 +6,7 @@ export default class Nexo extends EventEmitter {
     console.log(options);
     super();
   }
-  // use(value?: any): Nexo.Proxy {}
+  use(): void {}
   // link(link: Nexo.key, value?: any): Nexo.Proxy {}
   // target(value?: any): any {}
   // revoke(value: Nexo.traceable): boolean {}
