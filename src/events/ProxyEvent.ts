@@ -5,6 +5,7 @@ class ProxyEvent {
   name: Nexo.events.name;
   proxy: Nexo.Proxy;
   #defaultPrevented: boolean = false;
+  #returnValue: unknown;
 
   constructor(
     name: Nexo.events.name,
@@ -26,8 +27,16 @@ class ProxyEvent {
     this.#defaultPrevented = true;
   }
 
-  get defaultPrevented() {
+  next(value?: unknown): void {
+    this.#returnValue = value;
+  }
+
+  get defaultPrevented(): boolean {
     return this.#defaultPrevented;
+  }
+
+  get returnValue(): unknown {
+    return this.#returnValue;
   }
 }
 

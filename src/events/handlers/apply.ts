@@ -17,7 +17,7 @@ const apply = (mock: Nexo.Mock, that?: unknown, args?: unknown[]): unknown => {
   scope.emit(event.name, event);
 
   if (event.defaultPrevented) {
-    return;
+    return event.returnValue;
   }
 
   if (typeof target === "function") {
