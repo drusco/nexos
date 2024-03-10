@@ -1,8 +1,8 @@
-import Nexo from "./types/Nexo.js";
+import NexoTs from "./types/Nexo.js";
 import EventEmitter from "node:events";
 
-export default class Nexo extends EventEmitter implements Nexo.Emulator {
-  constructor(options?: Nexo.emulator.options) {
+export default class Nexo extends EventEmitter {
+  constructor(options?: NexoTs.options) {
     console.log("new emulator", options);
     super();
   }

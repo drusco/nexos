@@ -4,7 +4,7 @@ import proxyIterator from "./proxyIterator.js";
 import isProxyPayload from "./isProxyPayload.js";
 
 export default function findProxyById(
-  scope: Nexo.Emulator,
+  scope: Nexo.instance,
   id: string,
 ): void | Nexo.Proxy {
   // Find proxy by unique proxy ID

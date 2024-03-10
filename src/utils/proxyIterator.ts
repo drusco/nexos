@@ -2,7 +2,7 @@ import Nexo from "../types/Nexo.js";
 import map from "./map.js";
 
 const proxyIterator = function* (
-  scope: Nexo.Emulator,
+  scope: Nexo.instance,
 ): IterableIterator<Nexo.Proxy> {
   const { proxyMap } = map.emulators.get(scope);
   for (const [, ref] of proxyMap) {

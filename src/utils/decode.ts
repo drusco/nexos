@@ -4,7 +4,7 @@ import isProxyPayload from "./isProxyPayload.js";
 import isTraceable from "./isTraceable.js";
 
 export default function decode<Type>(
-  scope: Nexo.Emulator,
+  scope: Nexo.instance,
   value: Type,
   visited: WeakSet<Nexo.traceable> = new WeakSet(),
 ): Type | Nexo.Proxy {

@@ -1,18 +1,17 @@
+import NexoClass from "../Nexo.js";
+
 declare namespace Nexo {
   type functionLike = (...args: unknown[]) => unknown;
   type traceable = object | functionLike;
   type objectKey = string | symbol;
+  type instance = { new (): NexoClass };
 
-  interface Emulator {}
+  interface options {}
 
-  namespace emulator {
-    interface options {}
-
-    interface data {
-      options: options;
-      counter: number;
-      proxyMap: Map<string, WeakRef<Proxy>>;
-    }
+  interface data {
+    options: options;
+    counter: number;
+    proxyMap: Map<string, WeakRef<Proxy>>;
   }
 
   interface Mock extends functionLike {}
@@ -60,7 +59,7 @@ declare namespace Nexo {
     interface data {
       id: string;
       target: WeakRef<traceable> | void;
-      scope: WeakRef<Emulator>;
+      scope: WeakRef<Nexo.instance>;
       sandbox: Map<objectKey, unknown>;
     }
   }

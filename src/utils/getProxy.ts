@@ -5,7 +5,7 @@ import isTraceable from "./isTraceable.js";
 import traps from "./traps/index.js";
 
 const getProxy = (
-  scope: Nexo.Emulator,
+  scope: Nexo.instance,
   target: Nexo.traceable | void,
 ): Nexo.Proxy => {
   // find proxy by target
@@ -19,10 +19,10 @@ const getProxy = (
   // create proxy
 
   const traceable = isTraceable(target);
-  const data: Nexo.emulator.data = map.emulators.get(scope);
+  const data: Nexo.data = map.emulators.get(scope);
   const { proxyMap } = data;
   const mock: Nexo.Mock = function () {};
-  const proxy = new Proxy<Nexo.Proxy>(mock as Nexo.Proxy, traps);
+  const proxy = new Proxy(mock, traps) as Nexo.Proxy;
 
   // set information about this proxy
 
