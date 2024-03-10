@@ -1,5 +1,4 @@
 import Nexo from "../Nexo.js";
-
 declare namespace Nexo {
   type functionLike = (...args: unknown[]) => unknown;
   type traceable = object | functionLike;
