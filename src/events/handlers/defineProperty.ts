@@ -2,22 +2,24 @@ import Nexo from "../../types/Nexo.js";
 import { isTraceable, map } from "../../utils/index.js";
 import ProxyEvent from "../ProxyEvent.js";
 
+type descriptor = {
+  enumerable?: boolean;
+  writable?: boolean;
+  configurable?: boolean;
+  value?: unknown;
+};
+
 const defineProperty = (
   mock: Nexo.Mock,
   key: Nexo.objectKey,
-  descriptor: {
-    enumerable?: boolean;
-    writable?: boolean;
-    configurable?: boolean;
-    value?: unknown;
-  } = {},
+  descriptor: descriptor = {},
 ): boolean => {
   const proxy = map.tracables.get(mock);
   const data = map.proxies.get(proxy);
   const { sandbox } = data;
   const scope = data.scope.deref();
 
-  let _descriptor: unknown;
+  let _descriptor = descriptor;
 
   const event = new ProxyEvent("handler.defineProperty", {
     proxy,
@@ -32,7 +34,7 @@ const defineProperty = (
   }
 
   try {
-    const value = _descriptor["value"];
+    const value = _descriptor.value;
 
     if (isTraceable(value)) {
       sandbox.set(key, new WeakRef(value));
