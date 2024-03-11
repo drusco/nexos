@@ -25,9 +25,9 @@ const getOwnPropertyDescriptor = (
   }
 
   return {
-    configurable: false,
+    configurable: true,
     enumerable: true,
-    writable: false,
+    writable: true,
     value,
   };
 };
