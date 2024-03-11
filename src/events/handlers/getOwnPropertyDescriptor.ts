@@ -20,10 +20,6 @@ const getOwnPropertyDescriptor = (
 
   scope.emit(event.name, event);
 
-  if (event.defaultPrevented) {
-    return event.returnValue;
-  }
-
   return {
     configurable: true,
     enumerable: true,
