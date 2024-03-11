@@ -1,5 +1,5 @@
 import Nexo from "../../types/Nexo.js";
-import { isTraceable, map } from "../../utils/index.js";
+import { getTarget, isTraceable, map } from "../../utils/index.js";
 import ProxyEvent from "../ProxyEvent.js";
 
 const defineProperty = (
@@ -9,10 +9,10 @@ const defineProperty = (
 ): boolean => {
   const proxy = map.tracables.get(mock);
   const data = map.proxies.get(proxy);
+
   const { sandbox } = data;
   const scope = data.scope.deref();
-
-  let _descriptor = descriptor;
+  const value = getTarget(descriptor.value, true);
 
   const event = new ProxyEvent("handler.defineProperty", {
     proxy,
@@ -22,20 +22,10 @@ const defineProperty = (
 
   scope.emit(event.name, event);
 
-  if (event.defaultPrevented) {
-    _descriptor = event.returnValue;
-  }
-
-  try {
-    const value = _descriptor.value;
-
-    if (isTraceable(value)) {
-      sandbox.set(key, new WeakRef(value));
-    } else {
-      sandbox.set(key, value);
-    }
-  } catch (error) {
-    return false;
+  if (isTraceable(value)) {
+    sandbox.set(key, new WeakRef(value));
+  } else {
+    sandbox.set(key, value);
   }
 
   return true;
