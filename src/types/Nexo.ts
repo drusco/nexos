@@ -35,6 +35,7 @@ declare namespace Nexo {
     type name =
       | "handler.get"
       | "handler.set"
+      | "handler.defineProperty"
       | "handler.deleteProperty"
       | "handler.apply"
       | "handler.construct";
@@ -48,6 +49,11 @@ declare namespace Nexo {
       name: "handler.set";
       key: objectKey;
       value: unknown;
+    }
+
+    interface definePropertyHandler extends ProxyEvent {
+      name: "handler.defineProperty";
+      key: objectKey;
     }
 
     interface deletePropertyHandler extends ProxyEvent {
