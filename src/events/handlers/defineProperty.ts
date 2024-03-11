@@ -12,7 +12,7 @@ type descriptor = {
 const defineProperty = (
   mock: Nexo.Mock,
   key: Nexo.objectKey,
-  descriptor: descriptor = {},
+  descriptor: descriptor,
 ): boolean => {
   const proxy = map.tracables.get(mock);
   const data = map.proxies.get(proxy);
