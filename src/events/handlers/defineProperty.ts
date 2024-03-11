@@ -2,17 +2,10 @@ import Nexo from "../../types/Nexo.js";
 import { isTraceable, map } from "../../utils/index.js";
 import ProxyEvent from "../ProxyEvent.js";
 
-type descriptor = {
-  enumerable?: boolean;
-  writable?: boolean;
-  configurable?: boolean;
-  value?: unknown;
-};
-
 const defineProperty = (
   mock: Nexo.Mock,
   key: Nexo.objectKey,
-  descriptor: descriptor,
+  descriptor: PropertyDescriptor,
 ): boolean => {
   const proxy = map.tracables.get(mock);
   const data = map.proxies.get(proxy);
