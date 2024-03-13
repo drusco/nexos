@@ -37,7 +37,8 @@ declare namespace Nexo {
       | "defineProperty"
       | "apply"
       | "construct"
-      | "getPrototypeOf";
+      | "getPrototypeOf"
+      | "isExtensible";
   }
 }
 
