@@ -41,7 +41,8 @@ declare namespace Nexo {
       | "getPrototypeOf"
       | "isExtensible"
       | "ownKeys"
-      | "preventExtensions";
+      | "preventExtensions"
+      | "setPrototypeOf";
   }
 }
 
