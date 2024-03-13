@@ -39,7 +39,9 @@ declare namespace Nexo {
       | "apply"
       | "construct"
       | "getPrototypeOf"
-      | "isExtensible";
+      | "isExtensible"
+      | "ownKeys"
+      | "preventExtensions";
   }
 }
 

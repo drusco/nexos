@@ -9,7 +9,7 @@ const ownKeys = (mock: Nexo.Mock): Nexo.objectKey[] => {
   const scope = data.scope.deref();
   const keys: Nexo.objectKey[] = [];
 
-  const event = new ProxyHandlerEvent("isExtensible", proxy);
+  const event = new ProxyHandlerEvent("ownKeys", proxy);
 
   scope.emit(event.name, event);
 
