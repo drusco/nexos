@@ -2,7 +2,7 @@ import Nexo from "../types/Nexo.js";
 import map from "./map.js";
 import findProxy from "./findProxy.js";
 import isTraceable from "./isTraceable.js";
-import handlers from "../events/handlers/index.js";
+import handlers from "../handlers/index.js";
 
 const getProxy = (scope: Nexo, target: Nexo.traceable | void): Nexo.Proxy => {
   // find proxy by target

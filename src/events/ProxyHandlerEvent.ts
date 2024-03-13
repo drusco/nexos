@@ -1,12 +1,10 @@
 import Nexo from "../types/Nexo.js";
 import ProxyEvent from "./ProxyEvent.js";
 
-class ProxyHandlerEvent extends ProxyEvent {
-  constructor(
-    name: Nexo.proxy.handler,
-    proxy: Nexo.Proxy,
-    data?: Record<string, unknown>,
-  ) {
+class ProxyHandlerEvent<Data = unknown> extends ProxyEvent {
+  declare data: Data;
+
+  constructor(name: Nexo.proxy.handlerName, proxy: Nexo.Proxy, data?: Data) {
     super(`handler.${name}`, proxy, data);
   }
 }

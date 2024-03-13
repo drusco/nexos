@@ -1,8 +1,8 @@
-import Nexo from "../../types/Nexo.js";
-import { getTarget, getProxy, map } from "../../utils/index.js";
-import ProxyHandlerEvent from "../ProxyHandlerEvent.js";
+import Nexo from "../types/Nexo.js";
+import { getTarget, getProxy, map } from "../utils/index.js";
+import ProxyHandlerEvent from "../events/ProxyHandlerEvent.js";
 
-const apply = (mock: Nexo.Mock, that?: unknown, args?: unknown[]): unknown => {
+const apply = (mock: Nexo.Mock, that: unknown, args: unknown[]): unknown => {
   const proxy = map.tracables.get(mock);
   const data = map.proxies.get(proxy);
   const target = getTarget(data.target);

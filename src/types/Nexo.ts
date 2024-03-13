@@ -1,11 +1,9 @@
 import Nexo from "../Nexo.js";
-import PxEvent from "../events/ProxyEvent.js";
 
 declare namespace Nexo {
   type functionLike = (...args: unknown[]) => unknown;
   type traceable = object | functionLike;
   type objectKey = string | symbol;
-  type ProxyEvent = PxEvent;
 
   interface options {}
 
@@ -30,24 +28,15 @@ declare namespace Nexo {
       sandbox: Map<objectKey, unknown>;
     };
 
-    type handler =
-      // getters
+    type handlerName =
       | "get"
       | "has"
       | "deleteProperty"
       | "getOwnPropertyDescriptor"
-      | "get"
-      | "has"
-      | "deleteProperty"
-      | "getOwnPropertyDescriptor"
-      // setters
       | "set"
       | "defineProperty"
-      // function calls
       | "apply"
-      // class instances
       | "construct"
-      // objects
       | "getPrototypeOf";
   }
 }

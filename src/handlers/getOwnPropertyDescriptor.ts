@@ -1,6 +1,6 @@
-import Nexo from "../../types/Nexo.js";
-import { getTarget, map } from "../../utils/index.js";
-import ProxyHandlerEvent from "../ProxyHandlerEvent.js";
+import Nexo from "../types/Nexo.js";
+import { getTarget, map } from "../utils/index.js";
+import ProxyHandlerEvent from "../events/ProxyHandlerEvent.js";
 
 const getOwnPropertyDescriptor = (
   mock: Nexo.Mock,

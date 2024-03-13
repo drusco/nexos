@@ -1,6 +1,6 @@
-import Nexo from "../../types/Nexo.js";
-import { map } from "../../utils/index.js";
-import ProxyHandlerEvent from "../ProxyHandlerEvent.js";
+import Nexo from "../types/Nexo.js";
+import { map } from "../utils/index.js";
+import ProxyHandlerEvent from "../events/ProxyHandlerEvent.js";
 
 const deleteProperty = (mock: Nexo.Mock, key: Nexo.objectKey): boolean => {
   const proxy = map.tracables.get(mock);
