@@ -1,6 +1,6 @@
 import Nexo from "../../types/Nexo.js";
 import { getTarget, map } from "../../utils/index.js";
-import ProxyEvent from "../ProxyEvent.js";
+import ProxyHandlerEvent from "../ProxyHandlerEvent.js";
 
 const getOwnPropertyDescriptor = (
   mock: Nexo.Mock,
@@ -13,8 +13,7 @@ const getOwnPropertyDescriptor = (
   const scope = data.scope.deref();
   const value = getTarget(sandbox.get(key), true);
 
-  const event = new ProxyEvent("handler.getOwnPropertyDescriptor", {
-    proxy,
+  const event = new ProxyHandlerEvent("getOwnPropertyDescriptor", proxy, {
     key,
   });
 

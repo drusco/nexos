@@ -2,21 +2,22 @@ import Nexo from "../../types/Nexo.js";
 import { map } from "../../utils/index.js";
 import ProxyHandlerEvent from "../ProxyHandlerEvent.js";
 
-const deleteProperty = (mock: Nexo.Mock, key: Nexo.objectKey): boolean => {
+const has = (mock: Nexo.Mock, key: Nexo.objectKey): boolean => {
   const proxy = map.tracables.get(mock);
   const data = map.proxies.get(proxy);
+
   const { sandbox } = data;
   const scope = data.scope.deref();
 
-  const event = new ProxyHandlerEvent("deleteProperty", proxy, { key });
+  const event = new ProxyHandlerEvent("has", proxy, { key });
 
   scope.emit(event.name, event);
 
   if (event.defaultPrevented) {
-    return false;
+    return event.returnValue === true;
   }
 
-  return sandbox.delete(key);
+  return sandbox.has(key);
 };
 
-export default deleteProperty;
+export default has;

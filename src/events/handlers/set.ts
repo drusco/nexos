@@ -1,6 +1,6 @@
 import Nexo from "../../types/Nexo.js";
 import { getTarget, isTraceable, map } from "../../utils/index.js";
-import ProxyEvent from "../ProxyEvent.js";
+import ProxyHandlerEvent from "../ProxyHandlerEvent.js";
 
 const set = (mock: Nexo.Mock, key: Nexo.objectKey, value: unknown): boolean => {
   const proxy = map.tracables.get(mock);
@@ -10,11 +10,7 @@ const set = (mock: Nexo.Mock, key: Nexo.objectKey, value: unknown): boolean => {
 
   let _value = getTarget(value, true);
 
-  const event = new ProxyEvent("handler.set", {
-    proxy,
-    key,
-    value,
-  });
+  const event = new ProxyHandlerEvent("set", proxy, { key, value });
 
   scope.emit(event.name, event);
 

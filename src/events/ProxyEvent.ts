@@ -2,25 +2,27 @@ import Nexo from "../types/Nexo.js";
 import { map } from "../utils/index.js";
 
 class ProxyEvent {
-  name: Nexo.events.name;
+  name: string;
   proxy: Nexo.Proxy;
+  data: Record<string, unknown> = {};
   #defaultPrevented: boolean = false;
   #returnValue: unknown;
 
-  constructor(
-    name: Nexo.events.name,
-    data: { proxy: Nexo.Proxy; [K: string]: unknown },
-  ) {
-    if (!name) {
-      throw Error("ProxyEvent: event name cannot be empty");
+  constructor(name: string, proxy: Nexo.Proxy, data?: Record<string, unknown>) {
+    if (!name.length) {
+      throw Error(`ProxyEvent: event name cannot be empty`);
     }
 
-    if (!map.proxies.has(data.proxy)) {
-      throw Error("ProxyEvent: invalid proxy");
+    if (!map.proxies.has(proxy)) {
+      throw Error(`ProxyEvent ${name} proxy not found`);
     }
 
     this.name = name;
-    Object.assign(this, data);
+    this.proxy = proxy;
+
+    if (data) {
+      Object.assign(this.data, data);
+    }
   }
 
   preventDefault(): void {

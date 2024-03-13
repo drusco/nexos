@@ -1,6 +1,6 @@
 import Nexo from "../../types/Nexo.js";
 import { getTarget, getProxy, map } from "../../utils/index.js";
-import ProxyEvent from "../ProxyEvent.js";
+import ProxyHandlerEvent from "../ProxyHandlerEvent.js";
 
 const apply = (mock: Nexo.Mock, that?: unknown, args?: unknown[]): unknown => {
   const proxy = map.tracables.get(mock);
@@ -8,11 +8,7 @@ const apply = (mock: Nexo.Mock, that?: unknown, args?: unknown[]): unknown => {
   const target = getTarget(data.target);
   const scope = data.scope.deref();
 
-  const event = new ProxyEvent("handler.apply", {
-    proxy,
-    that,
-    args,
-  });
+  const event = new ProxyHandlerEvent("apply", proxy, { that, args });
 
   scope.emit(event.name, event);
 
