@@ -8,12 +8,6 @@ declare namespace Nexo {
 
   interface options {}
 
-  type data = {
-    options: options;
-    counter: number;
-    proxyMap: Map<string, WeakRef<Proxy>>;
-  };
-
   interface Mock extends EventEmitter {
     (...args: unknown[]): unknown;
   }

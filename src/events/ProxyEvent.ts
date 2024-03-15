@@ -2,12 +2,12 @@ import Nexo from "../types/Nexo.js";
 import { map } from "../utils/index.js";
 
 class ProxyEvent<Data = unknown> {
-  public readonly name: string;
-  public readonly proxy: Nexo.Proxy;
-  public readonly data: Data;
-  public returnValue: unknown;
-
+  readonly name: string;
+  readonly proxy: Nexo.Proxy;
+  readonly data: Data;
   protected prevented: boolean = false;
+
+  returnValue: unknown;
 
   constructor(name: string, proxy: Nexo.Proxy, data?: Data) {
     if (!name.length) {

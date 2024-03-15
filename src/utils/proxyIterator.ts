@@ -1,9 +1,7 @@
 import Nexo from "../types/Nexo.js";
-import map from "./map.js";
 
 const proxyIterator = function* (scope: Nexo): IterableIterator<Nexo.Proxy> {
-  const { proxyMap } = map.emulators.get(scope);
-  for (const [, ref] of proxyMap) {
+  for (const [, ref] of scope.map) {
     const proxy = ref.deref();
     if (proxy) yield proxy;
   }
