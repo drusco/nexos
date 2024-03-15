@@ -35,13 +35,13 @@ export default class Nexo extends EventEmitter {
     const proxy = getProxy(this, target);
 
     this.links.set(name, new WeakRef(proxy));
-    this.emit("link", name, proxy);
+    this.emit("nx.link", name, proxy);
 
     return proxy;
   }
 
   unlink(name: string): boolean {
-    this.emit("unlink", name);
+    this.emit("nx.unlink", name);
     return this.links.delete(name);
   }
 
@@ -69,19 +69,24 @@ export default class Nexo extends EventEmitter {
     return;
   }
 
-  cleanup() {
+  clear(): void {
+    this.proxies.clear();
+    this.links.clear();
+  }
+
+  cleanup(): void {
     const current = this.proxies.size;
 
     this.proxies.forEach((wref, id) => {
       if (wref.deref() === undefined) {
-        this.emit("delete", id);
+        this.emit("nx.delete", id);
         this.proxies.delete(id);
       }
     });
 
     this.links.forEach((wref, id) => {
       if (wref.deref() === undefined) {
-        this.emit("delete", id);
+        this.emit("nx.delete", id);
         this.links.delete(id);
       }
     });
@@ -89,7 +94,7 @@ export default class Nexo extends EventEmitter {
     const deleted = current - this.proxies.size;
 
     if (deleted > 0) {
-      this.emit("cleanup", { total: this.proxies.size, deleted });
+      this.emit("nx.cleanup", { total: this.proxies.size, deleted });
     }
   }
 }

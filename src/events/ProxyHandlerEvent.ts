@@ -5,7 +5,7 @@ class ProxyHandlerEvent<Data = unknown> extends ProxyEvent {
   declare readonly data: Data;
 
   constructor(name: Nexo.proxy.handlerName, proxy: Nexo.Proxy, data?: Data) {
-    super(`handler.${name}`, proxy, data);
+    super(`nx.trap.${name}`, proxy, data);
   }
 }
 
