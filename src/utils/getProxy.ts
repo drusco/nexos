@@ -44,7 +44,7 @@ const getProxy = (scope: Nexo, target?: Nexo.traceable): Nexo.Proxy => {
     map.tracables.set(target, proxy);
   }
 
-  scope.link(proxyId, proxy);
+  scope.map.set(proxyId, new WeakRef(proxy));
 
   return proxy;
 };
