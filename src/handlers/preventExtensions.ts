@@ -10,6 +10,7 @@ const preventExtensions = (mock: Nexo.Mock): boolean => {
   const event = new ProxyHandlerEvent("preventExtensions", proxy);
 
   scope.emit(event.name, event);
+  mock.emit(event.name, event);
 
   if (event.defaultPrevented) {
     data.isExtensible = event.returnValue === false;

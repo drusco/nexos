@@ -7,6 +7,10 @@ import getPrototypeOf from "./getPrototypeOf.js";
 import construct from "./construct.js";
 import apply from "./apply.js";
 import has from "./has.js";
+import isExtensible from "./isExtensible.js";
+import ownKeys from "./ownKeys.js";
+import preventExtensions from "./preventExtensions.js";
+import setPrototypeOf from "./setPrototypeOf.js";
 
 export default {
   get,
@@ -18,4 +22,8 @@ export default {
   getPrototypeOf,
   construct,
   apply,
+  isExtensible,
+  ownKeys,
+  preventExtensions,
+  setPrototypeOf,
 };

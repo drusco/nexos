@@ -18,6 +18,7 @@ const getOwnPropertyDescriptor = (
   });
 
   scope.emit(event.name, event);
+  mock.emit(event.name, event);
 
   return {
     configurable: true,

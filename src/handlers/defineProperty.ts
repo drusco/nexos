@@ -20,6 +20,7 @@ const defineProperty = (
   });
 
   scope.emit(event.name, event);
+  mock.emit(event.name, event);
 
   if (isTraceable(value)) {
     sandbox.set(key, new WeakRef(value));

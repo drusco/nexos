@@ -11,6 +11,7 @@ const getPrototypeOf = (mock: Nexo.Mock): object => {
   const event = new ProxyHandlerEvent("getPrototypeOf", proxy);
 
   scope.emit(event.name, event);
+  mock.emit(event.name, event);
 
   try {
     if (isTraceable(target)) {

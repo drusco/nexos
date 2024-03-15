@@ -10,6 +10,7 @@ const setPrototypeOf = (mock: Nexo.Mock, prototype: object): boolean => {
   const event = new ProxyHandlerEvent("setPrototypeOf", proxy);
 
   scope.emit(event.name, event);
+  mock.emit(event.name, event);
 
   if (event.defaultPrevented) {
     if (typeof event.returnValue === "object") {

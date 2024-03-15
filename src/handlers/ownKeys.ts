@@ -12,6 +12,7 @@ const ownKeys = (mock: Nexo.Mock): Nexo.objectKey[] => {
   const event = new ProxyHandlerEvent("ownKeys", proxy);
 
   scope.emit(event.name, event);
+  mock.emit(event.name, event);
 
   if (event.defaultPrevented) {
     if (!Array.isArray(event.returnValue)) {

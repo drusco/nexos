@@ -12,6 +12,7 @@ const has = (mock: Nexo.Mock, key: Nexo.objectKey): boolean => {
   const event = new ProxyHandlerEvent("has", proxy, { key });
 
   scope.emit(event.name, event);
+  mock.emit(event.name, event);
 
   if (event.defaultPrevented) {
     return event.returnValue === true;

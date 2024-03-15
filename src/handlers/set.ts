@@ -13,6 +13,7 @@ const set = (mock: Nexo.Mock, key: Nexo.objectKey, value: unknown): boolean => {
   const event = new ProxyHandlerEvent("set", proxy, { key, value });
 
   scope.emit(event.name, event);
+  mock.emit(event.name, event);
 
   if (event.defaultPrevented) {
     _value = event.returnValue;
