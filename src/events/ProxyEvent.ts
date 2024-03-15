@@ -2,12 +2,12 @@ import Nexo from "../types/Nexo.js";
 import { map } from "../utils/index.js";
 
 class ProxyEvent<Data = unknown> {
-  #name: string;
-  #proxy: Nexo.Proxy;
-  #defaultPrevented: boolean = false;
-  #returnValue: unknown;
+  public readonly name: string;
+  public readonly proxy: Nexo.Proxy;
+  public readonly data: Data;
+  public returnValue: unknown;
 
-  data: Data;
+  protected prevented: boolean = false;
 
   constructor(name: string, proxy: Nexo.Proxy, data?: Data) {
     if (!name.length) {
@@ -18,33 +18,17 @@ class ProxyEvent<Data = unknown> {
       throw Error(`ProxyEvent ${name} proxy not found`);
     }
 
-    this.#name = name;
-    this.#proxy = proxy;
+    this.name = name;
+    this.proxy = proxy;
     this.data = data;
   }
 
   preventDefault(): void {
-    this.#defaultPrevented = true;
-  }
-
-  next(value?: unknown): void {
-    this.#returnValue = value;
-  }
-
-  get name(): string {
-    return this.#name;
-  }
-
-  get proxy(): Nexo.Proxy {
-    return this.#proxy;
+    this.prevented = true;
   }
 
   get defaultPrevented(): boolean {
-    return this.#defaultPrevented;
-  }
-
-  get returnValue(): unknown {
-    return this.#returnValue;
+    return this.prevented;
   }
 }
 
