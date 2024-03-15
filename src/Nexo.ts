@@ -68,4 +68,28 @@ export default class Nexo extends EventEmitter {
 
     return;
   }
+
+  cleanup() {
+    const current = this.proxies.size;
+
+    this.proxies.forEach((wref, id) => {
+      if (wref.deref() === undefined) {
+        this.emit("delete", id);
+        this.proxies.delete(id);
+      }
+    });
+
+    this.links.forEach((wref, id) => {
+      if (wref.deref() === undefined) {
+        this.emit("delete", id);
+        this.links.delete(id);
+      }
+    });
+
+    const deleted = current - this.proxies.size;
+
+    if (deleted > 0) {
+      this.emit("cleanup", { total: this.proxies.size, deleted });
+    }
+  }
 }
