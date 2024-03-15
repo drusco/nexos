@@ -35,6 +35,7 @@ const getProxy = (scope: Nexo, target?: Nexo.traceable): Nexo.Proxy => {
     scope: new WeakRef(scope),
     sandbox: new Map(),
     isExtensible: true,
+    mock: new WeakRef(mock),
   };
 
   map.proxies.set(proxy, proxyData);
@@ -44,7 +45,7 @@ const getProxy = (scope: Nexo, target?: Nexo.traceable): Nexo.Proxy => {
     map.tracables.set(target, proxy);
   }
 
-  scope.map.set(proxyId, new WeakRef(proxy));
+  scope.proxies.set(proxyId, new WeakRef(proxy));
 
   return proxy;
 };

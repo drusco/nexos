@@ -20,6 +20,7 @@ declare namespace Nexo {
       target: WeakRef<traceable> | void;
       scope: WeakRef<Nexo>;
       sandbox: Map<objectKey, unknown>;
+      mock: WeakRef<Mock>;
       isExtensible: boolean;
     };
 

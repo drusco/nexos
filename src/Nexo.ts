@@ -1,10 +1,10 @@
 import NexoTS from "./types/Nexo.js";
 import EventEmitter from "node:events";
-import { getProxy, isTraceable } from "./utils/index.js";
+import { getProxy, isTraceable, map } from "./utils/index.js";
 
 export default class Nexo extends EventEmitter {
   protected options: NexoTS.options = {};
-  readonly map: Map<string, WeakRef<NexoTS.Proxy>> = new Map();
+  readonly proxies: Map<string, WeakRef<NexoTS.Proxy>> = new Map();
   readonly links: Map<string, WeakRef<NexoTS.Proxy>> = new Map();
 
   constructor(options?: NexoTS.options) {
@@ -35,29 +35,37 @@ export default class Nexo extends EventEmitter {
     const proxy = getProxy(this, target);
 
     this.links.set(name, new WeakRef(proxy));
-
     this.emit("link", name, proxy);
 
     return proxy;
   }
 
-  unlink(name: string): boolean {
+  deleteLink(name: string): boolean {
     this.emit("unlink", name);
-
     return this.links.delete(name);
   }
 
-  // target(value?: any): any {}
+  target(proxy: NexoTS.Proxy): NexoTS.traceable | void {
+    const data = map.proxies.get(proxy);
 
-  // revoke(value: Nexo.traceable): boolean {}
-  // encode(value: any): any {}
-  // decode(value: any): any {}
-  // exec(
-  //   method: Nexo.functionLike,
-  //   dependencies?: Record<string, Nexo.Proxy>,
-  // ): Nexo.Proxy {}
+    if (!data) return;
 
-  get totalProxies(): number {
-    return this.map.size;
+    if (data.target) {
+      return data.target.deref();
+    }
+
+    return;
+  }
+
+  useMock(proxy: NexoTS.Proxy): NexoTS.Mock | void {
+    const data = map.proxies.get(proxy);
+
+    if (!data) return;
+
+    if (data.mock) {
+      return data.mock.deref();
+    }
+
+    return;
   }
 }
