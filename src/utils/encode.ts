@@ -1,15 +1,12 @@
 import Nexo from "../types/Nexo.js";
-import findProxy from "./findProxy.js";
-import isTraceable from "./isTraceable.js";
-import getProxyPayload from "./getProxyPayload.js";
+import { findProxy, isTraceable, getProxyPayload } from "./index.js";
 
-// Intenta codificar un proxy a su representacion en string
-// devuelve un objeto que incluye string representando proxys codificados
+// Encodes a proxy to its string (payload) representation
 
 export default function encode<Type>(
   value: Type,
   visited: WeakSet<Nexo.traceable> = new WeakSet(),
-): unknown {
+): Type | string {
   const proxy = findProxy(value);
 
   if (proxy) {
@@ -34,10 +31,9 @@ export default function encode<Type>(
   const copy = (Array.isArray(value) ? [] : {}) as Type;
   const keys = Object.keys(value);
 
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
+  keys.forEach((key) => {
     copy[key] = encode(value[key], visited);
-  }
+  });
 
   return copy;
 }
