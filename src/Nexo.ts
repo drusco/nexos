@@ -15,7 +15,7 @@ export default class Nexo extends EventEmitter {
     }
   }
 
-  new(target?: NexoTS.traceable): NexoTS.Proxy {
+  create(target?: NexoTS.traceable): NexoTS.Proxy {
     return getProxy(this, target);
   }
 
@@ -40,7 +40,7 @@ export default class Nexo extends EventEmitter {
     return proxy;
   }
 
-  deleteLink(name: string): boolean {
+  unlink(name: string): boolean {
     this.emit("unlink", name);
     return this.links.delete(name);
   }
@@ -57,7 +57,7 @@ export default class Nexo extends EventEmitter {
     return;
   }
 
-  useMock(proxy: NexoTS.Proxy): NexoTS.Mock | void {
+  mock(proxy: NexoTS.Proxy): NexoTS.Mock | void {
     const data = map.proxies.get(proxy);
 
     if (!data) return;
