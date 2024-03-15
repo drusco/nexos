@@ -3,6 +3,7 @@ import map from "./map.js";
 import findProxy from "./findProxy.js";
 import isTraceable from "./isTraceable.js";
 import handlers from "../handlers/index.js";
+import EventEmitter from "node:events";
 
 const getProxy = (scope: Nexo, target: Nexo.traceable | void): Nexo.Proxy => {
   // find proxy by target
@@ -18,7 +19,10 @@ const getProxy = (scope: Nexo, target: Nexo.traceable | void): Nexo.Proxy => {
   const traceable = isTraceable(target);
   const data: Nexo.data = map.emulators.get(scope);
   const { proxyMap } = data;
-  const mock: Nexo.Mock = function () {};
+  const mock: Nexo.Mock = Object.setPrototypeOf(
+    function () {},
+    EventEmitter.prototype,
+  );
   const proxy = new Proxy(mock, handlers) as Nexo.Proxy;
 
   // set information about this proxy

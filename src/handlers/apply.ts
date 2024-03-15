@@ -11,6 +11,7 @@ const apply = (mock: Nexo.Mock, that: unknown, args: unknown[]): unknown => {
   const event = new ProxyHandlerEvent("apply", proxy, { that, args });
 
   scope.emit(event.name, event);
+  mock.emit(event.name, event);
 
   if (event.defaultPrevented) {
     return event.returnValue;

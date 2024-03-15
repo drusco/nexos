@@ -1,4 +1,5 @@
 import Nexo from "../Nexo.js";
+import EventEmitter from "node:events";
 
 declare namespace Nexo {
   type functionLike = (...args: unknown[]) => unknown;
@@ -13,12 +14,11 @@ declare namespace Nexo {
     proxyMap: Map<string, WeakRef<Proxy>>;
   };
 
-  interface Mock extends functionLike {}
-
-  interface Proxy extends Mock {
+  interface Mock extends EventEmitter {
     (...args: unknown[]): unknown;
-    [K: objectKey]: unknown;
   }
+
+  interface Proxy extends functionLike {}
 
   namespace proxy {
     type data = {
