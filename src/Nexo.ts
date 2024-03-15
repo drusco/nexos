@@ -6,6 +6,7 @@ export default class Nexo extends EventEmitter {
   protected options: NexoTS.options = {};
   readonly proxies: Map<string, WeakRef<NexoTS.Proxy>> = new Map();
   readonly links: Map<string, WeakRef<NexoTS.Proxy>> = new Map();
+  protected _release: boolean = false;
 
   constructor(options?: NexoTS.options) {
     super();
@@ -72,9 +73,14 @@ export default class Nexo extends EventEmitter {
   clear(): void {
     this.proxies.clear();
     this.links.clear();
+    this.emit("nx.clear");
   }
 
-  cleanup(): void {
+  release(): void {
+    if (this._release) return;
+
+    this._release = true;
+
     const current = this.proxies.size;
 
     this.proxies.forEach((wref, id) => {
@@ -94,7 +100,9 @@ export default class Nexo extends EventEmitter {
     const deleted = current - this.proxies.size;
 
     if (deleted > 0) {
-      this.emit("nx.cleanup", { total: this.proxies.size, deleted });
+      this.emit("nx.release", { active: this.proxies.size, deleted });
     }
+
+    this._release = false;
   }
 }
