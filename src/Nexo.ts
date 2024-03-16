@@ -14,8 +14,8 @@ export default class Nexo extends EventEmitter {
     map: NexoTS.proxy.map,
   ) => {
     if (wref.deref() === undefined) {
-      this.emit("nx.delete", id);
       map.delete(id);
+      this.emit("nx.delete", id);
     }
   };
 
