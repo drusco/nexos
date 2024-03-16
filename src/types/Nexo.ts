@@ -15,6 +15,9 @@ declare namespace Nexo {
   interface Proxy extends functionLike {}
 
   namespace proxy {
+    type ref = WeakRef<Proxy>;
+    type map = Map<string, ref>;
+
     type data = {
       id: string;
       target: WeakRef<traceable> | void;

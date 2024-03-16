@@ -4,9 +4,20 @@ import { getProxy, isTraceable, map } from "./utils/index.js";
 
 export default class Nexo extends EventEmitter {
   protected options: NexoTS.options = {};
-  readonly proxies: Map<string, WeakRef<NexoTS.Proxy>> = new Map();
-  readonly links: Map<string, WeakRef<NexoTS.Proxy>> = new Map();
-  protected _release: boolean = false;
+  readonly proxies: NexoTS.proxy.map = new Map();
+  readonly links: NexoTS.proxy.map = new Map();
+
+  private _release: boolean = false;
+  private _releaseCallback = (
+    wref: NexoTS.proxy.ref,
+    id: string,
+    map: NexoTS.proxy.map,
+  ) => {
+    if (wref.deref() === undefined) {
+      this.emit("nx.delete", id);
+      map.delete(id);
+    }
+  };
 
   constructor(options?: NexoTS.options) {
     super();
@@ -83,19 +94,8 @@ export default class Nexo extends EventEmitter {
 
     const current = this.proxies.size;
 
-    this.proxies.forEach((wref, id) => {
-      if (wref.deref() === undefined) {
-        this.emit("nx.delete", id);
-        this.proxies.delete(id);
-      }
-    });
-
-    this.links.forEach((wref, id) => {
-      if (wref.deref() === undefined) {
-        this.emit("nx.delete", id);
-        this.links.delete(id);
-      }
-    });
+    this.proxies.forEach(this._releaseCallback);
+    this.links.forEach(this._releaseCallback);
 
     const deleted = current - this.proxies.size;
 
