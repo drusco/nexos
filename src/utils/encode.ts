@@ -31,7 +31,7 @@ export default function encode<Type>(
   const isObject = isPlainObject(value);
   const isArray = Array.isArray(value);
 
-  if (!(isObject || isArray)) {
+  if (!isObject && !isArray) {
     return value;
   }
 
