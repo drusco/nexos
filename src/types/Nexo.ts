@@ -5,6 +5,7 @@ declare namespace Nexo {
   type functionLike = (...args: unknown[]) => unknown;
   type traceable = object | functionLike;
   type objectKey = string | symbol;
+  type plainObject = Record<objectKey, unknown>;
 
   interface options {}
 

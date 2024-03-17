@@ -1,6 +1,10 @@
 import Nexo from "../types/Nexo.js";
-import { findProxy, isTraceable, getProxyPayload } from "./index.js";
-import isPlainObject from "is-plain-obj";
+import {
+  findProxy,
+  isTraceable,
+  getProxyPayload,
+  isPlainObject,
+} from "./index.js";
 
 // Encodes a proxy to its string (payload) representation
 
