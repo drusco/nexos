@@ -26,14 +26,6 @@ export default function encode<Type>(
     return value;
   }
 
-  // Handle circular reference by returning the original value
-
-  if (visited.has(value)) {
-    return value;
-  }
-
-  visited.add(value);
-
   // return original value
 
   const isObject = isPlainObject(value);
@@ -43,7 +35,15 @@ export default function encode<Type>(
     return value;
   }
 
-  // return shallow copy for plain-objects and arrays
+  // Handle circular reference by returning the original value
+
+  if (visited.has(value)) {
+    return value;
+  }
+
+  visited.add(value);
+
+  // return shallow copy for plain objects and arrays
 
   const copy = (isArray ? [] : {}) as Type;
   const keys = Object.keys(value);
