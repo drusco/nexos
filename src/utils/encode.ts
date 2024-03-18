@@ -6,12 +6,13 @@ import {
   isPlainObject,
 } from "./index.js";
 
-// Encodes a proxy to its string (payload) representation
+type plainObjectOrArray = Nexo.plainObject | Array<unknown>;
 
-export default function encode<Type>(
-  value: Type,
-  visited: WeakSet<Nexo.traceable> = new WeakSet(),
-): Type | string {
+export default function encode(
+  value: unknown,
+  callback: (value: unknown) => unknown = (value) => value,
+  cache: WeakMap<plainObjectOrArray, plainObjectOrArray> = new WeakMap(),
+): unknown {
   const proxy = findProxy(value);
 
   // return the string that represents the proxy
@@ -32,24 +33,24 @@ export default function encode<Type>(
   const isArray = Array.isArray(value);
 
   if (!isObject && !isArray) {
-    return value;
+    return callback(value);
   }
 
-  // Handle circular reference by returning the original value
+  // Handle circular reference by returning a shallow copy
 
-  if (visited.has(value)) {
-    return value;
+  if (cache.has(value)) {
+    return cache.get(value);
   }
-
-  visited.add(value);
 
   // return shallow copy for plain objects and arrays
 
-  const copy = (isArray ? [] : {}) as Type;
+  const copy = isArray ? [] : {};
   const keys = Object.keys(value);
 
+  cache.set(value, copy);
+
   keys.forEach((key) => {
-    copy[key] = encode(value[key], visited);
+    copy[key] = encode(value[key], callback, cache);
   });
 
   return copy;
