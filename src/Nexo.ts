@@ -1,6 +1,6 @@
 import NexoTS from "./types/Nexo.js";
 import EventEmitter from "node:events";
-import { getProxy, isTraceable, map } from "./utils/index.js";
+import { getProxy, isTraceable, map, encode } from "./utils/index.js";
 
 export default class Nexo extends EventEmitter {
   protected options: NexoTS.options = {};
@@ -104,5 +104,9 @@ export default class Nexo extends EventEmitter {
     }
 
     this._release = false;
+  }
+
+  static encode(value: unknown, callback?: (value: unknown) => unknown) {
+    return encode(value, callback);
   }
 }
