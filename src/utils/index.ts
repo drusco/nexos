@@ -5,10 +5,8 @@ import getTarget from "./getTarget.js";
 import proxyIterator from "./proxyIterator.js";
 import map from "./map.js";
 import encode from "./encode.js";
-import decode from "./decode.js";
 import isProxyPayload from "./isProxyPayload.js";
 import isPayload from "./isPayload.js";
-import findProxyById from "./findProxyById.js";
 import constants from "./constants.js";
 import isProxy from "./isProxy.js";
 import getProxyPayload from "./getProxyPayload.js";
@@ -25,8 +23,6 @@ export {
   getProxyPayload,
   isProxyPayload,
   isPayload,
-  decode,
-  findProxyById,
   constants,
   isProxy,
   isPlainObject,
