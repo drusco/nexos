@@ -26,4 +26,10 @@ describe("utils/findProxy", () => {
 
     expect(result).toStrictEqual(proxy);
   });
+
+  it("Returns undefined when the proxy is not found", () => {
+    const result = findProxy({});
+
+    expect(result).toBeUndefined();
+  });
 });
