@@ -34,10 +34,10 @@ describe("utils/getProxy", () => {
 
   it("Exposes the proxy to the nexo instance", () => {
     const proxy = getProxy(nexo);
-    const data = map.proxies.get(proxy);
+    const { id } = map.proxies.get(proxy);
 
-    expect(nexo.proxies.has(data.id)).toBe(true);
-    expect(nexo.proxies.get(data.id).deref()).toStrictEqual(proxy);
+    expect(nexo.proxies.has(id)).toBe(true);
+    expect(nexo.proxies.get(id).deref()).toStrictEqual(proxy);
   });
 
   it("Emits an event for new proxies", () => {
@@ -68,10 +68,12 @@ function testProxyData(
   const { id, scope, mock, sandbox, isExtensible, target } =
     map.proxies.get(proxy);
 
+  const $target = target ? target.deref() : target;
+
   expect(typeof id).toBe("string");
   expect(typeof mock.deref()).toBe("function");
   expect(scope.deref()).toStrictEqual(nexo);
   expect(sandbox).toBeInstanceOf(Map);
   expect(isExtensible).toBe(true);
-  expect(target ? target.deref() : target).toStrictEqual(proxyTarget);
+  expect($target).toStrictEqual(proxyTarget);
 }
