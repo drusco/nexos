@@ -1,10 +1,6 @@
 import Nexo from "../types/Nexo.js";
-import {
-  findProxy,
-  isTraceable,
-  getProxyPayload,
-  isPlainObject,
-} from "./index.js";
+import isPlainObject from "is-plain-obj";
+import { findProxy, isTraceable, getProxyPayload } from "./index.js";
 
 type plainObjectOrArray = Nexo.plainObject | Array<unknown>;
 
@@ -33,7 +29,7 @@ export default function encode(
 
   // return the original or transformed value for special objects
 
-  const isObject = isPlainObject(value);
+  const isObject = isPlainObject<Nexo.plainObject>(value);
   const isArray = Array.isArray(value);
 
   if (!isObject && !isArray) {

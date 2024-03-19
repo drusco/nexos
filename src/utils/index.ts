@@ -9,7 +9,6 @@ import isProxyPayload from "./isProxyPayload.js";
 import constants from "./constants.js";
 import isProxy from "./isProxy.js";
 import getProxyPayload from "./getProxyPayload.js";
-import isPlainObject from "./isPlainObject.js";
 
 export {
   isTraceable,
@@ -23,5 +22,4 @@ export {
   isProxyPayload,
   constants,
   isProxy,
-  isPlainObject,
 };
