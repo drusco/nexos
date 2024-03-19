@@ -29,7 +29,7 @@ export default function encode(
 
   // return the original or transformed value for special objects
 
-  const isObject = isPlainObject<Nexo.plainObject>(value);
+  const isObject = isPlainObject(value);
   const isArray = Array.isArray(value);
 
   if (!isObject && !isArray) {
