@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Run javascript code from a different context",
   "main": "dist/index.js",
-  "private": true,
   "type": "module",
   "license": "MIT",
   "scripts": {
