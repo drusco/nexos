@@ -1,4 +1,5 @@
 import Nexo from "../Nexo.js";
+import NexoTS from "../types/Nexo.js";
 import { getProxy, map } from "./index.js";
 
 const nexo = new Nexo();
@@ -6,25 +7,28 @@ const nexo = new Nexo();
 describe("utils/getProxy", () => {
   it("Creates a new proxy with custom data", () => {
     const proxy = getProxy(nexo);
-    const data = map.proxies.get(proxy);
 
-    expect(data.target).toBeUndefined();
-    expect(data.scope.deref()).toStrictEqual(nexo);
-    expect(typeof data.id).toBe("string");
-    expect(typeof data.mock.deref()).toBe("function");
-    expect(data.sandbox instanceof Map).toBe(true);
-    expect(data.isExtensible).toBe(true);
+    testProxyData(proxy);
+  });
+
+  it("Creates a new proxy with custom data and a target", () => {
+    const arrayTarget = [];
+    const proxy = getProxy(nexo, arrayTarget);
+
+    testProxyData(proxy, arrayTarget);
   });
 
   it("Links internal data using weak maps", () => {
     const target = [];
     const proxy = getProxy(nexo);
     const proxyWithTarget = getProxy(nexo, target);
-    const data = map.proxies.get(proxy);
+    const proxyData = map.proxies.get(proxy);
+    const proxyWithTargetData = map.proxies.get(proxyWithTarget);
 
     expect(map.proxies.has(proxy)).toBe(true);
     expect(map.proxies.has(proxyWithTarget)).toBe(true);
-    expect(map.tracables.has(data.mock.deref())).toBe(true);
+    expect(map.tracables.has(proxyData.mock.deref())).toBe(true);
+    expect(map.tracables.has(proxyWithTargetData.mock.deref())).toBe(true);
     expect(map.tracables.has(target)).toBe(true);
   });
 
@@ -41,9 +45,9 @@ describe("utils/getProxy", () => {
 
     nexo.on("nx.create", createCallback);
     const proxy = getProxy(nexo);
-    const data = map.proxies.get(proxy);
+    const { id } = map.proxies.get(proxy);
 
-    expect(createCallback).toHaveBeenCalledWith(data.id, undefined);
+    expect(createCallback).toHaveBeenCalledWith(id, undefined);
   });
 
   it("Returns an existing proxy", () => {
@@ -56,3 +60,18 @@ describe("utils/getProxy", () => {
     expect(getProxy(nexo, target)).toStrictEqual(proxyWithTarget);
   });
 });
+
+function testProxyData(
+  proxy: NexoTS.Proxy,
+  proxyTarget: NexoTS.traceable | void,
+) {
+  const { id, scope, mock, sandbox, isExtensible, target } =
+    map.proxies.get(proxy);
+
+  expect(typeof id).toBe("string");
+  expect(typeof mock.deref()).toBe("function");
+  expect(scope.deref()).toStrictEqual(nexo);
+  expect(sandbox).toBeInstanceOf(Map);
+  expect(isExtensible).toBe(true);
+  expect(target ? target.deref() : target).toStrictEqual(proxyTarget);
+}
