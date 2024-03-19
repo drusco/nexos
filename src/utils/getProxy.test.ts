@@ -4,7 +4,7 @@ import { getProxy, map } from "./index.js";
 
 const nexo = new Nexo();
 
-describe("utils/getProxy", () => {
+describe("getProxy", () => {
   it("Creates a new proxy with custom data", () => {
     const proxy = getProxy(nexo);
 

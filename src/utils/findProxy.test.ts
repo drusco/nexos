@@ -3,7 +3,7 @@ import { findProxy, map } from "./index.js";
 
 const nexo = new Nexo();
 
-describe("utils/findProxy", () => {
+describe("findProxy", () => {
   it("Finds a proxy by itself", () => {
     const proxy = nexo.create();
     const result = findProxy(proxy);
