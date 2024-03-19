@@ -15,7 +15,7 @@ describe("isProxy", () => {
     expect(isProxy(undefined)).toBe(false);
     expect(isProxy(NaN)).toBe(false);
     expect(isProxy(null)).toBe(false);
-    expect(isProxy("string")).toBe(false);
+    expect(isProxy("foo")).toBe(false);
     expect(isProxy(() => {})).toBe(false);
     expect(isProxy({})).toBe(false);
     expect(isProxy([])).toBe(false);
