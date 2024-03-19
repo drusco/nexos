@@ -8,7 +8,9 @@ describe("getProxyPayload", () => {
     const proxy = nexo.create();
     const encodedId = getProxyPayload(proxy);
     const { id } = map.proxies.get(proxy);
+    const proxyPayload = constants.NO_BREAK + id;
 
-    expect(encodedId).toBe(constants.NO_BREAK + id);
+    expect(encodedId).toBe(proxyPayload);
+    expect(constants.IS_PROXY_ID_REGEXP.test(encodedId)).toBe(true);
   });
 });
