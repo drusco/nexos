@@ -10,47 +10,51 @@ type plainObjectOrArray = Nexo.plainObject | Array<unknown>;
 
 export default function encode(
   value: unknown,
-  callback: (value: unknown) => unknown = (value) => value,
+  transform: (value: unknown, isProxyPayload?: boolean) => unknown = (
+    value,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isProxyPayload = false,
+  ) => value,
   cache: WeakMap<plainObjectOrArray, plainObjectOrArray> = new WeakMap(),
 ): unknown {
   const proxy = findProxy(value);
 
-  // return the string that represents the proxy
+  // return a proxy payload or a transformed value
 
   if (proxy) {
-    return getProxyPayload(proxy);
+    return transform(getProxyPayload(proxy), true);
   }
 
-  // return original value for untraceable values
+  // return the original or transformed value for untraceable values
 
   if (!isTraceable(value)) {
-    return value;
+    return transform(value);
   }
 
-  // return original value
+  // return the original or transformed value for special objects
 
   const isObject = isPlainObject(value);
   const isArray = Array.isArray(value);
 
   if (!isObject && !isArray) {
-    return callback(value);
+    return transform(value);
   }
 
-  // Handle circular reference by returning a shallow copy
+  // Handle circular reference by returning a shallow copy in cache
 
   if (cache.has(value)) {
     return cache.get(value);
   }
 
-  // return shallow copy for plain objects and arrays
+  // return a shallow copy for plain objects and arrays
 
-  const copy = isArray ? [] : {};
+  const copy: plainObjectOrArray = isArray ? [] : {};
   const keys = Object.keys(value);
 
   cache.set(value, copy);
 
   keys.forEach((key) => {
-    copy[key] = encode(value[key], callback, cache);
+    copy[key] = encode(value[key], transform, cache);
   });
 
   return copy;
