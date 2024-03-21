@@ -12,7 +12,7 @@
     "clean": "rm -rf dist",
     "lint": "eslint --fix --ext .js,.ts,.json .",
     "check": "tsc --project .",
-    "test": "jest --passWithNoTests",
+    "test": "jest",
     "test:memory": "node --expose-gc ./node_modules/.bin/jest --runInBand --logHeapUsage"
   },
   "author": {
