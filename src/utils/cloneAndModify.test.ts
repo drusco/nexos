@@ -1,7 +1,7 @@
-import Nexo from "../lib/NexoProxy.js";
+import ProxyNexo from "../lib/ProxyNexo.js";
 import { cloneAndModify, isProxy } from "./index.js";
 
-const nexo = new Nexo();
+const nexo = new ProxyNexo();
 
 describe("cloneAndModify", () => {
   it("Creates a shallow copy for plain objects or arrays", () => {
@@ -56,7 +56,7 @@ describe("cloneAndModify", () => {
   });
 
   it("Can transform the value when it is neither array nor plain object", () => {
-    const proxy = nexo.create();
+    const proxy = nexo.createProxy();
 
     const data = {
       proxy,

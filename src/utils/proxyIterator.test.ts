@@ -1,14 +1,14 @@
-import Nexo from "../lib/NexoProxy.js";
+import ProxyNexo from "../lib/ProxyNexo.js";
 import NexoTS from "../lib/types/Nexo.js";
 import { proxyIterator } from "./index.js";
 import map from "../lib/maps.js";
 
-const nexo = new Nexo();
+const nexo = new ProxyNexo();
 
 describe("proxyIterator", () => {
   it("Returns an iterable iterator of proxies", () => {
-    const foo = nexo.create();
-    const bar = nexo.create();
+    const foo = nexo.createProxy();
+    const bar = nexo.createProxy();
 
     const iterator = proxyIterator(nexo);
     const proxies = [...iterator];
@@ -19,7 +19,7 @@ describe("proxyIterator", () => {
   });
 
   it("Emits a deletion event when the proxy does not exists anymore", () => {
-    const proxy = nexo.create();
+    const proxy = nexo.createProxy();
     const { id } = map.proxies.get(proxy);
     const callback = jest.fn();
 

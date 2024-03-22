@@ -1,10 +1,10 @@
-import Nexo from "../lib/NexoProxy.js";
+import ProxyNexo from "../lib/ProxyNexo.js";
 import NexoTS from "../lib/types/Nexo.js";
 import { getProxy } from "./index.js";
 import map from "../lib/maps.js";
 import NexoEvent from "../lib/events/NexoEvent.js";
 
-const nexo = new Nexo();
+const nexo = new ProxyNexo();
 
 describe("getProxy", () => {
   it("Creates a new proxy with custom data", () => {

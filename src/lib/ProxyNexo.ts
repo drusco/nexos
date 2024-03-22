@@ -3,7 +3,7 @@ import Nexo from "./Nexo.js";
 import { getProxy, isTraceable, isProxy } from "../utils/index.js";
 import map from "./maps.js";
 
-class NexoProxy extends Nexo<NexoTS.Proxy> {
+class ProxyNexo extends Nexo<NexoTS.Proxy> {
   constructor() {
     super();
   }
@@ -17,7 +17,17 @@ class NexoProxy extends Nexo<NexoTS.Proxy> {
     return id;
   }
 
-  create(target?: NexoTS.traceable): NexoTS.Proxy {
+  static getProxyTarget(proxy: NexoTS.Proxy): void | NexoTS.traceable {
+    const data = map.proxies.get(proxy);
+    if (data?.target) return data.target.deref();
+  }
+
+  static mock(proxy: NexoTS.Proxy): void | NexoTS.Mock {
+    const data = map.proxies.get(proxy);
+    if (data?.mock) return data.mock.deref();
+  }
+
+  createProxy(target?: NexoTS.traceable): NexoTS.Proxy {
     return getProxy(this, target);
   }
 
@@ -37,22 +47,6 @@ class NexoProxy extends Nexo<NexoTS.Proxy> {
     const proxy = getProxy(this, target);
     return super.link(name, proxy);
   }
-
-  target(proxy: NexoTS.Proxy): void | NexoTS.traceable {
-    const data = map.proxies.get(proxy);
-
-    if (data?.target) {
-      return data.target.deref();
-    }
-  }
-
-  mock(proxy: NexoTS.Proxy): void | NexoTS.Mock {
-    const data = map.proxies.get(proxy);
-
-    if (data?.mock) {
-      return data.mock.deref();
-    }
-  }
 }
 
-export default NexoProxy;
+export default ProxyNexo;

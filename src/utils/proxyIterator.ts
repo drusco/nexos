@@ -1,8 +1,8 @@
 import Nexo from "../lib/types/Nexo.js";
-import NexoProxy from "../lib/NexoProxy.js";
+import ProxyNexo from "../lib/ProxyNexo.js";
 
 const proxyIterator = function* (
-  scope: NexoProxy,
+  scope: ProxyNexo,
 ): IterableIterator<Nexo.Proxy> {
   for (const [id, ref] of scope.entries) {
     const proxy = ref.deref();

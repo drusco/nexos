@@ -1,4 +1,4 @@
-import NexoProxy from "../NexoProxy.js";
+import ProxyNexo from "../ProxyNexo.js";
 import EventEmitter from "node:events";
 
 declare namespace Nexo {
@@ -21,7 +21,7 @@ declare namespace Nexo {
     type data = {
       id: string;
       target: WeakRef<traceable> | void;
-      scope: WeakRef<NexoProxy>;
+      scope: WeakRef<ProxyNexo>;
       sandbox: Map<objectKey, unknown>;
       mock: WeakRef<Mock>;
       isExtensible: boolean;

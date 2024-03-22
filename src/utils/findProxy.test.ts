@@ -1,12 +1,12 @@
-import Nexo from "../lib/NexoProxy.js";
+import ProxyNexo from "../lib/ProxyNexo.js";
 import { findProxy } from "./index.js";
 import map from "../lib/maps.js";
 
-const nexo = new Nexo();
+const nexo = new ProxyNexo();
 
 describe("findProxy", () => {
   it("Finds a proxy by itself", () => {
-    const proxy = nexo.create();
+    const proxy = nexo.createProxy();
     const result = findProxy(proxy);
 
     expect(result).toStrictEqual(proxy);
@@ -14,14 +14,14 @@ describe("findProxy", () => {
 
   it("Finds a proxy by its target", () => {
     const target = [];
-    const proxy = nexo.create(target);
+    const proxy = nexo.createProxy(target);
     const result = findProxy(target);
 
     expect(result).toStrictEqual(proxy);
   });
 
   it("Finds a proxy by its mock", () => {
-    const proxy = nexo.create();
+    const proxy = nexo.createProxy();
     const { mock } = map.proxies.get(proxy);
     const result = findProxy(mock.deref());
 

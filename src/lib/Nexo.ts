@@ -1,6 +1,5 @@
 import NexoTS from "./types/Nexo.js";
 import EventEmitter from "node:events";
-import { cloneAndModify } from "../utils/index.js";
 import NexoEvent from "./events/NexoEvent.js";
 
 class Nexo<T extends NexoTS.traceable> extends EventEmitter {
@@ -22,10 +21,6 @@ class Nexo<T extends NexoTS.traceable> extends EventEmitter {
 
   constructor() {
     super();
-  }
-
-  static cloneAndModify(value: unknown, modify?: (value: unknown) => unknown) {
-    return cloneAndModify(value, modify);
   }
 
   link(id: string, target: T): T {
