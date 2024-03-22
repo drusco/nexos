@@ -1,3 +1,3 @@
-import ProxyNexo from "./lib/ProxyNexo.js";
+import NexoProxy from "./lib/NexoProxy.js";
 
-export { ProxyNexo };
+export { NexoProxy };

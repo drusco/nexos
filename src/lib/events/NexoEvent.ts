@@ -1,4 +1,3 @@
-import { PREFIX } from "../constants.js";
 import NexoError from "../errors/NexoError.js";
 
 class NexoEvent<Target, Data> {
@@ -16,7 +15,7 @@ class NexoEvent<Target, Data> {
       );
     }
 
-    this.name = PREFIX + "." + name;
+    this.name = name;
     this.data = data;
     this.target = target;
     this.timestamp = Date.now();

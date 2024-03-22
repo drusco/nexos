@@ -5,11 +5,11 @@ import isTraceable from "./isTraceable.js";
 import handlers from "./handlers/index.js";
 import EventEmitter from "node:events";
 import { randomUUID } from "node:crypto";
-import ProxyNexo from "../lib/ProxyNexo.js";
+import NexoProxy from "../lib/NexoProxy.js";
 import NexoEvent from "../lib/events/NexoEvent.js";
 
 const getProxy = (
-  scope: ProxyNexo,
+  scope: NexoProxy,
   target: Nexo.traceable | void,
 ): Nexo.Proxy => {
   // find proxy by target
@@ -50,7 +50,10 @@ const getProxy = (
     map.tracables.set(target, proxy);
   }
 
-  const event = new NexoEvent("proxy.create", target, proxyId);
+  const event = new NexoEvent("nx.proxy.create", scope, {
+    id: proxyId,
+    target,
+  });
 
   scope.entries.set(proxyId, new WeakRef(proxy));
   scope.emit(event.name, event);

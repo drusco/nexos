@@ -1,4 +1,4 @@
-import Nexo from "../lib/ProxyNexo.js";
+import Nexo from "../lib/NexoProxy.js";
 import NexoTS from "../lib/types/Nexo.js";
 import { getProxy } from "./index.js";
 import map from "../lib/maps.js";
@@ -53,8 +53,8 @@ describe("getProxy", () => {
     expect(createCallback.mock.lastCall.length).toBe(1);
     expect(createCallback).toHaveBeenCalledTimes(1);
     expect(event).toBeInstanceOf(NexoEvent);
-    expect(event.data).toBe(id);
-    expect(event.target).toBeUndefined();
+    expect(event.data).toEqual({ id, target: undefined });
+    expect(event.target).toBe(nexo);
   });
 
   it("Returns an existing proxy", () => {

@@ -1,11 +1,20 @@
 import NexoTS from "./types/Nexo.js";
 import Nexo from "./Nexo.js";
-import { getProxy, isTraceable } from "../utils/index.js";
+import { getProxy, isTraceable, isProxy } from "../utils/index.js";
 import map from "./maps.js";
 
-class ProxyNexo extends Nexo<NexoTS.Proxy> {
+class NexoProxy extends Nexo<NexoTS.Proxy> {
   constructor() {
     super();
+  }
+
+  static isProxy(value: unknown): boolean {
+    return isProxy(value);
+  }
+
+  static getProxyId(proxy: NexoTS.Proxy): string {
+    const { id } = map.proxies.get(proxy);
+    return id;
   }
 
   create(target?: NexoTS.traceable): NexoTS.Proxy {
@@ -46,4 +55,4 @@ class ProxyNexo extends Nexo<NexoTS.Proxy> {
   }
 }
 
-export default ProxyNexo;
+export default NexoProxy;

@@ -15,7 +15,7 @@ class Nexo<T extends NexoTS.traceable> extends EventEmitter {
   ) => {
     if (wref.deref() === undefined) {
       map.delete(id);
-      const event = new NexoEvent("delete", id);
+      const event = new NexoEvent("nx.delete", this, { id });
       this.emit(event.name, event);
     }
   };
@@ -28,26 +28,26 @@ class Nexo<T extends NexoTS.traceable> extends EventEmitter {
     return cloneAndModify(value, modify);
   }
 
-  link(name: string, target: T): T {
-    this.links.set(name, new WeakRef(target));
+  link(id: string, target: T): T {
+    this.links.set(id, new WeakRef(target));
 
-    const event = new NexoEvent("link", target, name);
+    const event = new NexoEvent("nx.link", this, { id, target });
     this.emit(event.name, event);
 
     return target;
   }
 
-  unlink(name: string): boolean {
-    const event = new NexoEvent("unlink", name);
+  unlink(id: string): boolean {
+    const event = new NexoEvent("nx.unlink", this, { id });
     this.emit(event.name, event);
 
-    return this.links.delete(name);
+    return this.links.delete(id);
   }
 
   clear(): void {
     this.entries.clear();
     this.links.clear();
-    const event = new NexoEvent("clear");
+    const event = new NexoEvent("nx.clear", this);
     this.emit(event.name, event);
   }
 
@@ -64,7 +64,7 @@ class Nexo<T extends NexoTS.traceable> extends EventEmitter {
     const deleted = current - this.entries.size;
 
     if (deleted > 0) {
-      const event = new NexoEvent("release", this, {
+      const event = new NexoEvent("nx.release", this, {
         active: this.entries.size,
         deleted,
       });

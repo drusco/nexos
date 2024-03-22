@@ -1,4 +1,4 @@
-import Nexo from "../lib/ProxyNexo.js";
+import Nexo from "../lib/NexoProxy.js";
 import { findProxy } from "./index.js";
 import map from "../lib/maps.js";
 
