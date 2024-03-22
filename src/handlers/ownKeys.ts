@@ -1,6 +1,6 @@
 import Nexo from "../types/Nexo.js";
 import { map } from "../utils/index.js";
-import ProxyHandlerEvent from "../events/ProxyHandlerEvent.js";
+import ProxyEvent from "../events/ProxyEvent.js";
 
 const ownKeys = (mock: Nexo.Mock): Nexo.objectKey[] => {
   const proxy = map.tracables.get(mock);
@@ -9,7 +9,7 @@ const ownKeys = (mock: Nexo.Mock): Nexo.objectKey[] => {
   const scope = data.scope.deref();
   const keys: Nexo.objectKey[] = [];
 
-  const event = new ProxyHandlerEvent("ownKeys", proxy);
+  const event = new ProxyEvent("ownKeys", proxy);
 
   scope.emit(event.name, event);
   mock.emit(event.name, event);

@@ -1,6 +1,6 @@
 import Nexo from "../types/Nexo.js";
 import { map } from "../utils/index.js";
-import ProxyHandlerEvent from "../events/ProxyHandlerEvent.js";
+import ProxyEvent from "../events/ProxyEvent.js";
 
 const has = (mock: Nexo.Mock, key: Nexo.objectKey): boolean => {
   const proxy = map.tracables.get(mock);
@@ -9,7 +9,7 @@ const has = (mock: Nexo.Mock, key: Nexo.objectKey): boolean => {
   const { sandbox } = data;
   const scope = data.scope.deref();
 
-  const event = new ProxyHandlerEvent("has", proxy, { key });
+  const event = new ProxyEvent("has", proxy, { key });
 
   scope.emit(event.name, event);
   mock.emit(event.name, event);

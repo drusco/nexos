@@ -13,7 +13,7 @@ declare namespace Nexo {
     (...args: unknown[]): unknown;
   }
 
-  interface Proxy {}
+  interface Proxy extends functionLike {}
 
   namespace proxy {
     type ref = WeakRef<Proxy>;

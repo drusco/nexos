@@ -1,13 +1,13 @@
 import Nexo from "../types/Nexo.js";
 import { map } from "../utils/index.js";
-import ProxyHandlerEvent from "../events/ProxyHandlerEvent.js";
+import ProxyEvent from "../events/ProxyEvent.js";
 
 const preventExtensions = (mock: Nexo.Mock): boolean => {
   const proxy = map.tracables.get(mock);
   const data = map.proxies.get(proxy);
   const scope = data.scope.deref();
 
-  const event = new ProxyHandlerEvent("preventExtensions", proxy);
+  const event = new ProxyEvent("preventExtensions", proxy);
 
   scope.emit(event.name, event);
   mock.emit(event.name, event);

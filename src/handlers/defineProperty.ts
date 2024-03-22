@@ -1,6 +1,6 @@
 import Nexo from "../types/Nexo.js";
 import { getTarget, isTraceable, map } from "../utils/index.js";
-import ProxyHandlerEvent from "../events/ProxyHandlerEvent.js";
+import ProxyEvent from "../events/ProxyEvent.js";
 
 const defineProperty = (
   mock: Nexo.Mock,
@@ -14,7 +14,7 @@ const defineProperty = (
   const scope = data.scope.deref();
   const value = getTarget(descriptor.value, true);
 
-  const event = new ProxyHandlerEvent("defineProperty", proxy, {
+  const event = new ProxyEvent("defineProperty", proxy, {
     key,
     descriptor,
   });
