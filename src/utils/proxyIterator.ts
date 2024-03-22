@@ -1,4 +1,4 @@
-import Nexo from "../types/Nexo.js";
+import Nexo from "../lib/types/Nexo.js";
 
 const proxyIterator = function* (scope: Nexo): IterableIterator<Nexo.Proxy> {
   for (const [id, ref] of scope.proxies) {

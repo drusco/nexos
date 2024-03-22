@@ -1,4 +1,5 @@
-import { PREFIX } from "../utils/constants.js";
+import { PREFIX } from "../constants.js";
+import NexoError from "../errors/NexoError.js";
 
 class NexoEvent<Target, Data> {
   readonly name: string;
@@ -8,9 +9,11 @@ class NexoEvent<Target, Data> {
   public returnValue: unknown;
   private _defaultPrevented: boolean;
 
-  constructor(name: string, target: Target, data?: Data) {
+  constructor(name: string, target?: Target, data?: Data) {
     if (!name.length) {
-      throw Error(`NexoEvent: event name cannot be empty`);
+      throw new NexoError(
+        `${this.constructor.name}: event name cannot be empty`,
+      );
     }
 
     this.name = PREFIX + "." + name;

@@ -1,6 +1,6 @@
-import Nexo from "../types/Nexo.js";
-import { map } from "../utils/index.js";
-import ProxyEvent from "../events/ProxyEvent.js";
+import Nexo from "../../lib/types/Nexo.js";
+import map from "../../lib/maps.js";
+import ProxyEvent from "../../lib/events/ProxyEvent.js";
 
 const has = (mock: Nexo.Mock, key: Nexo.objectKey): boolean => {
   const proxy = map.tracables.get(mock);

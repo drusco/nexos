@@ -3,10 +3,8 @@ import findProxy from "./findProxy.js";
 import getProxy from "./getProxy.js";
 import getTarget from "./getTarget.js";
 import proxyIterator from "./proxyIterator.js";
-import map from "./map.js";
-import encode from "./encode.js";
+import cloneAndModify from "./cloneAndModify.js";
 import isProxyPayload from "./isProxyPayload.js";
-import constants from "./constants.js";
 import isProxy from "./isProxy.js";
 import getProxyPayload from "./getProxyPayload.js";
 
@@ -14,12 +12,10 @@ export {
   isTraceable,
   findProxy,
   proxyIterator,
-  map,
   getProxy,
   getTarget,
-  encode,
+  cloneAndModify,
   getProxyPayload,
   isProxyPayload,
-  constants,
   isProxy,
 };

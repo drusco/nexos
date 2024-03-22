@@ -1,1 +1,1 @@
-export { default } from "./Nexo.js";
+export { default } from "./lib/Nexo.js";

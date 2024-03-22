@@ -1,5 +1,5 @@
 import findProxy from "./findProxy.js";
-import map from "./map.js";
+import map from "../lib/maps.js";
 
 const getTarget = (value: unknown, resolveProxy: boolean = false): unknown => {
   if (value instanceof WeakRef) {

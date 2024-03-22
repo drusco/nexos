@@ -1,23 +1,12 @@
 import NexoTS from "./types/Nexo.js";
 import EventEmitter from "node:events";
-import { getProxy, isTraceable, map, encode } from "./utils/index.js";
+import { getProxy, isTraceable } from "../utils/index.js";
+import map from "./maps.js";
 
 export default class Nexo extends EventEmitter {
   protected options: NexoTS.options = {};
   readonly proxies: NexoTS.proxy.map = new Map();
   readonly links: NexoTS.proxy.map = new Map();
-
-  private _release: boolean = false;
-  private _releaseCallback = (
-    wref: NexoTS.proxy.ref,
-    id: string,
-    map: NexoTS.proxy.map,
-  ) => {
-    if (wref.deref() === undefined) {
-      map.delete(id);
-      this.emit("nx.delete", id);
-    }
-  };
 
   constructor(options?: NexoTS.options) {
     super();
@@ -79,34 +68,5 @@ export default class Nexo extends EventEmitter {
     }
 
     return;
-  }
-
-  clear(): void {
-    this.proxies.clear();
-    this.links.clear();
-    this.emit("nx.clear");
-  }
-
-  release(): void {
-    if (this._release) return;
-
-    this._release = true;
-
-    const current = this.proxies.size;
-
-    this.proxies.forEach(this._releaseCallback);
-    this.links.forEach(this._releaseCallback);
-
-    const deleted = current - this.proxies.size;
-
-    if (deleted > 0) {
-      this.emit("nx.release", { active: this.proxies.size, deleted });
-    }
-
-    this._release = false;
-  }
-
-  static encode(value: unknown, callback?: (value: unknown) => unknown) {
-    return encode(value, callback);
   }
 }

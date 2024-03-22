@@ -1,8 +1,8 @@
-import Nexo from "../types/Nexo.js";
-import map from "./map.js";
+import Nexo from "../lib/types/Nexo.js";
+import map from "../lib/maps.js";
 import findProxy from "./findProxy.js";
 import isTraceable from "./isTraceable.js";
-import handlers from "../handlers/index.js";
+import handlers from "./handlers/index.js";
 import EventEmitter from "node:events";
 import { randomUUID } from "node:crypto";
 

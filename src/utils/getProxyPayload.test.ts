@@ -1,5 +1,7 @@
-import Nexo from "../Nexo.js";
-import { constants, getProxyPayload, map } from "./index.js";
+import Nexo from "../lib/Nexo.js";
+import { getProxyPayload } from "./index.js";
+import map from "../lib/maps.js";
+import { NO_BREAK, IS_PROXY_ID_REGEXP } from "../lib/constants.js";
 
 const nexo = new Nexo();
 
@@ -8,9 +10,9 @@ describe("getProxyPayload", () => {
     const proxy = nexo.create();
     const encodedId = getProxyPayload(proxy);
     const { id } = map.proxies.get(proxy);
-    const proxyPayload = constants.NO_BREAK + id;
+    const proxyPayload = NO_BREAK + id;
 
     expect(encodedId).toBe(proxyPayload);
-    expect(constants.IS_PROXY_ID_REGEXP.test(encodedId)).toBe(true);
+    expect(IS_PROXY_ID_REGEXP.test(encodedId)).toBe(true);
   });
 });

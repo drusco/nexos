@@ -1,6 +1,7 @@
-import Nexo from "../Nexo.js";
-import NexoTS from "../types/Nexo.js";
-import { proxyIterator, map } from "./index.js";
+import Nexo from "../lib/Nexo.js";
+import NexoTS from "../lib/types/Nexo.js";
+import { proxyIterator } from "./index.js";
+import map from "../lib/maps.js";
 
 const nexo = new Nexo();
 

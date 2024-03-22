@@ -2,7 +2,8 @@ import Nexo from "../Nexo.js";
 import EventEmitter from "node:events";
 
 declare namespace Nexo {
-  type functionLike = (...args: unknown[]) => unknown;
+  type arrayLike = unknown[];
+  type functionLike = (...args: arrayLike) => unknown;
   type traceable = object | functionLike;
   type objectKey = string | symbol;
   type plainObject = Record<objectKey, unknown>;
@@ -10,7 +11,7 @@ declare namespace Nexo {
   interface options {}
 
   interface Mock extends EventEmitter {
-    (...args: unknown[]): unknown;
+    (...args: arrayLike): unknown;
   }
 
   interface Proxy extends functionLike {}
