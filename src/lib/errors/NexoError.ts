@@ -1,7 +1,14 @@
+import EventEmitter from "events";
+import NexoEvent from "../events/NexoEvent.js";
+
 class NexoError extends Error {
-  constructor(message: string) {
+  constructor(message: string, emitter?: EventEmitter) {
     super(message);
-    Object.setPrototypeOf(this, NexoError.prototype);
+
+    if (emitter) {
+      const event = new NexoEvent("nx.error", emitter, this);
+      emitter.emit(event.name, event);
+    }
   }
 }
 

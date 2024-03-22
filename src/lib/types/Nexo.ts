@@ -1,5 +1,5 @@
 import ProxyNexo from "../ProxyNexo.js";
-import EventEmitter from "node:events";
+import EventEmitter from "events";
 
 declare namespace Nexo {
   type arrayLike = unknown[];

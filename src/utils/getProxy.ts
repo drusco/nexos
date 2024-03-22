@@ -3,7 +3,7 @@ import map from "../lib/maps.js";
 import findProxy from "./findProxy.js";
 import isTraceable from "./isTraceable.js";
 import handlers from "./handlers/index.js";
-import EventEmitter from "node:events";
+import EventEmitter from "events";
 import { randomUUID } from "node:crypto";
 import ProxyNexo from "../lib/ProxyNexo.js";
 import NexoEvent from "../lib/events/NexoEvent.js";

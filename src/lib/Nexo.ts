@@ -1,5 +1,5 @@
 import NexoTS from "./types/Nexo.js";
-import EventEmitter from "node:events";
+import EventEmitter from "events";
 import NexoEvent from "./events/NexoEvent.js";
 
 class Nexo<T extends NexoTS.traceable> extends EventEmitter {

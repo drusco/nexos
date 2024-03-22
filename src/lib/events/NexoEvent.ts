@@ -1,5 +1,3 @@
-import NexoError from "../errors/NexoError.js";
-
 class NexoEvent<Target, Data> {
   readonly name: string;
   readonly data: Data;
@@ -9,12 +7,6 @@ class NexoEvent<Target, Data> {
   private _defaultPrevented: boolean;
 
   constructor(name: string, target?: Target, data?: Data) {
-    if (!name.length) {
-      throw new NexoError(
-        `${this.constructor.name}: event name cannot be empty`,
-      );
-    }
-
     this.name = name;
     this.data = data;
     this.target = target;
