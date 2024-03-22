@@ -1,4 +1,4 @@
-import Nexo from "../lib/Nexo.js";
+import Nexo from "../lib/ProxyNexo.js";
 import { isProxyPayload } from "./index.js";
 import map from "../lib/maps.js";
 import { NO_BREAK } from "../lib/constants.js";

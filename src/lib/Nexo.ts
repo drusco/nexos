@@ -1,72 +1,78 @@
 import NexoTS from "./types/Nexo.js";
 import EventEmitter from "node:events";
-import { getProxy, isTraceable } from "../utils/index.js";
-import map from "./maps.js";
+import { cloneAndModify } from "../utils/index.js";
+import NexoEvent from "./events/NexoEvent.js";
 
-export default class Nexo extends EventEmitter {
-  protected options: NexoTS.options = {};
-  readonly proxies: NexoTS.proxy.map = new Map();
-  readonly links: NexoTS.proxy.map = new Map();
+class Nexo<T extends NexoTS.traceable> extends EventEmitter {
+  readonly entries: Map<string, WeakRef<T>> = new Map();
+  readonly links: Map<string, WeakRef<T>> = new Map();
+  private _release: boolean = false;
 
-  constructor(options?: NexoTS.options) {
+  private _releaseCallback = (
+    wref: WeakRef<T>,
+    id: string,
+    map: Map<string, WeakRef<T>>,
+  ) => {
+    if (wref.deref() === undefined) {
+      map.delete(id);
+      const event = new NexoEvent("delete", id);
+      this.emit(event.name, event);
+    }
+  };
+
+  constructor() {
     super();
-
-    if (options) {
-      this.options = { ...this.options, ...options };
-    }
   }
 
-  create(target?: NexoTS.traceable): NexoTS.Proxy {
-    return getProxy(this, target);
+  static cloneAndModify(value: unknown, modify?: (value: unknown) => unknown) {
+    return cloneAndModify(value, modify);
   }
 
-  use(target: string | NexoTS.traceable): NexoTS.Proxy {
-    if (isTraceable(target)) {
-      return getProxy(this, target);
-    }
+  link(name: string, target: T): T {
+    this.links.set(name, new WeakRef(target));
 
-    if (this.links.has(target)) {
-      return this.links.get(target).deref();
-    }
+    const event = new NexoEvent("link", target, name);
+    this.emit(event.name, event);
 
-    return this.link(target);
-  }
-
-  link(name: string, target?: NexoTS.traceable): NexoTS.Proxy {
-    const proxy = getProxy(this, target);
-
-    this.links.set(name, new WeakRef(proxy));
-    this.emit("nx.link", name, proxy);
-
-    return proxy;
+    return target;
   }
 
   unlink(name: string): boolean {
-    this.emit("nx.unlink", name);
+    const event = new NexoEvent("unlink", name);
+    this.emit(event.name, event);
+
     return this.links.delete(name);
   }
 
-  target(proxy: NexoTS.Proxy): NexoTS.traceable | void {
-    const data = map.proxies.get(proxy);
-
-    if (!data) return;
-
-    if (data.target) {
-      return data.target.deref();
-    }
-
-    return;
+  clear(): void {
+    this.entries.clear();
+    this.links.clear();
+    const event = new NexoEvent("clear");
+    this.emit(event.name, event);
   }
 
-  mock(proxy: NexoTS.Proxy): NexoTS.Mock | void {
-    const data = map.proxies.get(proxy);
+  release(): void {
+    if (this._release) return;
 
-    if (!data) return;
+    this._release = true;
 
-    if (data.mock) {
-      return data.mock.deref();
+    const current = this.entries.size;
+
+    this.entries.forEach(this._releaseCallback);
+    this.links.forEach(this._releaseCallback);
+
+    const deleted = current - this.entries.size;
+
+    if (deleted > 0) {
+      const event = new NexoEvent("release", this, {
+        active: this.entries.size,
+        deleted,
+      });
+      this.emit(event.name, event);
     }
 
-    return;
+    this._release = false;
   }
 }
+
+export default Nexo;

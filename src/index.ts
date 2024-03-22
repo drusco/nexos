@@ -1,1 +1,3 @@
-export { default } from "./lib/Nexo.js";
+import ProxyNexo from "./lib/ProxyNexo.js";
+
+export { ProxyNexo };

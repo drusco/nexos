@@ -1,11 +1,14 @@
 import Nexo from "../lib/types/Nexo.js";
+import ProxyNexo from "../lib/ProxyNexo.js";
 
-const proxyIterator = function* (scope: Nexo): IterableIterator<Nexo.Proxy> {
-  for (const [id, ref] of scope.proxies) {
+const proxyIterator = function* (
+  scope: ProxyNexo,
+): IterableIterator<Nexo.Proxy> {
+  for (const [id, ref] of scope.entries) {
     const proxy = ref.deref();
     if (proxy) yield proxy;
     else {
-      scope.proxies.delete(id);
+      scope.entries.delete(id);
       scope.emit("nx.delete", id);
     }
   }
