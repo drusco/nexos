@@ -50,6 +50,7 @@ describe("getProxy", () => {
     const { id } = map.proxies.get(proxy);
     const event = createCallback.mock.lastCall[0];
 
+    expect(createCallback.mock.lastCall.length).toBe(1);
     expect(createCallback).toHaveBeenCalledTimes(1);
     expect(event).toBeInstanceOf(NexoEvent);
     expect(event.data).toBe(id);
