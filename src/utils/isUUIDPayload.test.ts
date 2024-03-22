@@ -6,7 +6,7 @@ import { PAYLOAD_PREFIX } from "../lib/constants.js";
 const nexo = new Nexo();
 
 describe("isUUIDPayload", () => {
-  it("Returns true when the parameter is a proxy payload", () => {
+  it("Returns true when the parameter is an UUID payload", () => {
     const proxy = nexo.create();
     const { id } = map.proxies.get(proxy);
     const result = isUUIDPayload(PAYLOAD_PREFIX + id);
