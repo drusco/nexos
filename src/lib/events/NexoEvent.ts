@@ -14,7 +14,7 @@ class NexoEvent<Target, Data> {
     this._defaultPrevented = false;
   }
 
-  preventDefault(returnValue: unknown): void {
+  preventDefault(returnValue?: unknown): void {
     this._defaultPrevented = true;
     this.returnValue = returnValue;
   }
