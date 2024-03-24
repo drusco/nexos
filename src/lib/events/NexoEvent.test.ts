@@ -1,7 +1,7 @@
 import NexoEvent from "./NexoEvent.js";
 
 describe("NexoEvent", () => {
-  it("Creates a new event", () => {
+  it("Creates a new nexo event", () => {
     const event = new NexoEvent("foo");
 
     expect(event.name).toBe("foo");
