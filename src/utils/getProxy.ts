@@ -6,7 +6,6 @@ import handlers from "./handlers/index.js";
 import EventEmitter from "events";
 import { randomUUID } from "node:crypto";
 import ProxyNexo from "../lib/ProxyNexo.js";
-import NexoEvent from "../lib/events/NexoEvent.js";
 
 const getProxy = (
   scope: ProxyNexo,
@@ -50,13 +49,7 @@ const getProxy = (
     map.tracables.set(target, proxy);
   }
 
-  const event = new NexoEvent("nx.proxy.create", scope, {
-    id: proxyId,
-    target,
-  });
-
-  scope.entries.set(proxyId, new WeakRef(proxy));
-  scope.emit(event.name, event);
+  scope.set(proxyId, proxy);
 
   return proxy;
 };

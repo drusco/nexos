@@ -7,20 +7,25 @@ class Nexo<T extends NexoTS.traceable> extends EventEmitter {
   readonly links: Map<string, WeakRef<T>> = new Map();
   private _release: boolean = false;
 
-  private _releaseCallback = (
-    wref: WeakRef<T>,
-    id: string,
-    map: Map<string, WeakRef<T>>,
-  ) => {
-    if (wref.deref() === undefined) {
-      map.delete(id);
-      const event = new NexoEvent("nx.delete", this, { id });
-      this.emit(event.name, event);
-    }
-  };
-
   constructor() {
     super();
+  }
+
+  set(id: string, target: T): T {
+    this.entries.set(id, new WeakRef(target));
+
+    const event = new NexoEvent("nx.create", this, { id, target });
+    this.emit(event.name, event);
+
+    return target;
+  }
+
+  delete(id: string): boolean {
+    const event = new NexoEvent("nx.delete", this, { id });
+    const removed = this.entries.delete(id);
+    this.emit(event.name, event);
+
+    return removed;
   }
 
   link(id: string, target: T): T {
@@ -34,9 +39,10 @@ class Nexo<T extends NexoTS.traceable> extends EventEmitter {
 
   unlink(id: string): boolean {
     const event = new NexoEvent("nx.unlink", this, { id });
+    const removed = this.links.delete(id);
     this.emit(event.name, event);
 
-    return this.links.delete(id);
+    return removed;
   }
 
   clear(): void {
@@ -51,20 +57,24 @@ class Nexo<T extends NexoTS.traceable> extends EventEmitter {
 
     this._release = true;
 
-    const current = this.entries.size;
+    this.links.forEach((wref: WeakRef<T>, id: string) => {
+      if (wref.deref() === undefined) {
+        this.unlink(id);
+      }
+    });
 
-    this.entries.forEach(this._releaseCallback);
-    this.links.forEach(this._releaseCallback);
+    this.entries.forEach((wref: WeakRef<T>, id: string) => {
+      if (wref.deref() === undefined) {
+        this.delete(id);
+      }
+    });
 
-    const deleted = current - this.entries.size;
+    const event = new NexoEvent("nx.release", this, {
+      links: this.links.size,
+      entries: this.entries.size,
+    });
 
-    if (deleted > 0) {
-      const event = new NexoEvent("nx.release", this, {
-        active: this.entries.size,
-        deleted,
-      });
-      this.emit(event.name, event);
-    }
+    this.emit(event.name, event);
 
     this._release = false;
   }

@@ -43,18 +43,18 @@ describe("getProxy", () => {
   });
 
   it("Emits an event for new proxies", () => {
-    const callback = jest.fn();
+    const createCallback = jest.fn();
 
-    nexo.on("nx.proxy.create", callback);
+    nexo.on("nx.create", createCallback);
     const proxy = getProxy(nexo);
     const { id } = map.proxies.get(proxy);
-    const [event] = callback.mock.lastCall;
+    const [createEvent] = createCallback.mock.lastCall;
 
-    expect(callback.mock.lastCall.length).toBe(1);
-    expect(callback).toHaveBeenCalledTimes(1);
-    expect(event).toBeInstanceOf(NexoEvent);
-    expect(event.data).toEqual({ id, target: undefined });
-    expect(event.target).toBe(nexo);
+    expect(createCallback.mock.lastCall.length).toBe(1);
+    expect(createCallback).toHaveBeenCalledTimes(1);
+    expect(createEvent).toBeInstanceOf(NexoEvent);
+    expect(createEvent.data).toEqual({ id, target: proxy });
+    expect(createEvent.target).toBe(nexo);
   });
 
   it("Returns an existing proxy", () => {
