@@ -1,10 +1,9 @@
-import ProxyNexo from "../lib/ProxyNexo.js";
+import Nexo from "../lib/Nexo.js";
 import NexoTS from "../lib/types/Nexo.js";
 import { getProxy } from "./index.js";
 import map from "../lib/maps.js";
-import NexoEvent from "../lib/events/NexoEvent.js";
 
-const nexo = new ProxyNexo();
+const nexo = new Nexo();
 
 describe("getProxy", () => {
   it("Creates a new proxy with custom data", () => {
@@ -40,21 +39,6 @@ describe("getProxy", () => {
 
     expect(nexo.entries.has(id)).toBe(true);
     expect(nexo.entries.get(id).deref()).toStrictEqual(proxy);
-  });
-
-  it("Emits an event for new proxies", () => {
-    const createCallback = jest.fn();
-
-    nexo.on("nx.create", createCallback);
-    const proxy = getProxy(nexo);
-    const { id } = map.proxies.get(proxy);
-    const [createEvent] = createCallback.mock.lastCall;
-
-    expect(createCallback.mock.lastCall.length).toBe(1);
-    expect(createCallback).toHaveBeenCalledTimes(1);
-    expect(createEvent).toBeInstanceOf(NexoEvent);
-    expect(createEvent.data).toEqual({ id, target: proxy });
-    expect(createEvent.target).toBe(nexo);
   });
 
   it("Returns an existing proxy", () => {

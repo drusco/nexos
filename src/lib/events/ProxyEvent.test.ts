@@ -1,4 +1,4 @@
-import ProxyNexo from "../ProxyNexo.js";
+import ProxyNexo from "../Nexo.js";
 import NexoTS from "../types/Nexo.js";
 import ProxyEvent from "./ProxyEvent.js";
 

@@ -1,20 +1,22 @@
-import Nexo from "./Nexo.js";
+import NexoTS from "./types/Nexo.js";
 import NexoEvent from "./events/NexoEvent.js";
+import EventEmitter from "events";
 
-class NexoMap<T extends object> extends Map {
-  private nexo: Nexo<T>;
-  private _release: boolean = false;
+class NexoMap<T extends NexoTS.traceable> extends Map<string, WeakRef<T>> {
+  private _release: boolean;
+  readonly events: EventEmitter;
 
-  constructor(nexo: Nexo<T>) {
+  constructor() {
     super();
-    this.nexo = nexo;
+    this._release = false;
+    this.events = new EventEmitter();
   }
 
-  set(key: string, value: T): this {
-    super.set(key, new WeakRef(value));
+  set(key: string, value: WeakRef<T>): this {
+    super.set(key, value);
 
-    const event = new NexoEvent("nx.map.set", this, { id: key, target: value });
-    this.nexo.emit(event.name, event);
+    const event = new NexoEvent("nx.map.set", this, { key, value });
+    this.events.emit(event.name, event);
 
     return this;
   }
@@ -22,8 +24,8 @@ class NexoMap<T extends object> extends Map {
   delete(key: string): boolean {
     const existed = super.delete(key);
 
-    const event = new NexoEvent("nx.map.delete", this, { id: key });
-    this.nexo.emit(event.name, event);
+    const event = new NexoEvent("nx.map.delete", this, { key });
+    this.events.emit(event.name, event);
 
     return existed;
   }
@@ -32,7 +34,7 @@ class NexoMap<T extends object> extends Map {
     super.clear();
 
     const event = new NexoEvent("nx.map.clear", this);
-    this.nexo.emit(event.name, event);
+    this.events.emit(event.name, event);
   }
 
   release(): void {
@@ -40,14 +42,14 @@ class NexoMap<T extends object> extends Map {
 
     this._release = true;
 
-    this.forEach((wref: WeakRef<T>, id: string) => {
-      if (wref.deref() === undefined) {
-        this.delete(id);
+    this.forEach((weakRef, key) => {
+      if (weakRef.deref() === undefined) {
+        this.delete(key);
       }
     });
 
     const event = new NexoEvent("nx.map.release", this);
-    this.nexo.emit(event.name, event);
+    this.events.emit(event.name, event);
 
     this._release = false;
   }
