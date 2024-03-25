@@ -33,14 +33,6 @@ describe("getProxy", () => {
     expect(map.tracables.has(target)).toBe(true);
   });
 
-  it("Exposes the proxy to the nexo instance", () => {
-    const proxy = getProxy(nexo);
-    const { id } = map.proxies.get(proxy);
-
-    expect(nexo.entries.has(id)).toBe(true);
-    expect(nexo.entries.get(id).deref()).toStrictEqual(proxy);
-  });
-
   it("Returns an existing proxy", () => {
     const target = [];
     const proxy = getProxy(nexo);
