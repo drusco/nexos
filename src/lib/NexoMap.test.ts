@@ -56,7 +56,7 @@ describe("NexoMap", () => {
     expect(map.size).toBe(0);
   });
 
-  it("Release the memory and emits event", () => {
+  it("Releases the map's internal memory and emits event", () => {
     const map = new NexoMap();
     const releaseCallback = jest.fn();
     const deleteCallback = jest.fn();
