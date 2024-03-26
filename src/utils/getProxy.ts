@@ -9,8 +9,8 @@ import NexoEvent from "../lib/events/NexoEvent.js";
 
 const getProxy = (
   nexo: Nexo,
-  target: Nexo.traceable | void,
-  id: string | void,
+  target?: Nexo.traceable | void,
+  id?: string | void,
 ): Nexo.Proxy => {
   // find proxy by target
 

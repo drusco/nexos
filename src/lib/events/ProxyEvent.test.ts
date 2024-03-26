@@ -25,13 +25,11 @@ describe("ProxyEvent", () => {
     const proxy = nexo.proxy();
 
     proxyEventNames.forEach((eventName) => {
-      const event = new ProxyEvent(
-        eventName as NexoTS.proxy.handlerName,
-        proxy,
-      );
+      const event = new ProxyEvent(eventName as NexoTS.proxy.handler, proxy);
 
       expect(event.name).toBe("nx.proxy." + eventName);
       expect(event.target).toBe(proxy);
+      expect(event.data).toBeUndefined();
     });
   });
 });

@@ -1,9 +1,9 @@
-class NexoEvent<Target, Data> {
+class NexoEvent<Target = unknown, Data = unknown, Return = unknown> {
   readonly name: string;
   readonly data: Data;
   readonly target: Target;
   readonly timestamp: number;
-  public returnValue: unknown;
+  public returnValue: Return;
   private _defaultPrevented: boolean;
 
   constructor(name: string, target?: Target, data?: Data) {
@@ -14,7 +14,7 @@ class NexoEvent<Target, Data> {
     this._defaultPrevented = false;
   }
 
-  preventDefault(returnValue?: unknown): void {
+  preventDefault(returnValue?: Return): void {
     this._defaultPrevented = true;
     this.returnValue = returnValue;
   }

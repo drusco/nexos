@@ -4,7 +4,7 @@ import EventEmitter from "events";
 declare namespace Nexo {
   type arrayLike = unknown[];
   type functionLike = (...args: arrayLike) => unknown;
-  type traceable = object | functionLike;
+  type traceable = object;
   type objectKey = string | symbol;
   type plainObject = Record<objectKey, unknown>;
 
@@ -15,9 +15,6 @@ declare namespace Nexo {
   interface Proxy extends functionLike {}
 
   namespace proxy {
-    type ref = WeakRef<Proxy>;
-    type map = Map<string, ref>;
-
     type data = {
       id: string;
       target: WeakRef<traceable> | void;
@@ -27,7 +24,7 @@ declare namespace Nexo {
       isExtensible: boolean;
     };
 
-    type handlerName =
+    type handler =
       | "get"
       | "has"
       | "deleteProperty"
