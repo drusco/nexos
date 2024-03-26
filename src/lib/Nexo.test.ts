@@ -8,7 +8,7 @@ describe("Nexo", () => {
   it("Creates a new nexo object", () => {
     const nexo = new Nexo();
 
-    expect(nexo.links).toBeInstanceOf(NexoMap);
+    expect(nexo.entries).toBeInstanceOf(NexoMap);
     expect(nexo.entries).toBeInstanceOf(NexoMap);
     expect(nexo).toBeInstanceOf(EventEmitter);
   });

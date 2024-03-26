@@ -6,13 +6,10 @@ import EventEmitter from "events";
 
 class Nexo extends EventEmitter {
   readonly entries: NexoMap<NexoTS.Proxy>;
-  readonly links: NexoMap<NexoTS.Proxy>;
 
   constructor() {
     super();
-
     this.entries = new NexoMap();
-    this.links = new NexoMap();
   }
 
   static getProxyId(proxy: NexoTS.Proxy): string {
@@ -39,12 +36,12 @@ class Nexo extends EventEmitter {
       return getProxy(this, target);
     }
 
-    if (this.links.has(target)) {
-      return this.links.get(target).deref();
+    if (this.entries.has(target)) {
+      return this.entries.get(target).deref();
     }
 
     const proxy = getProxy(this);
-    this.links.set(target, new WeakRef(proxy));
+    this.entries.set(target, new WeakRef(proxy));
 
     return proxy;
   }
