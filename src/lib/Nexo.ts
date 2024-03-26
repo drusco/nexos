@@ -37,9 +37,11 @@ class Nexo extends EventEmitter {
     }
 
     if (this.entries.has(target)) {
+      // returns an existing proxy by its id or name
       return this.entries.get(target).deref();
     }
 
+    // creates a new proxy using a custom name
     const proxy = getProxy(this);
     this.entries.set(target, new WeakRef(proxy));
 
