@@ -7,7 +7,11 @@ import EventEmitter from "events";
 import { randomUUID } from "node:crypto";
 import NexoEvent from "../lib/events/NexoEvent.js";
 
-const getProxy = (nexo: Nexo, target: Nexo.traceable | void): Nexo.Proxy => {
+const getProxy = (
+  nexo: Nexo,
+  target: Nexo.traceable | void,
+  id: string | void,
+): Nexo.Proxy => {
   // find proxy by target
 
   const usableProxy = findProxy(target);
@@ -28,7 +32,7 @@ const getProxy = (nexo: Nexo, target: Nexo.traceable | void): Nexo.Proxy => {
 
   // set information about this proxy
 
-  const proxyId = randomUUID();
+  const proxyId = id || randomUUID();
 
   const proxyData: Nexo.proxy.data = {
     id: proxyId,

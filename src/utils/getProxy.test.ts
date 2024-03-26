@@ -19,6 +19,14 @@ describe("getProxy", () => {
     testProxyData(proxy, arrayTarget);
   });
 
+  it("Creates a new proxy with a custom id", () => {
+    const target = undefined;
+    const customId = "foo";
+    const proxy = getProxy(nexo, target, "foo");
+
+    testProxyData(proxy, target, customId);
+  });
+
   it("Links internal data using weak maps", () => {
     const target = [];
     const proxy = getProxy(nexo);
@@ -47,13 +55,16 @@ describe("getProxy", () => {
 function testProxyData(
   proxy: NexoTS.Proxy,
   proxyTarget: NexoTS.traceable | void,
+  proxyId: string | void,
 ) {
   const { id, scope, mock, sandbox, isExtensible, target } =
     map.proxies.get(proxy);
 
   const $target = target ? target.deref() : target;
+  const $id = proxyId || id;
 
   expect(typeof id).toBe("string");
+  expect($id).toBe(id);
   expect(typeof mock.deref()).toBe("function");
   expect(scope.deref()).toStrictEqual(nexo);
   expect(sandbox).toBeInstanceOf(Map);

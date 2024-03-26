@@ -31,7 +31,11 @@ class Nexo extends EventEmitter {
     }
   }
 
-  proxy(target?: string | NexoTS.traceable): NexoTS.Proxy {
+  proxy(target: string | NexoTS.traceable | void): NexoTS.Proxy {
+    if (!target) {
+      return getProxy(this);
+    }
+
     if (isTraceable(target)) {
       return getProxy(this, target);
     }
@@ -42,7 +46,7 @@ class Nexo extends EventEmitter {
     }
 
     // creates a new proxy using a custom name
-    const proxy = getProxy(this);
+    const proxy = getProxy(this, undefined, target);
     this.entries.set(target, new WeakRef(proxy));
 
     return proxy;
