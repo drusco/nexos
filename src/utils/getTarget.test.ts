@@ -13,8 +13,8 @@ describe("getTarget", () => {
 
   it("Returns the target of a proxy", () => {
     const target = [];
-    const proxy = nexo.createProxy();
-    const proxyWithTarget = nexo.createProxy(target);
+    const proxy = nexo.proxy();
+    const proxyWithTarget = nexo.proxy(target);
 
     const result = getTarget(proxy);
     const resultWithTarget = getTarget(proxyWithTarget);
@@ -25,8 +25,8 @@ describe("getTarget", () => {
 
   it("Returns the proxy when the second parameter is true", () => {
     const target = [];
-    const proxy = nexo.createProxy();
-    const proxyWithTarget = nexo.createProxy(target);
+    const proxy = nexo.proxy();
+    const proxyWithTarget = nexo.proxy(target);
 
     const result = getTarget(proxy, true);
     const resultWithTarget = getTarget(proxyWithTarget, true);
@@ -39,7 +39,7 @@ describe("getTarget", () => {
 
   it("Returns the target from a WeakRef(proxy)", () => {
     const target = [];
-    const proxy = nexo.createProxy(target);
+    const proxy = nexo.proxy(target);
     const wref = new WeakRef(proxy);
 
     const targetResult = getTarget(wref);
@@ -51,7 +51,7 @@ describe("getTarget", () => {
 
   it("Returns the target from a WeakRef(object)", () => {
     const target = [];
-    const proxy = nexo.createProxy(target);
+    const proxy = nexo.proxy(target);
     const wref = new WeakRef(proxy);
     const deepRef = new WeakRef(wref);
 

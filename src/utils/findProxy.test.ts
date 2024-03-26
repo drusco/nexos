@@ -6,7 +6,7 @@ const nexo = new ProxyNexo();
 
 describe("findProxy", () => {
   it("Finds a proxy by itself", () => {
-    const proxy = nexo.createProxy();
+    const proxy = nexo.proxy();
     const result = findProxy(proxy);
 
     expect(result).toStrictEqual(proxy);
@@ -14,14 +14,14 @@ describe("findProxy", () => {
 
   it("Finds a proxy by its target", () => {
     const target = [];
-    const proxy = nexo.createProxy(target);
+    const proxy = nexo.proxy(target);
     const result = findProxy(target);
 
     expect(result).toStrictEqual(proxy);
   });
 
   it("Finds a proxy by its mock", () => {
-    const proxy = nexo.createProxy();
+    const proxy = nexo.proxy();
     const { mock } = map.proxies.get(proxy);
     const result = findProxy(mock.deref());
 

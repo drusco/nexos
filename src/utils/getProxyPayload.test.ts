@@ -7,7 +7,7 @@ const nexo = new ProxyNexo();
 
 describe("getProxyPayload", () => {
   it("Returns an encoded proxy id", () => {
-    const proxy = nexo.createProxy();
+    const proxy = nexo.proxy();
     const encodedId = getProxyPayload(proxy);
     const { id } = map.proxies.get(proxy);
     const proxyPayload = PAYLOAD_PREFIX + id;

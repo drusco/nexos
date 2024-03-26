@@ -7,7 +7,7 @@ const nexo = new ProxyNexo();
 
 describe("isUUIDPayload", () => {
   it("Returns true when the parameter is an UUID payload", () => {
-    const proxy = nexo.createProxy();
+    const proxy = nexo.proxy();
     const { id } = map.proxies.get(proxy);
     const result = isUUIDPayload(PAYLOAD_PREFIX + id);
 

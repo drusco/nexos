@@ -22,7 +22,7 @@ const proxyEventNames = [
 
 describe("ProxyEvent", () => {
   it("Adds nx.proxy prefix to the proxy handler event names", () => {
-    const proxy = nexo.createProxy();
+    const proxy = nexo.proxy();
 
     proxyEventNames.forEach((eventName) => {
       const event = new ProxyEvent(
