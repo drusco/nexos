@@ -4,6 +4,7 @@ import EventEmitter from "events";
 
 class NexoMap<T extends NexoTS.traceable> extends Map<string, WeakRef<T>> {
   private _release: boolean;
+  private releaseKey: string;
   readonly events: EventEmitter;
 
   constructor() {
@@ -24,7 +25,11 @@ class NexoMap<T extends NexoTS.traceable> extends Map<string, WeakRef<T>> {
   delete(key: string): boolean {
     const existed = super.delete(key);
 
-    const event = new NexoEvent("nx.map.delete", this, { key });
+    const event = new NexoEvent("nx.map.delete", this, {
+      key,
+      released: this.releaseKey === key,
+    });
+
     this.events.emit(event.name, event);
 
     return existed;
@@ -44,7 +49,9 @@ class NexoMap<T extends NexoTS.traceable> extends Map<string, WeakRef<T>> {
 
     this.forEach((weakRef, key) => {
       if (weakRef.deref() === undefined) {
+        this.releaseKey = key;
         this.delete(key);
+        this.releaseKey = undefined;
       }
     });
 

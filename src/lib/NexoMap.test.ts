@@ -32,7 +32,7 @@ describe("NexoMap", () => {
     expect(deleteCallback).toHaveBeenCalledTimes(1);
     expect(deleteEvent.name).toBe("nx.map.delete");
     expect(deleteEvent.target).toBe(map);
-    expect(deleteEvent.data).toEqual({ key: "foo" });
+    expect(deleteEvent.data).toEqual({ key: "foo", released: false });
     expect(map.size).toBe(0);
   });
 
@@ -56,7 +56,7 @@ describe("NexoMap", () => {
     expect(map.size).toBe(0);
   });
 
-  it("Releases the map's internal memory and emits event", () => {
+  it("Releases the internal memory and emits event", () => {
     const map = new NexoMap();
     const releaseCallback = jest.fn();
     const deleteCallback = jest.fn();
@@ -73,16 +73,19 @@ describe("NexoMap", () => {
 
     map.release();
 
-    const deleteEvents = deleteCallback.mock.calls;
+    const [firstDeleteCall, secondDeleteCall] = deleteCallback.mock.calls;
     const [releaseEvent] = releaseCallback.mock.lastCall;
+    const [firstDeleteEvent] = firstDeleteCall;
+    const [secondDeleteEvent] = secondDeleteCall;
 
     expect(releaseCallback).toHaveBeenCalledTimes(1);
     expect(releaseEvent.name).toBe("nx.map.release");
     expect(releaseEvent.target).toBe(map);
     expect(releaseEvent.data).toBeUndefined();
+    expect(map.size).toBe(0);
 
     expect(deleteCallback).toHaveBeenCalledTimes(2);
-    expect(deleteEvents.length).toBe(2);
-    expect(map.size).toBe(0);
+    expect(firstDeleteEvent.data.released).toBe(true);
+    expect(secondDeleteEvent.data.released).toBe(true);
   });
 });
