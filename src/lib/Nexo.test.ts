@@ -11,7 +11,7 @@ describe("Nexo", () => {
     const id = "baz";
     const proxy = nexo.use(id);
 
-    const proxyId = Nexo.getId(proxy);
+    const proxyId = Nexo.wrap(proxy).id;
 
     expect(proxyId).toBe(id);
   });
@@ -20,17 +20,17 @@ describe("Nexo", () => {
     const nexo = new Nexo();
 
     const foo = nexo.proxy();
-    const fooTarget = Nexo.getTarget(foo);
+    const fooTarget = Nexo.wrap(foo).target;
 
     const target = [];
     const bar = nexo.proxy(target);
-    const barTarget = Nexo.getTarget(bar);
+    const barTarget = Nexo.wrap(bar).target;
 
-    expect(fooTarget).toBeUndefined();
-    expect(barTarget).toBe(target);
+    expect(fooTarget && fooTarget.deref()).toBeUndefined();
+    expect(barTarget && barTarget.deref()).toBe(target);
   });
 
-  it("Wraps the proxy within its wrapper function to extend its usability", () => {
+  it("Accesses the proxy wrapper class", () => {
     const nexo = new Nexo();
     const proxy = nexo.proxy();
 
@@ -53,15 +53,16 @@ describe("Nexo", () => {
 
     expect(isProxy(proxy)).toBe(true);
     expect(typeof proxy).toBe("function");
-    expect(Nexo.getTarget(proxy)).toBeUndefined();
+    expect(Nexo.wrap(proxy).target).toBeUndefined();
   });
 
   it("Creates a new proxy object with a target", () => {
     const nexo = new Nexo();
     const target = {};
     const proxy = nexo.proxy(target);
+    const proxyTarget = Nexo.wrap(proxy).target;
 
-    expect(Nexo.getTarget(proxy)).toBe(target);
+    expect(proxyTarget && proxyTarget.deref()).toBe(target);
   });
 
   it("Emits an event when a proxy is created", () => {
@@ -79,7 +80,7 @@ describe("Nexo", () => {
     expect(createEvent.name).toBe("nx.proxy.create");
     expect(createEvent.target).toBe(nexo);
     expect(createEvent.data).toEqual({
-      id: Nexo.getId(proxy),
+      id: Nexo.wrap(proxy).id,
       target,
     });
   });

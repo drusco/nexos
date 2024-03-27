@@ -13,19 +13,6 @@ class Nexo extends EventEmitter {
     this.entries = new NexoMap();
   }
 
-  static getId(proxy: NexoTS.Proxy): string {
-    const data = map.proxies.get(proxy);
-    return data.id;
-  }
-
-  static getTarget(proxy: NexoTS.Proxy): void | NexoTS.traceable {
-    const { target } = map.proxies.get(proxy);
-
-    if (target) {
-      return target.deref();
-    }
-  }
-
   static wrap(proxy: NexoTS.Proxy): NexoTS.Wrapper {
     const { wrapper } = map.proxies.get(proxy);
     return wrapper.deref();
