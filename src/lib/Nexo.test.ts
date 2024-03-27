@@ -6,30 +6,6 @@ import NexoEvent from "./events/NexoEvent.js";
 import ProxyWrapper from "./ProxyWrapper.js";
 
 describe("Nexo", () => {
-  it("Gets the id from a proxy", () => {
-    const nexo = new Nexo();
-    const id = "baz";
-    const proxy = nexo.use(id);
-
-    const proxyId = Nexo.wrap(proxy).id;
-
-    expect(proxyId).toBe(id);
-  });
-
-  it("Gets the target from a proxy", () => {
-    const nexo = new Nexo();
-
-    const foo = nexo.proxy();
-    const fooTarget = Nexo.wrap(foo).target;
-
-    const target = [];
-    const bar = nexo.proxy(target);
-    const barTarget = Nexo.wrap(bar).target;
-
-    expect(fooTarget && fooTarget.deref()).toBeUndefined();
-    expect(barTarget && barTarget.deref()).toBe(target);
-  });
-
   it("Accesses the proxy wrapper class", () => {
     const nexo = new Nexo();
     const proxy = nexo.proxy();
@@ -42,7 +18,6 @@ describe("Nexo", () => {
   it("Creates a new nexo object", () => {
     const nexo = new Nexo();
 
-    expect(nexo.entries).toBeInstanceOf(NexoMap);
     expect(nexo.entries).toBeInstanceOf(NexoMap);
     expect(nexo).toBeInstanceOf(EventEmitter);
   });

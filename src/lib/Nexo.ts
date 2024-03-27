@@ -3,8 +3,6 @@ import getProxy from "../utils/getProxy.js";
 import map from "./maps.js";
 import NexoMap from "./NexoMap.js";
 import EventEmitter from "events";
-import NexoError from "./errors/NexoError.js";
-
 class Nexo extends EventEmitter {
   readonly entries: NexoMap<NexoTS.Proxy>;
 
@@ -19,19 +17,12 @@ class Nexo extends EventEmitter {
   }
 
   use(id: string, target?: NexoTS.traceable | void): NexoTS.Proxy {
-    if (this.entries.has(id)) {
-      if (target) {
-        throw new NexoError(
-          `${this.constructor.name}: [Proxy ${id}] is already declared`,
-          this,
-        );
-      }
-
+    if (!target && this.entries.has(id)) {
       // returns an existing proxy by its id
       return this.entries.get(id).deref();
     }
 
-    // creates a new proxy using a custom name
+    // creates or update an entry key to a proxy
     const proxy = getProxy(this, target, id);
     this.entries.set(id, new WeakRef(proxy));
 
