@@ -1,7 +1,7 @@
 import ProxyNexo from "../lib/Nexo.js";
 import { getProxyPayload } from "./index.js";
 import map from "../lib/maps.js";
-import { PAYLOAD_PREFIX, IS_UUID_PAYLOAD } from "../lib/constants.js";
+import { PAYLOAD_PREFIX, IS_PAYLOAD } from "../lib/constants.js";
 
 const nexo = new ProxyNexo();
 
@@ -13,6 +13,6 @@ describe("getProxyPayload", () => {
     const proxyPayload = PAYLOAD_PREFIX + id;
 
     expect(encodedId).toBe(proxyPayload);
-    expect(IS_UUID_PAYLOAD.test(encodedId)).toBe(true);
+    expect(IS_PAYLOAD.test(encodedId)).toBe(true);
   });
 });

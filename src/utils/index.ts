@@ -3,7 +3,7 @@ import findProxy from "./findProxy.js";
 import getProxy from "./getProxy.js";
 import getTarget from "./getTarget.js";
 import cloneAndModify from "./cloneAndModify.js";
-import isUUIDPayload from "./isUUIDPayload.js";
+import isProxyPayload from "./isProxyPayload.js";
 import isProxy from "./isProxy.js";
 import getProxyPayload from "./getProxyPayload.js";
 
@@ -14,6 +14,6 @@ export {
   getTarget,
   cloneAndModify,
   getProxyPayload,
-  isUUIDPayload,
+  isProxyPayload,
   isProxy,
 };
