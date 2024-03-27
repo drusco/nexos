@@ -3,7 +3,11 @@ import { getTarget, isTraceable } from "../index.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
 import map from "../../lib/maps.js";
 
-const set = (wrapper: Nexo.Wrapper, key: Nexo.objectKey, value: unknown): boolean => {
+const set = (
+  wrapper: Nexo.Wrapper,
+  key: Nexo.objectKey,
+  value: unknown,
+): boolean => {
   const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const { sandbox } = data;
