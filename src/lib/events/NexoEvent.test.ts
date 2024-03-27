@@ -14,20 +14,20 @@ describe("NexoEvent", () => {
 
   it("Creates a new event with target", () => {
     const target = [];
-    const event = new NexoEvent("foo", target);
+    const event = new NexoEvent("foo", { target });
 
     expect(event.target).toBe(target);
   });
 
   it("Creates a new event with target and data", () => {
     const data = {};
-    const event = new NexoEvent("foo", undefined, data);
+    const event = new NexoEvent("foo", { data });
 
     expect(event.data).toBe(data);
   });
 
   it("Prevents the event default behaviour", () => {
-    const event = new NexoEvent("foo");
+    const event = new NexoEvent("foo", { cancellable: true });
     event.preventDefault();
 
     expect(event.defaultPrevented).toBe(true);

@@ -6,7 +6,7 @@ class NexoError extends Error {
     super(message);
 
     if (emitter) {
-      const event = new NexoEvent("nx.error", emitter, this);
+      const event = new NexoEvent("nx.error", { target: emitter, data: this });
       emitter.emit(event.name, event);
     }
   }
