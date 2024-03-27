@@ -60,4 +60,45 @@ describe("Nexo", () => {
       target: wrapper.target,
     });
   });
+
+  it("Creates a proxy by name", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.use("foo");
+    const wrapper = Nexo.wrap(proxy);
+
+    expect(wrapper.id).toBe("foo");
+    expect(nexo.entries.has("foo")).toBe(true);
+    expect(wrapper.target).toBeUndefined();
+  });
+
+  it("Creates a proxy by name and target", () => {
+    const nexo = new Nexo();
+    const target = {};
+    const proxy = nexo.use("bar", target);
+    const wrapper = Nexo.wrap(proxy);
+
+    expect(wrapper.id).toBe("bar");
+    expect(nexo.entries.has("bar")).toBe(true);
+    expect(wrapper.target && wrapper.target.deref()).toBe(target);
+  });
+
+  it("Updates a proxy by name and target", () => {
+    const nexo = new Nexo();
+    const targetA = {};
+    const targetB = [];
+
+    const proxyA = nexo.use("foo", targetA);
+    const proxyB = nexo.use("foo", targetB);
+
+    const wrapperA = Nexo.wrap(proxyA);
+    const wrapperB = Nexo.wrap(proxyB);
+    const { target } = Nexo.wrap(nexo.use("foo"));
+
+    expect(wrapperA.id).toBe("foo");
+    expect(wrapperB.id).toBe("foo");
+
+    expect(nexo.entries.has("foo")).toBe(true);
+    expect(nexo.entries.size).toBe(1);
+    expect(target && target.deref()).toBe(targetB);
+  });
 });
