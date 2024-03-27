@@ -73,6 +73,7 @@ describe("Nexo", () => {
     nexo.on("nx.proxy.create", createCallback);
 
     const proxy = nexo.proxy(target);
+    const wrapper = Nexo.wrap(proxy);
     const [createEvent] = createCallback.mock.lastCall;
 
     expect(createCallback).toHaveBeenCalledTimes(1);
@@ -80,8 +81,8 @@ describe("Nexo", () => {
     expect(createEvent.name).toBe("nx.proxy.create");
     expect(createEvent.target).toBe(nexo);
     expect(createEvent.data).toEqual({
-      id: Nexo.wrap(proxy).id,
-      target,
+      id: wrapper.id,
+      target: wrapper.target,
     });
   });
 });

@@ -33,10 +33,11 @@ const getProxy = (
   // set information about this proxy
 
   const proxyId = id || randomUUID();
+  const targetRef = traceable ? new WeakRef(target) : target;
 
   const proxyData: Nexo.proxy.data = {
     id: proxyId,
-    target: traceable ? new WeakRef(target) : target,
+    target: targetRef,
     scope: new WeakRef(nexo),
     sandbox: new Map(),
     isExtensible: true,
@@ -54,7 +55,7 @@ const getProxy = (
     target: nexo,
     data: {
       id: proxyId,
-      target,
+      target: targetRef,
     },
   });
 
