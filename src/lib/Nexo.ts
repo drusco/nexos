@@ -1,5 +1,5 @@
 import NexoTS from "./types/Nexo.js";
-import { getProxy, isTraceable } from "../utils/index.js";
+import { getProxy } from "../utils/index.js";
 import map from "./maps.js";
 import NexoMap from "./NexoMap.js";
 import EventEmitter from "events";
@@ -34,25 +34,25 @@ class Nexo extends EventEmitter {
     }
   }
 
-  proxy(target: string | NexoTS.traceable | void): NexoTS.Proxy {
+  use(id: string, target?: NexoTS.traceable | void): NexoTS.Proxy {
+    if (this.entries.has(id)) {
+      // returns an existing proxy by its id
+      return this.entries.get(id).deref();
+    }
+
+    // creates a new proxy using a custom name
+    const proxy = getProxy(this, target, id);
+    this.entries.set(id, new WeakRef(proxy));
+
+    return proxy;
+  }
+
+  proxy(target?: NexoTS.traceable | void): NexoTS.Proxy {
     if (!target) {
       return getProxy(this);
     }
 
-    if (isTraceable(target)) {
-      return getProxy(this, target);
-    }
-
-    if (this.entries.has(target)) {
-      // returns an existing proxy by its id or name
-      return this.entries.get(target).deref();
-    }
-
-    // creates a new proxy using a custom name
-    const proxy = getProxy(this, undefined, target);
-    this.entries.set(target, new WeakRef(proxy));
-
-    return proxy;
+    return getProxy(this, target);
   }
 }
 

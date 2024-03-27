@@ -5,6 +5,30 @@ import isProxy from "../utils/isProxy.js";
 import NexoEvent from "./events/NexoEvent.js";
 
 describe("Nexo", () => {
+  it("Gets the id from a proxy", () => {
+    const nexo = new Nexo();
+    const id = "baz";
+    const proxy = nexo.use(id);
+
+    const proxyId = Nexo.getProxyId(proxy);
+
+    expect(proxyId).toBe(id);
+  });
+
+  it("Gets the target from a proxy", () => {
+    const nexo = new Nexo();
+
+    const foo = nexo.proxy();
+    const fooTarget = Nexo.getProxyTarget(foo);
+
+    const target = [];
+    const bar = nexo.proxy(target);
+    const barTarget = Nexo.getProxyTarget(bar);
+
+    expect(fooTarget).toBeUndefined();
+    expect(barTarget).toBe(target);
+  });
+
   it("Creates a new nexo object", () => {
     const nexo = new Nexo();
 
