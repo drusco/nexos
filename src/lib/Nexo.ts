@@ -1,5 +1,5 @@
 import NexoTS from "./types/Nexo.js";
-import { getProxy } from "../utils/index.js";
+import getProxy from "../utils/getProxy.js";
 import map from "./maps.js";
 import NexoMap from "./NexoMap.js";
 import EventEmitter from "events";
