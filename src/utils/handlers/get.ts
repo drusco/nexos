@@ -3,8 +3,8 @@ import { getProxy, getTarget, isTraceable } from "../index.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
 import map from "../../lib/maps.js";
 
-const get = (mock: Nexo.Mock, key: Nexo.objectKey): unknown => {
-  const proxy = map.tracables.get(mock);
+const get = (wrapper: Nexo.Wrapper, key: Nexo.objectKey): unknown => {
+  const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const { sandbox } = data;
   const scope = data.scope.deref();
@@ -15,7 +15,7 @@ const get = (mock: Nexo.Mock, key: Nexo.objectKey): unknown => {
   const event = new ProxyEvent("get", proxy, { key });
 
   scope.emit(event.name, event);
-  mock.emit(event.name, event);
+  wrapper.emit(event.name, event);
 
   if (event.defaultPrevented) {
     return event.returnValue;

@@ -3,9 +3,9 @@ import map from "../lib/maps.js";
 import findProxy from "./findProxy.js";
 import isTraceable from "./isTraceable.js";
 import handlers from "./handlers/index.js";
-import EventEmitter from "events";
 import { randomUUID } from "node:crypto";
 import NexoEvent from "../lib/events/NexoEvent.js";
+import ProxyWrapper from "../lib/ProxyWrapper.js";
 
 const getProxy = (
   nexo: Nexo,
@@ -22,12 +22,12 @@ const getProxy = (
 
   // create proxy
 
-  const mock: Nexo.Mock = Object.setPrototypeOf(
+  const wrapper: Nexo.Wrapper = Object.setPrototypeOf(
     function () {},
-    EventEmitter.prototype,
+    ProxyWrapper.prototype,
   );
 
-  const proxy = new Proxy(mock, handlers) as Nexo.Proxy;
+  const proxy = new Proxy(wrapper, handlers) as Nexo.Proxy;
   const traceable = isTraceable(target);
 
   // set information about this proxy
@@ -40,11 +40,11 @@ const getProxy = (
     scope: new WeakRef(nexo),
     sandbox: new Map(),
     isExtensible: true,
-    mock: new WeakRef(mock),
+    wrapper: new WeakRef(wrapper),
   };
 
   map.proxies.set(proxy, proxyData);
-  map.tracables.set(mock, proxy);
+  map.tracables.set(wrapper, proxy);
 
   if (traceable) {
     map.tracables.set(target, proxy);

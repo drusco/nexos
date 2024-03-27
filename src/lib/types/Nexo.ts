@@ -1,5 +1,5 @@
 import Nexo from "../Nexo.js";
-import EventEmitter from "events";
+import ProxyWrapper from "../ProxyWrapper.js";
 
 declare namespace Nexo {
   type arrayLike = unknown[];
@@ -8,7 +8,7 @@ declare namespace Nexo {
   type objectKey = string | symbol;
   type plainObject = Record<objectKey, unknown>;
 
-  interface Mock extends EventEmitter {
+  interface Wrapper extends ProxyWrapper {
     (...args: arrayLike): unknown;
   }
 
@@ -20,7 +20,7 @@ declare namespace Nexo {
       target: WeakRef<traceable> | void;
       scope: WeakRef<Nexo>;
       sandbox: Map<objectKey, unknown>;
-      mock: WeakRef<Mock>;
+      wrapper: WeakRef<Wrapper>;
       isExtensible: boolean;
     };
 

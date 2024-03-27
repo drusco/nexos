@@ -3,8 +3,8 @@ import { getTarget, isTraceable } from "../index.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
 import map from "../../lib/maps.js";
 
-const getPrototypeOf = (mock: Nexo.Mock): object => {
-  const proxy = map.tracables.get(mock);
+const getPrototypeOf = (wrapper: Nexo.Wrapper): object => {
+  const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const target = getTarget(data.target);
   const scope = data.scope.deref();
@@ -12,7 +12,7 @@ const getPrototypeOf = (mock: Nexo.Mock): object => {
   const event = new ProxyEvent("getPrototypeOf", proxy);
 
   scope.emit(event.name, event);
-  mock.emit(event.name, event);
+  wrapper.emit(event.name, event);
 
   try {
     if (isTraceable(target)) {

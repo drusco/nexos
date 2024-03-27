@@ -4,11 +4,11 @@ import ProxyEvent from "../../lib/events/ProxyEvent.js";
 import map from "../../lib/maps.js";
 
 const apply = (
-  mock: Nexo.Mock,
+  wrapper: Nexo.Wrapper,
   that: unknown,
   args: Nexo.arrayLike,
 ): unknown => {
-  const proxy = map.tracables.get(mock);
+  const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const target = getTarget(data.target);
   const scope = data.scope.deref();
@@ -16,7 +16,7 @@ const apply = (
   const event = new ProxyEvent("apply", proxy, { that, args });
 
   scope.emit(event.name, event);
-  mock.emit(event.name, event);
+  wrapper.emit(event.name, event);
 
   if (event.defaultPrevented) {
     return event.returnValue;

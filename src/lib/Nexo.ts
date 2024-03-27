@@ -3,6 +3,7 @@ import { getProxy } from "../utils/index.js";
 import map from "./maps.js";
 import NexoMap from "./NexoMap.js";
 import EventEmitter from "events";
+import NexoError from "./errors/NexoError.js";
 
 class Nexo extends EventEmitter {
   readonly entries: NexoMap<NexoTS.Proxy>;
@@ -12,30 +13,33 @@ class Nexo extends EventEmitter {
     this.entries = new NexoMap();
   }
 
-  static getProxyId(proxy: NexoTS.Proxy): void | string {
+  static getId(proxy: NexoTS.Proxy): string {
     const data = map.proxies.get(proxy);
-
-    return data?.id;
+    return data.id;
   }
 
-  static getProxyTarget(proxy: NexoTS.Proxy): void | NexoTS.traceable {
-    const data = map.proxies.get(proxy);
+  static getTarget(proxy: NexoTS.Proxy): void | NexoTS.traceable {
+    const { target } = map.proxies.get(proxy);
 
-    if (data?.target) {
-      return data.target.deref();
+    if (target) {
+      return target.deref();
     }
   }
 
-  static mock(proxy: NexoTS.Proxy): void | NexoTS.Mock {
-    const data = map.proxies.get(proxy);
-
-    if (data?.mock) {
-      return data.mock.deref();
-    }
+  static wrap(proxy: NexoTS.Proxy): NexoTS.Wrapper {
+    const { wrapper } = map.proxies.get(proxy);
+    return wrapper.deref();
   }
 
   use(id: string, target?: NexoTS.traceable | void): NexoTS.Proxy {
     if (this.entries.has(id)) {
+      if (target) {
+        throw new NexoError(
+          `${this.constructor.name}: [Proxy ${id}] is already declared`,
+          this,
+        );
+      }
+
       // returns an existing proxy by its id
       return this.entries.get(id).deref();
     }

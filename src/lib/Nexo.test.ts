@@ -3,6 +3,7 @@ import Nexo from "./Nexo.js";
 import NexoMap from "./NexoMap.js";
 import isProxy from "../utils/isProxy.js";
 import NexoEvent from "./events/NexoEvent.js";
+import ProxyWrapper from "./ProxyWrapper.js";
 
 describe("Nexo", () => {
   it("Gets the id from a proxy", () => {
@@ -10,7 +11,7 @@ describe("Nexo", () => {
     const id = "baz";
     const proxy = nexo.use(id);
 
-    const proxyId = Nexo.getProxyId(proxy);
+    const proxyId = Nexo.getId(proxy);
 
     expect(proxyId).toBe(id);
   });
@@ -19,14 +20,23 @@ describe("Nexo", () => {
     const nexo = new Nexo();
 
     const foo = nexo.proxy();
-    const fooTarget = Nexo.getProxyTarget(foo);
+    const fooTarget = Nexo.getTarget(foo);
 
     const target = [];
     const bar = nexo.proxy(target);
-    const barTarget = Nexo.getProxyTarget(bar);
+    const barTarget = Nexo.getTarget(bar);
 
     expect(fooTarget).toBeUndefined();
     expect(barTarget).toBe(target);
+  });
+
+  it("Wraps the proxy within its wrapper function to extend its usability", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.proxy();
+
+    const wrapper = Nexo.wrap(proxy);
+
+    expect(wrapper).toBeInstanceOf(ProxyWrapper);
   });
 
   it("Creates a new nexo object", () => {
@@ -43,7 +53,7 @@ describe("Nexo", () => {
 
     expect(isProxy(proxy)).toBe(true);
     expect(typeof proxy).toBe("function");
-    expect(Nexo.getProxyTarget(proxy)).toBeUndefined();
+    expect(Nexo.getTarget(proxy)).toBeUndefined();
   });
 
   it("Creates a new proxy object with a target", () => {
@@ -51,7 +61,7 @@ describe("Nexo", () => {
     const target = {};
     const proxy = nexo.proxy(target);
 
-    expect(Nexo.getProxyTarget(proxy)).toBe(target);
+    expect(Nexo.getTarget(proxy)).toBe(target);
   });
 
   it("Emits an event when a proxy is created", () => {
@@ -69,7 +79,7 @@ describe("Nexo", () => {
     expect(createEvent.name).toBe("nx.proxy.create");
     expect(createEvent.target).toBe(nexo);
     expect(createEvent.data).toEqual({
-      id: Nexo.getProxyId(proxy),
+      id: Nexo.getId(proxy),
       target,
     });
   });

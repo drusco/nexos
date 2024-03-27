@@ -4,10 +4,10 @@ import ProxyEvent from "../../lib/events/ProxyEvent.js";
 import map from "../../lib/maps.js";
 
 const getOwnPropertyDescriptor = (
-  mock: Nexo.Mock,
+  wrapper: Nexo.Wrapper,
   key: Nexo.objectKey,
 ): PropertyDescriptor => {
-  const proxy = map.tracables.get(mock);
+  const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
 
   const { sandbox } = data;
@@ -19,7 +19,7 @@ const getOwnPropertyDescriptor = (
   });
 
   scope.emit(event.name, event);
-  mock.emit(event.name, event);
+  wrapper.emit(event.name, event);
 
   return {
     configurable: true,

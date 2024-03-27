@@ -61,15 +61,15 @@ describe("NexoMap", () => {
     const releaseCallback = jest.fn();
     const deleteCallback = jest.fn();
 
-    const valueMock = {
+    const weakRefMock = {
       deref() {},
     } as WeakRef<object>;
 
     map.events.on("nx.map.release", releaseCallback);
     map.events.on("nx.map.delete", deleteCallback);
 
-    map.set("foo", valueMock);
-    map.set("bar", valueMock);
+    map.set("foo", weakRefMock);
+    map.set("bar", weakRefMock);
 
     map.release();
 

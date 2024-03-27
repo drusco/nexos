@@ -2,8 +2,8 @@ import Nexo from "../../lib/types/Nexo.js";
 import map from "../../lib/maps.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
 
-const isExtensible = (mock: Nexo.Mock): boolean => {
-  const proxy = map.tracables.get(mock);
+const isExtensible = (wrapper: Nexo.Wrapper): boolean => {
+  const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const { isExtensible } = data;
   const scope = data.scope.deref();
@@ -11,7 +11,7 @@ const isExtensible = (mock: Nexo.Mock): boolean => {
   const event = new ProxyEvent("isExtensible", proxy);
 
   scope.emit(event.name, event);
-  mock.emit(event.name, event);
+  wrapper.emit(event.name, event);
 
   if (event.defaultPrevented) {
     return event.returnValue === true;

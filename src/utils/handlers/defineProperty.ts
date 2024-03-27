@@ -4,11 +4,11 @@ import ProxyEvent from "../../lib/events/ProxyEvent.js";
 import map from "../../lib/maps.js";
 
 const defineProperty = (
-  mock: Nexo.Mock,
+  wrapper: Nexo.Wrapper,
   key: Nexo.objectKey,
   descriptor: PropertyDescriptor,
 ): boolean => {
-  const proxy = map.tracables.get(mock);
+  const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
 
   const { sandbox } = data;
@@ -21,7 +21,7 @@ const defineProperty = (
   });
 
   scope.emit(event.name, event);
-  mock.emit(event.name, event);
+  wrapper.emit(event.name, event);
 
   if (isTraceable(value)) {
     sandbox.set(key, new WeakRef(value));

@@ -2,8 +2,8 @@ import Nexo from "../../lib/types/Nexo.js";
 import map from "../../lib/maps.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
 
-const ownKeys = (mock: Nexo.Mock): Nexo.objectKey[] => {
-  const proxy = map.tracables.get(mock);
+const ownKeys = (wrapper: Nexo.Wrapper): Nexo.objectKey[] => {
+  const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const { sandbox } = data;
   const scope = data.scope.deref();
@@ -12,7 +12,7 @@ const ownKeys = (mock: Nexo.Mock): Nexo.objectKey[] => {
   const event = new ProxyEvent("ownKeys", proxy);
 
   scope.emit(event.name, event);
-  mock.emit(event.name, event);
+  wrapper.emit(event.name, event);
 
   if (event.defaultPrevented) {
     if (!Array.isArray(event.returnValue)) {

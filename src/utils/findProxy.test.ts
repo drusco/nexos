@@ -20,10 +20,10 @@ describe("findProxy", () => {
     expect(result).toStrictEqual(proxy);
   });
 
-  it("Finds a proxy by its mock", () => {
+  it("Finds a proxy by its wrapper", () => {
     const proxy = nexo.proxy();
-    const { mock } = map.proxies.get(proxy);
-    const result = findProxy(mock.deref());
+    const { wrapper } = map.proxies.get(proxy);
+    const result = findProxy(wrapper.deref());
 
     expect(result).toStrictEqual(proxy);
   });
