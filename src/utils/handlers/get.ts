@@ -12,7 +12,7 @@ const get = (wrapper: Nexo.Wrapper, key: Nexo.objectKey): unknown => {
 
   let value: unknown;
 
-  const event = new ProxyEvent("get", proxy, { key });
+  const event = new ProxyEvent("get", { target: proxy, data: { key } });
 
   scope.emit(event.name, event);
   wrapper.emit(event.name, event);

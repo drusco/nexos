@@ -5,8 +5,11 @@ class ProxyEvent<Target extends Nexo.Proxy, Data> extends NexoEvent<
   Target,
   Data
 > {
-  constructor(name: Nexo.proxy.handler, target: Target, data?: Data) {
-    super(`nx.proxy.${name}`, { target, data });
+  constructor(
+    name: Nexo.proxy.handler,
+    options: Nexo.events.options<Target, Data>,
+  ) {
+    super(`nx.proxy.${name}`, options);
   }
 }
 

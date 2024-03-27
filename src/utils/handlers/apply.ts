@@ -1,5 +1,6 @@
 import Nexo from "../../lib/types/Nexo.js";
-import { getTarget, getProxy } from "../index.js";
+import getTarget from "../getTarget.js";
+import getProxy from "../getProxy.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
 import map from "../../lib/maps.js";
 
@@ -11,11 +12,14 @@ const apply = (
   const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const target = getTarget(data.target);
-  const scope = data.scope.deref();
+  const nexo = data.scope.deref();
 
-  const event = new ProxyEvent("apply", proxy, { that, args });
+  const event = new ProxyEvent("apply", {
+    target: proxy,
+    data: { that, args },
+  });
 
-  scope.emit(event.name, event);
+  nexo.emit(event.name, event);
   wrapper.emit(event.name, event);
 
   if (event.defaultPrevented) {
@@ -34,7 +38,7 @@ const apply = (
     return value;
   }
 
-  return getProxy(scope);
+  return getProxy(nexo);
 };
 
 export default apply;

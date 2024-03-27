@@ -9,7 +9,7 @@ const has = (wrapper: Nexo.Wrapper, key: Nexo.objectKey): boolean => {
   const { sandbox } = data;
   const scope = data.scope.deref();
 
-  const event = new ProxyEvent("has", proxy, { key });
+  const event = new ProxyEvent("has", { target: proxy, data: { key } });
 
   scope.emit(event.name, event);
   wrapper.emit(event.name, event);

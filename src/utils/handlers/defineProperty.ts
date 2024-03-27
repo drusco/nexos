@@ -15,9 +15,12 @@ const defineProperty = (
   const scope = data.scope.deref();
   const value = getTarget(descriptor.value, true);
 
-  const event = new ProxyEvent("defineProperty", proxy, {
-    key,
-    descriptor,
+  const event = new ProxyEvent("defineProperty", {
+    target: proxy,
+    data: {
+      key,
+      descriptor,
+    },
   });
 
   scope.emit(event.name, event);

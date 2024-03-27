@@ -14,8 +14,11 @@ const getOwnPropertyDescriptor = (
   const scope = data.scope.deref();
   const value = getTarget(sandbox.get(key), true);
 
-  const event = new ProxyEvent("getOwnPropertyDescriptor", proxy, {
-    key,
+  const event = new ProxyEvent("getOwnPropertyDescriptor", {
+    target: proxy,
+    data: {
+      key,
+    },
   });
 
   scope.emit(event.name, event);

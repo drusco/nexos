@@ -11,7 +11,10 @@ const deleteProperty = (
   const { sandbox } = data;
   const scope = data.scope.deref();
 
-  const event = new ProxyEvent("deleteProperty", proxy, { key });
+  const event = new ProxyEvent("deleteProperty", {
+    target: proxy,
+    data: { key },
+  });
 
   scope.emit(event.name, event);
   wrapper.emit(event.name, event);

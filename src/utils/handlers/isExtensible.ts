@@ -8,7 +8,7 @@ const isExtensible = (wrapper: Nexo.Wrapper): boolean => {
   const { isExtensible } = data;
   const scope = data.scope.deref();
 
-  const event = new ProxyEvent("isExtensible", proxy);
+  const event = new ProxyEvent("isExtensible", { target: proxy });
 
   scope.emit(event.name, event);
   wrapper.emit(event.name, event);

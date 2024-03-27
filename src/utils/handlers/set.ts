@@ -15,7 +15,7 @@ const set = (
 
   let _value = getTarget(value, true);
 
-  const event = new ProxyEvent("set", proxy, { key, value });
+  const event = new ProxyEvent("set", { target: proxy, data: { key, value } });
 
   scope.emit(event.name, event);
   wrapper.emit(event.name, event);

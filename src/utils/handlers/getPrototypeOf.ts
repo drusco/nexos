@@ -9,7 +9,7 @@ const getPrototypeOf = (wrapper: Nexo.Wrapper): object => {
   const target = getTarget(data.target);
   const scope = data.scope.deref();
 
-  const event = new ProxyEvent("getPrototypeOf", proxy);
+  const event = new ProxyEvent("getPrototypeOf", { target: proxy });
 
   scope.emit(event.name, event);
   wrapper.emit(event.name, event);

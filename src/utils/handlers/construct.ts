@@ -9,7 +9,7 @@ const construct = (wrapper: Nexo.Wrapper, args: Nexo.arrayLike): object => {
   const target = getTarget(data.target);
   const scope = data.scope.deref();
 
-  const event = new ProxyEvent("construct", proxy, { args });
+  const event = new ProxyEvent("construct", { target: proxy, data: { args } });
 
   scope.emit(event.name, event);
   wrapper.emit(event.name, event);

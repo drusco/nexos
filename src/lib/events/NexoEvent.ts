@@ -1,3 +1,5 @@
+import Nexo from "../types/Nexo.js";
+
 class NexoEvent<Target = unknown, Data = unknown, Return = unknown> {
   readonly name: string;
   readonly data: Data;
@@ -9,11 +11,7 @@ class NexoEvent<Target = unknown, Data = unknown, Return = unknown> {
 
   constructor(
     name: string,
-    options: {
-      target?: Target;
-      data?: Data;
-      cancellable?: boolean;
-    } = { cancellable: false },
+    options: Nexo.events.options<Target, Data> = { cancellable: false },
   ) {
     this.name = name;
     this.data = options.data;

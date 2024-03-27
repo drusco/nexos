@@ -39,6 +39,14 @@ declare namespace Nexo {
       | "preventExtensions"
       | "setPrototypeOf";
   }
+
+  namespace events {
+    interface options<Target, Data> {
+      target?: Target;
+      data?: Data;
+      cancellable?: boolean;
+    }
+  }
 }
 
 export default Nexo;

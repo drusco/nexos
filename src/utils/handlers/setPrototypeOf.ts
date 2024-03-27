@@ -7,7 +7,7 @@ const setPrototypeOf = (wrapper: Nexo.Wrapper, prototype: object): boolean => {
   const data = map.proxies.get(proxy);
   const scope = data.scope.deref();
 
-  const event = new ProxyEvent("setPrototypeOf", proxy);
+  const event = new ProxyEvent("setPrototypeOf", { target: proxy });
 
   scope.emit(event.name, event);
   wrapper.emit(event.name, event);

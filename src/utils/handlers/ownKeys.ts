@@ -9,7 +9,7 @@ const ownKeys = (wrapper: Nexo.Wrapper): Nexo.objectKey[] => {
   const scope = data.scope.deref();
   const keys: Nexo.objectKey[] = [];
 
-  const event = new ProxyEvent("ownKeys", proxy);
+  const event = new ProxyEvent("ownKeys", { target: proxy });
 
   scope.emit(event.name, event);
   wrapper.emit(event.name, event);
