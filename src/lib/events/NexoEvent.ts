@@ -21,13 +21,12 @@ class NexoEvent<Target = unknown, Data = unknown, Return = unknown> {
     this._defaultPrevented = false;
   }
 
-  preventDefault(returnValue?: Return): void {
+  preventDefault(): void {
     if (!this.cancellable) {
       return;
     }
 
     this._defaultPrevented = true;
-    this.returnValue = returnValue;
   }
 
   get defaultPrevented(): boolean {

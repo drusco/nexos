@@ -16,7 +16,8 @@ const apply = (
 
   const event = new ProxyEvent("apply", {
     target: proxy,
-    data: { that, args },
+    data: { this: that, arguments: args },
+    cancellable: true,
   });
 
   nexo.emit(event.name, event);
