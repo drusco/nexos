@@ -46,9 +46,9 @@ describe("getProxy", () => {
     const proxy = getProxy(nexo);
     const proxyWithTarget = getProxy(nexo, target);
 
-    expect(getProxy(nexo, proxy)).toStrictEqual(proxy);
-    expect(getProxy(nexo, proxyWithTarget)).toStrictEqual(proxyWithTarget);
-    expect(getProxy(nexo, target)).toStrictEqual(proxyWithTarget);
+    expect(getProxy(nexo, proxy)).toBe(proxy);
+    expect(getProxy(nexo, proxyWithTarget)).toBe(proxyWithTarget);
+    expect(getProxy(nexo, target)).toBe(proxyWithTarget);
   });
 });
 
@@ -66,8 +66,8 @@ function testProxyData(
   expect(typeof id).toBe("string");
   expect($id).toBe(id);
   expect(typeof wrapper.deref()).toBe("function");
-  expect(scope.deref()).toStrictEqual(nexo);
+  expect(scope.deref()).toBe(nexo);
   expect(sandbox).toBeInstanceOf(Map);
   expect(isExtensible).toBe(true);
-  expect($target).toStrictEqual(proxyTarget);
+  expect($target).toBe(proxyTarget);
 }

@@ -55,7 +55,7 @@ describe("Nexo", () => {
     expect(createEvent).toBeInstanceOf(NexoEvent);
     expect(createEvent.name).toBe("nx.proxy.create");
     expect(createEvent.target).toBe(nexo);
-    expect(createEvent.data).toEqual({
+    expect(createEvent.data).toStrictEqual({
       id: wrapper.id,
       target: wrapper.target,
     });

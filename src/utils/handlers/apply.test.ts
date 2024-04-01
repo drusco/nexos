@@ -1,4 +1,5 @@
 import Nexo from "../../lib/Nexo.js";
+import NexoEvent from "../../lib/events/NexoEvent.js";
 import apply from "./apply.js";
 
 const nexo = new Nexo();
@@ -27,9 +28,23 @@ describe("apply", () => {
     expect(applyEventForNexo.data.this).toBe($this);
 
     expect(applyCallbackProxy).toBeCalledTimes(1);
-    expect(applyEventForProxy.target).toBe(proxy);
-    expect(applyEventForProxy.cancellable).toBe(true);
-    expect(applyEventForProxy.data.arguments).toBe(args);
-    expect(applyEventForProxy.data.this).toBe($this);
+    expect(applyEventForProxy).toBe(applyEventForNexo);
+  });
+
+  it("Allows its return value to be defined by the event listener", () => {
+    const proxy = nexo.proxy();
+    const wrapper = Nexo.wrap(proxy);
+    const args = ["foo", 123, { test: true }];
+    const $this = {};
+    const expectedResult = [];
+
+    nexo.on("nx.proxy.apply", (event: NexoEvent) => {
+      event.preventDefault();
+      event.returnValue = expectedResult;
+    });
+
+    const result = apply(wrapper, $this, args);
+
+    expect(result).toBe(expectedResult);
   });
 });

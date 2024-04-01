@@ -15,7 +15,7 @@ describe("cloneAndModify", () => {
 
     expect(result).not.toBe(data);
     expect(result.foo).toBe("file");
-    expect(result.bar).toEqual([10, 20]);
+    expect(result.bar).toStrictEqual([10, 20]);
     expect(result.bar).not.toBe(data.bar);
     expect(result.test).toBe(true);
   });
@@ -50,7 +50,7 @@ describe("cloneAndModify", () => {
 
     expect(result).not.toBe(bar);
     expect(result[0]).not.toBe(foo);
-    expect(result[0]).toEqual(foo);
+    expect(result[0]).toStrictEqual(foo);
     expect(result[0].bar).toBe(result);
     expect(result[0]).toBe(result[0].bar[0]);
   });

@@ -8,7 +8,7 @@ describe("getTarget", () => {
     const notAProxy = {};
     const result = getTarget(notAProxy);
 
-    expect(result).toStrictEqual(notAProxy);
+    expect(result).toBe(notAProxy);
   });
 
   it("Returns the target of a proxy", () => {
@@ -20,7 +20,7 @@ describe("getTarget", () => {
     const resultWithTarget = getTarget(proxyWithTarget);
 
     expect(result).toBeUndefined();
-    expect(resultWithTarget).toStrictEqual(target);
+    expect(resultWithTarget).toBe(target);
   });
 
   it("Returns the proxy when the second parameter is true", () => {
@@ -32,9 +32,9 @@ describe("getTarget", () => {
     const resultWithTarget = getTarget(proxyWithTarget, true);
     const resultFromTarget = getTarget(target, true);
 
-    expect(result).toStrictEqual(proxy);
-    expect(resultWithTarget).toStrictEqual(proxyWithTarget);
-    expect(resultFromTarget).toStrictEqual(proxyWithTarget);
+    expect(result).toBe(proxy);
+    expect(resultWithTarget).toBe(proxyWithTarget);
+    expect(resultFromTarget).toBe(proxyWithTarget);
   });
 
   it("Returns the target from a WeakRef(proxy)", () => {
@@ -45,8 +45,8 @@ describe("getTarget", () => {
     const targetResult = getTarget(wref);
     const proxyResult = getTarget(wref, true);
 
-    expect(targetResult).toStrictEqual(target);
-    expect(proxyResult).toStrictEqual(proxy);
+    expect(targetResult).toBe(target);
+    expect(proxyResult).toBe(proxy);
   });
 
   it("Returns the target from a WeakRef(object)", () => {
@@ -58,7 +58,7 @@ describe("getTarget", () => {
     const wrefResult = getTarget(deepRef);
     const wrefResult2 = getTarget(deepRef, true);
 
-    expect(wrefResult).toStrictEqual(wref);
-    expect(wrefResult2).toStrictEqual(wref);
+    expect(wrefResult).toBe(wref);
+    expect(wrefResult2).toBe(wref);
   });
 });

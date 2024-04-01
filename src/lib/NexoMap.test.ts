@@ -14,7 +14,7 @@ describe("NexoMap", () => {
     expect(setCallback).toHaveBeenCalledTimes(1);
     expect(setEvent.name).toBe("nx.map.set");
     expect(setEvent.target).toBe(map);
-    expect(setEvent.data).toEqual({ key: "foo", value });
+    expect(setEvent.data).toStrictEqual({ key: "foo", value });
     expect(map.size).toBe(1);
   });
 
@@ -32,7 +32,7 @@ describe("NexoMap", () => {
     expect(deleteCallback).toHaveBeenCalledTimes(1);
     expect(deleteEvent.name).toBe("nx.map.delete");
     expect(deleteEvent.target).toBe(map);
-    expect(deleteEvent.data).toEqual({ key: "foo", released: false });
+    expect(deleteEvent.data).toStrictEqual({ key: "foo", released: false });
     expect(map.size).toBe(0);
   });
 

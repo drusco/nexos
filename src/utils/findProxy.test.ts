@@ -9,7 +9,7 @@ describe("findProxy", () => {
     const proxy = nexo.proxy();
     const result = findProxy(proxy);
 
-    expect(result).toStrictEqual(proxy);
+    expect(result).toBe(proxy);
   });
 
   it("Finds a proxy by its target", () => {
@@ -17,7 +17,7 @@ describe("findProxy", () => {
     const proxy = nexo.proxy(target);
     const result = findProxy(target);
 
-    expect(result).toStrictEqual(proxy);
+    expect(result).toBe(proxy);
   });
 
   it("Finds a proxy by its wrapper", () => {
@@ -25,7 +25,7 @@ describe("findProxy", () => {
     const { wrapper } = map.proxies.get(proxy);
     const result = findProxy(wrapper.deref());
 
-    expect(result).toStrictEqual(proxy);
+    expect(result).toBe(proxy);
   });
 
   it("Returns undefined when the proxy is not found", () => {
