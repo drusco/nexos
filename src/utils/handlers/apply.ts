@@ -14,9 +14,12 @@ const apply = (
   const target = getTarget(data.target);
   const nexo = data.scope.deref();
 
+  const returnProxy = getProxy(nexo);
+  let returnValue: unknown = returnProxy;
+
   const event = new ProxyEvent("apply", {
     target: proxy,
-    data: { this: that, arguments: args },
+    data: { this: that, arguments: args, result: returnProxy },
     cancellable: true,
   });
 
@@ -24,22 +27,29 @@ const apply = (
   wrapper.emit(event.name, event);
 
   if (event.defaultPrevented) {
-    return event.returnValue;
-  }
+    returnValue = event.returnValue;
+    //
+  } else if (typeof target === "function") {
+    // get the value from the original function
 
-  if (typeof target === "function") {
-    // get the value from the original target
-
-    const value: unknown = Reflect.apply(
+    returnValue = Reflect.apply(
       target,
       getTarget(that),
       args.map((arg) => getTarget(arg)),
     );
-
-    return value;
   }
 
-  return getProxy(nexo);
+  if (returnValue !== returnProxy) {
+    const update = new ProxyEvent("update", {
+      target: returnProxy,
+      data: returnValue,
+    });
+
+    nexo.emit(update.name, update);
+    wrapper.emit(update.name, update);
+  }
+
+  return returnValue;
 };
 
 export default apply;

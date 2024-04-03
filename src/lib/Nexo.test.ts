@@ -35,9 +35,8 @@ describe("Nexo", () => {
     const nexo = new Nexo();
     const target = {};
     const proxy = nexo.proxy(target);
-    const proxyTarget = Nexo.wrap(proxy).target;
 
-    expect(proxyTarget && proxyTarget.deref()).toBe(target);
+    expect(Nexo.wrap(proxy).target).toBe(target);
   });
 
   it("Emits an event when a proxy is created", () => {
@@ -79,7 +78,7 @@ describe("Nexo", () => {
 
     expect(wrapper.id).toBe("bar");
     expect(nexo.entries.has("bar")).toBe(true);
-    expect(wrapper.target && wrapper.target.deref()).toBe(target);
+    expect(wrapper.target).toBe(target);
   });
 
   it("Updates a proxy by name and target", () => {
@@ -99,6 +98,6 @@ describe("Nexo", () => {
 
     expect(nexo.entries.has("foo")).toBe(true);
     expect(nexo.entries.size).toBe(1);
-    expect(target && target.deref()).toBe(targetB);
+    expect(target).toBe(targetB);
   });
 });

@@ -9,10 +9,8 @@ class NexoEvent<Target = unknown, Data = unknown, Return = unknown> {
   public returnValue: Return;
   private _defaultPrevented: boolean;
 
-  constructor(
-    name: string,
-    options: Nexo.events.options<Target, Data> = { cancellable: false },
-  ) {
+  constructor(name: string, options: Nexo.events.options<Target, Data> = {}) {
+    options = { cancellable: false, ...options };
     this.name = name;
     this.data = options.data;
     this.target = options.target;

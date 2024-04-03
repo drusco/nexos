@@ -55,7 +55,7 @@ const getProxy = (
     target: nexo,
     data: {
       id: proxyId,
-      target: targetRef,
+      target,
     },
   });
 

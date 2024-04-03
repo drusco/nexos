@@ -25,6 +25,7 @@ declare namespace Nexo {
     };
 
     type handler =
+      | "update"
       | "get"
       | "has"
       | "deleteProperty"

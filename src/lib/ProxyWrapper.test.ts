@@ -22,6 +22,6 @@ describe("ProxyWrapper", () => {
     const wrapper = Nexo.wrap(proxy);
 
     expect(wrapper.id).toBe(id);
-    expect(wrapper.target && wrapper.target.deref()).toBe(target);
+    expect(wrapper.target).toBe(target);
   });
 });
