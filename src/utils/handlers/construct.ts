@@ -1,5 +1,5 @@
 import Nexo from "../../lib/types/Nexo.js";
-import { getProxy, getTarget, isTraceable } from "../index.js";
+import { getProxy, getTarget } from "../index.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
 import map from "../../lib/maps.js";
 
@@ -7,33 +7,32 @@ const construct = (wrapper: Nexo.Wrapper, args: Nexo.arrayLike): object => {
   const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const target = getTarget(data.target);
-  const scope = data.scope.deref();
+  const nexo = data.scope.deref();
+  const instanceProxy = getProxy(nexo);
 
-  const event = new ProxyEvent("construct", { target: proxy, data: { args } });
+  const event = new ProxyEvent("construct", {
+    target: proxy,
+    data: { arguments: args, result: instanceProxy },
+    cancellable: false,
+  });
 
-  scope.emit(event.name, event);
+  nexo.emit(event.name, event);
   wrapper.emit(event.name, event);
-
-  if (event.defaultPrevented) {
-    const returnValue = event.returnValue;
-    if (!isTraceable(returnValue)) {
-      return null;
-    }
-    return returnValue;
-  }
 
   if (typeof target === "function") {
     // get the value from the original target
 
-    const instance: object = Reflect.construct(
+    const instanceResult: object = Reflect.construct(
       target,
       args.map((arg) => getTarget(arg)),
     );
 
-    return getProxy(scope, instance);
+    // update the proxy target
+    const instanceData = map.proxies.get(instanceProxy);
+    instanceData.target = new WeakRef(instanceResult);
   }
 
-  return getProxy(scope);
+  return instanceProxy;
 };
 
 export default construct;

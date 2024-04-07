@@ -42,7 +42,7 @@ describe("apply", () => {
     const proxy = nexo.proxy();
     const wrapper = Nexo.wrap(proxy);
 
-    const expectedResult = [];
+    const expectedResult = "foo";
 
     nexo.on("nx.proxy.apply", (event: ProxyEvent<NexoTS.Proxy, object>) => {
       event.preventDefault();
@@ -54,6 +54,25 @@ describe("apply", () => {
     const result = apply(wrapper, _this, args);
 
     expect(result).toBe(expectedResult);
+  });
+
+  it("Allows its return value to be converted to a proxy", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.proxy();
+    const wrapper = Nexo.wrap(proxy);
+
+    const expectedResult = [];
+
+    nexo.on("nx.proxy.apply", (event: ProxyEvent<NexoTS.Proxy, object>) => {
+      event.preventDefault();
+      event.returnValue = expectedResult;
+    });
+
+    const args = ["foo", "bar", 100];
+    const _this = undefined;
+    const result = apply(wrapper, _this, args);
+
+    expect(result).toBe(nexo.proxy(expectedResult));
   });
 
   it("Allows its return value to be defined by a function target", () => {

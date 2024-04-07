@@ -4,7 +4,7 @@ import ProxyWrapper from "../ProxyWrapper.js";
 declare namespace Nexo {
   type arrayLike = unknown[];
   type functionLike = (...args: arrayLike) => unknown;
-  type traceable = object;
+  type traceable = NonNullable<object>;
   type objectKey = string | symbol;
   type plainObject = Record<objectKey, unknown>;
 
