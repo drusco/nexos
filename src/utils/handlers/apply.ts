@@ -3,6 +3,7 @@ import getTarget from "../getTarget.js";
 import getProxy from "../getProxy.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
 import map from "../../lib/maps.js";
+import update from "./update.js";
 
 const apply = (
   wrapper: Nexo.Wrapper,
@@ -13,13 +14,11 @@ const apply = (
   const data = map.proxies.get(proxy);
   const target = getTarget(data.target);
   const nexo = data.scope.deref();
-
-  const returnProxy = getProxy(nexo);
-  let returnValue: unknown = returnProxy;
+  const proxyResult = getProxy(nexo);
 
   const event = new ProxyEvent("apply", {
     target: proxy,
-    data: { this: that, arguments: args, result: returnProxy },
+    data: { this: that, arguments: args, result: proxyResult },
     cancellable: true,
   });
 
@@ -27,29 +26,21 @@ const apply = (
   wrapper.emit(event.name, event);
 
   if (event.defaultPrevented) {
-    returnValue = event.returnValue;
-    //
-  } else if (typeof target === "function") {
+    return update(proxyResult, event.returnValue);
+  }
+
+  if (typeof target === "function") {
     // get the value from the original function
 
-    returnValue = Reflect.apply(
-      target,
+    const functionResult = target.apply(
       getTarget(that),
       args.map((arg) => getTarget(arg)),
     );
+
+    return update(proxyResult, functionResult);
   }
 
-  if (returnValue !== returnProxy) {
-    const update = new ProxyEvent("update", {
-      target: returnProxy,
-      data: returnValue,
-    });
-
-    nexo.emit(update.name, update);
-    wrapper.emit(update.name, update);
-  }
-
-  return returnValue;
+  return proxyResult;
 };
 
 export default apply;
