@@ -1,5 +1,6 @@
 import Nexo from "../../lib/types/Nexo.js";
-import { getProxy, getTarget } from "../index.js";
+import getTarget from "../getTarget.js";
+import getProxy from "../getProxy.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
 import map from "../../lib/maps.js";
 
