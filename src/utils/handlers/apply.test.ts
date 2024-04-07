@@ -16,7 +16,7 @@ describe("apply", () => {
     nexo.on("nx.proxy.apply", applyCallbackNexo);
     wrapper.on("nx.proxy.apply", applyCallbackProxy);
 
-    const args = ["foo", "bar", 100];
+    const args = ["foo", "bar"];
     const _this = {};
     const result = apply(wrapper, _this, args);
 
@@ -37,6 +37,18 @@ describe("apply", () => {
     expect(applyEventForProxy).toBe(applyEventForNexo);
   });
 
+  it("Returns a new proxy by default", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.proxy();
+    const wrapper = Nexo.wrap(proxy);
+
+    const result = apply(wrapper) as NexoTS.Proxy;
+    const resultWrapper = Nexo.wrap(result);
+
+    expect(isProxy(result)).toBe(true);
+    expect(resultWrapper.target).toBeUndefined();
+  });
+
   it("Allows its return value to be defined by the event listener", () => {
     const nexo = new Nexo();
     const proxy = nexo.proxy();
@@ -49,9 +61,7 @@ describe("apply", () => {
       event.returnValue = expectedResult;
     });
 
-    const args = ["foo", "bar", 100];
-    const _this = undefined;
-    const result = apply(wrapper, _this, args);
+    const result = apply(wrapper);
 
     expect(result).toBe(expectedResult);
   });
@@ -68,10 +78,9 @@ describe("apply", () => {
       event.returnValue = expectedResult;
     });
 
-    const args = ["foo", "bar", 100];
-    const _this = undefined;
-    const result = apply(wrapper, _this, args);
+    const result = apply(wrapper);
 
+    expect(isProxy(result)).toBe(true);
     expect(result).toBe(nexo.proxy(expectedResult));
   });
 
@@ -81,37 +90,28 @@ describe("apply", () => {
     const proxy = nexo.proxy(target);
     const wrapper = Nexo.wrap(proxy);
 
-    const args = [4, 1];
-    const _this = undefined;
-    const result = apply(wrapper, _this, args);
+    const traceableValue = {};
+    const target2 = () => traceableValue;
+    const proxy2 = nexo.proxy(target2);
+    const wrapper2 = Nexo.wrap(proxy2);
 
-    expect(result).toBe(5);
-  });
+    const numberResult = apply(wrapper, undefined, [4, 1]);
+    const traceableResult = apply(wrapper2);
 
-  it("Returns a new proxy by default", () => {
-    const nexo = new Nexo();
-    const proxy = nexo.proxy();
-    const wrapper = Nexo.wrap(proxy);
-
-    const args = [];
-    const _this = undefined;
-    const result = apply(wrapper, _this, args) as NexoTS.Proxy;
-
-    expect(isProxy(result)).toBe(true);
-    expect(Nexo.wrap(result).target).toBeUndefined();
+    expect(numberResult).toBe(5);
+    expect(isProxy(traceableResult)).toBe(true);
+    expect(traceableResult).toBe(nexo.proxy(traceableValue));
   });
 
   it("Emits an update event when the expected return proxy changes", () => {
     const nexo = new Nexo();
+    const updateCallback = jest.fn();
+
     const proxy = nexo.proxy();
     const wrapper = Nexo.wrap(proxy);
-
-    const args = [];
-    const _this = undefined;
     const expectedResult = "test";
-    let expectedProxy: NexoTS.Proxy;
 
-    const updateCallback = jest.fn();
+    let expectedProxy: NexoTS.Proxy;
 
     nexo.on(
       "nx.proxy.apply",
@@ -124,7 +124,7 @@ describe("apply", () => {
 
     nexo.on("nx.proxy.update", updateCallback);
 
-    apply(wrapper, _this, args);
+    apply(wrapper);
 
     const [updateEvent] = updateCallback.mock.lastCall;
 
@@ -132,5 +132,37 @@ describe("apply", () => {
     expect(updateEvent.target).toBe(expectedProxy);
     expect(updateEvent.cancellable).toBe(false);
     expect(updateEvent.data).toBe(expectedResult);
+  });
+
+  it("Emits an update event when the target function is called and the return proxy changes", () => {
+    const nexo = new Nexo();
+    const updateCallback = jest.fn();
+
+    const expectedResult = [];
+    const functionTarget = () => expectedResult;
+    const proxy = nexo.proxy(functionTarget);
+    const wrapper = Nexo.wrap(proxy);
+
+    let expectedProxy: NexoTS.Proxy;
+
+    nexo.on(
+      "nx.proxy.apply",
+      (event: ProxyEvent<NexoTS.Proxy, { result: NexoTS.Proxy }>) => {
+        expectedProxy = event.data.result;
+      },
+    );
+
+    nexo.on("nx.proxy.update", updateCallback);
+
+    const result = apply(wrapper);
+
+    const [updateEvent] = updateCallback.mock.lastCall;
+
+    expect(updateCallback).toBeCalledTimes(1);
+    expect(updateEvent.target).toBe(expectedProxy);
+    expect(updateEvent.cancellable).toBe(false);
+    expect(updateEvent.data).toBe(nexo.proxy(expectedResult));
+    expect(isProxy(updateEvent.data)).toBe(true);
+    expect(result).toBe(updateEvent.data);
   });
 });

@@ -7,8 +7,8 @@ import update from "./update.js";
 
 const apply = (
   wrapper: Nexo.Wrapper,
-  that: unknown,
-  args: Nexo.arrayLike,
+  that: unknown = undefined,
+  args: Nexo.arrayLike = [],
 ): unknown => {
   const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);

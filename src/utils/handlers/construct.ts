@@ -3,7 +3,10 @@ import { getProxy, getTarget } from "../index.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
 import map from "../../lib/maps.js";
 
-const construct = (wrapper: Nexo.Wrapper, args: Nexo.arrayLike): object => {
+const construct = (
+  wrapper: Nexo.Wrapper,
+  args: Nexo.arrayLike = [],
+): object => {
   const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const target = getTarget(data.target);
