@@ -7,7 +7,7 @@ const getPrototypeOf = (wrapper: Nexo.Wrapper): object => {
   const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const target = getTarget(data.target);
-  const scope = data.scope.deref();
+  const scope = data.scope;
 
   const event = new ProxyEvent("getPrototypeOf", { target: proxy });
 

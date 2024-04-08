@@ -23,7 +23,7 @@ describe("findProxy", () => {
   it("Finds a proxy by its wrapper", () => {
     const proxy = nexo.proxy();
     const { wrapper } = map.proxies.get(proxy);
-    const result = findProxy(wrapper.deref());
+    const result = findProxy(wrapper);
 
     expect(result).toBe(proxy);
   });

@@ -22,7 +22,7 @@ const getTarget = (value: unknown, resolveProxy: boolean = false): unknown => {
 
   if (target) {
     // returns a target from a proxy that is linked to the received value
-    return target.deref();
+    return target;
   }
 };
 

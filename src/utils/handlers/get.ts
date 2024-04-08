@@ -7,7 +7,7 @@ const get = (wrapper: Nexo.Wrapper, key: Nexo.objectKey): unknown => {
   const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const { sandbox } = data;
-  const scope = data.scope.deref();
+  const scope = data.scope;
   const target = getTarget(data.target);
 
   let value: unknown;

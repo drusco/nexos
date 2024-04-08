@@ -33,15 +33,14 @@ const getProxy = (
   // set information about this proxy
 
   const proxyId = id || randomUUID();
-  const targetRef = traceable ? new WeakRef(target) : target;
 
   const proxyData: Nexo.proxy.data = {
     id: proxyId,
-    target: targetRef,
-    scope: new WeakRef(nexo),
+    target,
+    scope: nexo,
     sandbox: new Map(),
     isExtensible: true,
-    wrapper: new WeakRef(wrapper),
+    wrapper,
   };
 
   map.proxies.set(proxy, proxyData);

@@ -9,7 +9,7 @@ const deleteProperty = (
   const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const { sandbox } = data;
-  const scope = data.scope.deref();
+  const scope = data.scope;
 
   const event = new ProxyEvent("deleteProperty", {
     target: proxy,

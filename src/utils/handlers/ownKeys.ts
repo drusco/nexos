@@ -6,7 +6,7 @@ const ownKeys = (wrapper: Nexo.Wrapper): Nexo.objectKey[] => {
   const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const { sandbox } = data;
-  const scope = data.scope.deref();
+  const scope = data.scope;
   const keys: Nexo.objectKey[] = [];
 
   const event = new ProxyEvent("ownKeys", { target: proxy });

@@ -36,8 +36,8 @@ describe("getProxy", () => {
 
     expect(map.proxies.has(proxy)).toBe(true);
     expect(map.proxies.has(proxyWithTarget)).toBe(true);
-    expect(map.tracables.has(proxyData.wrapper.deref())).toBe(true);
-    expect(map.tracables.has(proxyWithTargetData.wrapper.deref())).toBe(true);
+    expect(map.tracables.has(proxyData.wrapper)).toBe(true);
+    expect(map.tracables.has(proxyWithTargetData.wrapper)).toBe(true);
     expect(map.tracables.has(target)).toBe(true);
   });
 
@@ -60,14 +60,13 @@ function testProxyData(
   const { id, scope, wrapper, sandbox, isExtensible, target } =
     map.proxies.get(proxy);
 
-  const $target = target ? target.deref() : target;
   const $id = proxyId || id;
 
   expect(typeof id).toBe("string");
   expect($id).toBe(id);
-  expect(typeof wrapper.deref()).toBe("function");
-  expect(scope.deref()).toBe(nexo);
+  expect(typeof wrapper).toBe("function");
+  expect(scope).toBe(nexo);
   expect(sandbox).toBeInstanceOf(Map);
   expect(isExtensible).toBe(true);
-  expect($target).toBe(proxyTarget);
+  expect(target).toBe(proxyTarget);
 }

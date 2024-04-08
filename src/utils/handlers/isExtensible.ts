@@ -6,7 +6,7 @@ const isExtensible = (wrapper: Nexo.Wrapper): boolean => {
   const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const { isExtensible } = data;
-  const scope = data.scope.deref();
+  const scope = data.scope;
 
   const event = new ProxyEvent("isExtensible", { target: proxy });
 

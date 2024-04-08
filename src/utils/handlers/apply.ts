@@ -13,7 +13,7 @@ const apply = (
   const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const target = getTarget(data.target);
-  const nexo = data.scope.deref();
+  const nexo = data.scope;
   const resultProxy = getProxy(nexo);
 
   const event = new ProxyEvent("apply", {

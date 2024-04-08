@@ -17,10 +17,10 @@ declare namespace Nexo {
   namespace proxy {
     type data = {
       id: string;
-      target: WeakRef<traceable> | void;
-      scope: WeakRef<Nexo>;
+      target: void | traceable;
+      scope: Nexo;
       sandbox: Map<objectKey, PropertyDescriptor>;
-      wrapper: WeakRef<Wrapper>;
+      wrapper: Wrapper;
       isExtensible: boolean;
     };
 

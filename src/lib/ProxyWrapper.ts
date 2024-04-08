@@ -13,9 +13,7 @@ class ProxyWrapper extends EventEmitter {
   }
 
   get target(): void | Nexo.traceable {
-    if (this.data.target) {
-      return this.data.target.deref();
-    }
+    return this.data.target;
   }
 }
 

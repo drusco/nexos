@@ -11,7 +11,7 @@ const construct = (
   const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const target = getTarget(data.target);
-  const nexo = data.scope.deref();
+  const nexo = data.scope;
   const instanceProxy = getProxy(nexo);
 
   const event = new ProxyEvent("construct", {
@@ -33,7 +33,7 @@ const construct = (
 
     // update the proxy target
     const instanceData = map.proxies.get(instanceProxy);
-    instanceData.target = new WeakRef(instanceResult);
+    instanceData.target = instanceResult;
   }
 
   return instanceProxy;

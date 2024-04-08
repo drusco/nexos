@@ -7,7 +7,7 @@ const has = (wrapper: Nexo.Wrapper, key: Nexo.objectKey): boolean => {
   const data = map.proxies.get(proxy);
 
   const { sandbox } = data;
-  const scope = data.scope.deref();
+  const scope = data.scope;
 
   const event = new ProxyEvent("has", { target: proxy, data: { key } });
 

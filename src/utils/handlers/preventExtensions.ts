@@ -5,7 +5,7 @@ import ProxyEvent from "../../lib/events/ProxyEvent.js";
 const preventExtensions = (wrapper: Nexo.Wrapper): boolean => {
   const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
-  const scope = data.scope.deref();
+  const scope = data.scope;
 
   const event = new ProxyEvent("preventExtensions", { target: proxy });
 

@@ -11,7 +11,7 @@ const set = (
   const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const { sandbox } = data;
-  const scope = data.scope.deref();
+  const scope = data.scope;
 
   let _value = getTarget(value, true);
 

@@ -16,7 +16,7 @@ const defineProperty = (
 ): boolean => {
   const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
-  const nexo = data.scope.deref();
+  const nexo = data.scope;
   const { sandbox } = data;
 
   const propertyDescriptor = cloneOrModify(descriptor, (value: unknown) => {

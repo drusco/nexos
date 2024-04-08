@@ -11,7 +11,7 @@ const getOwnPropertyDescriptor = (
   const data = map.proxies.get(proxy);
 
   const { sandbox } = data;
-  const scope = data.scope.deref();
+  const scope = data.scope;
   const value = getTarget(sandbox.get(key), true);
 
   const event = new ProxyEvent("getOwnPropertyDescriptor", {
