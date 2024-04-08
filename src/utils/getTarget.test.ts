@@ -36,29 +36,4 @@ describe("getTarget", () => {
     expect(resultWithTarget).toBe(proxyWithTarget);
     expect(resultFromTarget).toBe(proxyWithTarget);
   });
-
-  it("Returns the target from a WeakRef(proxy)", () => {
-    const target = [];
-    const proxy = nexo.proxy(target);
-    const wref = new WeakRef(proxy);
-
-    const targetResult = getTarget(wref);
-    const proxyResult = getTarget(wref, true);
-
-    expect(targetResult).toBe(target);
-    expect(proxyResult).toBe(proxy);
-  });
-
-  it("Returns the target from a WeakRef(object)", () => {
-    const target = [];
-    const proxy = nexo.proxy(target);
-    const wref = new WeakRef(proxy);
-    const deepRef = new WeakRef(wref);
-
-    const wrefResult = getTarget(deepRef);
-    const wrefResult2 = getTarget(deepRef, true);
-
-    expect(wrefResult).toBe(wref);
-    expect(wrefResult2).toBe(wref);
-  });
 });

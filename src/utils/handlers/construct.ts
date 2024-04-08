@@ -17,7 +17,6 @@ const construct = (
   const event = new ProxyEvent("construct", {
     target: proxy,
     data: { arguments: args, result: instanceProxy },
-    cancellable: false,
   });
 
   nexo.emit(event.name, event);
