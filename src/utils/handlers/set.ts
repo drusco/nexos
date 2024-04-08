@@ -25,7 +25,7 @@ const set = (
   }
 
   if (isTraceable(_value)) {
-    sandbox.set(key, new WeakRef(_value));
+    // sandbox.set(key, new WeakRef(_value));
   } else {
     sandbox.set(key, _value);
   }

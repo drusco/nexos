@@ -4,7 +4,7 @@ import { isTraceable } from "./index.js";
 
 type objectOrArray = Nexo.plainObject | Nexo.arrayLike;
 
-export default function cloneAndModify(
+export default function cloneOrModify(
   value: unknown,
   modify: (value: unknown) => unknown = (value) => value,
   cache: WeakMap<objectOrArray, objectOrArray> = new WeakMap(),
@@ -38,7 +38,7 @@ export default function cloneAndModify(
   cache.set(value, copy);
 
   keys.forEach((key) => {
-    copy[key] = cloneAndModify(value[key], modify, cache);
+    copy[key] = cloneOrModify(value[key], modify, cache);
   });
 
   return copy;

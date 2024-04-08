@@ -1,9 +1,9 @@
 import ProxyNexo from "../lib/Nexo.js";
-import { cloneAndModify, isProxy } from "./index.js";
+import { cloneOrModify, isProxy } from "./index.js";
 
 const nexo = new ProxyNexo();
 
-describe("cloneAndModify", () => {
+describe("cloneOrModify", () => {
   it("Creates a shallow copy for plain objects or arrays", () => {
     const data = {
       foo: "file",
@@ -11,7 +11,7 @@ describe("cloneAndModify", () => {
       test: true,
     };
 
-    const result = cloneAndModify(data) as typeof data;
+    const result = cloneOrModify(data) as typeof data;
 
     expect(result).not.toBe(data);
     expect(result.foo).toBe("file");
@@ -25,19 +25,19 @@ describe("cloneAndModify", () => {
     const map = new Map();
     const date = new Date();
 
-    expect(cloneAndModify(true)).toBe(true);
-    expect(cloneAndModify(false)).toBe(false);
-    expect(cloneAndModify(NaN)).toBe(NaN);
-    expect(cloneAndModify(Infinity)).toBe(Infinity);
-    expect(cloneAndModify("foo")).toBe("foo");
-    expect(cloneAndModify(symbol)).toBe(symbol);
-    expect(cloneAndModify(null)).toBe(null);
-    expect(cloneAndModify(undefined)).toBe(undefined);
-    expect(cloneAndModify(100)).toBe(100);
-    expect(cloneAndModify(10.5)).toBe(10.5);
-    expect(cloneAndModify(map)).toBe(map);
-    expect(cloneAndModify(date)).toBe(date);
-    expect(cloneAndModify(nexo)).toBe(nexo);
+    expect(cloneOrModify(true)).toBe(true);
+    expect(cloneOrModify(false)).toBe(false);
+    expect(cloneOrModify(NaN)).toBe(NaN);
+    expect(cloneOrModify(Infinity)).toBe(Infinity);
+    expect(cloneOrModify("foo")).toBe("foo");
+    expect(cloneOrModify(symbol)).toBe(symbol);
+    expect(cloneOrModify(null)).toBe(null);
+    expect(cloneOrModify(undefined)).toBe(undefined);
+    expect(cloneOrModify(100)).toBe(100);
+    expect(cloneOrModify(10.5)).toBe(10.5);
+    expect(cloneOrModify(map)).toBe(map);
+    expect(cloneOrModify(date)).toBe(date);
+    expect(cloneOrModify(nexo)).toBe(nexo);
   });
 
   it("Handles circular references by using an internal cache", () => {
@@ -46,7 +46,7 @@ describe("cloneAndModify", () => {
 
     foo.bar = bar;
 
-    const result = cloneAndModify(bar) as typeof bar;
+    const result = cloneOrModify(bar) as typeof bar;
 
     expect(result).not.toBe(bar);
     expect(result[0]).not.toBe(foo);
@@ -76,7 +76,7 @@ describe("cloneAndModify", () => {
       return "bar";
     };
 
-    const result = cloneAndModify(data, transform) as typeof data;
+    const result = cloneOrModify(data, transform) as typeof data;
 
     expect(result.proxy).toBe("foo");
     expect(result.map).toBe("bar");

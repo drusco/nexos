@@ -2,7 +2,7 @@ import isTraceable from "./isTraceable.js";
 import findProxy from "./findProxy.js";
 import getProxy from "./getProxy.js";
 import getTarget from "./getTarget.js";
-import cloneAndModify from "./cloneAndModify.js";
+import cloneOrModify from "./cloneOrModify.js";
 import isProxyPayload from "./isProxyPayload.js";
 import isProxy from "./isProxy.js";
 import getProxyPayload from "./getProxyPayload.js";
@@ -12,7 +12,7 @@ export {
   findProxy,
   getProxy,
   getTarget,
-  cloneAndModify,
+  cloneOrModify,
   getProxyPayload,
   isProxyPayload,
   isProxy,

@@ -35,7 +35,7 @@ const get = (wrapper: Nexo.Wrapper, key: Nexo.objectKey): unknown => {
       // original value changed
 
       if (isTraceable(value)) {
-        sandbox.set(key, new WeakRef(value));
+        // sandbox.set(key, new WeakRef(value));
       } else {
         sandbox.set(key, value);
       }

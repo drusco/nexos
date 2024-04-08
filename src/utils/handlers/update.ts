@@ -18,6 +18,7 @@ const update = <T>(proxy: Nexo.Proxy, value: T): ProxyOrValue<T> => {
   const event = new ProxyEvent("update", {
     target: proxy,
     data: value,
+    cancellable: false,
   });
 
   nexo.emit(event.name, event);

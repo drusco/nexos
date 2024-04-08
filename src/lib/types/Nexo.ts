@@ -19,7 +19,7 @@ declare namespace Nexo {
       id: string;
       target: WeakRef<traceable> | void;
       scope: WeakRef<Nexo>;
-      sandbox: Map<objectKey, unknown>;
+      sandbox: Map<objectKey, PropertyDescriptor>;
       wrapper: WeakRef<Wrapper>;
       isExtensible: boolean;
     };
