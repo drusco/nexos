@@ -3,32 +3,39 @@ import getProxy from "../getProxy.js";
 import isTraceable from "../isTraceable.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
 import map from "../../lib/maps.js";
-import cloneOrModify from "../cloneOrModify.js";
+import cloneModify from "../cloneModify.js";
+
+const descriptorDefaults: PropertyDescriptor = {
+  configurable: false,
+  enumerable: false,
+  writable: false,
+};
 
 const defineProperty = (
   wrapper: Nexo.Wrapper,
   key: Nexo.objectKey,
-  descriptor: PropertyDescriptor = {
-    configurable: false,
-    enumerable: false,
-    writable: false,
-  },
+  descriptor: PropertyDescriptor = descriptorDefaults,
 ): boolean => {
   const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const nexo = data.scope;
   const { sandbox } = data;
 
-  const propertyDescriptor = cloneOrModify(descriptor, (value: unknown) => {
+  descriptor = {
+    ...descriptorDefaults,
+    ...descriptor,
+  };
+
+  const propertyDescriptor = cloneModify(descriptor, false, (value) => {
     if (isTraceable(value)) {
       return getProxy(nexo, value);
     }
-
     return value;
   });
 
   const event = new ProxyEvent("defineProperty", {
     target: proxy,
+    cancellable: true,
     data: {
       key,
       descriptor: propertyDescriptor,

@@ -1,18 +1,19 @@
-import Nexo from "../lib/types/Nexo.js";
 import isPlainObject from "is-plain-obj";
 import { isTraceable } from "./index.js";
 
-type objectOrArray = Nexo.plainObject | Nexo.arrayLike;
+const cache: WeakMap<object, object> = new WeakMap();
 
-export default function cloneOrModify(
-  value: unknown,
+type ReturnType<E, T> = E extends void ? T : E;
+
+const cloneModify = <Expected = void, T = unknown>(
+  value: T,
+  deep: boolean = true,
   modify: (value: unknown) => unknown = (value) => value,
-  cache: WeakMap<objectOrArray, objectOrArray> = new WeakMap(),
-): unknown {
+): ReturnType<Expected, T> => {
   // return the original or transformed value for untraceable values
 
   if (!isTraceable(value)) {
-    return modify(value);
+    return modify(value) as ReturnType<Expected, T>;
   }
 
   // return the original or transformed value for special objects
@@ -21,25 +22,31 @@ export default function cloneOrModify(
   const isArray = Array.isArray(value);
 
   if (!isObject && !isArray) {
-    return modify(value);
+    return modify(value) as ReturnType<Expected, T>;
   }
 
   // Handle circular reference by returning a shallow copy in cache
 
   if (cache.has(value)) {
-    return cache.get(value);
+    return cache.get(value) as ReturnType<Expected, T>;
   }
 
   // return a shallow copy for plain objects and arrays
 
-  const copy: objectOrArray = isArray ? [] : {};
+  const copy: object = isArray ? [] : {};
   const keys = Object.keys(value);
 
   cache.set(value, copy);
 
   keys.forEach((key) => {
-    copy[key] = cloneOrModify(value[key], modify, cache);
+    if (deep) {
+      copy[key] = cloneModify(value[key], true, modify);
+      return;
+    }
+    copy[key] = modify(value[key]);
   });
 
-  return copy;
-}
+  return copy as ReturnType<Expected, T>;
+};
+
+export default cloneModify;

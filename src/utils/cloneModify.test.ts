@@ -1,9 +1,10 @@
 import ProxyNexo from "../lib/Nexo.js";
-import { cloneOrModify, isProxy } from "./index.js";
+import cloneModify from "./cloneModify.js";
+import isProxy from "./isProxy.js";
 
 const nexo = new ProxyNexo();
 
-describe("cloneOrModify", () => {
+describe("cloneModify", () => {
   it("Creates a shallow copy for plain objects or arrays", () => {
     const data = {
       foo: "file",
@@ -11,7 +12,7 @@ describe("cloneOrModify", () => {
       test: true,
     };
 
-    const result = cloneOrModify(data) as typeof data;
+    const result = cloneModify(data);
 
     expect(result).not.toBe(data);
     expect(result.foo).toBe("file");
@@ -25,19 +26,19 @@ describe("cloneOrModify", () => {
     const map = new Map();
     const date = new Date();
 
-    expect(cloneOrModify(true)).toBe(true);
-    expect(cloneOrModify(false)).toBe(false);
-    expect(cloneOrModify(NaN)).toBe(NaN);
-    expect(cloneOrModify(Infinity)).toBe(Infinity);
-    expect(cloneOrModify("foo")).toBe("foo");
-    expect(cloneOrModify(symbol)).toBe(symbol);
-    expect(cloneOrModify(null)).toBe(null);
-    expect(cloneOrModify(undefined)).toBe(undefined);
-    expect(cloneOrModify(100)).toBe(100);
-    expect(cloneOrModify(10.5)).toBe(10.5);
-    expect(cloneOrModify(map)).toBe(map);
-    expect(cloneOrModify(date)).toBe(date);
-    expect(cloneOrModify(nexo)).toBe(nexo);
+    expect(cloneModify(true)).toBe(true);
+    expect(cloneModify(false)).toBe(false);
+    expect(cloneModify(NaN)).toBe(NaN);
+    expect(cloneModify(Infinity)).toBe(Infinity);
+    expect(cloneModify("foo")).toBe("foo");
+    expect(cloneModify(symbol)).toBe(symbol);
+    expect(cloneModify(null)).toBe(null);
+    expect(cloneModify(undefined)).toBe(undefined);
+    expect(cloneModify(100)).toBe(100);
+    expect(cloneModify(10.5)).toBe(10.5);
+    expect(cloneModify(map)).toBe(map);
+    expect(cloneModify(date)).toBe(date);
+    expect(cloneModify(nexo)).toBe(nexo);
   });
 
   it("Handles circular references by using an internal cache", () => {
@@ -46,7 +47,7 @@ describe("cloneOrModify", () => {
 
     foo.bar = bar;
 
-    const result = cloneOrModify(bar) as typeof bar;
+    const result = cloneModify(bar);
 
     expect(result).not.toBe(bar);
     expect(result[0]).not.toBe(foo);
@@ -76,10 +77,19 @@ describe("cloneOrModify", () => {
       return "bar";
     };
 
-    const result = cloneOrModify(data, transform) as typeof data;
+    const result = cloneModify(data, true, transform);
 
     expect(result.proxy).toBe("foo");
     expect(result.map).toBe("bar");
     expect(result.bar).toBe(null);
+  });
+
+  it("Prevents objects an arrays to be cloned deeply; i.e., creates shallow copies", () => {
+    const foo = { bar: [[], () => {}, {}] };
+
+    const result = cloneModify(foo, false);
+
+    expect(foo).not.toBe(result);
+    expect(foo.bar).toBe(result.bar);
   });
 });
