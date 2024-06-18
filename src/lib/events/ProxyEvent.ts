@@ -1,4 +1,4 @@
-import Nexo from "../types/Nexo.js";
+import type Nexo from "../types/Nexo.js";
 import NexoEvent from "./NexoEvent.js";
 
 class ProxyEvent<Target extends Nexo.Proxy, Data> extends NexoEvent<

@@ -1,5 +1,5 @@
 import Nexo from "../Nexo.js";
-import ProxyWrapper from "../ProxyWrapper.js";
+import NexoProxy from "../NexoProxy.js";
 
 declare namespace Nexo {
   type arrayLike = unknown[];
@@ -8,11 +8,11 @@ declare namespace Nexo {
   type objectKey = string | symbol;
   type plainObject = Record<objectKey, unknown>;
 
-  interface Wrapper extends ProxyWrapper {
+  interface Proxy extends functionLike {}
+
+  interface Wrapper extends NexoProxy {
     (...args: arrayLike): unknown;
   }
-
-  interface Proxy extends functionLike {}
 
   namespace proxy {
     type data = {
@@ -22,6 +22,7 @@ declare namespace Nexo {
       sandbox: Map<objectKey, PropertyDescriptor>;
       wrapper: Wrapper;
       isExtensible: boolean;
+      revoke: () => void;
     };
 
     type handler =

@@ -1,4 +1,4 @@
-import NexoTS from "../../lib/types/Nexo.js";
+import nx from "../../lib/types/Nexo.js";
 import Nexo from "../../lib/Nexo.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
 import isProxy from "../isProxy.js";
@@ -42,7 +42,7 @@ describe("apply", () => {
     const proxy = nexo.proxy();
     const wrapper = Nexo.wrap(proxy);
 
-    const result = apply(wrapper) as NexoTS.Proxy;
+    const result = apply(wrapper) as nx.Proxy;
     const resultWrapper = Nexo.wrap(result);
 
     expect(isProxy(result)).toBe(true);
@@ -56,7 +56,7 @@ describe("apply", () => {
 
     const expectedResult = "foo";
 
-    nexo.on("nx.proxy.apply", (event: ProxyEvent<NexoTS.Proxy, object>) => {
+    nexo.on("nx.proxy.apply", (event: ProxyEvent<nx.Proxy, object>) => {
       event.preventDefault();
       event.returnValue = expectedResult;
     });
@@ -73,7 +73,7 @@ describe("apply", () => {
 
     const expectedResult = [];
 
-    nexo.on("nx.proxy.apply", (event: ProxyEvent<NexoTS.Proxy, object>) => {
+    nexo.on("nx.proxy.apply", (event: ProxyEvent<nx.Proxy, object>) => {
       event.preventDefault();
       event.returnValue = expectedResult;
     });
@@ -111,11 +111,11 @@ describe("apply", () => {
     const wrapper = Nexo.wrap(proxy);
     const expectedResult = "test";
 
-    let expectedProxy: NexoTS.Proxy;
+    let expectedProxy: nx.Proxy;
 
     nexo.on(
       "nx.proxy.apply",
-      (event: ProxyEvent<NexoTS.Proxy, { result: NexoTS.Proxy }>) => {
+      (event: ProxyEvent<nx.Proxy, { result: nx.Proxy }>) => {
         event.preventDefault();
         expectedProxy = event.data.result;
         event.returnValue = expectedResult;
@@ -143,11 +143,11 @@ describe("apply", () => {
     const proxy = nexo.proxy(functionTarget);
     const wrapper = Nexo.wrap(proxy);
 
-    let expectedProxy: NexoTS.Proxy;
+    let expectedProxy: nx.Proxy;
 
     nexo.on(
       "nx.proxy.apply",
-      (event: ProxyEvent<NexoTS.Proxy, { result: NexoTS.Proxy }>) => {
+      (event: ProxyEvent<nx.Proxy, { result: nx.Proxy }>) => {
         expectedProxy = event.data.result;
       },
     );

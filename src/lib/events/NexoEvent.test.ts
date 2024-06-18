@@ -19,7 +19,7 @@ describe("NexoEvent", () => {
     expect(event.target).toBe(target);
   });
 
-  it("Creates a new event with target and data", () => {
+  it("Creates a new event with data", () => {
     const data = {};
     const event = new NexoEvent("foo", { data });
 

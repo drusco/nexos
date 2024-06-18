@@ -1,5 +1,5 @@
 import Nexo from "../lib/Nexo.js";
-import NexoTS from "../lib/types/Nexo.js";
+import nx from "../lib/types/Nexo.js";
 import { getProxy } from "./index.js";
 import map from "../lib/maps.js";
 
@@ -53,8 +53,8 @@ describe("getProxy", () => {
 });
 
 function testProxyData(
-  proxy: NexoTS.Proxy,
-  proxyTarget: NexoTS.traceable | void,
+  proxy: nx.Proxy,
+  proxyTarget: nx.traceable | void,
   proxyId: string | void,
 ) {
   const { id, scope, wrapper, sandbox, isExtensible, target } =

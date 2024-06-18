@@ -1,4 +1,4 @@
-import Nexo from "../types/Nexo.js";
+import type Nexo from "../types/Nexo.js";
 
 class NexoEvent<Target = unknown, Data = unknown, Return = unknown> {
   readonly name: string;

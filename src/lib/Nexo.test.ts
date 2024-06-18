@@ -3,10 +3,10 @@ import Nexo from "./Nexo.js";
 import NexoMap from "./NexoMap.js";
 import isProxy from "../utils/isProxy.js";
 import NexoEvent from "./events/NexoEvent.js";
-import ProxyWrapper from "./ProxyWrapper.js";
+import ProxyWrapper from "./NexoProxy.js";
 
 describe("Nexo", () => {
-  it("Accesses the proxy wrapper class", () => {
+  it("Access the proxy wrapper class", () => {
     const nexo = new Nexo();
     const proxy = nexo.proxy();
 
@@ -88,16 +88,21 @@ describe("Nexo", () => {
 
     const proxyA = nexo.use("foo", targetA);
     const proxyB = nexo.use("foo", targetB);
+    const proxyC = nexo.use("foo");
 
     const wrapperA = Nexo.wrap(proxyA);
     const wrapperB = Nexo.wrap(proxyB);
-    const { target } = Nexo.wrap(nexo.use("foo"));
+    const wrapperC = Nexo.wrap(proxyC);
 
     expect(wrapperA.id).toBe("foo");
     expect(wrapperB.id).toBe("foo");
+    expect(wrapperC.id).toBe("foo");
 
     expect(nexo.entries.has("foo")).toBe(true);
     expect(nexo.entries.size).toBe(1);
-    expect(target).toBe(targetB);
+
+    expect(wrapperA.target).toBe(targetA);
+    expect(wrapperB.target).toBe(targetB);
+    expect(wrapperC.target).toBe(targetB);
   });
 });

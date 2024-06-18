@@ -1,8 +1,8 @@
-import Nexo from "./types/Nexo.js";
+import type nx from "./types/Nexo.js";
 import NexoEvent from "./events/NexoEvent.js";
 import EventEmitter from "events";
 
-class NexoMap<Target extends Nexo.traceable> extends Map<
+class NexoMap<Target extends nx.traceable> extends Map<
   string,
   WeakRef<Target>
 > {

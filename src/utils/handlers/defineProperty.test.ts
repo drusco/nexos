@@ -1,4 +1,4 @@
-import NexoTS from "../../lib/types/Nexo.js";
+import nx from "../../lib/types/Nexo.js";
 import Nexo from "../../lib/Nexo.js";
 import defineProperty from "./defineProperty.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
@@ -52,7 +52,7 @@ describe("defineProperty", () => {
       "nx.proxy.defineProperty",
       (
         event: ProxyEvent<
-          NexoTS.Proxy,
+          nx.Proxy,
           { key: string; descriptor: PropertyDescriptor }
         >,
       ) => {

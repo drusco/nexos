@@ -1,17 +1,16 @@
-import Nexo from "../lib/types/Nexo.js";
+import type nx from "../lib/types/Nexo.js";
 import map from "../lib/maps.js";
 import findProxy from "./findProxy.js";
 import isTraceable from "./isTraceable.js";
-import handlers from "./handlers/index.js";
-import { randomUUID } from "node:crypto";
 import NexoEvent from "../lib/events/NexoEvent.js";
-import ProxyWrapper from "../lib/ProxyWrapper.js";
+import NexoProxy from "../lib/NexoProxy.js";
+import { randomUUID } from "node:crypto";
 
 const getProxy = (
-  nexo: Nexo,
-  target?: Nexo.traceable | void,
+  nexo: nx,
+  target?: nx.traceable | void,
   id?: string | void,
-): Nexo.Proxy => {
+): nx.Proxy => {
   // find proxy by target
 
   const usableProxy = findProxy(target);
@@ -22,25 +21,21 @@ const getProxy = (
 
   // create proxy
 
-  const wrapper: Nexo.Wrapper = Object.setPrototypeOf(
-    function () {},
-    ProxyWrapper.prototype,
-  );
-
-  const proxy = new Proxy(wrapper, handlers) as Nexo.Proxy;
+  const { proxy, wrapper, revoke } = NexoProxy.create();
   const traceable = isTraceable(target);
 
   // set information about this proxy
 
   const proxyId = id || randomUUID();
 
-  const proxyData: Nexo.proxy.data = {
+  const proxyData: nx.proxy.data = {
     id: proxyId,
     target,
     scope: nexo,
     sandbox: new Map(),
     isExtensible: true,
     wrapper,
+    revoke,
   };
 
   map.proxies.set(proxy, proxyData);

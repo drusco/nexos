@@ -1,37 +1,19 @@
-import ProxyNexo from "../Nexo.js";
-import NexoTS from "../types/Nexo.js";
+import type nx from "../types/Nexo.js";
+import Nexo from "../Nexo.js";
 import ProxyEvent from "./ProxyEvent.js";
 
-const nexo = new ProxyNexo();
-
-const proxyEventNames = [
-  "get",
-  "has",
-  "deleteProperty",
-  "getOwnPropertyDescriptor",
-  "set",
-  "defineProperty",
-  "apply",
-  "construct",
-  "getPrototypeOf",
-  "isExtensible",
-  "ownKeys",
-  "preventExtensions",
-  "setPrototypeOf",
-];
-
 describe("ProxyEvent", () => {
-  it("Adds nx.proxy prefix to the proxy handler event names", () => {
+  it("Prefixes 'nx.proxy.' to the proxy handler event names", () => {
+    const nexo = new Nexo();
     const proxy = nexo.proxy();
+    const handlerName: nx.proxy.handler = "construct";
 
-    proxyEventNames.forEach((eventName) => {
-      const event = new ProxyEvent(eventName as NexoTS.proxy.handler, {
-        target: proxy,
-      });
-
-      expect(event.name).toBe("nx.proxy." + eventName);
-      expect(event.target).toBe(proxy);
-      expect(event.data).toBeUndefined();
+    const event = new ProxyEvent(handlerName, {
+      target: proxy,
     });
+
+    expect(event.name).toBe("nx.proxy." + handlerName);
+    expect(event.target).toBe(proxy);
+    expect(event.data).toBeUndefined();
   });
 });

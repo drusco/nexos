@@ -1,4 +1,4 @@
-import NexoTS from "../../lib/types/Nexo.js";
+import nx from "../../lib/types/Nexo.js";
 import Nexo from "../../lib/Nexo.js";
 import isProxy from "../isProxy.js";
 import construct from "./construct.js";
@@ -39,7 +39,7 @@ describe("construct", () => {
     const proxy = nexo.proxy();
     const wrapper = Nexo.wrap(proxy);
 
-    const result = construct(wrapper) as NexoTS.Proxy;
+    const result = construct(wrapper) as nx.Proxy;
 
     expect(isProxy(result)).toBe(true);
     expect(Nexo.wrap(result).target).toBeUndefined();
@@ -51,7 +51,7 @@ describe("construct", () => {
     const proxy = nexo.proxy(MyTarget);
     const wrapper = Nexo.wrap(proxy);
 
-    const result = construct(wrapper) as NexoTS.Proxy;
+    const result = construct(wrapper) as nx.Proxy;
     const resultWrapper = Nexo.wrap(result);
 
     expect(isProxy(result)).toBe(true);
