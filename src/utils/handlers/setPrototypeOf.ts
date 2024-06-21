@@ -1,8 +1,8 @@
-import type Nexo from "../../lib/types/Nexo.js";
+import type nx from "../../lib/types/Nexo.js";
 import map from "../../lib/maps.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
 
-const setPrototypeOf = (wrapper: Nexo.Wrapper, prototype: object): boolean => {
+const setPrototypeOf = (wrapper: nx.Wrapper, prototype: object): boolean => {
   const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const scope = data.scope;

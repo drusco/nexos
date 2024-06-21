@@ -1,13 +1,13 @@
-import type Nexo from "../types/Nexo.js";
+import type nx from "../types/Nexo.js";
 import NexoEvent from "./NexoEvent.js";
 
-class ProxyEvent<Target extends Nexo.Proxy, Data> extends NexoEvent<
+class ProxyEvent<Target extends nx.Proxy, Data> extends NexoEvent<
   Target,
   Data
 > {
   constructor(
-    name: Nexo.proxy.handler,
-    options: Nexo.events.options<Target, Data>,
+    name: nx.proxy.handler,
+    options: nx.events.options<Target, Data>,
   ) {
     super(`nx.proxy.${name}`, options);
   }

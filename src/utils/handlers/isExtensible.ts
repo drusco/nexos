@@ -1,8 +1,8 @@
-import type Nexo from "../../lib/types/Nexo.js";
+import type nx from "../../lib/types/Nexo.js";
 import map from "../../lib/maps.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
 
-const isExtensible = (wrapper: Nexo.Wrapper): boolean => {
+const isExtensible = (wrapper: nx.Wrapper): boolean => {
   const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const { isExtensible } = data;

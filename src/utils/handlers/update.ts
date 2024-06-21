@@ -1,12 +1,12 @@
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
-import type Nexo from "../../lib/types/Nexo.js";
+import type nx from "../../lib/types/Nexo.js";
 import map from "../../lib/maps.js";
 import isTraceable from "../isTraceable.js";
 import getProxy from "../getProxy.js";
 
-type ProxyOrValue<T> = T extends Nexo.traceable ? Nexo.Proxy : T;
+type ProxyOrValue<T> = T extends nx.traceable ? nx.Proxy : T;
 
-const update = <T>(proxy: Nexo.Proxy, value: T): ProxyOrValue<T> => {
+const update = <T>(proxy: nx.Proxy, value: T): ProxyOrValue<T> => {
   const data = map.proxies.get(proxy);
   const nexo = data.scope;
   const wrapper = data.wrapper;

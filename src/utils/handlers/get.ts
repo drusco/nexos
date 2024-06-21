@@ -1,11 +1,11 @@
-import type Nexo from "../../lib/types/Nexo.js";
+import type nx from "../../lib/types/Nexo.js";
 import getProxy from "../getProxy.js";
 import getTarget from "../getTarget.js";
 import isTraceable from "../isTraceable.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
 import map from "../../lib/maps.js";
 
-const get = (wrapper: Nexo.Wrapper, key: Nexo.objectKey): unknown => {
+const get = (wrapper: nx.Wrapper, key: nx.objectKey): unknown => {
   const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const { sandbox } = data;

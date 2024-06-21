@@ -1,4 +1,4 @@
-import type Nexo from "../../lib/types/Nexo.js";
+import type nx from "../../lib/types/Nexo.js";
 import getProxy from "../getProxy.js";
 import isTraceable from "../isTraceable.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
@@ -12,8 +12,8 @@ const descriptorDefaults: PropertyDescriptor = {
 };
 
 const defineProperty = (
-  wrapper: Nexo.Wrapper,
-  key: Nexo.objectKey,
+  wrapper: nx.Wrapper,
+  key: nx.objectKey,
   descriptor: PropertyDescriptor = descriptorDefaults,
 ): boolean => {
   const proxy = map.tracables.get(wrapper);

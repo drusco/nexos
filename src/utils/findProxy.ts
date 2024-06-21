@@ -1,9 +1,9 @@
-import type Nexo from "../lib/types/Nexo.js";
+import type nx from "../lib/types/Nexo.js";
 import map from "../lib/maps.js";
 import isProxy from "./isProxy.js";
 import isTraceable from "./isTraceable.js";
 
-const findProxy = (value: unknown): void | Nexo.Proxy => {
+const findProxy = (value: unknown): void | nx.Proxy => {
   // checks whether the value is a proxy or not
   if (isProxy(value)) return value;
   // traceable values may be linked to a proxy

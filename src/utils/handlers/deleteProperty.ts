@@ -1,11 +1,8 @@
-import type Nexo from "../../lib/types/Nexo.js";
+import type nx from "../../lib/types/Nexo.js";
 import map from "../../lib/maps.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
 
-const deleteProperty = (
-  wrapper: Nexo.Wrapper,
-  key: Nexo.objectKey,
-): boolean => {
+const deleteProperty = (wrapper: nx.Wrapper, key: nx.objectKey): boolean => {
   const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);
   const { sandbox } = data;

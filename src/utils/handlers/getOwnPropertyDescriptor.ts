@@ -1,11 +1,11 @@
-import type Nexo from "../../lib/types/Nexo.js";
+import type nx from "../../lib/types/Nexo.js";
 import getTarget from "../getTarget.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
 import map from "../../lib/maps.js";
 
 const getOwnPropertyDescriptor = (
-  wrapper: Nexo.Wrapper,
-  key: Nexo.objectKey,
+  wrapper: nx.Wrapper,
+  key: nx.objectKey,
 ): PropertyDescriptor => {
   const proxy = map.tracables.get(wrapper);
   const data = map.proxies.get(proxy);

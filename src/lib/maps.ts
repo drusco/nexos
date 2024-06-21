@@ -1,6 +1,6 @@
-import type Nexo from "./types/Nexo.js";
+import type nx from "./types/Nexo.js";
 
-const tracables: WeakMap<Nexo.traceable, Nexo.Proxy> = new WeakMap();
-const proxies: WeakMap<Nexo.Proxy, Nexo.proxy.data> = new WeakMap();
+const tracables: WeakMap<nx.traceable, nx.Proxy> = new WeakMap();
+const proxies: WeakMap<nx.Proxy, nx.proxy.data> = new WeakMap();
 
 export default { tracables, proxies };

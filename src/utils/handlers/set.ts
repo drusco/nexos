@@ -1,12 +1,12 @@
-import type Nexo from "../../lib/types/Nexo.js";
+import type nx from "../../lib/types/Nexo.js";
 import getTarget from "../getTarget.js";
 import isTraceable from "../isTraceable.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
 import map from "../../lib/maps.js";
 
 const set = (
-  wrapper: Nexo.Wrapper,
-  key: Nexo.objectKey,
+  wrapper: nx.Wrapper,
+  key: nx.objectKey,
   value: unknown,
 ): boolean => {
   const proxy = map.tracables.get(wrapper);
