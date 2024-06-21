@@ -1,5 +1,5 @@
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
-import Nexo from "../../lib/types/Nexo.js";
+import type Nexo from "../../lib/types/Nexo.js";
 import map from "../../lib/maps.js";
 import isTraceable from "../isTraceable.js";
 import getProxy from "../getProxy.js";

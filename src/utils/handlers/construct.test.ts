@@ -1,4 +1,4 @@
-import nx from "../../lib/types/Nexo.js";
+import type nx from "../../lib/types/Nexo.js";
 import Nexo from "../../lib/Nexo.js";
 import isProxy from "../isProxy.js";
 import construct from "./construct.js";

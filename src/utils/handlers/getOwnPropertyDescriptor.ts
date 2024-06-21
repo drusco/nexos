@@ -1,4 +1,4 @@
-import Nexo from "../../lib/types/Nexo.js";
+import type Nexo from "../../lib/types/Nexo.js";
 import { getTarget } from "../index.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
 import map from "../../lib/maps.js";

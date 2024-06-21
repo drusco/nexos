@@ -1,5 +1,5 @@
 import Nexo from "../lib/Nexo.js";
-import nx from "../lib/types/Nexo.js";
+import type nx from "../lib/types/Nexo.js";
 import { getProxy } from "./index.js";
 import map from "../lib/maps.js";
 

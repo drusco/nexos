@@ -1,4 +1,4 @@
-import Nexo from "../lib/types/Nexo.js";
+import type Nexo from "../lib/types/Nexo.js";
 import { PAYLOAD_PREFIX } from "../lib/constants.js";
 import map from "../lib/maps.js";
 

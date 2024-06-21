@@ -1,4 +1,4 @@
-import Nexo from "../lib/types/Nexo.js";
+import type Nexo from "../lib/types/Nexo.js";
 import map from "../lib/maps.js";
 
 const isProxy = (value: unknown): value is Nexo.Proxy => {
