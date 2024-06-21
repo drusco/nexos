@@ -1,8 +1,8 @@
-import type nx from "../../lib/types/Nexo.js";
-import getTarget from "../getTarget.js";
-import getProxy from "../getProxy.js";
-import ProxyEvent from "../../lib/events/ProxyEvent.js";
-import map from "../../lib/maps.js";
+import type nx from "../types/Nexo.js";
+import getTarget from "../utils/getTarget.js";
+import getProxy from "../utils/getProxy.js";
+import ProxyEvent from "../events/ProxyEvent.js";
+import map from "../utils/maps.js";
 import update from "./update.js";
 
 const apply = (

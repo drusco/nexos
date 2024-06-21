@@ -1,7 +1,7 @@
-import type nx from "../../lib/types/Nexo.js";
-import Nexo from "../../lib/Nexo.js";
-import ProxyEvent from "../../lib/events/ProxyEvent.js";
-import isProxy from "../isProxy.js";
+import type nx from "../types/Nexo.js";
+import Nexo from "../Nexo.js";
+import ProxyEvent from "../events/ProxyEvent.js";
+import isProxy from "../utils/isProxy.js";
 import apply from "./apply.js";
 
 describe("apply", () => {

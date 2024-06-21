@@ -1,7 +1,7 @@
 import type nx from "./types/Nexo.js";
-import getProxy from "../utils/getProxy.js";
-import map from "./maps.js";
-import NexoMap from "./NexoMap.js";
+import getProxy from "./utils/getProxy.js";
+import map from "./utils/maps.js";
+import NexoMap from "./utils/NexoMap.js";
 import EventEmitter from "events";
 
 class Nexo extends EventEmitter {

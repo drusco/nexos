@@ -1,4 +1,4 @@
-import Nexo from "./lib/Nexo.js";
+import Nexo from "./Nexo.js";
 import isProxyPayload from "./utils/isProxyPayload.js";
 import cloneModify from "./utils/cloneModify.js";
 import isProxy from "./utils/isProxy.js";

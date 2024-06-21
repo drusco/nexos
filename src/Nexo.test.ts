@@ -1,9 +1,9 @@
 import EventEmitter from "events";
 import Nexo from "./Nexo.js";
-import NexoMap from "./NexoMap.js";
-import isProxy from "../utils/isProxy.js";
+import NexoMap from "./utils/NexoMap.js";
+import isProxy from "./utils/isProxy.js";
 import NexoEvent from "./events/NexoEvent.js";
-import ProxyWrapper from "./NexoProxy.js";
+import ProxyWrapper from "./utils/ProxyWrapper.js";
 
 describe("Nexo", () => {
   it("Access the proxy wrapper class", () => {

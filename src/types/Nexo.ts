@@ -1,5 +1,5 @@
 import Nexo from "../Nexo.js";
-import NexoProxy from "../NexoProxy.js";
+import NexoProxy from "../utils/ProxyWrapper.js";
 
 declare namespace Nexo {
   type arrayLike = unknown[];

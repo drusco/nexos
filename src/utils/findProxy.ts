@@ -1,5 +1,5 @@
-import type nx from "../lib/types/Nexo.js";
-import map from "../lib/maps.js";
+import type nx from "../types/Nexo.js";
+import map from "./maps.js";
 import isProxy from "./isProxy.js";
 import isTraceable from "./isTraceable.js";
 

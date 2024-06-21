@@ -1,9 +1,9 @@
-import type nx from "../../lib/types/Nexo.js";
-import getProxy from "../getProxy.js";
-import isTraceable from "../isTraceable.js";
-import ProxyEvent from "../../lib/events/ProxyEvent.js";
-import map from "../../lib/maps.js";
-import cloneModify from "../cloneModify.js";
+import type nx from "../types/Nexo.js";
+import getProxy from "../utils/getProxy.js";
+import isTraceable from "../utils/isTraceable.js";
+import ProxyEvent from "../events/ProxyEvent.js";
+import map from "../utils/maps.js";
+import cloneModify from "../utils/cloneModify.js";
 
 const descriptorDefaults: PropertyDescriptor = {
   configurable: false,

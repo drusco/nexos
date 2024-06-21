@@ -1,8 +1,8 @@
-import ProxyEvent from "../../lib/events/ProxyEvent.js";
-import type nx from "../../lib/types/Nexo.js";
-import map from "../../lib/maps.js";
-import isTraceable from "../isTraceable.js";
-import getProxy from "../getProxy.js";
+import ProxyEvent from "../events/ProxyEvent.js";
+import type nx from "../types/Nexo.js";
+import map from "../utils/maps.js";
+import isTraceable from "../utils/isTraceable.js";
+import getProxy from "../utils/getProxy.js";
 
 type ProxyOrValue<T> = T extends nx.traceable ? nx.Proxy : T;
 

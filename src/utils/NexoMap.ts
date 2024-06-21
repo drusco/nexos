@@ -1,5 +1,5 @@
-import type nx from "./types/Nexo.js";
-import NexoEvent from "./events/NexoEvent.js";
+import type nx from "../types/Nexo.js";
+import NexoEvent from "../events/NexoEvent.js";
 import EventEmitter from "events";
 
 class NexoMap<Target extends nx.traceable> extends Map<

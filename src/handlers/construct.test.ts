@@ -1,6 +1,6 @@
-import type nx from "../../lib/types/Nexo.js";
-import Nexo from "../../lib/Nexo.js";
-import isProxy from "../isProxy.js";
+import type nx from "../types/Nexo.js";
+import Nexo from "../Nexo.js";
+import isProxy from "../utils/isProxy.js";
 import construct from "./construct.js";
 
 describe("construct", () => {
