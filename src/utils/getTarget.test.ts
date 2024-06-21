@@ -1,5 +1,5 @@
 import ProxyNexo from "../lib/Nexo.js";
-import { getTarget } from "./index.js";
+import getTarget from "./getTarget.js";
 
 const nexo = new ProxyNexo();
 

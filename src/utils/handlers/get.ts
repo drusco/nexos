@@ -1,5 +1,7 @@
 import type Nexo from "../../lib/types/Nexo.js";
-import { getProxy, getTarget, isTraceable } from "../index.js";
+import getProxy from "../getProxy.js";
+import getTarget from "../getTarget.js";
+import isTraceable from "../isTraceable.js";
 import ProxyEvent from "../../lib/events/ProxyEvent.js";
 import map from "../../lib/maps.js";
 

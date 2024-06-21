@@ -1,5 +1,5 @@
 import isPlainObject from "is-plain-obj";
-import { isTraceable } from "./index.js";
+import isTraceable from "./isTraceable.js";
 
 const cache: WeakMap<object, object> = new WeakMap();
 

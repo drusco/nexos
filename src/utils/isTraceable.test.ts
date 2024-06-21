@@ -1,4 +1,4 @@
-import { isTraceable } from "./index.js";
+import isTraceable from "./isTraceable.js";
 
 describe("isTraceable", () => {
   it("Returns true when the value is a non null object or a function", () => {

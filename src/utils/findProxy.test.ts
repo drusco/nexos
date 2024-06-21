@@ -1,5 +1,5 @@
 import ProxyNexo from "../lib/Nexo.js";
-import { findProxy } from "./index.js";
+import findProxy from "./findProxy.js";
 import map from "../lib/maps.js";
 
 const nexo = new ProxyNexo();

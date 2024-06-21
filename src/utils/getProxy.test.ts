@@ -1,6 +1,6 @@
-import Nexo from "../lib/Nexo.js";
 import type nx from "../lib/types/Nexo.js";
-import { getProxy } from "./index.js";
+import Nexo from "../lib/Nexo.js";
+import getProxy from "./getProxy.js";
 import map from "../lib/maps.js";
 
 const nexo = new Nexo();

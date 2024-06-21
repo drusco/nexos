@@ -1,5 +1,5 @@
 import ProxyNexo from "../lib/Nexo.js";
-import { getProxyPayload } from "./index.js";
+import getProxyPayload from "./getProxyPayload.js";
 import map from "../lib/maps.js";
 import { PAYLOAD_PREFIX, IS_PAYLOAD } from "../lib/constants.js";
 
