@@ -2,7 +2,6 @@ import type nx from "./types/Nexo.js";
 import getProxy from "./utils/getProxy.js";
 import NexoMap from "./utils/NexoMap.js";
 import EventEmitter from "events";
-import ProxyWrapper from "./utils/ProxyWrapper.js";
 
 class Nexo extends EventEmitter {
   readonly entries: NexoMap<nx.Proxy>;
@@ -10,10 +9,6 @@ class Nexo extends EventEmitter {
   constructor() {
     super();
     this.entries = new NexoMap();
-  }
-
-  static wrap(proxy: nx.Proxy): ProxyWrapper {
-    return new ProxyWrapper(proxy);
   }
 
   use(id: string, target?: nx.traceable | void): nx.Proxy {

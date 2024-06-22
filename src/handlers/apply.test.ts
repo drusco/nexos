@@ -3,12 +3,13 @@ import Nexo from "../Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import isProxy from "../utils/isProxy.js";
 import apply from "./apply.js";
+import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 describe("apply", () => {
   it("Emits an apply event", () => {
     const nexo = new Nexo();
     const proxy = nexo.proxy();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = new ProxyWrapper(proxy);
 
     const applyCallbackNexo = jest.fn();
     const applyCallbackProxy = jest.fn();
@@ -40,10 +41,10 @@ describe("apply", () => {
   it("Returns a new proxy by default", () => {
     const nexo = new Nexo();
     const proxy = nexo.proxy();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = new ProxyWrapper(proxy);
 
     const result = apply(wrapper.fn) as nx.Proxy;
-    const resultWrapper = Nexo.wrap(result);
+    const resultWrapper = new ProxyWrapper(result);
 
     expect(isProxy(result)).toBe(true);
     expect(resultWrapper.target).toBeUndefined();
@@ -52,7 +53,7 @@ describe("apply", () => {
   it("Allows its return value to be defined by the event listener", () => {
     const nexo = new Nexo();
     const proxy = nexo.proxy();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = new ProxyWrapper(proxy);
 
     const expectedResult = "foo";
 
@@ -69,7 +70,7 @@ describe("apply", () => {
   it("Allows its return value to be converted to a proxy", () => {
     const nexo = new Nexo();
     const proxy = nexo.proxy();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = new ProxyWrapper(proxy);
 
     const expectedResult = [];
 
@@ -88,12 +89,12 @@ describe("apply", () => {
     const nexo = new Nexo();
     const target = (a: number, b: number): number => a + b;
     const proxy = nexo.proxy(target);
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = new ProxyWrapper(proxy);
 
     const traceableValue = {};
     const target2 = () => traceableValue;
     const proxy2 = nexo.proxy(target2);
-    const wrapper2 = Nexo.wrap(proxy2);
+    const wrapper2 = new ProxyWrapper(proxy2);
 
     const numberResult = apply(wrapper.fn, undefined, [4, 1]);
     const traceableResult = apply(wrapper2.fn);
@@ -108,7 +109,7 @@ describe("apply", () => {
     const updateCallback = jest.fn();
 
     const proxy = nexo.proxy();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = new ProxyWrapper(proxy);
     const expectedResult = "test";
 
     let expectedProxy: nx.Proxy;
@@ -141,7 +142,7 @@ describe("apply", () => {
     const expectedResult = [];
     const functionTarget = () => expectedResult;
     const proxy = nexo.proxy(functionTarget);
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = new ProxyWrapper(proxy);
 
     let expectedProxy: nx.Proxy;
 

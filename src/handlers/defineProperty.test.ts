@@ -4,12 +4,13 @@ import defineProperty from "./defineProperty.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
 import isProxy from "../utils/isProxy.js";
+import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 describe("defineProperty", () => {
   it("Emits a defineProperty event", () => {
     const nexo = new Nexo();
     const proxy = nexo.proxy();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = new ProxyWrapper(proxy);
 
     const definePropertyCallbackNexo = jest.fn();
     const definePropertyCallbackProxy = jest.fn();
@@ -46,7 +47,7 @@ describe("defineProperty", () => {
   it("Returns false when the event is default prevented", () => {
     const nexo = new Nexo();
     const proxy = nexo.proxy();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = new ProxyWrapper(proxy);
 
     wrapper.events.on(
       "nx.proxy.defineProperty",
@@ -68,7 +69,7 @@ describe("defineProperty", () => {
   it("Converts traceable values to proxies", () => {
     const nexo = new Nexo();
     const proxy = nexo.proxy();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = new ProxyWrapper(proxy);
     const { sandbox } = map.proxies.get(proxy);
 
     const key = "foo";

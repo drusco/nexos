@@ -2,12 +2,13 @@ import type nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import isProxy from "../utils/isProxy.js";
 import construct from "./construct.js";
+import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 describe("construct", () => {
   it("Emits a construct event", () => {
     const nexo = new Nexo();
     const proxy = nexo.proxy();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = new ProxyWrapper(proxy);
 
     const constructCallbackNexo = jest.fn();
     const constructCallbackProxy = jest.fn();
@@ -37,22 +38,23 @@ describe("construct", () => {
   it("Returns a new proxy by default", () => {
     const nexo = new Nexo();
     const proxy = nexo.proxy();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = new ProxyWrapper(proxy);
 
     const result = construct(wrapper.fn) as nx.Proxy;
+    const resultWrapper = new ProxyWrapper(result);
 
     expect(isProxy(result)).toBe(true);
-    expect(Nexo.wrap(result).target).toBeUndefined();
+    expect(resultWrapper.target).toBeUndefined();
   });
 
   it("Creates an instance from a function target and returns its proxy", () => {
     const nexo = new Nexo();
     class MyTarget {}
     const proxy = nexo.proxy(MyTarget);
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = new ProxyWrapper(proxy);
 
     const result = construct(wrapper.fn) as nx.Proxy;
-    const resultWrapper = Nexo.wrap(result);
+    const resultWrapper = new ProxyWrapper(result);
 
     expect(isProxy(result)).toBe(true);
     expect(resultWrapper.target).toBeInstanceOf(MyTarget);
