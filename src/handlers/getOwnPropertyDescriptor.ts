@@ -2,13 +2,15 @@ import type nx from "../types/Nexo.js";
 import getTarget from "../utils/getTarget.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
+import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 const getOwnPropertyDescriptor = (
-  wrapper: nx.Wrapper,
+  fn: nx.functionLike,
   key: nx.objectKey,
 ): PropertyDescriptor => {
-  const proxy = map.tracables.get(wrapper);
+  const proxy = map.tracables.get(fn);
   const data = map.proxies.get(proxy);
+  const wrapper = new ProxyWrapper(proxy);
 
   const { sandbox } = data;
   const scope = data.scope;
@@ -22,7 +24,7 @@ const getOwnPropertyDescriptor = (
   });
 
   scope.emit(event.name, event);
-  wrapper.emit(event.name, event);
+  wrapper.events.emit(event.name, event);
 
   return {
     configurable: true,

@@ -4,8 +4,8 @@ import map from "./maps.js";
 import findProxy from "./findProxy.js";
 import isTraceable from "./isTraceable.js";
 import NexoEvent from "../events/NexoEvent.js";
-import NexoProxy from "./ProxyWrapper.js";
 import handlers from "../handlers/index.js";
+import EventEmitter from "node:events";
 
 const getProxy = (
   nexo: nx,
@@ -22,8 +22,8 @@ const getProxy = (
 
   // create proxy
 
-  const wrapper = Object.setPrototypeOf(new Function(), NexoProxy.prototype);
-  const { proxy, revoke } = Proxy.revocable(wrapper, handlers);
+  const fn: nx.Proxy = () => {};
+  const { proxy, revoke } = Proxy.revocable(fn, handlers);
   const traceable = isTraceable(target);
 
   // set information about this proxy
@@ -32,16 +32,17 @@ const getProxy = (
 
   const proxyData: nx.proxy.data = {
     id: proxyId,
+    fn,
     target,
     scope: nexo,
     sandbox: new Map(),
     isExtensible: true,
-    wrapper,
+    events: new EventEmitter(),
     revoke,
   };
 
   map.proxies.set(proxy, proxyData);
-  map.tracables.set(wrapper, proxy);
+  map.tracables.set(fn, proxy);
 
   if (traceable) {
     map.tracables.set(target, proxy);

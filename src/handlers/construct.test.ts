@@ -13,10 +13,10 @@ describe("construct", () => {
     const constructCallbackProxy = jest.fn();
 
     nexo.on("nx.proxy.construct", constructCallbackNexo);
-    wrapper.on("nx.proxy.construct", constructCallbackProxy);
+    wrapper.events.on("nx.proxy.construct", constructCallbackProxy);
 
     const args = ["foo", "bar"];
-    const result = construct(wrapper, args);
+    const result = construct(wrapper.fn, args);
 
     const [constructEventForNexo] = constructCallbackNexo.mock.lastCall;
     const [constructEventForProxy] = constructCallbackProxy.mock.lastCall;
@@ -39,7 +39,7 @@ describe("construct", () => {
     const proxy = nexo.proxy();
     const wrapper = Nexo.wrap(proxy);
 
-    const result = construct(wrapper) as nx.Proxy;
+    const result = construct(wrapper.fn) as nx.Proxy;
 
     expect(isProxy(result)).toBe(true);
     expect(Nexo.wrap(result).target).toBeUndefined();
@@ -51,7 +51,7 @@ describe("construct", () => {
     const proxy = nexo.proxy(MyTarget);
     const wrapper = Nexo.wrap(proxy);
 
-    const result = construct(wrapper) as nx.Proxy;
+    const result = construct(wrapper.fn) as nx.Proxy;
     const resultWrapper = Nexo.wrap(result);
 
     expect(isProxy(result)).toBe(true);

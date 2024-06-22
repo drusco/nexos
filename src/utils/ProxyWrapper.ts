@@ -2,18 +2,31 @@ import type nx from "../types/Nexo.js";
 import EventEmitter from "events";
 import map from "./maps.js";
 
-class ProxyWrapper extends EventEmitter {
-  private get data() {
-    const proxy = map.tracables.get(this);
-    return map.proxies.get(proxy);
+class ProxyWrapper {
+  readonly proxy: nx.Proxy;
+
+  constructor(proxy: nx.Proxy) {
+    this.proxy = proxy;
   }
 
-  get id(): string | void {
-    return this.data?.id;
+  private get data(): nx.proxy.data {
+    return map.proxies.get(this.proxy);
+  }
+
+  get id(): string {
+    return this.data.id;
   }
 
   get target(): nx.traceable | void {
-    return this.data?.target;
+    return this.data.target;
+  }
+
+  get events(): EventEmitter {
+    return this.data.events;
+  }
+
+  get fn(): nx.functionLike {
+    return this.data.fn;
   }
 }
 

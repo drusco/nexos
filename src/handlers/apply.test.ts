@@ -14,11 +14,11 @@ describe("apply", () => {
     const applyCallbackProxy = jest.fn();
 
     nexo.on("nx.proxy.apply", applyCallbackNexo);
-    wrapper.on("nx.proxy.apply", applyCallbackProxy);
+    wrapper.events.on("nx.proxy.apply", applyCallbackProxy);
 
     const args = ["foo", "bar"];
     const _this = {};
-    const result = apply(wrapper, _this, args);
+    const result = apply(wrapper.fn, _this, args);
 
     const [applyEventForNexo] = applyCallbackNexo.mock.lastCall;
     const [applyEventForProxy] = applyCallbackProxy.mock.lastCall;
@@ -42,7 +42,7 @@ describe("apply", () => {
     const proxy = nexo.proxy();
     const wrapper = Nexo.wrap(proxy);
 
-    const result = apply(wrapper) as nx.Proxy;
+    const result = apply(wrapper.fn) as nx.Proxy;
     const resultWrapper = Nexo.wrap(result);
 
     expect(isProxy(result)).toBe(true);
@@ -61,7 +61,7 @@ describe("apply", () => {
       event.returnValue = expectedResult;
     });
 
-    const result = apply(wrapper);
+    const result = apply(wrapper.fn);
 
     expect(result).toBe(expectedResult);
   });
@@ -78,7 +78,7 @@ describe("apply", () => {
       event.returnValue = expectedResult;
     });
 
-    const result = apply(wrapper);
+    const result = apply(wrapper.fn);
 
     expect(isProxy(result)).toBe(true);
     expect(result).toBe(nexo.proxy(expectedResult));
@@ -95,8 +95,8 @@ describe("apply", () => {
     const proxy2 = nexo.proxy(target2);
     const wrapper2 = Nexo.wrap(proxy2);
 
-    const numberResult = apply(wrapper, undefined, [4, 1]);
-    const traceableResult = apply(wrapper2);
+    const numberResult = apply(wrapper.fn, undefined, [4, 1]);
+    const traceableResult = apply(wrapper2.fn);
 
     expect(numberResult).toBe(5);
     expect(isProxy(traceableResult)).toBe(true);
@@ -124,7 +124,7 @@ describe("apply", () => {
 
     nexo.on("nx.proxy.update", updateCallback);
 
-    apply(wrapper);
+    apply(wrapper.fn);
 
     const [updateEvent] = updateCallback.mock.lastCall;
 
@@ -154,7 +154,7 @@ describe("apply", () => {
 
     nexo.on("nx.proxy.update", updateCallback);
 
-    const result = apply(wrapper);
+    const result = apply(wrapper.fn);
 
     const [updateEvent] = updateCallback.mock.lastCall;
 

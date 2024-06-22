@@ -1,6 +1,6 @@
 import ProxyNexo from "../Nexo.js";
+import ProxyWrapper from "./ProxyWrapper.js";
 import findProxy from "./findProxy.js";
-import map from "./maps.js";
 
 const nexo = new ProxyNexo();
 
@@ -22,8 +22,8 @@ describe("findProxy", () => {
 
   it("Finds a proxy by its wrapper", () => {
     const proxy = nexo.proxy();
-    const { wrapper } = map.proxies.get(proxy);
-    const result = findProxy(wrapper);
+    const wrapper = new ProxyWrapper(proxy);
+    const result = findProxy(wrapper.fn);
 
     expect(result).toBe(proxy);
   });

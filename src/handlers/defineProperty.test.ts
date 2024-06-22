@@ -15,9 +15,9 @@ describe("defineProperty", () => {
     const definePropertyCallbackProxy = jest.fn();
 
     nexo.on("nx.proxy.defineProperty", definePropertyCallbackNexo);
-    wrapper.on("nx.proxy.defineProperty", definePropertyCallbackProxy);
+    wrapper.events.on("nx.proxy.defineProperty", definePropertyCallbackProxy);
 
-    const result = defineProperty(wrapper, "foo", { value: "bar" });
+    const result = defineProperty(wrapper.fn, "foo", { value: "bar" });
 
     const [definePropertyEventForNexo] =
       definePropertyCallbackNexo.mock.lastCall;
@@ -48,7 +48,7 @@ describe("defineProperty", () => {
     const proxy = nexo.proxy();
     const wrapper = Nexo.wrap(proxy);
 
-    wrapper.on(
+    wrapper.events.on(
       "nx.proxy.defineProperty",
       (
         event: ProxyEvent<
@@ -60,7 +60,7 @@ describe("defineProperty", () => {
       },
     );
 
-    const result = defineProperty(wrapper, "foo");
+    const result = defineProperty(wrapper.fn, "foo");
 
     expect(result).toBe(false);
   });
@@ -74,7 +74,7 @@ describe("defineProperty", () => {
     const key = "foo";
     const descriptor: PropertyDescriptor = { value: [] };
 
-    const result = defineProperty(wrapper, key, descriptor);
+    const result = defineProperty(wrapper.fn, key, descriptor);
     const fooDescriptor = sandbox.get(key);
 
     expect(result).toBe(true);

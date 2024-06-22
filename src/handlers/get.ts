@@ -4,20 +4,22 @@ import getTarget from "../utils/getTarget.js";
 import isTraceable from "../utils/isTraceable.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
+import ProxyWrapper from "../utils/ProxyWrapper.js";
 
-const get = (wrapper: nx.Wrapper, key: nx.objectKey): unknown => {
-  const proxy = map.tracables.get(wrapper);
+const get = (fn: nx.functionLike, key: nx.objectKey): unknown => {
+  const proxy = map.tracables.get(fn);
   const data = map.proxies.get(proxy);
   const { sandbox } = data;
   const scope = data.scope;
   const target = getTarget(data.target);
+  const wrapper = new ProxyWrapper(proxy);
 
   let value: unknown;
 
   const event = new ProxyEvent("get", { target: proxy, data: { key } });
 
   scope.emit(event.name, event);
-  wrapper.emit(event.name, event);
+  wrapper.events.emit(event.name, event);
 
   if (event.defaultPrevented) {
     return event.returnValue;

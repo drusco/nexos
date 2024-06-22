@@ -1,16 +1,18 @@
 import type nx from "../types/Nexo.js";
 import map from "../utils/maps.js";
 import ProxyEvent from "../events/ProxyEvent.js";
+import ProxyWrapper from "../utils/ProxyWrapper.js";
 
-const setPrototypeOf = (wrapper: nx.Wrapper, prototype: object): boolean => {
-  const proxy = map.tracables.get(wrapper);
+const setPrototypeOf = (fn: nx.functionLike, prototype: object): boolean => {
+  const proxy = map.tracables.get(fn);
   const data = map.proxies.get(proxy);
   const scope = data.scope;
+  const wrapper = new ProxyWrapper(proxy);
 
   const event = new ProxyEvent("setPrototypeOf", { target: proxy });
 
   scope.emit(event.name, event);
-  wrapper.emit(event.name, event);
+  wrapper.events.emit(event.name, event);
 
   if (event.defaultPrevented) {
     if (typeof event.returnValue === "object") {

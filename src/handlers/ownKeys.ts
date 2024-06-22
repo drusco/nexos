@@ -1,18 +1,20 @@
 import type nx from "../types/Nexo.js";
 import map from "../utils/maps.js";
 import ProxyEvent from "../events/ProxyEvent.js";
+import ProxyWrapper from "../utils/ProxyWrapper.js";
 
-const ownKeys = (wrapper: nx.Wrapper): nx.objectKey[] => {
-  const proxy = map.tracables.get(wrapper);
+const ownKeys = (fn: nx.functionLike): nx.objectKey[] => {
+  const proxy = map.tracables.get(fn);
   const data = map.proxies.get(proxy);
   const { sandbox } = data;
   const scope = data.scope;
   const keys: nx.objectKey[] = [];
+  const wrapper = new ProxyWrapper(proxy);
 
   const event = new ProxyEvent("ownKeys", { target: proxy });
 
   scope.emit(event.name, event);
-  wrapper.emit(event.name, event);
+  wrapper.events.emit(event.name, event);
 
   if (event.defaultPrevented) {
     if (!Array.isArray(event.returnValue)) {

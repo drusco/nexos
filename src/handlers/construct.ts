@@ -3,13 +3,15 @@ import getTarget from "../utils/getTarget.js";
 import getProxy from "../utils/getProxy.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
+import ProxyWrapper from "../utils/ProxyWrapper.js";
 
-const construct = (wrapper: nx.Wrapper, args: nx.arrayLike = []): object => {
-  const proxy = map.tracables.get(wrapper);
+const construct = (fn: nx.functionLike, args: nx.arrayLike = []): object => {
+  const proxy = map.tracables.get(fn);
   const data = map.proxies.get(proxy);
   const target = getTarget(data.target);
   const nexo = data.scope;
   const instanceProxy = getProxy(nexo);
+  const wrapper = new ProxyWrapper(proxy);
 
   const event = new ProxyEvent("construct", {
     target: proxy,
@@ -17,7 +19,7 @@ const construct = (wrapper: nx.Wrapper, args: nx.arrayLike = []): object => {
   });
 
   nexo.emit(event.name, event);
-  wrapper.emit(event.name, event);
+  wrapper.events.emit(event.name, event);
 
   if (typeof target === "function") {
     // get the value from the original target

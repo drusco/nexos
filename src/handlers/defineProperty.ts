@@ -4,6 +4,7 @@ import isTraceable from "../utils/isTraceable.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
 import cloneModify from "../utils/cloneModify.js";
+import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 const descriptorDefaults: PropertyDescriptor = {
   configurable: false,
@@ -12,11 +13,12 @@ const descriptorDefaults: PropertyDescriptor = {
 };
 
 const defineProperty = (
-  wrapper: nx.Wrapper,
+  fn: nx.functionLike,
   key: nx.objectKey,
   descriptor: PropertyDescriptor = descriptorDefaults,
 ): boolean => {
-  const proxy = map.tracables.get(wrapper);
+  const proxy = map.tracables.get(fn);
+  const wrapper = new ProxyWrapper(proxy);
   const data = map.proxies.get(proxy);
   const nexo = data.scope;
   const { sandbox } = data;
@@ -43,7 +45,7 @@ const defineProperty = (
   });
 
   nexo.emit(event.name, event);
-  wrapper.emit(event.name, event);
+  wrapper.events.emit(event.name, event);
 
   if (event.defaultPrevented) {
     return false;
