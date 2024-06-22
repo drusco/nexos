@@ -22,7 +22,7 @@ const getProxy = (
 
   // create proxy
 
-  const fn: nx.Proxy = () => {};
+  const fn = new Function() as nx.Proxy;
   const { proxy, revoke } = Proxy.revocable(fn, handlers);
   const traceable = isTraceable(target);
 

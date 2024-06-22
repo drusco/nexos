@@ -8,7 +8,9 @@ declare namespace Nexo {
   type objectKey = string | symbol;
   type plainObject = Record<objectKey, unknown>;
 
-  interface Proxy extends functionLike {}
+  interface Proxy extends functionLike {
+    (...args: arrayLike): void;
+  }
 
   namespace proxy {
     type data = {
