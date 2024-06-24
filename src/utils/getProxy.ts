@@ -28,10 +28,10 @@ const getProxy = (
 
   // set information about this proxy
 
-  const proxyId = id || randomUUID();
+  const uid = id || randomUUID();
 
   const proxyData: nx.proxy.data = {
-    id: proxyId,
+    id: uid,
     fn,
     target,
     scope: nexo,
@@ -51,12 +51,12 @@ const getProxy = (
   const event = new NexoEvent("nx.proxy.create", {
     target: nexo,
     data: {
-      id: proxyId,
+      id: uid,
       target,
     },
   });
 
-  nexo.entries.set(proxyId, new WeakRef(proxy));
+  nexo.entries.set(uid, new WeakRef(proxy));
   nexo.emit(event.name, event);
 
   return proxy;
