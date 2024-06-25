@@ -5,7 +5,7 @@ import map from "../utils/maps.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 const getOwnPropertyDescriptor = (
-  fn: nx.functionLike,
+  fn: nx.voidFunction,
   key: nx.objectKey,
 ): PropertyDescriptor => {
   const proxy = map.tracables.get(fn);

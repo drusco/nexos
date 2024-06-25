@@ -3,7 +3,7 @@ import map from "../utils/maps.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
 
-const has = (fn: nx.functionLike, key: nx.objectKey): boolean => {
+const has = (fn: nx.voidFunction, key: nx.objectKey): boolean => {
   const proxy = map.tracables.get(fn);
   const data = map.proxies.get(proxy);
   const wrapper = new ProxyWrapper(proxy);

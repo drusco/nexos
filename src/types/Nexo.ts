@@ -1,27 +1,30 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Nexo from "../Nexo.js";
 import EventEmitter from "node:events";
 
 declare namespace Nexo {
   type arrayLike = unknown[];
-  type functionLike = (...args: arrayLike) => unknown;
   type traceable = NonNullable<object>;
   type objectKey = string | symbol;
   type plainObject = Record<objectKey, unknown>;
+  type voidFunction = (...args: arrayLike) => void;
+  type functionLike = (...args: arrayLike) => any;
 
   interface Proxy extends functionLike {
-    (...args: arrayLike): void;
+    new (...args: arrayLike): any;
+    [x: objectKey]: any;
   }
 
   namespace proxy {
     type data = {
       id: string;
-      fn: functionLike;
       target: void | traceable;
       scope: Nexo;
       sandbox: Map<objectKey, PropertyDescriptor>;
       isExtensible: boolean;
       events: EventEmitter;
-      revoke: () => void;
+      fn: voidFunction;
+      revoke: voidFunction;
     };
 
     type handler =

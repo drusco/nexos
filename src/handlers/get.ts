@@ -6,7 +6,7 @@ import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
 
-const get = (fn: nx.functionLike, key: nx.objectKey): unknown => {
+const get = (fn: nx.voidFunction, key: nx.objectKey): unknown => {
   const proxy = map.tracables.get(fn);
   const data = map.proxies.get(proxy);
   const { sandbox } = data;

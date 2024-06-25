@@ -25,8 +25,12 @@ class ProxyWrapper {
     return this.data.events;
   }
 
-  get fn(): nx.functionLike {
+  get fn(): nx.voidFunction {
     return this.data.fn;
+  }
+
+  get revoke(): nx.voidFunction {
+    return this.data.revoke;
   }
 }
 

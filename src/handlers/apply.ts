@@ -7,7 +7,7 @@ import update from "./update.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 const apply = (
-  fn: nx.functionLike,
+  fn: nx.voidFunction,
   that: unknown = undefined,
   args: nx.arrayLike = [],
 ): unknown => {

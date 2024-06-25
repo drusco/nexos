@@ -5,7 +5,7 @@ import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
 
-const construct = (fn: nx.functionLike, args: nx.arrayLike = []): object => {
+const construct = (fn: nx.voidFunction, args: nx.arrayLike = []): object => {
   const proxy = map.tracables.get(fn);
   const data = map.proxies.get(proxy);
   const target = getTarget(data.target);

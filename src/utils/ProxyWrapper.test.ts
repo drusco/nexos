@@ -15,4 +15,14 @@ describe("ProxyWrapper", () => {
     expect(wrapper.events).toBeInstanceOf(EventEmitter);
     expect(nexo.proxy(wrapper.fn)).toBe(proxy);
   });
+
+  it("Can revoke a proxy", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.proxy();
+    const wrapper = new ProxyWrapper(proxy);
+
+    wrapper.revoke();
+
+    expect(proxy).toThrow();
+  });
 });

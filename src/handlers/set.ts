@@ -6,7 +6,7 @@ import map from "../utils/maps.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 const set = (
-  fn: nx.functionLike,
+  fn: nx.voidFunction,
   key: nx.objectKey,
   value: unknown,
 ): boolean => {

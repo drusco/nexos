@@ -13,7 +13,7 @@ const descriptorDefaults: PropertyDescriptor = {
 };
 
 const defineProperty = (
-  fn: nx.functionLike,
+  fn: nx.voidFunction,
   key: nx.objectKey,
   descriptor: PropertyDescriptor = descriptorDefaults,
 ): boolean => {

@@ -22,9 +22,10 @@ const getProxy = (
 
   // create proxy
 
-  const fn = new Function() as nx.Proxy;
-  const { proxy, revoke } = Proxy.revocable(fn, handlers);
+  const fn = new Function() as nx.functionLike;
+  const revocable = Proxy.revocable(fn, handlers);
   const traceable = isTraceable(target);
+  const proxy = revocable.proxy as nx.Proxy;
 
   // set information about this proxy
 
@@ -38,7 +39,7 @@ const getProxy = (
     sandbox: new Map(),
     isExtensible: true,
     events: new EventEmitter(),
-    revoke,
+    revoke: revocable.revoke,
   };
 
   map.proxies.set(proxy, proxyData);
