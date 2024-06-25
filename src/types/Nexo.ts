@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Nexo from "../Nexo.js";
-import EventEmitter from "node:events";
+import NexoEmitter from "../events/NexoEmitter.js";
 
 declare namespace Nexo {
   type arrayLike = unknown[];
@@ -22,7 +22,7 @@ declare namespace Nexo {
       scope: Nexo;
       sandbox: Map<objectKey, PropertyDescriptor>;
       isExtensible: boolean;
-      events: EventEmitter;
+      events: NexoEmitter;
       fn: voidFunction;
       revoke: voidFunction;
     };

@@ -1,6 +1,6 @@
 import ProxyWrapper from "./ProxyWrapper.js";
 import Nexo from "../Nexo.js";
-import EventEmitter from "events";
+import NexoEmitter from "../events/NexoEmitter.js";
 
 describe("ProxyWrapper", () => {
   it("Access the proxy data", () => {
@@ -11,7 +11,7 @@ describe("ProxyWrapper", () => {
 
     expect(wrapper.id).toBe("foo");
     expect(wrapper.target).toBe(target);
-    expect(wrapper.events).toBeInstanceOf(EventEmitter);
+    expect(wrapper.events).toBeInstanceOf(NexoEmitter);
     expect(wrapper.nexo).toBe(nexo);
   });
 

@@ -1,6 +1,6 @@
 import type nx from "../types/Nexo.js";
 import NexoEvent from "../events/NexoEvent.js";
-import EventEmitter from "events";
+import NexoEmitter from "../events/NexoEmitter.js";
 
 class NexoMap<Target extends nx.traceable> extends Map<
   string,
@@ -8,12 +8,12 @@ class NexoMap<Target extends nx.traceable> extends Map<
 > {
   private _release: boolean;
   private releaseKey: string;
-  readonly events: EventEmitter;
+  readonly events: NexoEmitter;
 
   constructor() {
     super();
     this._release = false;
-    this.events = new EventEmitter();
+    this.events = new NexoEmitter();
   }
 
   set(key: string, value: WeakRef<Target>): this {

@@ -1,5 +1,5 @@
 import type nx from "../types/Nexo.js";
-import EventEmitter from "events";
+import NexoEmitter from "../events/NexoEmitter.js";
 import map from "./maps.js";
 import Nexo from "../Nexo.js";
 
@@ -26,7 +26,7 @@ class ProxyWrapper {
     return this.data.scope;
   }
 
-  get events(): EventEmitter {
+  get events(): NexoEmitter {
     return this.data.events;
   }
 

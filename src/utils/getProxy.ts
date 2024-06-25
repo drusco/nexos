@@ -5,7 +5,7 @@ import findProxy from "./findProxy.js";
 import isTraceable from "./isTraceable.js";
 import NexoEvent from "../events/NexoEvent.js";
 import handlers from "../handlers/index.js";
-import EventEmitter from "node:events";
+import NexoEmitter from "../events/NexoEmitter.js";
 
 const getProxy = (
   nexo: nx,
@@ -38,7 +38,7 @@ const getProxy = (
     scope: nexo,
     sandbox: new Map(),
     isExtensible: true,
-    events: new EventEmitter(),
+    events: new NexoEmitter(),
     revoke: revocable.revoke,
   };
 

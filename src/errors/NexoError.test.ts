@@ -1,4 +1,4 @@
-import EventEmitter from "events";
+import NexoEmitter from "../events/NexoEmitter.js";
 import NexoError from "./NexoError.js";
 import NexoEvent from "../events/NexoEvent.js";
 
@@ -11,7 +11,7 @@ describe("NexoError", () => {
   });
 
   it("Accepts an event emitter that will emit an error event", () => {
-    const emitter = new EventEmitter();
+    const emitter = new NexoEmitter();
     const callback = jest.fn();
 
     emitter.on("nx.error", callback);

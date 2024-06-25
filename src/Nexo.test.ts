@@ -1,4 +1,4 @@
-import EventEmitter from "events";
+import NexoEmitter from "./events/NexoEmitter.js";
 import Nexo from "./Nexo.js";
 import NexoMap from "./utils/NexoMap.js";
 import isProxy from "./utils/isProxy.js";
@@ -10,7 +10,7 @@ describe("Nexo", () => {
     const nexo = new Nexo();
 
     expect(nexo.entries).toBeInstanceOf(NexoMap);
-    expect(nexo.events).toBeInstanceOf(EventEmitter);
+    expect(nexo.events).toBeInstanceOf(NexoEmitter);
   });
 
   it("Access the proxy wrapper", () => {
