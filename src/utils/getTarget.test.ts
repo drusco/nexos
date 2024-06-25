@@ -1,7 +1,7 @@
-import ProxyNexo from "../Nexo.js";
+import Nexo from "../Nexo.js";
 import getTarget from "./getTarget.js";
 
-const nexo = new ProxyNexo();
+const nexo = new Nexo();
 
 describe("getTarget", () => {
   it("Returns the same value when the value is not a proxy", () => {

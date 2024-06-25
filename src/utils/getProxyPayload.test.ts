@@ -1,9 +1,9 @@
-import ProxyNexo from "../Nexo.js";
+import Nexo from "../Nexo.js";
 import getProxyPayload from "./getProxyPayload.js";
 import map from "./maps.js";
 import { PAYLOAD_PREFIX, IS_PAYLOAD } from "./constants.js";
 
-const nexo = new ProxyNexo();
+const nexo = new Nexo();
 
 describe("getProxyPayload", () => {
   it("Returns an encoded proxy id", () => {

@@ -1,7 +1,7 @@
-import ProxyNexo from "../Nexo.js";
+import Nexo from "../Nexo.js";
 import isProxy from "./isProxy.js";
 
-const nexo = new ProxyNexo();
+const nexo = new Nexo();
 
 describe("isProxy", () => {
   it("Returns true when the parameter is a proxy", () => {

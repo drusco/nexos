@@ -1,8 +1,8 @@
-import ProxyNexo from "../Nexo.js";
+import Nexo from "../Nexo.js";
 import ProxyWrapper from "./ProxyWrapper.js";
 import findProxy from "./findProxy.js";
 
-const nexo = new ProxyNexo();
+const nexo = new Nexo();
 
 describe("findProxy", () => {
   it("Finds a proxy by itself", () => {

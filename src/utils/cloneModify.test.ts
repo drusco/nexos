@@ -1,8 +1,8 @@
-import ProxyNexo from "../Nexo.js";
+import Nexo from "../Nexo.js";
 import cloneModify from "./cloneModify.js";
 import isProxy from "./isProxy.js";
 
-const nexo = new ProxyNexo();
+const nexo = new Nexo();
 
 describe("cloneModify", () => {
   it("Creates a shallow copy for plain objects or arrays", () => {

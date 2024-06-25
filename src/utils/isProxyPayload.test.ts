@@ -1,9 +1,9 @@
-import ProxyNexo from "../Nexo.js";
+import Nexo from "../Nexo.js";
 import map from "./maps.js";
 import isProxyPayload from "./isProxyPayload.js";
 import { PAYLOAD_PREFIX } from "./constants.js";
 
-const nexo = new ProxyNexo();
+const nexo = new Nexo();
 
 describe("isProxyPayload", () => {
   it("Returns true when the parameter is an UUID payload", () => {
