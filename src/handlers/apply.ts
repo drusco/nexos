@@ -12,11 +12,9 @@ const apply = (
   args: nx.arrayLike = [],
 ): unknown => {
   const proxy = map.tracables.get(fn);
-  const data = map.proxies.get(proxy);
-  const target = getTarget(data.target);
-  const nexo = data.scope;
-  const resultProxy = getProxy(nexo);
   const wrapper = new ProxyWrapper(proxy);
+  const { target, nexo } = wrapper;
+  const resultProxy = getProxy(nexo);
 
   const event = new ProxyEvent("apply", {
     target: proxy,
@@ -28,11 +26,12 @@ const apply = (
   wrapper.events.emit(event.name, event);
 
   if (event.defaultPrevented) {
+    // return the value from the prevented event
     return update(resultProxy, event.returnValue);
   }
 
   if (typeof target === "function") {
-    // get the value from the original target
+    // return the value from the original target call
 
     const functionResult = target.apply(
       getTarget(that),

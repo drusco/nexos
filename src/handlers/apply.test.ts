@@ -57,7 +57,7 @@ describe("apply", () => {
 
     const expectedResult = "foo";
 
-    nexo.events.on("nx.proxy.apply", (event: ProxyEvent<nx.Proxy, object>) => {
+    nexo.events.on("nx.proxy.apply", (event: ProxyEvent) => {
       event.preventDefault();
       event.returnValue = expectedResult;
     });
@@ -74,15 +74,16 @@ describe("apply", () => {
 
     const expectedResult = [];
 
-    nexo.events.on("nx.proxy.apply", (event: ProxyEvent<nx.Proxy, object>) => {
+    nexo.events.on("nx.proxy.apply", (event: ProxyEvent) => {
       event.preventDefault();
       event.returnValue = expectedResult;
     });
 
     const result = apply(wrapper.fn);
+    const expectedProxy = nexo.create(expectedResult);
 
     expect(isProxy(result)).toBe(true);
-    expect(result).toBe(nexo.create(expectedResult));
+    expect(result).toBe(expectedProxy);
   });
 
   it("Allows its return value to be defined by a function target", () => {
@@ -98,10 +99,11 @@ describe("apply", () => {
 
     const numberResult = apply(wrapper.fn, undefined, [4, 1]);
     const traceableResult = apply(wrapper2.fn);
+    const traceableResultProxy = nexo.create(traceableValue);
 
     expect(numberResult).toBe(5);
     expect(isProxy(traceableResult)).toBe(true);
-    expect(traceableResult).toBe(nexo.create(traceableValue));
+    expect(traceableResult).toBe(traceableResultProxy);
   });
 
   it("Emits an update event when the expected return proxy changes", () => {
@@ -116,7 +118,7 @@ describe("apply", () => {
 
     nexo.events.on(
       "nx.proxy.apply",
-      (event: ProxyEvent<nx.Proxy, { result: nx.Proxy }>) => {
+      (event: ProxyEvent<{ result: nx.Proxy }>) => {
         event.preventDefault();
         expectedProxy = event.data.result;
         event.returnValue = expectedResult;
@@ -148,7 +150,7 @@ describe("apply", () => {
 
     nexo.events.on(
       "nx.proxy.apply",
-      (event: ProxyEvent<nx.Proxy, { result: nx.Proxy }>) => {
+      (event: ProxyEvent<{ result: nx.Proxy }>) => {
         expectedProxy = event.data.result;
       },
     );
@@ -156,13 +158,14 @@ describe("apply", () => {
     nexo.events.on("nx.proxy.update", updateCallback);
 
     const result = apply(wrapper.fn);
+    const expectedResultProxy = nexo.create(expectedResult);
 
     const [updateEvent] = updateCallback.mock.lastCall;
 
     expect(updateCallback).toBeCalledTimes(1);
     expect(updateEvent.target).toBe(expectedProxy);
     expect(updateEvent.cancellable).toBe(false);
-    expect(updateEvent.data).toBe(nexo.create(expectedResult));
+    expect(updateEvent.data).toBe(expectedResultProxy);
     expect(isProxy(updateEvent.data)).toBe(true);
     expect(result).toBe(updateEvent.data);
   });
