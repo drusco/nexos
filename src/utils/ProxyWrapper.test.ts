@@ -12,6 +12,7 @@ describe("ProxyWrapper", () => {
     expect(wrapper.id).toBe("foo");
     expect(wrapper.target).toBe(target);
     expect(wrapper.events).toBeInstanceOf(EventEmitter);
+    expect(wrapper.nexo).toBe(nexo);
   });
 
   it("Can access the original proxy", () => {

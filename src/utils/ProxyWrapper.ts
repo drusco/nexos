@@ -1,6 +1,7 @@
 import type nx from "../types/Nexo.js";
 import EventEmitter from "events";
 import map from "./maps.js";
+import Nexo from "../Nexo.js";
 
 class ProxyWrapper {
   readonly proxy: nx.Proxy;
@@ -19,6 +20,10 @@ class ProxyWrapper {
 
   get target(): nx.traceable | void {
     return this.data.target;
+  }
+
+  get nexo(): Nexo {
+    return this.data.scope;
   }
 
   get events(): EventEmitter {
