@@ -5,7 +5,7 @@ const nexo = new ProxyNexo();
 
 describe("isProxy", () => {
   it("Returns true when the parameter is a proxy", () => {
-    const proxy = nexo.proxy();
+    const proxy = nexo.create();
     const result = isProxy(proxy);
 
     expect(result).toBe(true);

@@ -13,8 +13,8 @@ describe("getTarget", () => {
 
   it("Returns the target of a proxy", () => {
     const target = [];
-    const proxy = nexo.proxy();
-    const proxyWithTarget = nexo.proxy(target);
+    const proxy = nexo.create();
+    const proxyWithTarget = nexo.create(target);
 
     const result = getTarget(proxy);
     const resultWithTarget = getTarget(proxyWithTarget);
@@ -25,8 +25,8 @@ describe("getTarget", () => {
 
   it("Returns the proxy when the second parameter is true", () => {
     const target = [];
-    const proxy = nexo.proxy();
-    const proxyWithTarget = nexo.proxy(target);
+    const proxy = nexo.create();
+    const proxyWithTarget = nexo.create(target);
 
     const result = getTarget(proxy, true);
     const resultWithTarget = getTarget(proxyWithTarget, true);

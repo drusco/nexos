@@ -5,7 +5,7 @@ import ProxyEvent from "./ProxyEvent.js";
 describe("ProxyEvent", () => {
   it("Prefixes 'nx.proxy.' to the proxy handler event names", () => {
     const nexo = new Nexo();
-    const proxy = nexo.proxy();
+    const proxy = nexo.create();
     const handlerName: nx.proxy.handler = "construct";
 
     const event = new ProxyEvent(handlerName, {

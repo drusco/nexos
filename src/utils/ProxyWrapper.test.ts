@@ -16,16 +16,16 @@ describe("ProxyWrapper", () => {
 
   it("Can access the original proxy", () => {
     const nexo = new Nexo();
-    const proxy = nexo.proxy();
+    const proxy = nexo.create();
     const wrapper = new ProxyWrapper(proxy);
 
     expect(wrapper.proxy).toBe(proxy);
-    expect(nexo.proxy(wrapper.fn)).toBe(proxy);
+    expect(nexo.create(wrapper.fn)).toBe(proxy);
   });
 
   it("Can revoke a proxy", () => {
     const nexo = new Nexo();
-    const proxy = nexo.proxy();
+    const proxy = nexo.create();
     const wrapper = new ProxyWrapper(proxy);
 
     wrapper.revoke();

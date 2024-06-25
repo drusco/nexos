@@ -57,7 +57,7 @@ describe("cloneModify", () => {
   });
 
   it("Can transform the value when it is neither array nor plain object", () => {
-    const proxy = nexo.proxy();
+    const proxy = nexo.create();
 
     const data = {
       proxy,

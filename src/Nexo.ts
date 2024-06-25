@@ -25,7 +25,7 @@ class Nexo {
     return proxy;
   }
 
-  proxy(target?: nx.traceable | void): nx.Proxy {
+  create(target?: nx.traceable | void): nx.Proxy {
     return getProxy(this, target);
   }
 }

@@ -6,7 +6,7 @@ const nexo = new ProxyNexo();
 
 describe("findProxy", () => {
   it("Finds a proxy by itself", () => {
-    const proxy = nexo.proxy();
+    const proxy = nexo.create();
     const result = findProxy(proxy);
 
     expect(result).toBe(proxy);
@@ -14,14 +14,14 @@ describe("findProxy", () => {
 
   it("Finds a proxy by its target", () => {
     const target = [];
-    const proxy = nexo.proxy(target);
+    const proxy = nexo.create(target);
     const result = findProxy(target);
 
     expect(result).toBe(proxy);
   });
 
   it("Finds a proxy by its wrapper", () => {
-    const proxy = nexo.proxy();
+    const proxy = nexo.create();
     const wrapper = new ProxyWrapper(proxy);
     const result = findProxy(wrapper.fn);
 

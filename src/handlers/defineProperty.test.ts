@@ -9,7 +9,7 @@ import ProxyWrapper from "../utils/ProxyWrapper.js";
 describe("defineProperty", () => {
   it("Emits a defineProperty event", () => {
     const nexo = new Nexo();
-    const proxy = nexo.proxy();
+    const proxy = nexo.create();
     const wrapper = new ProxyWrapper(proxy);
 
     const definePropertyCallbackNexo = jest.fn();
@@ -46,7 +46,7 @@ describe("defineProperty", () => {
 
   it("Returns false when the event is default prevented", () => {
     const nexo = new Nexo();
-    const proxy = nexo.proxy();
+    const proxy = nexo.create();
     const wrapper = new ProxyWrapper(proxy);
 
     wrapper.events.on(
@@ -68,7 +68,7 @@ describe("defineProperty", () => {
 
   it("Converts traceable values to proxies", () => {
     const nexo = new Nexo();
-    const proxy = nexo.proxy();
+    const proxy = nexo.create();
     const wrapper = new ProxyWrapper(proxy);
     const { sandbox } = map.proxies.get(proxy);
 
@@ -80,13 +80,13 @@ describe("defineProperty", () => {
 
     expect(result).toBe(true);
     expect(isProxy(fooDescriptor.value)).toBe(true);
-    expect(fooDescriptor.value).toBe(nexo.proxy(descriptor.value));
+    expect(fooDescriptor.value).toBe(nexo.create(descriptor.value));
 
     expect(fooDescriptor).toStrictEqual({
       configurable: false,
       enumerable: false,
       writable: false,
-      value: nexo.proxy(descriptor.value),
+      value: nexo.create(descriptor.value),
     });
   });
 });

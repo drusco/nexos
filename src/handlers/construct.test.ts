@@ -7,7 +7,7 @@ import ProxyWrapper from "../utils/ProxyWrapper.js";
 describe("construct", () => {
   it("Emits a construct event", () => {
     const nexo = new Nexo();
-    const proxy = nexo.proxy();
+    const proxy = nexo.create();
     const wrapper = new ProxyWrapper(proxy);
 
     const constructCallbackNexo = jest.fn();
@@ -37,7 +37,7 @@ describe("construct", () => {
 
   it("Returns a new proxy by default", () => {
     const nexo = new Nexo();
-    const proxy = nexo.proxy();
+    const proxy = nexo.create();
     const wrapper = new ProxyWrapper(proxy);
 
     const result = construct(wrapper.fn) as nx.Proxy;
@@ -50,7 +50,7 @@ describe("construct", () => {
   it("Creates an instance from a function target and returns its proxy", () => {
     const nexo = new Nexo();
     class MyTarget {}
-    const proxy = nexo.proxy(MyTarget);
+    const proxy = nexo.create(MyTarget);
     const wrapper = new ProxyWrapper(proxy);
 
     const result = construct(wrapper.fn) as nx.Proxy;

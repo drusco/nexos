@@ -15,7 +15,7 @@ describe("Nexo", () => {
 
   it("Creates a new proxy object without a target", () => {
     const nexo = new Nexo();
-    const proxy = nexo.proxy();
+    const proxy = nexo.create();
     const wrapper = new ProxyWrapper(proxy);
 
     expect(isProxy(proxy)).toBe(true);
@@ -26,7 +26,7 @@ describe("Nexo", () => {
   it("Creates a new proxy object with a target", () => {
     const nexo = new Nexo();
     const target = {};
-    const proxy = nexo.proxy(target);
+    const proxy = nexo.create(target);
     const wrapper = new ProxyWrapper(proxy);
 
     expect(wrapper.target).toBe(target);
@@ -39,7 +39,7 @@ describe("Nexo", () => {
 
     nexo.events.on("nx.proxy.create", createCallback);
 
-    const proxy = nexo.proxy(target);
+    const proxy = nexo.create(target);
     const wrapper = new ProxyWrapper(proxy);
     const [createEvent] = createCallback.mock.lastCall;
 
