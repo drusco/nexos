@@ -1,4 +1,3 @@
-import type nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import defineProperty from "./defineProperty.js";
 import ProxyEvent from "../events/ProxyEvent.js";
@@ -51,12 +50,7 @@ describe("defineProperty", () => {
 
     wrapper.events.on(
       "nx.proxy.defineProperty",
-      (
-        event: ProxyEvent<
-          nx.Proxy,
-          { key: string; descriptor: PropertyDescriptor }
-        >,
-      ) => {
+      (event: ProxyEvent<{ key: string; descriptor: PropertyDescriptor }>) => {
         event.preventDefault();
       },
     );

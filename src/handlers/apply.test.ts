@@ -59,7 +59,7 @@ describe("apply", () => {
 
     nexo.events.on("nx.proxy.apply", (event: ProxyEvent) => {
       event.preventDefault();
-      event.returnValue = expectedResult;
+      return expectedResult;
     });
 
     const result = apply(wrapper.fn);
@@ -76,7 +76,7 @@ describe("apply", () => {
 
     nexo.events.on("nx.proxy.apply", (event: ProxyEvent) => {
       event.preventDefault();
-      event.returnValue = expectedResult;
+      return expectedResult;
     });
 
     const result = apply(wrapper.fn);
@@ -121,7 +121,7 @@ describe("apply", () => {
       (event: ProxyEvent<{ result: nx.Proxy }>) => {
         event.preventDefault();
         expectedProxy = event.data.result;
-        event.returnValue = expectedResult;
+        return expectedResult;
       },
     );
 
