@@ -12,7 +12,7 @@ const isExtensible = (fn: nx.functionLike): boolean => {
 
   const event = new ProxyEvent("isExtensible", { target: proxy });
 
-  scope.emit(event.name, event);
+  scope.events.emit(event.name, event);
   wrapper.events.emit(event.name, event);
 
   if (event.defaultPrevented) {

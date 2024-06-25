@@ -22,7 +22,7 @@ const update = <T>(proxy: nx.Proxy, value: T): ProxyOrValue<T> => {
     cancellable: false,
   });
 
-  nexo.emit(event.name, event);
+  nexo.events.emit(event.name, event);
   wrapper.events.emit(event.name, event);
 
   return value as ProxyOrValue<T>;

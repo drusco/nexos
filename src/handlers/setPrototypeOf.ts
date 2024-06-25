@@ -11,7 +11,7 @@ const setPrototypeOf = (fn: nx.voidFunction, prototype: object): boolean => {
 
   const event = new ProxyEvent("setPrototypeOf", { target: proxy });
 
-  scope.emit(event.name, event);
+  scope.events.emit(event.name, event);
   wrapper.events.emit(event.name, event);
 
   if (event.defaultPrevented) {

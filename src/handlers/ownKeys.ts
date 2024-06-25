@@ -13,7 +13,7 @@ const ownKeys = (fn: nx.functionLike): nx.objectKey[] => {
 
   const event = new ProxyEvent("ownKeys", { target: proxy });
 
-  scope.emit(event.name, event);
+  scope.events.emit(event.name, event);
   wrapper.events.emit(event.name, event);
 
   if (event.defaultPrevented) {

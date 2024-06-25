@@ -3,12 +3,13 @@ import getProxy from "./utils/getProxy.js";
 import NexoMap from "./utils/NexoMap.js";
 import EventEmitter from "events";
 
-class Nexo extends EventEmitter {
+class Nexo {
   readonly entries: NexoMap<nx.Proxy>;
+  readonly events: EventEmitter;
 
   constructor() {
-    super();
     this.entries = new NexoMap();
+    this.events = new EventEmitter();
   }
 
   use(id: string, target?: nx.traceable | void): nx.Proxy {

@@ -13,7 +13,7 @@ describe("construct", () => {
     const constructCallbackNexo = jest.fn();
     const constructCallbackProxy = jest.fn();
 
-    nexo.on("nx.proxy.construct", constructCallbackNexo);
+    nexo.events.on("nx.proxy.construct", constructCallbackNexo);
     wrapper.events.on("nx.proxy.construct", constructCallbackProxy);
 
     const args = ["foo", "bar"];

@@ -15,7 +15,7 @@ describe("defineProperty", () => {
     const definePropertyCallbackNexo = jest.fn();
     const definePropertyCallbackProxy = jest.fn();
 
-    nexo.on("nx.proxy.defineProperty", definePropertyCallbackNexo);
+    nexo.events.on("nx.proxy.defineProperty", definePropertyCallbackNexo);
     wrapper.events.on("nx.proxy.defineProperty", definePropertyCallbackProxy);
 
     const result = defineProperty(wrapper.fn, "foo", { value: "bar" });

@@ -14,7 +14,7 @@ const getPrototypeOf = (fn: nx.functionLike): object => {
 
   const event = new ProxyEvent("getPrototypeOf", { target: proxy });
 
-  scope.emit(event.name, event);
+  scope.events.emit(event.name, event);
   wrapper.events.emit(event.name, event);
 
   try {

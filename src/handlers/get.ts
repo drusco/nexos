@@ -18,7 +18,7 @@ const get = (fn: nx.voidFunction, key: nx.objectKey): unknown => {
 
   const event = new ProxyEvent("get", { target: proxy, data: { key } });
 
-  scope.emit(event.name, event);
+  scope.events.emit(event.name, event);
   wrapper.events.emit(event.name, event);
 
   if (event.defaultPrevented) {

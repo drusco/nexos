@@ -44,7 +44,7 @@ const defineProperty = (
     },
   });
 
-  nexo.emit(event.name, event);
+  nexo.events.emit(event.name, event);
   wrapper.events.emit(event.name, event);
 
   if (event.defaultPrevented) {

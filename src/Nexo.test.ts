@@ -10,7 +10,7 @@ describe("Nexo", () => {
     const nexo = new Nexo();
 
     expect(nexo.entries).toBeInstanceOf(NexoMap);
-    expect(nexo).toBeInstanceOf(EventEmitter);
+    expect(nexo.events).toBeInstanceOf(EventEmitter);
   });
 
   it("Creates a new proxy object without a target", () => {
@@ -37,7 +37,7 @@ describe("Nexo", () => {
     const target = {};
     const createCallback = jest.fn();
 
-    nexo.on("nx.proxy.create", createCallback);
+    nexo.events.on("nx.proxy.create", createCallback);
 
     const proxy = nexo.proxy(target);
     const wrapper = new ProxyWrapper(proxy);

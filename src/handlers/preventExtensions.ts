@@ -11,7 +11,7 @@ const preventExtensions = (fn: nx.functionLike): boolean => {
 
   const event = new ProxyEvent("preventExtensions", { target: proxy });
 
-  scope.emit(event.name, event);
+  scope.events.emit(event.name, event);
   wrapper.events.emit(event.name, event);
 
   if (event.defaultPrevented) {

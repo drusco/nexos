@@ -20,7 +20,7 @@ const set = (
 
   const event = new ProxyEvent("set", { target: proxy, data: { key, value } });
 
-  scope.emit(event.name, event);
+  scope.events.emit(event.name, event);
   wrapper.events.emit(event.name, event);
 
   if (event.defaultPrevented) {

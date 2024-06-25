@@ -14,7 +14,7 @@ describe("apply", () => {
     const applyCallbackNexo = jest.fn();
     const applyCallbackProxy = jest.fn();
 
-    nexo.on("nx.proxy.apply", applyCallbackNexo);
+    nexo.events.on("nx.proxy.apply", applyCallbackNexo);
     wrapper.events.on("nx.proxy.apply", applyCallbackProxy);
 
     const args = ["foo", "bar"];
@@ -57,7 +57,7 @@ describe("apply", () => {
 
     const expectedResult = "foo";
 
-    nexo.on("nx.proxy.apply", (event: ProxyEvent<nx.Proxy, object>) => {
+    nexo.events.on("nx.proxy.apply", (event: ProxyEvent<nx.Proxy, object>) => {
       event.preventDefault();
       event.returnValue = expectedResult;
     });
@@ -74,7 +74,7 @@ describe("apply", () => {
 
     const expectedResult = [];
 
-    nexo.on("nx.proxy.apply", (event: ProxyEvent<nx.Proxy, object>) => {
+    nexo.events.on("nx.proxy.apply", (event: ProxyEvent<nx.Proxy, object>) => {
       event.preventDefault();
       event.returnValue = expectedResult;
     });
@@ -114,7 +114,7 @@ describe("apply", () => {
 
     let expectedProxy: nx.Proxy;
 
-    nexo.on(
+    nexo.events.on(
       "nx.proxy.apply",
       (event: ProxyEvent<nx.Proxy, { result: nx.Proxy }>) => {
         event.preventDefault();
@@ -123,7 +123,7 @@ describe("apply", () => {
       },
     );
 
-    nexo.on("nx.proxy.update", updateCallback);
+    nexo.events.on("nx.proxy.update", updateCallback);
 
     apply(wrapper.fn);
 
@@ -146,14 +146,14 @@ describe("apply", () => {
 
     let expectedProxy: nx.Proxy;
 
-    nexo.on(
+    nexo.events.on(
       "nx.proxy.apply",
       (event: ProxyEvent<nx.Proxy, { result: nx.Proxy }>) => {
         expectedProxy = event.data.result;
       },
     );
 
-    nexo.on("nx.proxy.update", updateCallback);
+    nexo.events.on("nx.proxy.update", updateCallback);
 
     const result = apply(wrapper.fn);
 

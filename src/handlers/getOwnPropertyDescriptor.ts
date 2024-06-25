@@ -23,7 +23,7 @@ const getOwnPropertyDescriptor = (
     },
   });
 
-  scope.emit(event.name, event);
+  scope.events.emit(event.name, event);
   wrapper.events.emit(event.name, event);
 
   return {

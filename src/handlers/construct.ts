@@ -18,7 +18,7 @@ const construct = (fn: nx.voidFunction, args: nx.arrayLike = []): object => {
     data: { arguments: args, result: instanceProxy },
   });
 
-  nexo.emit(event.name, event);
+  nexo.events.emit(event.name, event);
   wrapper.events.emit(event.name, event);
 
   if (typeof target === "function") {
