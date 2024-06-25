@@ -13,6 +13,15 @@ describe("Nexo", () => {
     expect(nexo.events).toBeInstanceOf(EventEmitter);
   });
 
+  it("Access the proxy wrapper", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.create();
+    const wrapper = Nexo.wrap(proxy);
+
+    expect(wrapper).toBeInstanceOf(ProxyWrapper);
+    expect(wrapper.proxy).toBe(proxy);
+  });
+
   it("Creates a new proxy object without a target", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
