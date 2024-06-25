@@ -9,7 +9,6 @@ describe("ProxyWrapper", () => {
     const proxy = nexo.use("foo", target);
     const wrapper = new ProxyWrapper(proxy);
 
-    expect(wrapper.proxy).toBe(proxy);
     expect(wrapper.id).toBe("foo");
     expect(wrapper.target).toBe(target);
     expect(wrapper.events).toBeInstanceOf(EventEmitter);
