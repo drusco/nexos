@@ -3,7 +3,7 @@ import Nexo from "../Nexo.js";
 import EventEmitter from "events";
 
 describe("ProxyWrapper", () => {
-  it("Access proxy data", () => {
+  it("Access the proxy data", () => {
     const nexo = new Nexo();
     const target = [];
     const proxy = nexo.use("foo", target);
@@ -13,6 +13,14 @@ describe("ProxyWrapper", () => {
     expect(wrapper.id).toBe("foo");
     expect(wrapper.target).toBe(target);
     expect(wrapper.events).toBeInstanceOf(EventEmitter);
+  });
+
+  it("Can access the original proxy", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.proxy();
+    const wrapper = new ProxyWrapper(proxy);
+
+    expect(wrapper.proxy).toBe(proxy);
     expect(nexo.proxy(wrapper.fn)).toBe(proxy);
   });
 
