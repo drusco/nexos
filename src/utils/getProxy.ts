@@ -31,7 +31,7 @@ const getProxy = (
 
   const uid = id || randomUUID();
 
-  const proxyData: nx.proxy.data = {
+  const data: nx.proxy.data = {
     id: uid,
     fn,
     target,
@@ -42,7 +42,7 @@ const getProxy = (
     revoke: revocable.revoke,
   };
 
-  map.proxies.set(proxy, proxyData);
+  map.proxies.set(proxy, data);
   map.tracables.set(fn, proxy);
 
   if (traceable) {
