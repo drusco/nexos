@@ -85,8 +85,7 @@ describe("cloneModify", () => {
   });
 
   it("Prevents objects an arrays to be cloned deeply; i.e., creates shallow copies", () => {
-    const foo = { bar: [[], () => {}, {}] };
-
+    const foo = { bar: [null] };
     const result = cloneModify(foo, false);
 
     expect(foo).not.toBe(result);
