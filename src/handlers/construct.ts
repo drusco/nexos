@@ -7,11 +7,9 @@ import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 const construct = (fn: nx.voidFunction, args: nx.arrayLike = []): object => {
   const proxy = map.tracables.get(fn);
-  const data = map.proxies.get(proxy);
-  const target = getTarget(data.target);
-  const nexo = data.scope;
-  const instanceProxy = getProxy(nexo);
   const wrapper = new ProxyWrapper(proxy);
+  const { target, nexo } = wrapper;
+  const instanceProxy = getProxy(nexo);
 
   const event = new ProxyEvent("construct", {
     target: proxy,
