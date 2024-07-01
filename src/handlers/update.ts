@@ -1,5 +1,5 @@
-import ProxyEvent from "../events/ProxyEvent.js";
 import type nx from "../types/Nexo.js";
+import NexoEvent from "../events/NexoEvent.js";
 import isTraceable from "../utils/isTraceable.js";
 import getProxy from "../utils/getProxy.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
@@ -14,7 +14,7 @@ const update = <T>(proxy: nx.Proxy, value: T): ProxyOrValue<T> => {
     value = getProxy(nexo, value) as T;
   }
 
-  const event = new ProxyEvent("update", {
+  const event = new NexoEvent("nx.update", {
     target: proxy,
     data: value,
     cancellable: false,

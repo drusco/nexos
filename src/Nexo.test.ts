@@ -46,7 +46,7 @@ describe("Nexo", () => {
     const target = {};
     const createCallback = jest.fn();
 
-    nexo.events.on("nx.proxy.create", createCallback);
+    nexo.events.on("nx.proxy", createCallback);
 
     const proxy = nexo.create(target);
     const wrapper = new ProxyWrapper(proxy);
@@ -54,7 +54,7 @@ describe("Nexo", () => {
 
     expect(createCallback).toHaveBeenCalledTimes(1);
     expect(createEvent).toBeInstanceOf(NexoEvent);
-    expect(createEvent.name).toBe("nx.proxy.create");
+    expect(createEvent.name).toBe("nx.proxy");
     expect(createEvent.target).toBe(nexo);
     expect(createEvent.data).toStrictEqual({
       id: wrapper.id,

@@ -125,7 +125,7 @@ describe("apply", () => {
       },
     );
 
-    nexo.events.on("nx.proxy.update", updateCallback);
+    nexo.events.on("nx.update", updateCallback);
 
     apply(wrapper.fn);
 
@@ -155,7 +155,7 @@ describe("apply", () => {
       },
     );
 
-    nexo.events.on("nx.proxy.update", updateCallback);
+    nexo.events.on("nx.update", updateCallback);
 
     const result = apply(wrapper.fn);
     const expectedResultProxy = nexo.create(expectedResult);

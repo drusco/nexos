@@ -49,7 +49,7 @@ const getProxy = (
     map.tracables.set(target, proxy);
   }
 
-  const event = new NexoEvent("nx.proxy.create", {
+  const event = new NexoEvent("nx.proxy", {
     target: nexo,
     data: {
       id: uid,
