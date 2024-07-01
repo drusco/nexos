@@ -25,6 +25,7 @@ describe("apply", () => {
     const [applyEventForProxy] = applyCallbackProxy.mock.lastCall;
 
     expect(applyCallbackNexo).toBeCalledTimes(1);
+    expect(applyEventForNexo).toBeInstanceOf(ProxyEvent);
     expect(applyEventForNexo.target).toBe(proxy);
     expect(applyEventForNexo.cancellable).toBe(true);
 
