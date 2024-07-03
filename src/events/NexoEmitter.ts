@@ -19,13 +19,17 @@ class NexoEmitter extends EventEmitter {
   ): boolean {
     const listeners = this.listeners(eventName);
 
-    listeners.forEach((listener) => {
-      const returnValue = listener.call(this, event, ...args);
-      // ignore non defaultPrevented events
-      if (event.defaultPrevented === false) return;
-      // ignore when event.returnValue is set manually
-      event.returnValue = returnValue;
-    });
+    try {
+      listeners.forEach((listener) => {
+        const returnValue = listener.call(this, event, ...args);
+        // ignore non defaultPrevented events
+        if (event.defaultPrevented === false) return;
+        // ignore when event.returnValue is set manually
+        event.returnValue = returnValue;
+      });
+    } catch (error) {
+      this.emit("error", error);
+    }
 
     return listeners.length > 0;
   }
