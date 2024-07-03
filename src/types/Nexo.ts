@@ -25,6 +25,7 @@ declare namespace Nexo {
       events: NexoEmitter;
       fn: voidFunction;
       revoke: voidFunction;
+      revoked: boolean;
     };
 
     type handler =

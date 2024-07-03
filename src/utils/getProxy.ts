@@ -40,6 +40,7 @@ const getProxy = (
     isExtensible: true,
     events: new NexoEmitter(),
     revoke: revocable.revoke,
+    revoked: false,
   };
 
   map.proxies.set(proxy, data);

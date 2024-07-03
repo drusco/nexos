@@ -13,14 +13,8 @@ describe("ProxyWrapper", () => {
     expect(wrapper.target).toBe(target);
     expect(wrapper.events).toBeInstanceOf(NexoEmitter);
     expect(wrapper.nexo).toBe(nexo);
-  });
-
-  it("Can access the original proxy", () => {
-    const nexo = new Nexo();
-    const proxy = nexo.create();
-    const wrapper = new ProxyWrapper(proxy);
-
     expect(wrapper.proxy).toBe(proxy);
+    expect(wrapper.revoked).toBe(false);
     expect(nexo.create(wrapper.fn)).toBe(proxy);
   });
 
@@ -32,5 +26,6 @@ describe("ProxyWrapper", () => {
     wrapper.revoke();
 
     expect(proxy).toThrow();
+    expect(wrapper.revoked).toBe(true);
   });
 });

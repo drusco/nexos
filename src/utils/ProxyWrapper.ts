@@ -34,8 +34,13 @@ class ProxyWrapper {
     return this.data.fn;
   }
 
-  get revoke(): nx.voidFunction {
-    return this.data.revoke;
+  revoke(): void {
+    this.data.revoke();
+    this.data.revoked = true;
+  }
+
+  get revoked(): boolean {
+    return this.data.revoked;
   }
 }
 
