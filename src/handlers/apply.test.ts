@@ -58,7 +58,7 @@ describe("apply", () => {
 
     const expectedResult = "foo";
 
-    nexo.events.on("nx.proxy.apply", (event: ProxyEvent) => {
+    wrapper.events.on("nx.proxy.apply", (event: ProxyEvent) => {
       event.preventDefault();
       return expectedResult;
     });
@@ -75,32 +75,34 @@ describe("apply", () => {
 
     const expectedResult = [];
 
-    nexo.events.on("nx.proxy.apply", (event: ProxyEvent) => {
+    wrapper.events.on("nx.proxy.apply", (event: ProxyEvent) => {
       event.preventDefault();
       return expectedResult;
     });
 
     const result = apply(wrapper.fn);
     const expectedProxy = nexo.create(expectedResult);
+    const resultWrapper = new ProxyWrapper(expectedProxy);
 
     expect(isProxy(result)).toBe(true);
     expect(result).toBe(expectedProxy);
+    expect(resultWrapper.target).toBe(expectedResult);
   });
 
   it("Allows its return value to be defined by a function target", () => {
     const nexo = new Nexo();
-    const target = (a: number, b: number): number => a + b;
-    const proxy = nexo.create(target);
+    const functionTarget = (a: number, b: number): number => a + b;
+    const proxy = nexo.create(functionTarget);
     const wrapper = new ProxyWrapper(proxy);
 
-    const traceableValue = {};
-    const target2 = () => traceableValue;
-    const proxy2 = nexo.create(target2);
+    const objReturn = {};
+    const fnTargetReturnsObj = () => objReturn;
+    const proxy2 = nexo.create(fnTargetReturnsObj);
     const wrapper2 = new ProxyWrapper(proxy2);
 
     const numberResult = apply(wrapper.fn, undefined, [4, 1]);
     const traceableResult = apply(wrapper2.fn);
-    const traceableResultProxy = nexo.create(traceableValue);
+    const traceableResultProxy = nexo.create(objReturn);
 
     expect(numberResult).toBe(5);
     expect(isProxy(traceableResult)).toBe(true);
@@ -117,7 +119,7 @@ describe("apply", () => {
 
     let expectedProxy: nx.Proxy;
 
-    nexo.events.on(
+    wrapper.events.on(
       "nx.proxy.apply",
       (event: ProxyEvent<{ result: nx.Proxy }>) => {
         event.preventDefault();
@@ -149,7 +151,7 @@ describe("apply", () => {
 
     let expectedProxy: nx.Proxy;
 
-    nexo.events.on(
+    wrapper.events.on(
       "nx.proxy.apply",
       (event: ProxyEvent<{ result: nx.Proxy }>) => {
         expectedProxy = event.data.result;
@@ -167,7 +169,7 @@ describe("apply", () => {
     expect(updateEvent.target).toBe(expectedProxy);
     expect(updateEvent.cancellable).toBe(false);
     expect(updateEvent.data).toBe(expectedResultProxy);
-    expect(isProxy(updateEvent.data)).toBe(true);
-    expect(result).toBe(updateEvent.data);
+    expect(isProxy(expectedResultProxy)).toBe(true);
+    expect(result).toBe(expectedResultProxy);
   });
 });

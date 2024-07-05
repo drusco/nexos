@@ -20,8 +20,12 @@ const update = <T>(proxy: nx.Proxy, value: T): ProxyOrValue<T> => {
     cancellable: false,
   });
 
+  /**
+   * Emits the 'nx.update' event only to the nexo listeners
+   * Emitting this event to proxy wrappers separately must be avoided
+   * because adding this listener to each proxy on creation is expensive
+   **/
   nexo.events.emit(event.name, event);
-  wrapper.events.emit(event.name, event);
 
   return value as ProxyOrValue<T>;
 };
