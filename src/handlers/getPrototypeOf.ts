@@ -9,7 +9,7 @@ const getPrototypeOf = (fn: nx.functionLike): object => {
   const proxy = map.tracables.get(fn);
   const data = map.proxies.get(proxy);
   const target = getTarget(data.target);
-  const scope = data.scope;
+  const scope = data.nexo;
   const wrapper = new ProxyWrapper(proxy);
 
   const event = new ProxyEvent("getPrototypeOf", { target: proxy });

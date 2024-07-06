@@ -6,7 +6,7 @@ import ProxyWrapper from "../utils/ProxyWrapper.js";
 const setPrototypeOf = (fn: nx.voidFunction, prototype: object): boolean => {
   const proxy = map.tracables.get(fn);
   const data = map.proxies.get(proxy);
-  const scope = data.scope;
+  const scope = data.nexo;
   const wrapper = new ProxyWrapper(proxy);
 
   const event = new ProxyEvent("setPrototypeOf", { target: proxy });

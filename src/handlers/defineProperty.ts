@@ -20,8 +20,7 @@ const defineProperty = (
   const proxy = map.tracables.get(fn);
   const wrapper = new ProxyWrapper(proxy);
   const data = map.proxies.get(proxy);
-  const nexo = data.scope;
-  const { sandbox } = data;
+  const { sandbox, nexo } = data;
 
   descriptor = {
     ...descriptorDefaults,

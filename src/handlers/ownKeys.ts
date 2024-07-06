@@ -7,7 +7,7 @@ const ownKeys = (fn: nx.functionLike): nx.objectKey[] => {
   const proxy = map.tracables.get(fn);
   const data = map.proxies.get(proxy);
   const { sandbox } = data;
-  const scope = data.scope;
+  const scope = data.nexo;
   const keys: nx.objectKey[] = [];
   const wrapper = new ProxyWrapper(proxy);
 

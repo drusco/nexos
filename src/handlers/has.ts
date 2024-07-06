@@ -9,7 +9,7 @@ const has = (fn: nx.voidFunction, key: nx.objectKey): boolean => {
   const wrapper = new ProxyWrapper(proxy);
 
   const { sandbox } = data;
-  const scope = data.scope;
+  const scope = data.nexo;
 
   const event = new ProxyEvent("has", { target: proxy, data: { key } });
 

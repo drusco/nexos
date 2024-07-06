@@ -13,7 +13,7 @@ const getOwnPropertyDescriptor = (
   const wrapper = new ProxyWrapper(proxy);
 
   const { sandbox } = data;
-  const scope = data.scope;
+  const scope = data.nexo;
   const value = getTarget(sandbox.get(key), true);
 
   const event = new ProxyEvent("getOwnPropertyDescriptor", {

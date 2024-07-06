@@ -19,7 +19,7 @@ declare namespace Nexo {
     type data = {
       id: string;
       target: void | traceable;
-      scope: Nexo;
+      nexo: Nexo;
       sandbox: Map<objectKey, PropertyDescriptor>;
       isExtensible: boolean;
       events: NexoEmitter;

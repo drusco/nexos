@@ -23,7 +23,7 @@ class ProxyWrapper {
   }
 
   get nexo(): Nexo {
-    return this.data.scope;
+    return this.data.nexo;
   }
 
   get events(): NexoEmitter {

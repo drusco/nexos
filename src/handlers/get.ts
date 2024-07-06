@@ -10,7 +10,7 @@ const get = (fn: nx.voidFunction, key: nx.objectKey): unknown => {
   const proxy = map.tracables.get(fn);
   const data = map.proxies.get(proxy);
   const { sandbox } = data;
-  const scope = data.scope;
+  const scope = data.nexo;
   const target = getTarget(data.target);
   const wrapper = new ProxyWrapper(proxy);
 

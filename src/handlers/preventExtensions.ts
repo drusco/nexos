@@ -6,7 +6,7 @@ import ProxyWrapper from "../utils/ProxyWrapper.js";
 const preventExtensions = (fn: nx.functionLike): boolean => {
   const proxy = map.tracables.get(fn);
   const data = map.proxies.get(proxy);
-  const scope = data.scope;
+  const scope = data.nexo;
   const wrapper = new ProxyWrapper(proxy);
 
   const event = new ProxyEvent("preventExtensions", { target: proxy });

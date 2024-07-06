@@ -13,7 +13,7 @@ const set = (
   const proxy = map.tracables.get(fn);
   const data = map.proxies.get(proxy);
   const { sandbox } = data;
-  const scope = data.scope;
+  const scope = data.nexo;
   const wrapper = new ProxyWrapper(proxy);
 
   let _value = getTarget(value, true);

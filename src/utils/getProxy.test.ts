@@ -56,13 +56,13 @@ function testProxyData(
   proxyTarget: nx.traceable | void,
   proxyId: string | void,
 ) {
-  const { id, scope, sandbox, isExtensible, target } = map.proxies.get(proxy);
+  const { id, nexo, sandbox, isExtensible, target } = map.proxies.get(proxy);
 
   const $id = proxyId || id;
 
   expect(typeof id).toBe("string");
   expect($id).toBe(id);
-  expect(scope).toBe(nexo);
+  expect(nexo).toBe(nexo);
   expect(sandbox).toBeInstanceOf(Map);
   expect(isExtensible).toBe(true);
   expect(target).toBe(proxyTarget);

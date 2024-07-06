@@ -7,7 +7,7 @@ const deleteProperty = (fn: nx.voidFunction, key: nx.objectKey): boolean => {
   const proxy = map.tracables.get(fn);
   const data = map.proxies.get(proxy);
   const { sandbox } = data;
-  const scope = data.scope;
+  const scope = data.nexo;
   const wrapper = new ProxyWrapper(proxy);
 
   const event = new ProxyEvent("deleteProperty", {

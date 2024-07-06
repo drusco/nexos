@@ -35,7 +35,7 @@ const getProxy = (
     id: uid,
     fn,
     target,
-    scope: nexo,
+    nexo: nexo,
     sandbox: new Map(),
     isExtensible: true,
     events: new NexoEmitter(),
