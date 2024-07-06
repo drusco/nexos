@@ -16,10 +16,8 @@ const getTarget = (value: unknown, resolveProxy: boolean = false): unknown => {
 
   const { target } = map.proxies.get(proxy);
 
-  if (target) {
-    // returns a target from a proxy that is linked to the received value
-    return target;
-  }
+  // returns the proxy target
+  return target;
 };
 
 export default getTarget;

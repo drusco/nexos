@@ -4,35 +4,41 @@ import getProxy from "../utils/getProxy.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
+import update from "./update.js";
 
 const construct = (fn: nx.voidFunction, args: nx.arrayLike = []): object => {
   const proxy = map.tracables.get(fn);
   const wrapper = new ProxyWrapper(proxy);
   const { target, nexo } = wrapper;
-  const instanceProxy = getProxy(nexo);
+  const resultProxy = getProxy(nexo);
 
   const event = new ProxyEvent("construct", {
     target: proxy,
-    data: { arguments: args, result: instanceProxy },
+    data: { arguments: args, result: resultProxy },
+    cancellable: true,
   });
 
   nexo.events.emit(event.name, event);
   wrapper.events.emit(event.name, event);
 
-  if (typeof target === "function") {
-    // get the value from the original target
+  if (event.defaultPrevented) {
+    // return the value from the prevented event
+    return update(resultProxy, event.returnValue) as object;
+  }
 
-    const instanceResult: object = Reflect.construct(
+  if (typeof target === "function") {
+    // get the value from the original target instance
+
+    const result = Reflect.construct(
       target,
       args.map((arg) => getTarget(arg)),
     );
 
-    // update the proxy target
-    const instanceData = map.proxies.get(instanceProxy);
-    instanceData.target = instanceResult;
+    // update the proxy
+    return update(resultProxy, result);
   }
 
-  return instanceProxy;
+  return resultProxy;
 };
 
 export default construct;

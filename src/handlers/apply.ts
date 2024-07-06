@@ -33,12 +33,13 @@ const apply = (
   if (typeof target === "function") {
     // return the value from the original target call
 
-    const functionResult = target.apply(
+    const result = target.apply(
       getTarget(that),
       args.map((arg) => getTarget(arg)),
     );
 
-    return update(resultProxy, functionResult);
+    // update the proxy
+    return update(resultProxy, result);
   }
 
   return resultProxy;
