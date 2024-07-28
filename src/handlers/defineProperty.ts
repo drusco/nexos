@@ -6,26 +6,34 @@ import map from "../utils/maps.js";
 import cloneModify from "../utils/cloneModify.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
 
-const descriptorDefaults: PropertyDescriptor = {
-  configurable: false,
-  enumerable: false,
-  writable: false,
-};
-
 const defineProperty = (
   fn: nx.voidFunction,
   key: nx.objectKey,
-  descriptor: PropertyDescriptor = descriptorDefaults,
+  descriptor?: PropertyDescriptor,
 ): boolean => {
   const proxy = map.tracables.get(fn);
   const wrapper = new ProxyWrapper(proxy);
   const data = map.proxies.get(proxy);
   const { sandbox, nexo } = data;
 
-  descriptor = {
-    ...descriptorDefaults,
-    ...descriptor,
-  };
+  const event = new ProxyEvent("defineProperty", {
+    target: proxy,
+    cancellable: true,
+    data: {
+      key,
+      descriptor,
+    },
+  });
+
+  nexo.events.emit(event.name, event);
+  wrapper.events.emit(event.name, event);
+
+  // the property descriptor can be modified by the event listeners
+  // by accesing the data.descriptor value.
+  // Property definition is cancelled whenever event.preventDefault is called
+  if (event.defaultPrevented) {
+    return false;
+  }
 
   const propertyDescriptor = cloneModify(descriptor, false, (value) => {
     if (isTraceable(value)) {
@@ -33,22 +41,6 @@ const defineProperty = (
     }
     return value;
   });
-
-  const event = new ProxyEvent("defineProperty", {
-    target: proxy,
-    cancellable: true,
-    data: {
-      key,
-      descriptor: propertyDescriptor,
-    },
-  });
-
-  nexo.events.emit(event.name, event);
-  wrapper.events.emit(event.name, event);
-
-  if (event.defaultPrevented) {
-    return false;
-  }
 
   sandbox.set(key, propertyDescriptor);
 

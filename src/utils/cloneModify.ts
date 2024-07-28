@@ -1,19 +1,20 @@
+import nx from "../types/Nexo.js";
 import isPlainObject from "is-plain-obj";
 import isTraceable from "./isTraceable.js";
 
+type clone<Expected, Type> = nx.typeExtends<Expected, void, Type>;
+
 const cache: WeakMap<object, object> = new WeakMap();
 
-type ReturnType<E, T> = E extends void ? T : E;
-
-const cloneModify = <Expected = void, T = unknown>(
-  value: T,
+const cloneModify = <Expected = void, Type = unknown>(
+  value: Type,
   deep: boolean = true,
-  modify: (value: unknown) => unknown = (value) => value,
-): ReturnType<Expected, T> => {
+  modify: nx.functionLike = (value) => value,
+): clone<Expected, Type> => {
   // return the original or transformed value for untraceable values
 
   if (!isTraceable(value)) {
-    return modify(value) as ReturnType<Expected, T>;
+    return modify(value) as clone<Expected, Type>;
   }
 
   // return the original or transformed value for special objects
@@ -22,13 +23,13 @@ const cloneModify = <Expected = void, T = unknown>(
   const isArray = Array.isArray(value);
 
   if (!isObject && !isArray) {
-    return modify(value) as ReturnType<Expected, T>;
+    return modify(value) as clone<Expected, Type>;
   }
 
   // Handle circular reference by returning a shallow copy in cache
 
   if (cache.has(value)) {
-    return cache.get(value) as ReturnType<Expected, T>;
+    return cache.get(value) as clone<Expected, Type>;
   }
 
   // return a shallow copy for plain objects and arrays
@@ -46,7 +47,7 @@ const cloneModify = <Expected = void, T = unknown>(
     copy[key] = modify(value[key]);
   });
 
-  return copy as ReturnType<Expected, T>;
+  return copy as clone<Expected, Type>;
 };
 
 export default cloneModify;

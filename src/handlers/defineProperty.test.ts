@@ -25,21 +25,18 @@ describe("defineProperty", () => {
       definePropertyCallbackProxy.mock.lastCall;
 
     expect(result).toBe(true);
-    expect(definePropertyCallbackNexo).toBeCalledTimes(1);
+    expect(definePropertyCallbackNexo).toHaveBeenCalledTimes(1);
     expect(definePropertyEventForNexo.target).toBe(proxy);
     expect(definePropertyEventForNexo.cancellable).toBe(true);
 
     expect(definePropertyEventForNexo.data).toStrictEqual({
       key: "foo",
       descriptor: {
-        configurable: false,
-        writable: false,
-        enumerable: false,
         value: "bar",
       },
     });
 
-    expect(definePropertyCallbackProxy).toBeCalledTimes(1);
+    expect(definePropertyCallbackProxy).toHaveBeenCalledTimes(1);
     expect(definePropertyEventForProxy).toBe(definePropertyEventForNexo);
   });
 
@@ -77,9 +74,6 @@ describe("defineProperty", () => {
     expect(fooDescriptor.value).toBe(nexo.create(descriptor.value));
 
     expect(fooDescriptor).toStrictEqual({
-      configurable: false,
-      enumerable: false,
-      writable: false,
       value: nexo.create(descriptor.value),
     });
   });

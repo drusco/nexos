@@ -4,14 +4,14 @@ import isTraceable from "../utils/isTraceable.js";
 import getProxy from "../utils/getProxy.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
 
-type ProxyOrValue<T> = T extends nx.traceable ? nx.Proxy : T;
+type Proxy<Type> = nx.typeExtends<Type, nx.traceable, nx.Proxy>;
 
-const update = <T>(proxy: nx.Proxy, value: T): ProxyOrValue<T> => {
+const update = <Type>(proxy: nx.Proxy, value: Type): Proxy<Type> => {
   const wrapper = new ProxyWrapper(proxy);
   const { nexo } = wrapper;
 
   if (isTraceable(value)) {
-    value = getProxy(nexo, value) as T;
+    value = getProxy(nexo, value) as Type;
   }
 
   const event = new NexoEvent("nx.update", {
@@ -27,7 +27,7 @@ const update = <T>(proxy: nx.Proxy, value: T): ProxyOrValue<T> => {
    **/
   nexo.events.emit(event.name, event);
 
-  return value as ProxyOrValue<T>;
+  return value as Proxy<Type>;
 };
 
 export default update;

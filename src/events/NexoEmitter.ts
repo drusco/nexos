@@ -7,7 +7,7 @@ class NexoEmitter extends EventEmitter {
   constructor() {
     super({ captureRejections: true });
 
-    this.on("error", (error) => {
+    this.on("error", (error: Error) => {
       new NexoError(error.message, this);
     });
   }
@@ -25,6 +25,7 @@ class NexoEmitter extends EventEmitter {
         // ignore non defaultPrevented events
         if (event.defaultPrevented === false) return;
         // ignore when event.returnValue is set manually
+        // listeners can check when 'returnValue' is set and thus transform or leave as is
         event.returnValue = returnValue;
       });
     } catch (error) {

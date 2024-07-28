@@ -4,10 +4,6 @@
 
 `npm i`
 
-#### Run husky script
-
-`npm run prepare`
-
 ## Development
 
 #### Typscript compiler watch mode

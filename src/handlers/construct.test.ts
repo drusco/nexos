@@ -23,7 +23,7 @@ describe("construct", () => {
     const [constructEventForNexo] = constructCallbackNexo.mock.lastCall;
     const [constructEventForProxy] = constructCallbackProxy.mock.lastCall;
 
-    expect(constructCallbackNexo).toBeCalledTimes(1);
+    expect(constructCallbackNexo).toHaveBeenCalledTimes(1);
     expect(constructEventForNexo.target).toBe(proxy);
     expect(constructEventForNexo.cancellable).toBe(true);
 
@@ -32,7 +32,7 @@ describe("construct", () => {
       result,
     });
 
-    expect(constructCallbackProxy).toBeCalledTimes(1);
+    expect(constructCallbackProxy).toHaveBeenCalledTimes(1);
     expect(constructEventForProxy).toBe(constructEventForNexo);
   });
 
@@ -124,7 +124,7 @@ describe("construct", () => {
 
     const [updateEvent] = updateCallback.mock.lastCall;
 
-    expect(updateCallback).toBeCalledTimes(1);
+    expect(updateCallback).toHaveBeenCalledTimes(1);
     expect(updateEvent.target).toBe(expectedProxy);
     expect(updateEvent.cancellable).toBe(false);
     expect(updateEvent.data).toBe(expectedResult);
@@ -152,7 +152,7 @@ describe("construct", () => {
     const result = construct(wrapper.fn);
     const [updateEvent] = updateCallback.mock.lastCall;
 
-    expect(updateCallback).toBeCalledTimes(1);
+    expect(updateCallback).toHaveBeenCalledTimes(1);
     expect(updateEvent.target).toBe(expectedProxy);
     expect(updateEvent.cancellable).toBe(false);
     expect(updateEvent.data).toBeInstanceOf(constructable);

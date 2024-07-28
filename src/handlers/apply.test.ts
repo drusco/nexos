@@ -24,7 +24,7 @@ describe("apply", () => {
     const [applyEventForNexo] = applyCallbackNexo.mock.lastCall;
     const [applyEventForProxy] = applyCallbackProxy.mock.lastCall;
 
-    expect(applyCallbackNexo).toBeCalledTimes(1);
+    expect(applyCallbackNexo).toHaveBeenCalledTimes(1);
     expect(applyEventForNexo).toBeInstanceOf(ProxyEvent);
     expect(applyEventForNexo.target).toBe(proxy);
     expect(applyEventForNexo.cancellable).toBe(true);
@@ -35,7 +35,7 @@ describe("apply", () => {
       result,
     });
 
-    expect(applyCallbackProxy).toBeCalledTimes(1);
+    expect(applyCallbackProxy).toHaveBeenCalledTimes(1);
     expect(applyEventForProxy).toBe(applyEventForNexo);
   });
 
@@ -134,7 +134,7 @@ describe("apply", () => {
 
     const [updateEvent] = updateCallback.mock.lastCall;
 
-    expect(updateCallback).toBeCalledTimes(1);
+    expect(updateCallback).toHaveBeenCalledTimes(1);
     expect(updateEvent.target).toBe(expectedProxy);
     expect(updateEvent.cancellable).toBe(false);
     expect(updateEvent.data).toBe(expectedResult);
@@ -165,7 +165,7 @@ describe("apply", () => {
 
     const [updateEvent] = updateCallback.mock.lastCall;
 
-    expect(updateCallback).toBeCalledTimes(1);
+    expect(updateCallback).toHaveBeenCalledTimes(1);
     expect(updateEvent.target).toBe(expectedProxy);
     expect(updateEvent.cancellable).toBe(false);
     expect(updateEvent.data).toBe(expectedResultProxy);
