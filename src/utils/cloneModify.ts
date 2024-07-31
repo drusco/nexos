@@ -9,30 +9,30 @@ const cache: WeakMap<object, object> = new WeakMap();
 const cloneModify = <Expected = void, Type = unknown>(
   value: Type,
   deep: boolean = true,
-  modify: nx.functionLike = (value) => value,
+  modify: nx.functionLike = (value: unknown) => value,
 ): clone<Expected, Type> => {
-  // return the original or transformed value for untraceable values
+  // return the transformed value for untraceable values
 
   if (!isTraceable(value)) {
-    return modify(value) as clone<Expected, Type>;
+    return modify(value);
   }
 
-  // return the original or transformed value for special objects
+  // return the transformed value for functions
 
   const isObject = isPlainObject(value);
   const isArray = Array.isArray(value);
 
   if (!isObject && !isArray) {
-    return modify(value) as clone<Expected, Type>;
+    return modify(value);
   }
 
-  // Handle circular reference by returning a shallow copy in cache
+  // Handle circular references using cached values
 
   if (cache.has(value)) {
     return cache.get(value) as clone<Expected, Type>;
   }
 
-  // return a shallow copy for plain objects and arrays
+  // return a shallow copy for objects and arrays
 
   const copy: object = isArray ? [] : {};
   const keys = Object.keys(value);

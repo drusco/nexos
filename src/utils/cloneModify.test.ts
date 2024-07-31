@@ -5,7 +5,7 @@ import isProxy from "./isProxy.js";
 const nexo = new Nexo();
 
 describe("cloneModify", () => {
-  it("Creates a shallow copy for plain objects or arrays", () => {
+  it("Creates a deep copy for plain objects and arrays", () => {
     const data = {
       foo: "file",
       bar: [10, 20],
@@ -56,7 +56,7 @@ describe("cloneModify", () => {
     expect(result[0]).toBe(result[0].bar[0]);
   });
 
-  it("Can transform the value when it is neither array nor plain object", () => {
+  it("Transforms a value when it's neither an array nor a plain object", () => {
     const proxy = nexo.create();
 
     const data = {
@@ -84,7 +84,7 @@ describe("cloneModify", () => {
     expect(result.bar).toBe(null);
   });
 
-  it("Prevents objects an arrays to be cloned deeply; i.e., creates shallow copies", () => {
+  it("Creates a shallow copy for plain objects and arrays", () => {
     const foo = { bar: [null] };
     const result = cloneModify(foo, false);
 
