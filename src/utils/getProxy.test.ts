@@ -1,4 +1,3 @@
-import type nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import getProxy from "./getProxy.js";
 import map from "./maps.js";
@@ -9,23 +8,28 @@ const nexo = new Nexo();
 describe("getProxy", () => {
   it("Creates a new proxy with custom data", () => {
     const proxy = getProxy(nexo);
+    const wrapper = new ProxyWrapper(proxy);
+    const data = map.proxies.get(proxy);
 
-    testProxyData(proxy);
+    expect(data?.id).toBe(wrapper.id);
+    expect(data?.fn).toBe(wrapper?.fn);
+    expect(data?.target).toBeUndefined();
   });
 
-  it("Creates a new proxy with custom data and a target", () => {
-    const arrayTarget = [];
-    const proxy = getProxy(nexo, arrayTarget);
+  it("Creates a new proxy with a custom target", () => {
+    const target = [];
+    const proxy = getProxy(nexo, target);
+    const data = map.proxies.get(proxy);
 
-    testProxyData(proxy, arrayTarget);
+    expect(data?.target).toBe(target);
   });
 
   it("Creates a new proxy with a custom id", () => {
-    const target = undefined;
-    const customId = "foo";
-    const proxy = getProxy(nexo, target, "foo");
+    const proxy = getProxy(nexo, undefined, "foo");
+    const data = map.proxies.get(proxy);
 
-    testProxyData(proxy, target, customId);
+    expect(data?.id).toBe("foo");
+    expect(data?.target).toBeUndefined();
   });
 
   it("Links internal data using weak maps", () => {
@@ -50,20 +54,3 @@ describe("getProxy", () => {
     expect(getProxy(nexo, target)).toBe(proxyWithTarget);
   });
 });
-
-function testProxyData(
-  proxy: nx.Proxy,
-  proxyTarget: nx.traceable | void,
-  proxyId: string | void,
-) {
-  const { id, nexo, sandbox, isExtensible, target } = map.proxies.get(proxy);
-
-  const $id = proxyId || id;
-
-  expect(typeof id).toBe("string");
-  expect($id).toBe(id);
-  expect(nexo).toBe(nexo);
-  expect(sandbox).toBeInstanceOf(Map);
-  expect(isExtensible).toBe(true);
-  expect(target).toBe(proxyTarget);
-}

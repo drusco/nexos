@@ -55,6 +55,7 @@ describe("defineProperty", () => {
     const result = defineProperty(wrapper.fn, "foo");
 
     expect(result).toBe(false);
+    expect(proxy.foo).toBeUndefined();
   });
 
   it("Converts traceable values to proxies", () => {
