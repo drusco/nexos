@@ -55,24 +55,23 @@ describe("defineProperty", () => {
     const result = defineProperty(wrapper.fn, "foo");
 
     expect(result).toBe(false);
-    expect(proxy.foo).toBeUndefined();
+    expect(proxy.foo).toBeUndefined(); // should throw an error later on
   });
 
   it("Converts traceable values to proxies", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
     const wrapper = new ProxyWrapper(proxy);
-    const { sandbox } = map.proxies.get(proxy);
+    const data = map.proxies.get(proxy);
 
     const key = "foo";
     const descriptor: PropertyDescriptor = { value: [] };
 
     const result = defineProperty(wrapper.fn, key, descriptor);
-    const fooDescriptor = sandbox.get(key);
+    const fooDescriptor = data?.sandbox.get(key);
 
     expect(result).toBe(true);
-    expect(isProxy(fooDescriptor.value)).toBe(true);
-    expect(fooDescriptor.value).toBe(nexo.create(descriptor.value));
+    expect(isProxy(fooDescriptor?.value)).toBe(true);
 
     expect(fooDescriptor).toStrictEqual({
       value: nexo.create(descriptor.value),
