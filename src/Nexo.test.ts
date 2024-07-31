@@ -30,6 +30,7 @@ describe("Nexo", () => {
     expect(isProxy(proxy)).toBe(true);
     expect(typeof proxy).toBe("function");
     expect(wrapper.target).toBeUndefined();
+    expect(nexo.entries.has(wrapper.id)).toBe(true);
   });
 
   it("Creates a new proxy object with a target", () => {
