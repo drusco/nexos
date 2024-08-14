@@ -14,15 +14,7 @@ const preventExtensions = (fn: nx.functionLike): boolean => {
   scope.events.emit(event.name, event);
   wrapper.events.emit(event.name, event);
 
-  if (event.defaultPrevented) {
-    data.isExtensible = event.returnValue === false;
-
-    return !data.isExtensible;
-  }
-
-  data.isExtensible = false;
-
-  return !data.isExtensible;
+  return Reflect.preventExtensions(fn);
 };
 
 export default preventExtensions;

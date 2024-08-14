@@ -1,8 +1,6 @@
 import Nexo from "../Nexo.js";
 import defineProperty from "./defineProperty.js";
 import ProxyEvent from "../events/ProxyEvent.js";
-import map from "../utils/maps.js";
-import isProxy from "../utils/isProxy.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 describe("defineProperty", () => {
@@ -30,7 +28,7 @@ describe("defineProperty", () => {
     expect(definePropertyEventForNexo.cancellable).toBe(true);
 
     expect(definePropertyEventForNexo.data).toStrictEqual({
-      key: "foo",
+      property: "foo",
       descriptor: {
         value: "bar",
       },
@@ -47,34 +45,55 @@ describe("defineProperty", () => {
 
     wrapper.events.on(
       "nx.proxy.defineProperty",
-      (event: ProxyEvent<{ key: string; descriptor: PropertyDescriptor }>) => {
+      (
+        event: ProxyEvent<{ property: string; descriptor: PropertyDescriptor }>,
+      ) => {
         event.preventDefault();
       },
     );
 
-    const result = defineProperty(wrapper.fn, "foo");
+    const result = defineProperty(wrapper.fn, "foo", { value: 5 });
 
     expect(result).toBe(false);
-    expect(proxy.foo).toBeUndefined(); // should throw an error later on
+    expect(proxy.foo).not.toBe(5);
   });
 
-  it("Converts traceable values to proxies", () => {
+  it("Cannot define properties on frozen proxies", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
     const wrapper = new ProxyWrapper(proxy);
-    const data = map.proxies.get(proxy);
 
-    const key = "foo";
-    const descriptor: PropertyDescriptor = { value: [] };
+    Object.freeze(proxy);
 
-    const result = defineProperty(wrapper.fn, key, descriptor);
-    const fooDescriptor = data?.sandbox.get(key);
+    const result = defineProperty(wrapper.fn, "foo", { value: 10 });
 
-    expect(result).toBe(true);
-    expect(isProxy(fooDescriptor?.value)).toBe(true);
+    expect(result).toBe(false);
+    expect(Object.isFrozen(proxy)).toBe(true);
+  });
 
-    expect(fooDescriptor).toStrictEqual({
-      value: nexo.create(descriptor.value),
-    });
+  it("Cannot define properties on sealed proxies", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.create();
+    const wrapper = new ProxyWrapper(proxy);
+
+    Object.seal(proxy);
+
+    const result = defineProperty(wrapper.fn, "foo", { value: 20 });
+
+    expect(result).toBe(false);
+    expect(Object.isSealed(proxy)).toBe(true);
+  });
+
+  it("Cannot define properties on non-extensible proxies", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.create();
+    const wrapper = new ProxyWrapper(proxy);
+
+    Object.preventExtensions(proxy);
+
+    const result = defineProperty(wrapper.fn, "foo", { value: 30 });
+
+    expect(result).toBe(false);
+    expect(Object.isExtensible(proxy)).toBe(false);
   });
 });

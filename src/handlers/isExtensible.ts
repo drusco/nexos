@@ -6,7 +6,6 @@ import ProxyWrapper from "../utils/ProxyWrapper.js";
 const isExtensible = (fn: nx.functionLike): boolean => {
   const proxy = map.tracables.get(fn);
   const data = map.proxies.get(proxy);
-  const { isExtensible } = data;
   const scope = data.nexo;
   const wrapper = new ProxyWrapper(proxy);
 
@@ -19,7 +18,7 @@ const isExtensible = (fn: nx.functionLike): boolean => {
     return event.returnValue === true;
   }
 
-  return isExtensible;
+  return Reflect.isExtensible(fn);
 };
 
 export default isExtensible;

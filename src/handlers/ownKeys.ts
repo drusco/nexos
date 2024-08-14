@@ -3,33 +3,23 @@ import map from "../utils/maps.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
 
-const ownKeys = (fn: nx.functionLike): nx.objectKey[] => {
+const ownKeys = (fn: nx.voidFunction): nx.objectKey[] => {
   const proxy = map.tracables.get(fn);
-  const data = map.proxies.get(proxy);
-  const { sandbox } = data;
-  const scope = data.nexo;
-  const keys: nx.objectKey[] = [];
   const wrapper = new ProxyWrapper(proxy);
 
-  const event = new ProxyEvent("ownKeys", { target: proxy });
+  // Event is emitted for inspection purposes only
+  // ProxyWrapper should have it's own 'keys' method to access the sandbox keys
 
-  scope.events.emit(event.name, event);
+  const event = new ProxyEvent("ownKeys", {
+    target: proxy,
+    cancellable: false,
+  });
+
+  wrapper.nexo.events.emit(event.name, event);
   wrapper.events.emit(event.name, event);
 
-  if (event.defaultPrevented) {
-    if (!Array.isArray(event.returnValue)) {
-      return keys;
-    }
-    return event.returnValue.filter(
-      (key) => typeof key === "string" || typeof key === "symbol",
-    );
-  }
-
-  for (const key of sandbox.keys()) {
-    keys.push(key);
-  }
-
-  return keys;
+  // Returns the own keys from the void function target
+  return Reflect.ownKeys(fn);
 };
 
 export default ownKeys;

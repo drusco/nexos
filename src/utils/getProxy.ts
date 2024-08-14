@@ -22,7 +22,7 @@ const getProxy = (
 
   // create proxy
 
-  const fn = new Function() as nx.functionLike;
+  const fn = function () {};
   const revocable = Proxy.revocable(fn, handlers);
   const traceable = isTraceable(target);
   const proxy = revocable.proxy as nx.Proxy;
@@ -37,7 +37,6 @@ const getProxy = (
     target,
     nexo,
     sandbox: new Map(),
-    isExtensible: true,
     events: new NexoEmitter(),
     revoke: revocable.revoke,
     revoked: false,

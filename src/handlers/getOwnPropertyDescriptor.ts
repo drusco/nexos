@@ -1,37 +1,30 @@
 import type nx from "../types/Nexo.js";
-import getTarget from "../utils/getTarget.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 const getOwnPropertyDescriptor = (
   fn: nx.voidFunction,
-  key: nx.objectKey,
+  property: nx.objectKey,
 ): PropertyDescriptor => {
   const proxy = map.tracables.get(fn);
-  const data = map.proxies.get(proxy);
   const wrapper = new ProxyWrapper(proxy);
 
-  const { sandbox } = data;
-  const scope = data.nexo;
-  const value = getTarget(sandbox.get(key), true);
+  // Event is emitted for inspection purposes only
+  // ProxyWrapper should have it's own 'getOwnPropertyDescriptor' method to access the sandbox descriptor
 
   const event = new ProxyEvent("getOwnPropertyDescriptor", {
     target: proxy,
+    cancellable: false,
     data: {
-      key,
+      property,
     },
   });
 
-  scope.events.emit(event.name, event);
+  wrapper.nexo.events.emit(event.name, event);
   wrapper.events.emit(event.name, event);
 
-  return {
-    configurable: true,
-    enumerable: true,
-    writable: true,
-    value,
-  };
+  return Reflect.getOwnPropertyDescriptor(fn, property);
 };
 
 export default getOwnPropertyDescriptor;

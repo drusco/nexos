@@ -22,7 +22,6 @@ declare namespace Nexo {
       target: void | traceable;
       nexo: Nexo;
       sandbox: Map<objectKey, PropertyDescriptor>;
-      isExtensible: boolean;
       events: NexoEmitter;
       fn: voidFunction;
       revoke: voidFunction;
