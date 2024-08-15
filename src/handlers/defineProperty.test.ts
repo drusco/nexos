@@ -2,6 +2,9 @@ import Nexo from "../Nexo.js";
 import defineProperty from "./defineProperty.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
+import NexoEvent from "../events/NexoEvent.js";
+import NexoError from "../errors/NexoError.js";
+import EventEmitter from "events";
 
 describe("defineProperty", () => {
   it("Emits a defineProperty event", () => {
@@ -95,5 +98,44 @@ describe("defineProperty", () => {
 
     expect(result).toBe(false);
     expect(Object.isExtensible(proxy)).toBe(false);
+  });
+
+  it("Defines a new property on the proxy", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.create();
+    const wrapper = new ProxyWrapper(proxy);
+
+    const result = defineProperty(wrapper.fn, "foo", { value: true });
+
+    expect(result).toBe(true);
+    expect(proxy.foo).toBe(true);
+  });
+
+  it("Cannot redefine property: non writable, non configurable", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.create();
+    const wrapper = new ProxyWrapper(proxy);
+    const errorCallbackNexo = jest.fn();
+    const errorCallbackProxy = jest.fn();
+
+    nexo.events.on("nx.error", errorCallbackNexo);
+    wrapper.events.on("nx.error", errorCallbackProxy);
+
+    defineProperty(wrapper.fn, "foo", { value: true });
+
+    const result = defineProperty(wrapper.fn, "foo", { value: false });
+
+    const [errorEventNexo]: NexoEvent<EventEmitter, NexoError>[] =
+      errorCallbackNexo.mock.lastCall;
+
+    const [errorEventProxy]: NexoEvent<EventEmitter, NexoError>[] =
+      errorCallbackProxy.mock.lastCall;
+
+    expect(result).toBe(false);
+    expect(proxy.foo).toBe(true);
+    expect(errorCallbackNexo).toHaveBeenCalledTimes(1);
+    expect(errorCallbackProxy).toHaveBeenCalledTimes(1);
+    expect(errorEventProxy.data).toBeInstanceOf(NexoError);
+    expect(errorEventNexo.data).toBeInstanceOf(NexoError);
   });
 });

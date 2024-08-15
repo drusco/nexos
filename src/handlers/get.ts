@@ -6,46 +6,39 @@ import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
 
-const get = (fn: nx.voidFunction, key: nx.objectKey): unknown => {
+const get = (fn: nx.voidFunction, property: nx.objectKey): unknown => {
   const proxy = map.tracables.get(fn);
   const data = map.proxies.get(proxy);
-  const { sandbox } = data;
-  const scope = data.nexo;
-  const target = getTarget(data.target);
   const wrapper = new ProxyWrapper(proxy);
+  const { sandbox, nexo } = data;
+  const target = wrapper.target;
 
   let value: unknown;
 
-  const event = new ProxyEvent("get", { target: proxy, data: { key } });
+  const event = new ProxyEvent("get", {
+    target: proxy,
+    cancellable: true,
+    data: { property },
+  });
 
-  scope.events.emit(event.name, event);
+  nexo.events.emit(event.name, event);
   wrapper.events.emit(event.name, event);
 
+  // Event listeners can modify the value to return
   if (event.defaultPrevented) {
     return event.returnValue;
   }
 
   try {
     // get value from the original target
-    value = getTarget(target[key], true);
+    value = getTarget(target[property], true);
   } catch (error) {
     // target is untraceable
   }
 
-  if (sandbox.has(key)) {
-    const savedValue = getTarget(sandbox.get(key), true);
-
-    if (savedValue !== value) {
-      // original value changed
-
-      if (isTraceable(value)) {
-        // sandbox.set(key, new WeakRef(value));
-      } else {
-        sandbox.set(key, value);
-      }
-    }
-
-    return getTarget(sandbox.get(key), true);
+  if (sandbox.has(property)) {
+    const descriptor = sandbox.get(property);
+    return descriptor.value;
   }
 
   // proxy's handler.set was not called ever
@@ -55,7 +48,7 @@ const get = (fn: nx.voidFunction, key: nx.objectKey): unknown => {
     return value;
   }
 
-  return getProxy(scope, value);
+  return getProxy(wrapper.nexo, value);
 };
 
 export default get;

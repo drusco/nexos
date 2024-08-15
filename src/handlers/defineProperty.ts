@@ -2,6 +2,7 @@ import type nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
+import NexoError from "../errors/NexoError.js";
 
 const defineProperty = (
   fn: nx.voidFunction,
@@ -34,6 +35,19 @@ const defineProperty = (
   // Property definition is cancelled whenever event.preventDefault is called
   if (event.defaultPrevented) {
     return false;
+  }
+
+  if (sandbox.has(property)) {
+    try {
+      const mock = Object.create(null);
+
+      Object.defineProperty(mock, property, sandbox.get(property));
+      Object.defineProperty(mock, property, descriptor);
+    } catch (error) {
+      new NexoError(error.message, nexo.events);
+      new NexoError(error.message, wrapper.events);
+      return false;
+    }
   }
 
   sandbox.set(property, descriptor);
