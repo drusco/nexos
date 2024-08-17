@@ -18,9 +18,6 @@ const construct = (fn: nx.voidFunction, args: nx.arrayLike = []): object => {
     cancellable: true,
   });
 
-  nexo.events.emit(event.name, event);
-  wrapper.events.emit(event.name, event);
-
   if (event.defaultPrevented) {
     // return the value from the prevented event
     return update(resultProxy, event.returnValue) as object;

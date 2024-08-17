@@ -3,7 +3,6 @@ import getTarget from "../utils/getTarget.js";
 import isTraceable from "../utils/isTraceable.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
-import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 const set = (
   fn: nx.voidFunction,
@@ -13,15 +12,10 @@ const set = (
   const proxy = map.tracables.get(fn);
   const data = map.proxies.get(proxy);
   const { sandbox } = data;
-  const scope = data.nexo;
-  const wrapper = new ProxyWrapper(proxy);
 
   let _value = getTarget(value, true);
 
   const event = new ProxyEvent("set", { target: proxy, data: { key, value } });
-
-  scope.events.emit(event.name, event);
-  wrapper.events.emit(event.name, event);
 
   if (event.defaultPrevented) {
     _value = event.returnValue;

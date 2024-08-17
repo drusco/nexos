@@ -10,7 +10,7 @@ const get = (fn: nx.voidFunction, property: nx.objectKey): unknown => {
   const proxy = map.tracables.get(fn);
   const data = map.proxies.get(proxy);
   const wrapper = new ProxyWrapper(proxy);
-  const { sandbox, nexo } = data;
+  const { sandbox } = data;
   const target = wrapper.target;
 
   let value: unknown;
@@ -20,9 +20,6 @@ const get = (fn: nx.voidFunction, property: nx.objectKey): unknown => {
     cancellable: true,
     data: { property },
   });
-
-  nexo.events.emit(event.name, event);
-  wrapper.events.emit(event.name, event);
 
   // Event listeners can modify the value to return
   if (event.defaultPrevented) {

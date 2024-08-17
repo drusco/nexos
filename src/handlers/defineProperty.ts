@@ -23,9 +23,6 @@ const defineProperty = (
     },
   });
 
-  nexo.events.emit(event.name, event);
-  wrapper.events.emit(event.name, event);
-
   // Target is not extensible and may be sealed or frozen as well
   if (!extensible) {
     return Reflect.defineProperty(fn, property, descriptor);

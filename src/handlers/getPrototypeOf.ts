@@ -3,19 +3,13 @@ import getTarget from "../utils/getTarget.js";
 import isTraceable from "../utils/isTraceable.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
-import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 const getPrototypeOf = (fn: nx.functionLike): object => {
   const proxy = map.tracables.get(fn);
   const data = map.proxies.get(proxy);
   const target = getTarget(data.target);
-  const scope = data.nexo;
-  const wrapper = new ProxyWrapper(proxy);
 
-  const event = new ProxyEvent("getPrototypeOf", { target: proxy });
-
-  scope.events.emit(event.name, event);
-  wrapper.events.emit(event.name, event);
+  new ProxyEvent("getPrototypeOf", { target: proxy });
 
   try {
     if (isTraceable(target)) {

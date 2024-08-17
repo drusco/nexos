@@ -22,9 +22,6 @@ const apply = (
     cancellable: true,
   });
 
-  nexo.events.emit(event.name, event);
-  wrapper.events.emit(event.name, event);
-
   if (event.defaultPrevented) {
     // return the value from the prevented event
     return update(resultProxy, event.returnValue);
