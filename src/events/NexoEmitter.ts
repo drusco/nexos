@@ -8,7 +8,7 @@ class NexoEmitter extends EventEmitter {
     super({ captureRejections: true });
 
     this.on("error", (error: Error) => {
-      new NexoError(error.message, this);
+      new NexoError(error.message, this, this);
     });
   }
 

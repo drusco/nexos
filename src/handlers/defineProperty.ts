@@ -44,8 +44,7 @@ const defineProperty = (
       Object.defineProperty(mock, property, sandbox.get(property));
       Object.defineProperty(mock, property, descriptor);
     } catch (error) {
-      new NexoError(error.message, nexo.events);
-      new NexoError(error.message, wrapper.events);
+      new NexoError(error.message, proxy, nexo.events, wrapper.events);
       return false;
     }
   }

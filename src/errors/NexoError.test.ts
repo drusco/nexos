@@ -10,19 +10,20 @@ describe("NexoError", () => {
     expect(nexoError).toBeInstanceOf(Error);
   });
 
-  it("Accepts an event emitter that will emit an error event", () => {
+  it("Accepts a target and event emitters to emit a new error event", () => {
     const emitter = new NexoEmitter();
     const callback = jest.fn();
+    const target = [];
 
     emitter.on("nx.error", callback);
 
-    const error = new NexoError("foo", emitter);
+    const error = new NexoError("foo", target, emitter);
     const [event] = callback.mock.lastCall;
 
     expect(callback).toHaveBeenCalledTimes(1);
     expect(event).toBeInstanceOf(NexoEvent);
     expect(event.data).toBe(error);
-    expect(event.target).toBe(emitter);
+    expect(event.target).toBe(target);
     expect(event.name).toBe("nx.error");
   });
 });
