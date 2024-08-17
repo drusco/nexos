@@ -8,10 +8,12 @@ class ProxyEvent<Data = unknown> extends NexoEvent<nx.Proxy, Data> {
     options: nx.events.options<nx.Proxy, Data>,
   ) {
     super(`nx.proxy.${name}`, options);
-    const proxy = this.target;
-    const { nexo, events } = new ProxyWrapper(proxy);
-    nexo.events.emit(this.name, this);
-    events.emit(this.name, this);
+
+    const wrapper = new ProxyWrapper(this.target);
+
+    // Emit the proxy event to its listeners
+    wrapper.nexo.events.emit(this.name, this);
+    wrapper.events.emit(this.name, this);
   }
 }
 
