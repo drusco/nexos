@@ -10,7 +10,7 @@ const ownKeys = (fn: nx.voidFunction): nx.objectKey[] => {
 
   new ProxyEvent("ownKeys", {
     target: proxy,
-    cancellable: false,
+    cancelable: false,
   });
 
   // Returns the own keys from the void function target

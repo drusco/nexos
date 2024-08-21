@@ -15,7 +15,7 @@ const construct = (fn: nx.voidFunction, args: nx.arrayLike = []): object => {
   const event = new ProxyEvent("construct", {
     target: proxy,
     data: { arguments: args, result: resultProxy },
-    cancellable: true,
+    cancelable: true,
   });
 
   if (event.defaultPrevented) {

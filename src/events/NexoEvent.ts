@@ -5,22 +5,22 @@ class NexoEvent<Target = unknown, Data = unknown> {
   readonly data: Data;
   readonly target: Target;
   readonly timestamp: number;
-  readonly cancellable: boolean;
+  readonly cancelable: boolean;
   public returnValue: unknown;
   private _defaultPrevented: boolean;
 
   constructor(name: string, options: nx.events.options<Target, Data> = {}) {
-    options = { cancellable: false, ...options };
+    options = { cancelable: false, ...options };
     this.name = name;
     this.data = options.data;
     this.target = options.target;
-    this.cancellable = options.cancellable;
+    this.cancelable = options.cancelable;
     this.timestamp = Date.now();
     this._defaultPrevented = false;
   }
 
   preventDefault(): void {
-    if (!this.cancellable) {
+    if (!this.cancelable) {
       return;
     }
 

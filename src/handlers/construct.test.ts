@@ -25,7 +25,7 @@ describe("construct", () => {
 
     expect(constructCallbackNexo).toHaveBeenCalledTimes(1);
     expect(constructEventForNexo.target).toBe(proxy);
-    expect(constructEventForNexo.cancellable).toBe(true);
+    expect(constructEventForNexo.cancelable).toBe(true);
 
     expect(constructEventForNexo.data).toStrictEqual({
       arguments: args,
@@ -126,7 +126,7 @@ describe("construct", () => {
 
     expect(updateCallback).toHaveBeenCalledTimes(1);
     expect(updateEvent.target).toBe(expectedProxy);
-    expect(updateEvent.cancellable).toBe(false);
+    expect(updateEvent.cancelable).toBe(false);
     expect(updateEvent.data).toBe(expectedResult);
   });
 
@@ -154,7 +154,7 @@ describe("construct", () => {
 
     expect(updateCallback).toHaveBeenCalledTimes(1);
     expect(updateEvent.target).toBe(expectedProxy);
-    expect(updateEvent.cancellable).toBe(false);
+    expect(updateEvent.cancelable).toBe(false);
     expect(updateEvent.data).toBeInstanceOf(constructable);
     expect(isProxy(result)).toBe(true);
     expect(result).toBe(updateEvent.data);

@@ -53,7 +53,7 @@ describe("NexoEmitter", () => {
 
   it("Adds the return value to the events 'returnValue' property", () => {
     const emitter = new NexoEmitter();
-    const nexoEvent = new NexoEvent("test", { cancellable: true });
+    const nexoEvent = new NexoEvent("test", { cancelable: true });
     const returnValue = new Object();
 
     emitter.on("test", (event: NexoEvent) => {

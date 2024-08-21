@@ -48,7 +48,7 @@ declare namespace Nexo {
     interface options<Target, Data> {
       target?: Target;
       data?: Data;
-      cancellable?: boolean;
+      cancelable?: boolean;
     }
   }
 }

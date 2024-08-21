@@ -16,7 +16,7 @@ const defineProperty = (
 
   const event = new ProxyEvent("defineProperty", {
     target: proxy,
-    cancellable: true,
+    cancelable: true,
     data: {
       property,
       descriptor,

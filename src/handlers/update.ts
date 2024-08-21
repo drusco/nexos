@@ -17,7 +17,7 @@ const update = <Type>(proxy: nx.Proxy, value: Type): Proxy<Type> => {
   const event = new NexoEvent("nx.update", {
     target: proxy,
     data: value,
-    cancellable: false,
+    cancelable: false,
   });
 
   /**

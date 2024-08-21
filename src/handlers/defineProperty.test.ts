@@ -28,7 +28,7 @@ describe("defineProperty", () => {
     expect(result).toBe(true);
     expect(definePropertyCallbackNexo).toHaveBeenCalledTimes(1);
     expect(definePropertyEventForNexo.target).toBe(proxy);
-    expect(definePropertyEventForNexo.cancellable).toBe(true);
+    expect(definePropertyEventForNexo.cancelable).toBe(true);
 
     expect(definePropertyEventForNexo.data).toStrictEqual({
       property: "foo",

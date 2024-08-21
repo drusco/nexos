@@ -19,7 +19,7 @@ const apply = (
   const event = new ProxyEvent("apply", {
     target: proxy,
     data: { this: that, arguments: args, result: resultProxy },
-    cancellable: true,
+    cancelable: true,
   });
 
   if (event.defaultPrevented) {

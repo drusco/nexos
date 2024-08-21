@@ -17,7 +17,7 @@ const get = (fn: nx.voidFunction, property: nx.objectKey): unknown => {
 
   const event = new ProxyEvent("get", {
     target: proxy,
-    cancellable: true,
+    cancelable: true,
     data: { property },
   });
 

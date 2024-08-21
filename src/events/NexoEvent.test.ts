@@ -27,7 +27,7 @@ describe("NexoEvent", () => {
   });
 
   it("Prevents the event default behaviour", () => {
-    const event = new NexoEvent("foo", { cancellable: true });
+    const event = new NexoEvent("foo", { cancelable: true });
     event.preventDefault();
 
     expect(event.defaultPrevented).toBe(true);
