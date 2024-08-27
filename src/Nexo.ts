@@ -7,7 +7,7 @@ import ProxyWrapper from "./utils/ProxyWrapper.js";
 class Nexo extends NexoEmitter {
   readonly entries: NexoMap<nx.Proxy> = new NexoMap();
 
-  static fn(proxy: nx.Proxy): ProxyWrapper {
+  static wrap(proxy: nx.Proxy): ProxyWrapper {
     return new ProxyWrapper(proxy);
   }
 

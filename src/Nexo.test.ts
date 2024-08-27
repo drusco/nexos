@@ -16,7 +16,7 @@ describe("Nexo", () => {
   it("Access the proxy wrapper", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.fn(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     expect(wrapper).toBeInstanceOf(ProxyWrapper);
     expect(wrapper.proxy).toBe(proxy);
