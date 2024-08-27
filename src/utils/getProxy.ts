@@ -58,7 +58,7 @@ const getProxy = (
   });
 
   nexo.entries.set(uid, new WeakRef(proxy));
-  nexo.events.emit(event.name, event);
+  nexo.emit(event.name, event);
 
   return proxy;
 };

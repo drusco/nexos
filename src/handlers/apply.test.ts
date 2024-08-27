@@ -14,7 +14,7 @@ describe("apply", () => {
     const applyCallbackNexo = jest.fn();
     const applyCallbackProxy = jest.fn();
 
-    nexo.events.on("nx.proxy.apply", applyCallbackNexo);
+    nexo.on("nx.proxy.apply", applyCallbackNexo);
     wrapper.events.on("nx.proxy.apply", applyCallbackProxy);
 
     const args = ["foo", "bar"];
@@ -128,7 +128,7 @@ describe("apply", () => {
       },
     );
 
-    nexo.events.on("nx.update", updateCallback);
+    nexo.on("nx.update", updateCallback);
 
     apply(wrapper.fn);
 
@@ -158,7 +158,7 @@ describe("apply", () => {
       },
     );
 
-    nexo.events.on("nx.update", updateCallback);
+    nexo.on("nx.update", updateCallback);
 
     const result = apply(wrapper.fn);
     const expectedResultProxy = nexo.create(expectedResult);

@@ -25,7 +25,7 @@ const update = <Type>(proxy: nx.Proxy, value: Type): Proxy<Type> => {
    * Emitting this event to proxy wrappers separately must be avoided
    * because adding this listener to each proxy on creation is expensive
    **/
-  nexo.events.emit(event.name, event);
+  nexo.emit(event.name, event);
 
   return value as Proxy<Type>;
 };

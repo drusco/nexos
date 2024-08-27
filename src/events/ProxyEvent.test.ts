@@ -26,7 +26,7 @@ describe("ProxyEvent", () => {
     const callback = jest.fn();
 
     wrapper.events.on("nx.proxy." + handlerName, callback);
-    wrapper.nexo.events.on("nx.proxy." + handlerName, callback);
+    wrapper.nexo.on("nx.proxy." + handlerName, callback);
 
     new ProxyEvent(handlerName, {
       target: proxy,

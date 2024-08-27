@@ -12,9 +12,9 @@ class NexoEmitter extends EventEmitter {
     });
   }
 
-  emit(
+  emit<Event extends NexoEvent>(
     eventName: nx.objectKey,
-    event: NexoEvent,
+    event: Event,
     ...args: nx.arrayLike
   ): boolean {
     const listeners = this.listeners(eventName);

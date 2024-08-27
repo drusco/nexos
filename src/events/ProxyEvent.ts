@@ -12,7 +12,7 @@ class ProxyEvent<Data = unknown> extends NexoEvent<nx.Proxy, Data> {
     const wrapper = new ProxyWrapper(this.target);
 
     // Emit the proxy event to its listeners
-    wrapper.nexo.events.emit(this.name, this);
+    wrapper.nexo.emit(this.name, this);
     wrapper.events.emit(this.name, this);
   }
 }

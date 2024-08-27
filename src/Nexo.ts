@@ -4,14 +4,8 @@ import NexoMap from "./utils/NexoMap.js";
 import NexoEmitter from "./events/NexoEmitter.js";
 import ProxyWrapper from "./utils/ProxyWrapper.js";
 
-class Nexo {
-  readonly entries: NexoMap<nx.Proxy>;
-  readonly events: NexoEmitter;
-
-  constructor() {
-    this.entries = new NexoMap();
-    this.events = new NexoEmitter();
-  }
+class Nexo extends NexoEmitter {
+  readonly entries: NexoMap<nx.Proxy> = new NexoMap();
 
   static fn(proxy: nx.Proxy): ProxyWrapper {
     return new ProxyWrapper(proxy);

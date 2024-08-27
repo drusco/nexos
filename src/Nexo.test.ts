@@ -10,7 +10,7 @@ describe("Nexo", () => {
     const nexo = new Nexo();
 
     expect(nexo.entries).toBeInstanceOf(NexoMap);
-    expect(nexo.events).toBeInstanceOf(NexoEmitter);
+    expect(nexo).toBeInstanceOf(NexoEmitter);
   });
 
   it("Access the proxy wrapper", () => {
@@ -47,7 +47,7 @@ describe("Nexo", () => {
     const target = {};
     const createCallback = jest.fn();
 
-    nexo.events.on("nx.proxy", createCallback);
+    nexo.on("nx.proxy", createCallback);
 
     const proxy = nexo.create(target);
     const wrapper = new ProxyWrapper(proxy);
