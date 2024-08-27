@@ -13,7 +13,7 @@ class Nexo {
     this.events = new NexoEmitter();
   }
 
-  static wrap(proxy: nx.Proxy): ProxyWrapper {
+  static fn(proxy: nx.Proxy): ProxyWrapper {
     return new ProxyWrapper(proxy);
   }
 
