@@ -15,6 +15,7 @@ const getPrototypeOf = (fn: nx.functionLike): object => {
     if (isTraceable(target)) {
       return Object.getPrototypeOf(target);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     // empty
   }

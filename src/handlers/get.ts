@@ -25,6 +25,7 @@ const get = (fn: nx.voidFunction, property: nx.objectKey): unknown => {
   try {
     // get value from the original target
     value = getTarget(target[property], true);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     // target is untraceable
   }
