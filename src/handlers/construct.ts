@@ -3,13 +3,11 @@ import getTarget from "../utils/getTarget.js";
 import getProxy from "../utils/getProxy.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
-import ProxyWrapper from "../utils/ProxyWrapper.js";
 import update from "./update.js";
 
 const construct = (fn: nx.voidFunction, args: nx.arrayLike = []): object => {
   const proxy = map.tracables.get(fn);
-  const wrapper = new ProxyWrapper(proxy);
-  const { target, nexo } = wrapper;
+  const { target, nexo } = map.proxies.get(proxy);
   const resultProxy = getProxy(nexo);
 
   const event = new ProxyEvent("construct", {

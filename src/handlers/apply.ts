@@ -4,7 +4,6 @@ import getProxy from "../utils/getProxy.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
 import update from "./update.js";
-import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 const apply = (
   fn: nx.voidFunction,
@@ -12,8 +11,7 @@ const apply = (
   args: nx.arrayLike = [],
 ): unknown => {
   const proxy = map.tracables.get(fn);
-  const wrapper = new ProxyWrapper(proxy);
-  const { target, nexo } = wrapper;
+  const { target, nexo } = map.proxies.get(proxy);
   const resultProxy = getProxy(nexo);
 
   const event = new ProxyEvent("apply", {

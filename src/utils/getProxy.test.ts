@@ -1,14 +1,13 @@
 import Nexo from "../Nexo.js";
 import getProxy from "./getProxy.js";
 import map from "./maps.js";
-import ProxyWrapper from "./ProxyWrapper.js";
 
 const nexo = new Nexo();
 
 describe("getProxy", () => {
   it("Creates a new proxy with custom data", () => {
     const proxy = getProxy(nexo);
-    const wrapper = new ProxyWrapper(proxy);
+    const wrapper = Nexo.wrap(proxy);
     const data = map.proxies.get(proxy);
 
     expect(data?.id).toBe(wrapper.id);
@@ -36,7 +35,7 @@ describe("getProxy", () => {
     const target = [];
     const proxy = getProxy(nexo);
     const proxyWithTarget = getProxy(nexo, target);
-    const wrapper = new ProxyWrapper(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     expect(map.proxies.has(proxy)).toBe(true);
     expect(map.proxies.has(proxyWithTarget)).toBe(true);

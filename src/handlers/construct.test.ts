@@ -2,20 +2,19 @@ import type nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import isProxy from "../utils/isProxy.js";
 import construct from "./construct.js";
-import ProxyWrapper from "../utils/ProxyWrapper.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 
 describe("construct", () => {
   it("Emits a construct event", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = new ProxyWrapper(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     const constructCallbackNexo = jest.fn();
     const constructCallbackProxy = jest.fn();
 
     nexo.on("nx.proxy.construct", constructCallbackNexo);
-    wrapper.events.on("nx.proxy.construct", constructCallbackProxy);
+    wrapper.on("nx.proxy.construct", constructCallbackProxy);
 
     const args = ["foo", "bar"];
     const result = construct(wrapper.fn, args);
@@ -39,10 +38,10 @@ describe("construct", () => {
   it("Returns a new proxy by default", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = new ProxyWrapper(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     const result = construct(wrapper.fn) as nx.Proxy;
-    const resultWrapper = new ProxyWrapper(result);
+    const resultWrapper = Nexo.wrap(result);
 
     expect(isProxy(result)).toBe(true);
     expect(resultWrapper.target).toBeUndefined();
@@ -52,10 +51,10 @@ describe("construct", () => {
     const nexo = new Nexo();
     class MyTarget {}
     const proxy = nexo.create(MyTarget);
-    const wrapper = new ProxyWrapper(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     const result = construct(wrapper.fn) as nx.Proxy;
-    const resultWrapper = new ProxyWrapper(result);
+    const resultWrapper = Nexo.wrap(result);
 
     expect(isProxy(result)).toBe(true);
     expect(resultWrapper.target).toBeInstanceOf(MyTarget);
@@ -64,11 +63,11 @@ describe("construct", () => {
   it("Allows its return value to be defined by the event listener", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = new ProxyWrapper(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     const expectedResult = "foo";
 
-    wrapper.events.on("nx.proxy.construct", (event: ProxyEvent) => {
+    wrapper.on("nx.proxy.construct", (event: ProxyEvent) => {
       event.preventDefault();
       return expectedResult;
     });
@@ -81,18 +80,18 @@ describe("construct", () => {
   it("Allows its return value to be converted to a proxy", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = new ProxyWrapper(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     const expectedResult = [];
 
-    wrapper.events.on("nx.proxy.construct", (event: ProxyEvent) => {
+    wrapper.on("nx.proxy.construct", (event: ProxyEvent) => {
       event.preventDefault();
       return expectedResult;
     });
 
     const result = construct(wrapper.fn);
     const expectedProxy = nexo.create(expectedResult);
-    const resultWrapper = new ProxyWrapper(expectedProxy);
+    const resultWrapper = Nexo.wrap(expectedProxy);
 
     expect(isProxy(result)).toBe(true);
     expect(result).toBe(expectedProxy);
@@ -104,12 +103,12 @@ describe("construct", () => {
     const updateCallback = jest.fn();
 
     const proxy = nexo.create();
-    const wrapper = new ProxyWrapper(proxy);
+    const wrapper = Nexo.wrap(proxy);
     const expectedResult = "test";
 
     let expectedProxy: nx.Proxy;
 
-    wrapper.events.on(
+    wrapper.on(
       "nx.proxy.construct",
       (event: ProxyEvent<{ result: nx.Proxy }>) => {
         event.preventDefault();
@@ -136,11 +135,11 @@ describe("construct", () => {
 
     const constructable = function () {};
     const proxy = nexo.create(constructable);
-    const wrapper = new ProxyWrapper(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     let expectedProxy: nx.Proxy;
 
-    wrapper.events.on(
+    wrapper.on(
       "nx.proxy.construct",
       (event: ProxyEvent<{ result: nx.Proxy }>) => {
         expectedProxy = event.data.result;

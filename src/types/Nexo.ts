@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Nexo from "../Nexo.js";
-import NexoEmitter from "../events/NexoEmitter.js";
+import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 declare namespace Nexo {
   type arrayLike = unknown[];
@@ -22,7 +22,7 @@ declare namespace Nexo {
       target: void | traceable;
       nexo: Nexo;
       sandbox: Map<objectKey, PropertyDescriptor>;
-      events: NexoEmitter;
+      wrapper: ProxyWrapper;
       fn: voidFunction;
       revoke: voidFunction;
       revoked: boolean;

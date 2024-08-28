@@ -3,10 +3,11 @@ import NexoEmitter from "../events/NexoEmitter.js";
 import map from "./maps.js";
 import Nexo from "../Nexo.js";
 
-class ProxyWrapper {
+class ProxyWrapper extends NexoEmitter {
   readonly proxy: nx.Proxy;
 
   constructor(proxy: nx.Proxy) {
+    super();
     this.proxy = proxy;
   }
 
@@ -24,10 +25,6 @@ class ProxyWrapper {
 
   get nexo(): Nexo {
     return this.data.nexo;
-  }
-
-  get events(): NexoEmitter {
-    return this.data.events;
   }
 
   get fn(): nx.voidFunction {

@@ -1,7 +1,6 @@
 import Nexo from "../Nexo.js";
 import defineProperty from "./defineProperty.js";
 import ProxyEvent from "../events/ProxyEvent.js";
-import ProxyWrapper from "../utils/ProxyWrapper.js";
 import NexoEvent from "../events/NexoEvent.js";
 import NexoError from "../errors/NexoError.js";
 import EventEmitter from "events";
@@ -10,13 +9,13 @@ describe("defineProperty", () => {
   it("Emits a defineProperty event", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = new ProxyWrapper(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     const definePropertyCallbackNexo = jest.fn();
     const definePropertyCallbackProxy = jest.fn();
 
     nexo.on("nx.proxy.defineProperty", definePropertyCallbackNexo);
-    wrapper.events.on("nx.proxy.defineProperty", definePropertyCallbackProxy);
+    wrapper.on("nx.proxy.defineProperty", definePropertyCallbackProxy);
 
     const result = defineProperty(wrapper.fn, "foo", { value: "bar" });
 
@@ -44,9 +43,9 @@ describe("defineProperty", () => {
   it("Returns false when the event is default prevented", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = new ProxyWrapper(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
-    wrapper.events.on(
+    wrapper.on(
       "nx.proxy.defineProperty",
       (
         event: ProxyEvent<{ property: string; descriptor: PropertyDescriptor }>,
@@ -64,7 +63,7 @@ describe("defineProperty", () => {
   it("Cannot define properties on frozen proxies", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = new ProxyWrapper(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     Object.freeze(proxy);
 
@@ -77,7 +76,7 @@ describe("defineProperty", () => {
   it("Cannot define properties on sealed proxies", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = new ProxyWrapper(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     Object.seal(proxy);
 
@@ -90,7 +89,7 @@ describe("defineProperty", () => {
   it("Cannot define properties on non-extensible proxies", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = new ProxyWrapper(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     Object.preventExtensions(proxy);
 
@@ -103,7 +102,7 @@ describe("defineProperty", () => {
   it("Defines a new property on the proxy", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = new ProxyWrapper(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     const result = defineProperty(wrapper.fn, "foo", { value: true });
 
@@ -114,12 +113,12 @@ describe("defineProperty", () => {
   it("Cannot redefine property: non writable, non configurable", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = new ProxyWrapper(proxy);
+    const wrapper = Nexo.wrap(proxy);
     const errorCallbackNexo = jest.fn();
     const errorCallbackProxy = jest.fn();
 
     nexo.on("nx.error", errorCallbackNexo);
-    wrapper.events.on("nx.error", errorCallbackProxy);
+    wrapper.on("nx.error", errorCallbackProxy);
 
     defineProperty(wrapper.fn, "foo", { value: true });
 

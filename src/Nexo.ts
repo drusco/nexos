@@ -3,12 +3,13 @@ import getProxy from "./utils/getProxy.js";
 import NexoMap from "./utils/NexoMap.js";
 import NexoEmitter from "./events/NexoEmitter.js";
 import ProxyWrapper from "./utils/ProxyWrapper.js";
+import maps from "./utils/maps.js";
 
 class Nexo extends NexoEmitter {
   readonly entries: NexoMap<nx.Proxy> = new NexoMap();
 
   static wrap(proxy: nx.Proxy): ProxyWrapper {
-    return new ProxyWrapper(proxy);
+    return maps.proxies.get(proxy).wrapper;
   }
 
   use(id: string, target?: nx.traceable | void): nx.Proxy {

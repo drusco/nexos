@@ -25,7 +25,7 @@ describe("Nexo", () => {
   it("Creates a new proxy object without a target", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = new ProxyWrapper(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     expect(isProxy(proxy)).toBe(true);
     expect(typeof proxy).toBe("function");
@@ -37,7 +37,7 @@ describe("Nexo", () => {
     const nexo = new Nexo();
     const target = {};
     const proxy = nexo.create(target);
-    const wrapper = new ProxyWrapper(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     expect(wrapper.target).toBe(target);
   });
@@ -50,7 +50,7 @@ describe("Nexo", () => {
     nexo.on("nx.proxy", createCallback);
 
     const proxy = nexo.create(target);
-    const wrapper = new ProxyWrapper(proxy);
+    const wrapper = Nexo.wrap(proxy);
     const [createEvent] = createCallback.mock.lastCall;
 
     expect(createCallback).toHaveBeenCalledTimes(1);
@@ -66,7 +66,7 @@ describe("Nexo", () => {
   it("Creates a proxy by name", () => {
     const nexo = new Nexo();
     const proxy = nexo.use("foo");
-    const wrapper = new ProxyWrapper(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     expect(wrapper.id).toBe("foo");
     expect(nexo.entries.has("foo")).toBe(true);
@@ -77,7 +77,7 @@ describe("Nexo", () => {
     const nexo = new Nexo();
     const target = {};
     const proxy = nexo.use("bar", target);
-    const wrapper = new ProxyWrapper(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     expect(wrapper.id).toBe("bar");
     expect(nexo.entries.has("bar")).toBe(true);
@@ -93,9 +93,9 @@ describe("Nexo", () => {
     const proxyB = nexo.use("foo", targetB);
     const proxyC = nexo.use("foo");
 
-    const wrapperA = new ProxyWrapper(proxyA);
-    const wrapperB = new ProxyWrapper(proxyB);
-    const wrapperC = new ProxyWrapper(proxyC);
+    const wrapperA = Nexo.wrap(proxyA);
+    const wrapperB = Nexo.wrap(proxyB);
+    const wrapperC = Nexo.wrap(proxyC);
 
     expect(wrapperA.id).toBe("foo");
     expect(wrapperB.id).toBe("foo");

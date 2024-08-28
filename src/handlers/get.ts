@@ -4,14 +4,10 @@ import getTarget from "../utils/getTarget.js";
 import isTraceable from "../utils/isTraceable.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
-import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 const get = (fn: nx.voidFunction, property: nx.objectKey): unknown => {
   const proxy = map.tracables.get(fn);
-  const data = map.proxies.get(proxy);
-  const wrapper = new ProxyWrapper(proxy);
-  const { sandbox } = data;
-  const target = wrapper.target;
+  const { sandbox, wrapper, target } = map.proxies.get(proxy);
 
   let value: unknown;
 

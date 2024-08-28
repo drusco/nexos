@@ -1,6 +1,6 @@
 import type nx from "../types/Nexo.js";
-import ProxyWrapper from "../utils/ProxyWrapper.js";
 import NexoEvent from "./NexoEvent.js";
+import map from "../utils/maps.js";
 
 class ProxyEvent<Data = unknown> extends NexoEvent<nx.Proxy, Data> {
   constructor(
@@ -9,11 +9,11 @@ class ProxyEvent<Data = unknown> extends NexoEvent<nx.Proxy, Data> {
   ) {
     super(`nx.proxy.${name}`, options);
 
-    const wrapper = new ProxyWrapper(this.target);
+    const { wrapper, nexo } = map.proxies.get(this.target);
 
     // Emit the proxy event to its listeners
-    wrapper.nexo.emit(this.name, this);
-    wrapper.events.emit(this.name, this);
+    nexo.emit(this.name, this);
+    wrapper.emit(this.name, this);
   }
 }
 
