@@ -6,13 +6,13 @@ describe("NexoMap", () => {
     const setCallback = jest.fn();
     const value = new WeakRef({});
 
-    map.events.on("nx.map.set", setCallback);
+    map.events.on("map.set", setCallback);
     map.set("foo", value);
 
     const [setEvent] = setCallback.mock.lastCall;
 
     expect(setCallback).toHaveBeenCalledTimes(1);
-    expect(setEvent.name).toBe("nx.map.set");
+    expect(setEvent.name).toBe("map.set");
     expect(setEvent.target).toBe(map);
     expect(setEvent.data).toStrictEqual({ key: "foo", value });
     expect(map.size).toBe(1);
@@ -23,14 +23,14 @@ describe("NexoMap", () => {
     const deleteCallback = jest.fn();
     const value = new WeakRef({});
 
-    map.events.on("nx.map.delete", deleteCallback);
+    map.events.on("map.delete", deleteCallback);
     map.set("foo", value);
     map.delete("foo");
 
     const [deleteEvent] = deleteCallback.mock.lastCall;
 
     expect(deleteCallback).toHaveBeenCalledTimes(1);
-    expect(deleteEvent.name).toBe("nx.map.delete");
+    expect(deleteEvent.name).toBe("map.delete");
     expect(deleteEvent.target).toBe(map);
     expect(deleteEvent.data).toStrictEqual({ key: "foo", released: false });
     expect(map.size).toBe(0);
@@ -41,7 +41,7 @@ describe("NexoMap", () => {
     const clearCalback = jest.fn();
     const value = new WeakRef({});
 
-    map.events.on("nx.map.clear", clearCalback);
+    map.events.on("map.clear", clearCalback);
     map.set("foo", value);
     map.set("bar", value);
 
@@ -50,7 +50,7 @@ describe("NexoMap", () => {
     const [clearEvent] = clearCalback.mock.lastCall;
 
     expect(clearCalback).toHaveBeenCalledTimes(1);
-    expect(clearEvent.name).toBe("nx.map.clear");
+    expect(clearEvent.name).toBe("map.clear");
     expect(clearEvent.target).toBe(map);
     expect(clearEvent.data).toBeUndefined();
     expect(map.size).toBe(0);
@@ -65,8 +65,8 @@ describe("NexoMap", () => {
       deref() {},
     } as WeakRef<object>;
 
-    map.events.on("nx.map.release", releaseCallback);
-    map.events.on("nx.map.delete", deleteCallback);
+    map.events.on("map.release", releaseCallback);
+    map.events.on("map.delete", deleteCallback);
 
     map.set("foo", weakRefMock);
     map.set("bar", weakRefMock);
@@ -79,7 +79,7 @@ describe("NexoMap", () => {
     const [secondDeleteEvent] = secondDeleteCall;
 
     expect(releaseCallback).toHaveBeenCalledTimes(1);
-    expect(releaseEvent.name).toBe("nx.map.release");
+    expect(releaseEvent.name).toBe("map.release");
     expect(releaseEvent.target).toBe(map);
     expect(releaseEvent.data).toBeUndefined();
     expect(map.size).toBe(0);

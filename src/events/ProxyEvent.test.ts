@@ -3,7 +3,7 @@ import Nexo from "../Nexo.js";
 import ProxyEvent from "./ProxyEvent.js";
 
 describe("ProxyEvent", () => {
-  it("Prefixes 'nx.proxy.' to the proxy handler event names", () => {
+  it("Prefixes 'proxy.' to the proxy handler event names", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
     const handlerName: nx.proxy.handler = "construct";
@@ -12,7 +12,7 @@ describe("ProxyEvent", () => {
       target: proxy,
     });
 
-    expect(event.name).toBe("nx.proxy." + handlerName);
+    expect(event.name).toBe("proxy." + handlerName);
     expect(event.target).toBe(proxy);
     expect(event.data).toBeUndefined();
   });
@@ -24,8 +24,8 @@ describe("ProxyEvent", () => {
     const handlerName: nx.proxy.handler = "apply";
     const callback = jest.fn();
 
-    wrapper.on("nx.proxy." + handlerName, callback);
-    wrapper.nexo.on("nx.proxy." + handlerName, callback);
+    wrapper.on("proxy." + handlerName, callback);
+    wrapper.nexo.on("proxy." + handlerName, callback);
 
     new ProxyEvent(handlerName, {
       target: proxy,
@@ -35,7 +35,7 @@ describe("ProxyEvent", () => {
 
     expect(callback).toHaveBeenCalledTimes(2);
     expect(proxyEvent).toBe(proxyEvt);
-    expect(proxyEvent.name).toBe("nx.proxy." + handlerName);
+    expect(proxyEvent.name).toBe("proxy." + handlerName);
     expect(proxyEvent.target).toBe(proxy);
   });
 });

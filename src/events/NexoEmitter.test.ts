@@ -1,16 +1,13 @@
-import NexoError from "../errors/NexoError.js";
 import NexoEmitter from "../events/NexoEmitter.js";
 import NexoEvent from "./NexoEvent.js";
 
 describe("NexoEmitter", () => {
-  it("Emits the 'error' and 'nx.error' events", () => {
+  it("Emits an 'error' event", () => {
     const emitter = new NexoEmitter();
     const errorCallback = jest.fn();
-    const nxErrorCallback = jest.fn();
     const errorMessage = "something went wrong";
 
     emitter.on("error", errorCallback);
-    emitter.on("nx.error", nxErrorCallback);
 
     emitter.on("test", () => {
       throw Error(errorMessage);
@@ -19,18 +16,10 @@ describe("NexoEmitter", () => {
     emitter.emit("test", new NexoEvent("test"));
 
     const [errorEvent] = errorCallback.mock.lastCall;
-    const [nxErrorEvent] = nxErrorCallback.mock.lastCall;
 
     expect(errorCallback).toHaveBeenCalledTimes(1);
-    expect(nxErrorCallback).toHaveBeenCalledTimes(1);
-
     expect(errorEvent).toBeInstanceOf(Error);
     expect(errorEvent.message).toBe(errorMessage);
-    expect(nxErrorEvent).toBeInstanceOf(NexoEvent);
-    expect(nxErrorEvent.name).toBe("nx.error");
-    expect(nxErrorEvent.target).toBe(emitter);
-    expect(nxErrorEvent.data).toBeInstanceOf(NexoError);
-    expect(nxErrorEvent.data.message).toBe(errorMessage);
   });
 
   it("Emits a NexoEvent with optional arguments", () => {

@@ -14,8 +14,8 @@ describe("defineProperty", () => {
     const definePropertyCallbackNexo = jest.fn();
     const definePropertyCallbackProxy = jest.fn();
 
-    nexo.on("nx.proxy.defineProperty", definePropertyCallbackNexo);
-    wrapper.on("nx.proxy.defineProperty", definePropertyCallbackProxy);
+    nexo.on("proxy.defineProperty", definePropertyCallbackNexo);
+    wrapper.on("proxy.defineProperty", definePropertyCallbackProxy);
 
     const result = defineProperty(wrapper.fn, "foo", { value: "bar" });
 
@@ -46,7 +46,7 @@ describe("defineProperty", () => {
     const wrapper = Nexo.wrap(proxy);
 
     wrapper.on(
-      "nx.proxy.defineProperty",
+      "proxy.defineProperty",
       (
         event: ProxyEvent<{ property: string; descriptor: PropertyDescriptor }>,
       ) => {
@@ -117,8 +117,8 @@ describe("defineProperty", () => {
     const errorCallbackNexo = jest.fn();
     const errorCallbackProxy = jest.fn();
 
-    nexo.on("nx.error", errorCallbackNexo);
-    wrapper.on("nx.error", errorCallbackProxy);
+    nexo.on("error", errorCallbackNexo);
+    wrapper.on("error", errorCallbackProxy);
 
     defineProperty(wrapper.fn, "foo", { value: true });
 

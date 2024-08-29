@@ -13,14 +13,14 @@ const update = <Type>(proxy: nx.Proxy, value: Type): Proxy<Type> => {
     value = getProxy(nexo, value) as Type;
   }
 
-  const event = new NexoEvent("nx.update", {
+  const event = new NexoEvent("update", {
     target: proxy,
     data: value,
     cancelable: false,
   });
 
   /**
-   * Emits the 'nx.update' event only to the nexo listeners
+   * Emits the 'update' event only to the nexo listeners
    * Emitting this event to proxy wrappers separately must be avoided
    * because adding this listener to each proxy on creation is expensive
    **/

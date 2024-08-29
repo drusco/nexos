@@ -24,7 +24,7 @@ const construct = (fn: nx.voidFunction, args: nx.arrayLike = []): object => {
   if (typeof target === "function") {
     // get the value from the original target instance
 
-    const result = Reflect.construct(
+    const result: object = Reflect.construct(
       target,
       args.map((arg) => getTarget(arg)),
     );

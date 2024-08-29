@@ -7,7 +7,7 @@ class ProxyEvent<Data = unknown> extends NexoEvent<nx.Proxy, Data> {
     name: nx.proxy.handler,
     options: nx.events.options<nx.Proxy, Data>,
   ) {
-    super(`nx.proxy.${name}`, options);
+    super(`proxy.${name}`, options);
 
     const { wrapper, nexo } = map.proxies.get(this.target);
 

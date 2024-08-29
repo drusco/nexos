@@ -1,6 +1,5 @@
 import type nx from "../types/Nexo.js";
 import EventEmitter from "events";
-import NexoError from "../errors/NexoError.js";
 import NexoEvent from "./NexoEvent.js";
 
 class NexoEmitter extends EventEmitter {
@@ -8,7 +7,7 @@ class NexoEmitter extends EventEmitter {
     super({ captureRejections: true });
 
     this.on("error", (error: Error) => {
-      new NexoError(error.message, this, this);
+      new NexoEvent("error", { target: this, data: error });
     });
   }
 

@@ -13,8 +13,8 @@ describe("construct", () => {
     const constructCallbackNexo = jest.fn();
     const constructCallbackProxy = jest.fn();
 
-    nexo.on("nx.proxy.construct", constructCallbackNexo);
-    wrapper.on("nx.proxy.construct", constructCallbackProxy);
+    nexo.on("proxy.construct", constructCallbackNexo);
+    wrapper.on("proxy.construct", constructCallbackProxy);
 
     const args = ["foo", "bar"];
     const result = construct(wrapper.fn, args);
@@ -67,7 +67,7 @@ describe("construct", () => {
 
     const expectedResult = "foo";
 
-    wrapper.on("nx.proxy.construct", (event: ProxyEvent) => {
+    wrapper.on("proxy.construct", (event: ProxyEvent) => {
       event.preventDefault();
       return expectedResult;
     });
@@ -84,7 +84,7 @@ describe("construct", () => {
 
     const expectedResult = [];
 
-    wrapper.on("nx.proxy.construct", (event: ProxyEvent) => {
+    wrapper.on("proxy.construct", (event: ProxyEvent) => {
       event.preventDefault();
       return expectedResult;
     });
@@ -108,16 +108,13 @@ describe("construct", () => {
 
     let expectedProxy: nx.Proxy;
 
-    wrapper.on(
-      "nx.proxy.construct",
-      (event: ProxyEvent<{ result: nx.Proxy }>) => {
-        event.preventDefault();
-        expectedProxy = event.data.result;
-        return expectedResult;
-      },
-    );
+    wrapper.on("proxy.construct", (event: ProxyEvent<{ result: nx.Proxy }>) => {
+      event.preventDefault();
+      expectedProxy = event.data.result;
+      return expectedResult;
+    });
 
-    nexo.on("nx.update", updateCallback);
+    nexo.on("update", updateCallback);
 
     construct(wrapper.fn);
 
@@ -139,14 +136,11 @@ describe("construct", () => {
 
     let expectedProxy: nx.Proxy;
 
-    wrapper.on(
-      "nx.proxy.construct",
-      (event: ProxyEvent<{ result: nx.Proxy }>) => {
-        expectedProxy = event.data.result;
-      },
-    );
+    wrapper.on("proxy.construct", (event: ProxyEvent<{ result: nx.Proxy }>) => {
+      expectedProxy = event.data.result;
+    });
 
-    nexo.on("nx.update", updateCallback);
+    nexo.on("update", updateCallback);
 
     const result = construct(wrapper.fn);
     const [updateEvent] = updateCallback.mock.lastCall;
