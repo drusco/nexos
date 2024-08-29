@@ -44,7 +44,7 @@ declare namespace Nexo {
       | "setPrototypeOf";
   }
 
-  namespace events {
+  namespace event {
     interface options<Target, Data> {
       target?: Target;
       data?: Data;

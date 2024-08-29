@@ -2,8 +2,7 @@ import Nexo from "../Nexo.js";
 import defineProperty from "./defineProperty.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import NexoEvent from "../events/NexoEvent.js";
-import NexoError from "../errors/NexoError.js";
-import EventEmitter from "events";
+import ProxyError from "../errors/ProxyError.js";
 
 describe("defineProperty", () => {
   it("Emits a defineProperty event", () => {
@@ -117,24 +116,22 @@ describe("defineProperty", () => {
     const errorCallbackNexo = jest.fn();
     const errorCallbackProxy = jest.fn();
 
-    nexo.on("error", errorCallbackNexo);
-    wrapper.on("error", errorCallbackProxy);
+    nexo.on("proxy.error", errorCallbackNexo);
+    wrapper.on("proxy.error", errorCallbackProxy);
 
     defineProperty(wrapper.fn, "foo", { value: true });
 
-    const result = defineProperty(wrapper.fn, "foo", { value: false });
+    expect(
+      defineProperty.bind(null, wrapper.fn, "foo", { value: false }),
+    ).toThrow(ProxyError);
 
-    const [errorEventNexo]: NexoEvent<EventEmitter, NexoError>[] =
-      errorCallbackNexo.mock.lastCall;
+    const [errorEventNexo]: NexoEvent[] = errorCallbackNexo.mock.lastCall;
+    const [errorEventProxy]: NexoEvent[] = errorCallbackProxy.mock.lastCall;
 
-    const [errorEventProxy]: NexoEvent<EventEmitter, NexoError>[] =
-      errorCallbackProxy.mock.lastCall;
-
-    expect(result).toBe(false);
     expect(proxy.foo).toBe(true);
     expect(errorCallbackNexo).toHaveBeenCalledTimes(1);
     expect(errorCallbackProxy).toHaveBeenCalledTimes(1);
-    expect(errorEventProxy.data).toBeInstanceOf(NexoError);
-    expect(errorEventNexo.data).toBeInstanceOf(NexoError);
+    expect(errorEventProxy.data).toBeInstanceOf(ProxyError);
+    expect(errorEventNexo.data).toBeInstanceOf(ProxyError);
   });
 });

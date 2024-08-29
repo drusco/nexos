@@ -1,7 +1,7 @@
 import type nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
-import NexoError from "../errors/NexoError.js";
+import ProxyError from "../errors/ProxyError.js";
 
 const defineProperty = (
   fn: nx.voidFunction,
@@ -9,7 +9,7 @@ const defineProperty = (
   descriptor: PropertyDescriptor = {},
 ): boolean => {
   const proxy = map.tracables.get(fn);
-  const { sandbox, nexo, wrapper } = map.proxies.get(proxy);
+  const { sandbox } = map.proxies.get(proxy);
   const extensible = Object.isExtensible(fn);
 
   const event = new ProxyEvent("defineProperty", {
@@ -39,8 +39,7 @@ const defineProperty = (
       Object.defineProperty(mock, property, sandbox.get(property));
       Object.defineProperty(mock, property, descriptor);
     } catch (error) {
-      new NexoError(error.message, proxy, nexo, wrapper);
-      return false;
+      throw new ProxyError(error.message, proxy);
     }
   }
 

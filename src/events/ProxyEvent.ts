@@ -5,7 +5,7 @@ import map from "../utils/maps.js";
 class ProxyEvent<Data = unknown> extends NexoEvent<nx.Proxy, Data> {
   constructor(
     name: nx.proxy.handler,
-    options: nx.events.options<nx.Proxy, Data>,
+    options: nx.event.options<nx.Proxy, Data>,
   ) {
     super(`proxy.${name}`, options);
 

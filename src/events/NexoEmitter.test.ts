@@ -2,7 +2,7 @@ import NexoEmitter from "../events/NexoEmitter.js";
 import NexoEvent from "./NexoEvent.js";
 
 describe("NexoEmitter", () => {
-  it("Emits an 'error' event", () => {
+  it("Emits an error event", () => {
     const emitter = new NexoEmitter();
     const errorCallback = jest.fn();
     const errorMessage = "something went wrong";
