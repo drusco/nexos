@@ -10,29 +10,24 @@ describe("construct", () => {
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
 
-    const constructCallbackNexo = jest.fn();
-    const constructCallbackProxy = jest.fn();
+    const constructListener = jest.fn();
 
-    nexo.on("proxy.construct", constructCallbackNexo);
-    wrapper.on("proxy.construct", constructCallbackProxy);
+    nexo.on("proxy.construct", constructListener);
+    wrapper.on("proxy.construct", constructListener);
 
     const args = ["foo", "bar"];
     const result = construct(wrapper.fn, args);
 
-    const [constructEventForNexo] = constructCallbackNexo.mock.lastCall;
-    const [constructEventForProxy] = constructCallbackProxy.mock.lastCall;
+    const [constructEvent] = constructListener.mock.lastCall;
 
-    expect(constructCallbackNexo).toHaveBeenCalledTimes(1);
-    expect(constructEventForNexo.target).toBe(proxy);
-    expect(constructEventForNexo.cancelable).toBe(true);
+    expect(constructListener).toHaveBeenCalledTimes(2);
+    expect(constructEvent.target).toBe(proxy);
+    expect(constructEvent.cancelable).toBe(true);
 
-    expect(constructEventForNexo.data).toStrictEqual({
+    expect(constructEvent.data).toStrictEqual({
       arguments: args,
       result,
     });
-
-    expect(constructCallbackProxy).toHaveBeenCalledTimes(1);
-    expect(constructEventForProxy).toBe(constructEventForNexo);
   });
 
   it("Returns a new proxy by default", () => {

@@ -9,33 +9,26 @@ describe("defineProperty", () => {
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
 
-    const definePropertyCallbackNexo = jest.fn();
-    const definePropertyCallbackProxy = jest.fn();
+    const definePropertyListener = jest.fn();
 
-    nexo.on("proxy.defineProperty", definePropertyCallbackNexo);
-    wrapper.on("proxy.defineProperty", definePropertyCallbackProxy);
+    nexo.on("proxy.defineProperty", definePropertyListener);
+    wrapper.on("proxy.defineProperty", definePropertyListener);
 
     const result = defineProperty(wrapper.fn, "foo", { value: "bar" });
 
-    const [definePropertyEventForNexo] =
-      definePropertyCallbackNexo.mock.lastCall;
-    const [definePropertyEventForProxy] =
-      definePropertyCallbackProxy.mock.lastCall;
+    const [definePropertyEvent] = definePropertyListener.mock.lastCall;
 
     expect(result).toBe(true);
-    expect(definePropertyCallbackNexo).toHaveBeenCalledTimes(1);
-    expect(definePropertyEventForNexo.target).toBe(proxy);
-    expect(definePropertyEventForNexo.cancelable).toBe(true);
+    expect(definePropertyListener).toHaveBeenCalledTimes(2);
+    expect(definePropertyEvent.target).toBe(proxy);
+    expect(definePropertyEvent.cancelable).toBe(true);
 
-    expect(definePropertyEventForNexo.data).toStrictEqual({
+    expect(definePropertyEvent.data).toStrictEqual({
       property: "foo",
       descriptor: {
         value: "bar",
       },
     });
-
-    expect(definePropertyCallbackProxy).toHaveBeenCalledTimes(1);
-    expect(definePropertyEventForProxy).toBe(definePropertyEventForNexo);
   });
 
   it("Returns false when the event is default prevented", () => {
@@ -112,11 +105,10 @@ describe("defineProperty", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
-    const errorCallbackNexo = jest.fn();
-    const errorCallbackProxy = jest.fn();
+    const errorListener = jest.fn();
 
-    nexo.on("proxy.error", errorCallbackNexo);
-    wrapper.on("proxy.error", errorCallbackProxy);
+    nexo.on("proxy.error", errorListener);
+    wrapper.on("proxy.error", errorListener);
 
     defineProperty(wrapper.fn, "foo", { value: true });
 
@@ -124,13 +116,10 @@ describe("defineProperty", () => {
       defineProperty.bind(null, wrapper.fn, "foo", { value: false }),
     ).toThrow(ProxyError);
 
-    const [proxyError] = errorCallbackNexo.mock.lastCall;
-    const [proxyError2] = errorCallbackProxy.mock.lastCall;
+    const [proxyError] = errorListener.mock.lastCall;
 
     expect(proxy.foo).toBe(true);
-    expect(errorCallbackNexo).toHaveBeenCalledTimes(1);
-    expect(errorCallbackProxy).toHaveBeenCalledTimes(1);
-    expect(proxyError).toBe(proxyError2);
+    expect(errorListener).toHaveBeenCalledTimes(2);
     expect(proxyError).toBeInstanceOf(ProxyError);
   });
 });

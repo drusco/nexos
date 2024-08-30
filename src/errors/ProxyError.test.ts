@@ -12,25 +12,23 @@ describe("ProxyError", () => {
     expect(proxyError.proxy).toBe(proxy);
   });
 
-  it("Emits a proxy error event on the proxy and the nexo instance", () => {
+  it("Emits proxy error events", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
+    const errorListener = jest.fn();
 
-    const nexoListener = jest.fn();
-    const proxyListener = jest.fn();
+    nexo.on("error", errorListener);
+    nexo.on("proxy.error", errorListener);
 
-    nexo.on("proxy.error", nexoListener);
-    wrapper.on("proxy.error", proxyListener);
+    wrapper.on("error", errorListener);
+    wrapper.on("proxy.error", errorListener);
 
     new ProxyError("foo", proxy);
 
-    const [proxyError] = nexoListener.mock.lastCall;
-    const [proxyError2] = proxyListener.mock.lastCall;
+    const [proxyError] = errorListener.mock.lastCall;
 
-    expect(nexoListener).toHaveBeenCalledTimes(1);
-    expect(proxyListener).toHaveBeenCalledTimes(1);
-    expect(proxyError).toBe(proxyError2);
+    expect(errorListener).toHaveBeenCalledTimes(4);
     expect(proxyError).toBeInstanceOf(ProxyError);
     expect(proxyError.proxy).toBe(proxy);
   });

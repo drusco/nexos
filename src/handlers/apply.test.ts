@@ -10,32 +10,27 @@ describe("apply", () => {
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
 
-    const applyCallbackNexo = jest.fn();
-    const applyCallbackProxy = jest.fn();
+    const applyListener = jest.fn();
 
-    nexo.on("proxy.apply", applyCallbackNexo);
-    wrapper.on("proxy.apply", applyCallbackProxy);
+    nexo.on("proxy.apply", applyListener);
+    wrapper.on("proxy.apply", applyListener);
 
     const args = ["foo", "bar"];
     const _this = {};
     const result = apply(wrapper.fn, _this, args);
 
-    const [applyEventForNexo] = applyCallbackNexo.mock.lastCall;
-    const [applyEventForProxy] = applyCallbackProxy.mock.lastCall;
+    const [applyEvent] = applyListener.mock.lastCall;
 
-    expect(applyCallbackNexo).toHaveBeenCalledTimes(1);
-    expect(applyEventForNexo).toBeInstanceOf(ProxyEvent);
-    expect(applyEventForNexo.target).toBe(proxy);
-    expect(applyEventForNexo.cancelable).toBe(true);
+    expect(applyListener).toHaveBeenCalledTimes(2);
+    expect(applyEvent).toBeInstanceOf(ProxyEvent);
+    expect(applyEvent.target).toBe(proxy);
+    expect(applyEvent.cancelable).toBe(true);
 
-    expect(applyEventForNexo.data).toStrictEqual({
+    expect(applyEvent.data).toStrictEqual({
       this: _this,
       arguments: args,
       result,
     });
-
-    expect(applyCallbackProxy).toHaveBeenCalledTimes(1);
-    expect(applyEventForProxy).toBe(applyEventForNexo);
   });
 
   it("Returns a new proxy by default", () => {
@@ -115,8 +110,7 @@ describe("apply", () => {
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
     const expectedResult = "test";
-
-    let expectedProxy: nx.Proxy;
+    let expectedProxy;
 
     wrapper.on("proxy.apply", (event: ProxyEvent<{ result: nx.Proxy }>) => {
       event.preventDefault();
