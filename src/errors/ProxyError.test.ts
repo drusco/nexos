@@ -1,5 +1,4 @@
 import ProxyError from "./ProxyError.js";
-import NexoEvent from "../events/NexoEvent.js";
 import Nexo from "../Nexo.js";
 
 describe("ProxyError", () => {
@@ -13,7 +12,7 @@ describe("ProxyError", () => {
     expect(proxyError.proxy).toBe(proxy);
   });
 
-  it("Emits a proxy error event", () => {
+  it("Emits a proxy error event on the proxy and the nexo instance", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
@@ -24,17 +23,15 @@ describe("ProxyError", () => {
     nexo.on("proxy.error", nexoListener);
     wrapper.on("proxy.error", proxyListener);
 
-    const error = new ProxyError("foo", proxy);
+    new ProxyError("foo", proxy);
 
-    const [errorEvent] = nexoListener.mock.lastCall;
-    const [errorEvent2] = proxyListener.mock.lastCall;
+    const [proxyError] = nexoListener.mock.lastCall;
+    const [proxyError2] = proxyListener.mock.lastCall;
 
-    expect(errorEvent).toBe(errorEvent2);
     expect(nexoListener).toHaveBeenCalledTimes(1);
     expect(proxyListener).toHaveBeenCalledTimes(1);
-    expect(errorEvent).toBeInstanceOf(NexoEvent);
-    expect(errorEvent.data).toBe(error);
-    expect(errorEvent.target).toBe(proxy);
-    expect(errorEvent.name).toBe("proxy.error");
+    expect(proxyError).toBe(proxyError2);
+    expect(proxyError).toBeInstanceOf(ProxyError);
+    expect(proxyError.proxy).toBe(proxy);
   });
 });

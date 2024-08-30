@@ -1,7 +1,6 @@
 import Nexo from "../Nexo.js";
 import defineProperty from "./defineProperty.js";
 import ProxyEvent from "../events/ProxyEvent.js";
-import NexoEvent from "../events/NexoEvent.js";
 import ProxyError from "../errors/ProxyError.js";
 
 describe("defineProperty", () => {
@@ -125,13 +124,13 @@ describe("defineProperty", () => {
       defineProperty.bind(null, wrapper.fn, "foo", { value: false }),
     ).toThrow(ProxyError);
 
-    const [errorEventNexo]: NexoEvent[] = errorCallbackNexo.mock.lastCall;
-    const [errorEventProxy]: NexoEvent[] = errorCallbackProxy.mock.lastCall;
+    const [proxyError] = errorCallbackNexo.mock.lastCall;
+    const [proxyError2] = errorCallbackProxy.mock.lastCall;
 
     expect(proxy.foo).toBe(true);
     expect(errorCallbackNexo).toHaveBeenCalledTimes(1);
     expect(errorCallbackProxy).toHaveBeenCalledTimes(1);
-    expect(errorEventProxy.data).toBeInstanceOf(ProxyError);
-    expect(errorEventNexo.data).toBeInstanceOf(ProxyError);
+    expect(proxyError).toBe(proxyError2);
+    expect(proxyError).toBeInstanceOf(ProxyError);
   });
 });

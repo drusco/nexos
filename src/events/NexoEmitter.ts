@@ -5,33 +5,39 @@ import NexoEvent from "./NexoEvent.js";
 class NexoEmitter extends EventEmitter {
   constructor() {
     super({ captureRejections: true });
-
-    this.on("error", (error: Error) => {
-      new NexoEvent("error", { target: this, data: error });
-    });
   }
 
-  emit<Event extends NexoEvent>(
+  emit(
     eventName: nx.objectKey,
-    event: Event,
+    data: NexoEvent | Error,
     ...args: nx.arrayLike
   ): boolean {
     const listeners = this.listeners(eventName);
+    const hasListeners = listeners.length > 0;
+    const isError = data instanceof Error;
+
+    // Re-emit errors if the eventName is not "error"
+    if (isError && eventName !== "error") {
+      this.emit("error", data, ...args);
+    }
 
     try {
-      listeners.forEach((listener) => {
-        const returnValue = listener.call(this, event, ...args);
-        // ignore non defaultPrevented events
-        if (event.defaultPrevented === false) return;
-        // ignore when event.returnValue is set manually
-        // listeners can check when 'returnValue' is set and thus transform or leave as is
-        event.returnValue = returnValue;
-      });
+      for (const listener of listeners) {
+        const returnValue = listener.call(this, data, ...args);
+
+        if (isError) continue;
+
+        // Ignore non defaultPrevented events
+        if (data.defaultPrevented === false) continue;
+        // Ignore when event.returnValue is set manually
+        // Listeners can check when 'returnValue' is set and thus transform or leave as is
+        data.returnValue = returnValue;
+      }
     } catch (error) {
       this.emit("error", error);
     }
 
-    return listeners.length > 0;
+    return hasListeners;
   }
 }
 

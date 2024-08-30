@@ -32,7 +32,7 @@ describe("NexoEmitter", () => {
 
     emitter.emit("test", nexoEvent, true);
 
-    const [event, arg] = callback.mock.lastCall;
+    const [event, arg]: [NexoEvent, boolean] = callback.mock.lastCall;
 
     expect(callback).toHaveBeenCalledTimes(2);
     expect(event).toBe(nexoEvent);
