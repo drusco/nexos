@@ -4,40 +4,28 @@ import map from "./maps.js";
 import Nexo from "../Nexo.js";
 
 class ProxyWrapper extends NexoEmitter {
-  readonly proxy: nx.Proxy;
+  private proxy: nx.proxy.data;
 
   constructor(proxy: nx.Proxy) {
     super();
-    this.proxy = proxy;
-  }
-
-  private get data(): nx.proxy.data {
-    return map.proxies.get(this.proxy);
+    this.proxy = map.proxies.get(proxy);
   }
 
   get id(): string {
-    return this.data.id;
-  }
-
-  get target(): nx.traceable | void {
-    return this.data.target;
+    return this.proxy.id;
   }
 
   get nexo(): Nexo {
-    return this.data.nexo;
-  }
-
-  get fn(): nx.voidFunction {
-    return this.data.fn;
+    return this.proxy.nexo;
   }
 
   revoke(): void {
-    this.data.revoke();
-    this.data.revoked = true;
+    this.proxy.revoke();
+    this.proxy.revoked = true;
   }
 
   get revoked(): boolean {
-    return this.data.revoked;
+    return this.proxy.revoked;
   }
 }
 

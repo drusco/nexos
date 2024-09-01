@@ -2,10 +2,13 @@ import type nx from "../types/Nexo.js";
 import map from "../utils/maps.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 
-const setPrototypeOf = (fn: nx.voidFunction, prototype: object): boolean => {
-  const proxy = map.tracables.get(fn);
+const setPrototypeOf = (target: nx.traceable, prototype: object): boolean => {
+  const proxy = map.tracables.get(target);
 
-  const event = new ProxyEvent("setPrototypeOf", { target: proxy });
+  const event = new ProxyEvent("setPrototypeOf", {
+    target: proxy,
+    data: { target, prototype },
+  });
 
   if (event.defaultPrevented) {
     if (typeof event.returnValue === "object") {
@@ -13,8 +16,6 @@ const setPrototypeOf = (fn: nx.voidFunction, prototype: object): boolean => {
     }
     return false;
   }
-
-  console.log(prototype);
 
   return true;
 };

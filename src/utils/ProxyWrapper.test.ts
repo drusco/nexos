@@ -9,12 +9,9 @@ describe("ProxyWrapper", () => {
     const wrapper = Nexo.wrap(proxy);
 
     expect(wrapper.id).toBe("foo");
-    expect(wrapper.target).toBe(target);
     expect(wrapper).toBeInstanceOf(NexoEmitter);
     expect(wrapper.nexo).toBe(nexo);
-    expect(wrapper.proxy).toBe(proxy);
     expect(wrapper.revoked).toBe(false);
-    expect(nexo.create(wrapper.fn)).toBe(proxy);
   });
 
   it("Can revoke a proxy", () => {

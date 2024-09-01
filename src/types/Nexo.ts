@@ -19,13 +19,12 @@ declare namespace Nexo {
   namespace proxy {
     type data = {
       id: string;
-      target: void | traceable;
       nexo: Nexo;
       sandbox: Map<objectKey, PropertyDescriptor>;
       wrapper: ProxyWrapper;
-      fn: voidFunction;
       revoke: voidFunction;
       revoked: boolean;
+      traceable: boolean;
     };
 
     type handler =

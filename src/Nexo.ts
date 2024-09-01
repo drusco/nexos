@@ -12,7 +12,7 @@ class Nexo extends NexoEmitter {
     return maps.proxies.get(proxy).wrapper;
   }
 
-  use(id: string, target?: nx.traceable | void): nx.Proxy {
+  use(id: string, target?: nx.traceable): nx.Proxy {
     if (!target && this.entries.has(id)) {
       // returns an existing proxy by its id
       return this.entries.get(id).deref();
@@ -29,7 +29,7 @@ class Nexo extends NexoEmitter {
     return proxy;
   }
 
-  create(target?: nx.traceable | void): nx.Proxy {
+  create(target?: nx.traceable): nx.Proxy {
     return getProxy(this, target);
   }
 }

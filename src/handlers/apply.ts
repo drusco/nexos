@@ -1,22 +1,26 @@
 import type nx from "../types/Nexo.js";
-import getTarget from "../utils/getTarget.js";
 import getProxy from "../utils/getProxy.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
 import update from "./update.js";
 
 const apply = (
-  fn: nx.voidFunction,
+  target: nx.traceable,
   that: unknown = undefined,
   args: nx.arrayLike = [],
 ): unknown => {
-  const proxy = map.tracables.get(fn);
-  const { target, nexo } = map.proxies.get(proxy);
+  const proxy = map.tracables.get(target);
+  const { nexo, traceable } = map.proxies.get(proxy);
   const resultProxy = getProxy(nexo);
 
   const event = new ProxyEvent("apply", {
     target: proxy,
-    data: { this: that, arguments: args, result: resultProxy },
+    data: {
+      target,
+      this: that,
+      arguments: args,
+      result: resultProxy,
+    },
     cancelable: true,
   });
 
@@ -25,13 +29,10 @@ const apply = (
     return update(resultProxy, event.returnValue);
   }
 
-  if (typeof target === "function") {
+  if (traceable && typeof target === "function") {
     // return the value from the original target call
 
-    const result = target.apply(
-      getTarget(that),
-      args.map((arg) => getTarget(arg)),
-    );
+    const result = target.apply(that, args);
 
     // update the proxy
     return update(resultProxy, result);

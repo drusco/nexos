@@ -4,18 +4,19 @@ import map from "../utils/maps.js";
 import ProxyError from "../errors/ProxyError.js";
 
 const defineProperty = (
-  fn: nx.voidFunction,
+  target: nx.traceable,
   property: nx.objectKey,
   descriptor: PropertyDescriptor = {},
 ): boolean => {
-  const proxy = map.tracables.get(fn);
+  const proxy = map.tracables.get(target);
   const { sandbox } = map.proxies.get(proxy);
-  const extensible = Object.isExtensible(fn);
+  const extensible = Object.isExtensible(target);
 
   const event = new ProxyEvent("defineProperty", {
     target: proxy,
     cancelable: true,
     data: {
+      target,
       property,
       descriptor,
     },
@@ -23,7 +24,7 @@ const defineProperty = (
 
   // Target is not extensible and may be sealed or frozen as well
   if (!extensible) {
-    return Reflect.defineProperty(fn, property, descriptor);
+    return Reflect.defineProperty(target, property, descriptor);
   }
 
   // Property descriptor can be modified by the event listeners

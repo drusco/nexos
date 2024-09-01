@@ -1,21 +1,22 @@
 import type nx from "../types/Nexo.js";
-import getTarget from "../utils/getTarget.js";
 import isTraceable from "../utils/isTraceable.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
 
 const set = (
-  fn: nx.voidFunction,
+  target: nx.traceable,
   key: nx.objectKey,
   value: unknown,
 ): boolean => {
-  const proxy = map.tracables.get(fn);
-  const data = map.proxies.get(proxy);
-  const { sandbox } = data;
+  const proxy = map.tracables.get(target);
+  const { sandbox } = map.proxies.get(proxy);
 
-  let _value = getTarget(value, true);
+  let _value = value;
 
-  const event = new ProxyEvent("set", { target: proxy, data: { key, value } });
+  const event = new ProxyEvent("set", {
+    target: proxy,
+    data: { target, key, value },
+  });
 
   if (event.defaultPrevented) {
     _value = event.returnValue;

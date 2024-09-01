@@ -1,13 +1,12 @@
 import type nx from "../types/Nexo.js";
 import getProxy from "../utils/getProxy.js";
-import getTarget from "../utils/getTarget.js";
 import isTraceable from "../utils/isTraceable.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
 
-const get = (fn: nx.voidFunction, property: nx.objectKey): unknown => {
-  const proxy = map.tracables.get(fn);
-  const { sandbox, wrapper, target } = map.proxies.get(proxy);
+const get = (target: nx.traceable, property: nx.objectKey): unknown => {
+  const proxy = map.tracables.get(target);
+  const { sandbox, wrapper, traceable } = map.proxies.get(proxy);
 
   let value: unknown;
 
@@ -22,12 +21,14 @@ const get = (fn: nx.voidFunction, property: nx.objectKey): unknown => {
     return event.returnValue;
   }
 
-  try {
-    // get value from the original target
-    value = getTarget(target[property], true);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (error) {
-    // target is untraceable
+  if (traceable) {
+    try {
+      // get value from the original target
+      value = target[property];
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      // target is untraceable
+    }
   }
 
   if (sandbox.has(property)) {

@@ -11,18 +11,10 @@ describe("findProxy", () => {
     expect(result).toBe(proxy);
   });
 
-  it("Finds a proxy by its target", () => {
+  it("Finds a proxy by a traceable value (target)", () => {
     const target = [];
     const proxy = nexo.create(target);
     const result = findProxy(target);
-
-    expect(result).toBe(proxy);
-  });
-
-  it("Finds a proxy by its wrapper", () => {
-    const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
-    const result = findProxy(wrapper.fn);
 
     expect(result).toBe(proxy);
   });

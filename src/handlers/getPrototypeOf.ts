@@ -1,13 +1,10 @@
 import type nx from "../types/Nexo.js";
-import getTarget from "../utils/getTarget.js";
 import isTraceable from "../utils/isTraceable.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
 
-const getPrototypeOf = (fn: nx.functionLike): object => {
-  const proxy = map.tracables.get(fn);
-  const data = map.proxies.get(proxy);
-  const target = getTarget(data.target);
+const getPrototypeOf = (target: nx.traceable): object => {
+  const proxy = map.tracables.get(target);
 
   new ProxyEvent("getPrototypeOf", { target: proxy });
 

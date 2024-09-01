@@ -19,7 +19,9 @@ describe("Nexo", () => {
     const wrapper = Nexo.wrap(proxy);
 
     expect(wrapper).toBeInstanceOf(ProxyWrapper);
-    expect(wrapper.proxy).toBe(proxy);
+    expect(wrapper).toBeInstanceOf(NexoEmitter);
+    expect(wrapper.nexo).toBe(nexo);
+    expect(wrapper.revoked).toBe(false);
   });
 
   it("Creates a new proxy object without a target", () => {
@@ -29,59 +31,35 @@ describe("Nexo", () => {
 
     expect(isProxy(proxy)).toBe(true);
     expect(typeof proxy).toBe("function");
-    expect(wrapper.target).toBeUndefined();
     expect(nexo.entries.has(wrapper.id)).toBe(true);
-  });
-
-  it("Creates a new proxy object with a target", () => {
-    const nexo = new Nexo();
-    const target = {};
-    const proxy = nexo.create(target);
-    const wrapper = Nexo.wrap(proxy);
-
-    expect(wrapper.target).toBe(target);
   });
 
   it("Emits an event when a proxy is created", () => {
     const nexo = new Nexo();
     const target = {};
-    const createCallback = jest.fn();
+    let proxyEvent;
 
-    nexo.on("proxy", createCallback);
+    nexo.on("proxy", (event: NexoEvent) => {
+      proxyEvent = event;
+    });
 
     const proxy = nexo.create(target);
     const wrapper = Nexo.wrap(proxy);
-    const [createEvent] = createCallback.mock.lastCall;
 
-    expect(createCallback).toHaveBeenCalledTimes(1);
-    expect(createEvent).toBeInstanceOf(NexoEvent);
-    expect(createEvent.name).toBe("proxy");
-    expect(createEvent.target).toBe(nexo);
-    expect(createEvent.data).toStrictEqual({
-      id: wrapper.id,
-      target: wrapper.target,
-    });
+    expect(proxyEvent).toBeInstanceOf(NexoEvent);
+    expect(proxyEvent.target).toBe(proxy);
+    expect(proxyEvent.name).toBe("proxy");
+    expect(proxyEvent.data).toStrictEqual({ id: wrapper.id, target });
   });
 
-  it("Creates a proxy by name", () => {
+  it("Creates a proxy by name with optional target", () => {
     const nexo = new Nexo();
-    const proxy = nexo.use("foo");
+    const target = {};
+    const proxy = nexo.use("foo", target);
     const wrapper = Nexo.wrap(proxy);
 
     expect(wrapper.id).toBe("foo");
     expect(nexo.entries.has("foo")).toBe(true);
-    expect(wrapper.target).toBeUndefined();
-  });
-
-  it("Creates a proxy by name and target", () => {
-    const nexo = new Nexo();
-    const target = {};
-    const proxy = nexo.use("bar", target);
-    const wrapper = Nexo.wrap(proxy);
-
-    expect(wrapper.id).toBe("bar");
-    expect(nexo.entries.has("bar")).toBe(true);
-    expect(wrapper.target).toBe(target);
   });
 
   it("Updates a proxy by name and target", () => {
@@ -103,9 +81,7 @@ describe("Nexo", () => {
 
     expect(nexo.entries.has("foo")).toBe(true);
     expect(nexo.entries.size).toBe(1);
-
-    expect(wrapperA.target).toBe(targetA);
-    expect(wrapperB.target).toBe(targetB);
-    expect(wrapperC.target).toBe(targetB);
+    expect(proxyB).not.toBe(proxyA);
+    expect(proxyC).toBe(proxyB);
   });
 });

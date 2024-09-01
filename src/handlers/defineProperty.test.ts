@@ -1,5 +1,4 @@
 import Nexo from "../Nexo.js";
-import defineProperty from "./defineProperty.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
 
@@ -14,9 +13,10 @@ describe("defineProperty", () => {
     nexo.on("proxy.defineProperty", definePropertyListener);
     wrapper.on("proxy.defineProperty", definePropertyListener);
 
-    const result = defineProperty(wrapper.fn, "foo", { value: "bar" });
+    const result = Reflect.defineProperty(proxy, "foo", { value: "bar" });
 
-    const [definePropertyEvent] = definePropertyListener.mock.lastCall;
+    const [definePropertyEvent]: [ProxyEvent<{ target: object }>] =
+      definePropertyListener.mock.lastCall;
 
     expect(result).toBe(true);
     expect(definePropertyListener).toHaveBeenCalledTimes(2);
@@ -25,6 +25,7 @@ describe("defineProperty", () => {
 
     expect(definePropertyEvent.data).toStrictEqual({
       property: "foo",
+      target: definePropertyEvent.data.target,
       descriptor: {
         value: "bar",
       },
@@ -45,7 +46,7 @@ describe("defineProperty", () => {
       },
     );
 
-    const result = defineProperty(wrapper.fn, "foo", { value: 5 });
+    const result = Reflect.defineProperty(proxy, "foo", { value: 5 });
 
     expect(result).toBe(false);
     expect(proxy.foo).not.toBe(5);
@@ -54,11 +55,10 @@ describe("defineProperty", () => {
   it("Cannot define properties on frozen proxies", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
 
     Object.freeze(proxy);
 
-    const result = defineProperty(wrapper.fn, "foo", { value: 10 });
+    const result = Reflect.defineProperty(proxy, "foo", { value: 10 });
 
     expect(result).toBe(false);
     expect(Object.isFrozen(proxy)).toBe(true);
@@ -67,11 +67,10 @@ describe("defineProperty", () => {
   it("Cannot define properties on sealed proxies", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
 
     Object.seal(proxy);
 
-    const result = defineProperty(wrapper.fn, "foo", { value: 20 });
+    const result = Reflect.defineProperty(proxy, "foo", { value: 20 });
 
     expect(result).toBe(false);
     expect(Object.isSealed(proxy)).toBe(true);
@@ -80,11 +79,9 @@ describe("defineProperty", () => {
   it("Cannot define properties on non-extensible proxies", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
-
     Object.preventExtensions(proxy);
 
-    const result = defineProperty(wrapper.fn, "foo", { value: 30 });
+    const result = Reflect.defineProperty(proxy, "foo", { value: 30 });
 
     expect(result).toBe(false);
     expect(Object.isExtensible(proxy)).toBe(false);
@@ -93,9 +90,8 @@ describe("defineProperty", () => {
   it("Defines a new property on the proxy", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
 
-    const result = defineProperty(wrapper.fn, "foo", { value: true });
+    const result = Reflect.defineProperty(proxy, "foo", { value: true });
 
     expect(result).toBe(true);
     expect(proxy.foo).toBe(true);
@@ -110,10 +106,10 @@ describe("defineProperty", () => {
     nexo.on("proxy.error", errorListener);
     wrapper.on("proxy.error", errorListener);
 
-    defineProperty(wrapper.fn, "foo", { value: true });
+    Reflect.defineProperty(proxy, "foo", { value: true });
 
     expect(
-      defineProperty.bind(null, wrapper.fn, "foo", { value: false }),
+      Reflect.defineProperty.bind(null, proxy, "foo", { value: false }),
     ).toThrow(ProxyError);
 
     const [proxyError] = errorListener.mock.lastCall;

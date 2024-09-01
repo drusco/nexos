@@ -2,7 +2,7 @@ import type nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import isProxy from "../utils/isProxy.js";
-import apply from "./apply.js";
+import NexoEvent from "../events/NexoEvent.js";
 
 describe("apply", () => {
   it("Emits an apply event", () => {
@@ -17,9 +17,10 @@ describe("apply", () => {
 
     const args = ["foo", "bar"];
     const _this = {};
-    const result = apply(wrapper.fn, _this, args);
+    const result = Reflect.apply(proxy, _this, args);
 
-    const [applyEvent] = applyListener.mock.lastCall;
+    const [applyEvent]: [ProxyEvent<{ target: object }>] =
+      applyListener.mock.lastCall;
 
     expect(applyListener).toHaveBeenCalledTimes(2);
     expect(applyEvent).toBeInstanceOf(ProxyEvent);
@@ -27,6 +28,7 @@ describe("apply", () => {
     expect(applyEvent.cancelable).toBe(true);
 
     expect(applyEvent.data).toStrictEqual({
+      target: applyEvent.data.target,
       this: _this,
       arguments: args,
       result,
@@ -36,13 +38,10 @@ describe("apply", () => {
   it("Returns a new proxy by default", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
 
-    const result = apply(wrapper.fn) as nx.Proxy;
-    const resultWrapper = Nexo.wrap(result);
+    const result = Reflect.apply(proxy, undefined, []);
 
     expect(isProxy(result)).toBe(true);
-    expect(resultWrapper.target).toBeUndefined();
   });
 
   it("Allows its return value to be defined by the event listener", () => {
@@ -57,7 +56,7 @@ describe("apply", () => {
       return expectedResult;
     });
 
-    const result = apply(wrapper.fn);
+    const result = Reflect.apply(proxy, undefined, []);
 
     expect(result).toBe(expectedResult);
   });
@@ -66,6 +65,7 @@ describe("apply", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
+    const proxyListener = jest.fn();
 
     const expectedResult = [];
 
@@ -74,28 +74,30 @@ describe("apply", () => {
       return expectedResult;
     });
 
-    const result = apply(wrapper.fn);
+    nexo.on("proxy", proxyListener);
+
+    const result = Reflect.apply(proxy, undefined, []);
     const expectedProxy = nexo.create(expectedResult);
-    const resultWrapper = Nexo.wrap(expectedProxy);
+
+    const [proxyEvent]: [NexoEvent<nx.Proxy, { target?: nx.traceable }>] =
+      proxyListener.mock.lastCall;
 
     expect(isProxy(result)).toBe(true);
     expect(result).toBe(expectedProxy);
-    expect(resultWrapper.target).toBe(expectedResult);
+    expect(proxyEvent.data.target).toBe(expectedResult);
   });
 
   it("Allows its return value to be defined by a function target", () => {
     const nexo = new Nexo();
     const functionTarget = (a: number, b: number): number => a + b;
     const proxy = nexo.create(functionTarget);
-    const wrapper = Nexo.wrap(proxy);
 
     const objReturn = {};
     const fnTargetReturnsObj = () => objReturn;
     const proxy2 = nexo.create(fnTargetReturnsObj);
-    const wrapper2 = Nexo.wrap(proxy2);
 
-    const numberResult = apply(wrapper.fn, undefined, [4, 1]);
-    const traceableResult = apply(wrapper2.fn);
+    const numberResult = Reflect.apply(proxy, undefined, [4, 1]);
+    const traceableResult = Reflect.apply(proxy2, undefined, []);
     const traceableResultProxy = nexo.create(objReturn);
 
     expect(numberResult).toBe(5);
@@ -120,7 +122,7 @@ describe("apply", () => {
 
     nexo.on("update", updateCallback);
 
-    apply(wrapper.fn);
+    Reflect.apply(proxy, undefined, []);
 
     const [updateEvent] = updateCallback.mock.lastCall;
 
@@ -139,7 +141,7 @@ describe("apply", () => {
     const proxy = nexo.create(functionTarget);
     const wrapper = Nexo.wrap(proxy);
 
-    let expectedProxy: nx.Proxy;
+    let expectedProxy;
 
     wrapper.on("proxy.apply", (event: ProxyEvent<{ result: nx.Proxy }>) => {
       expectedProxy = event.data.result;
@@ -147,7 +149,7 @@ describe("apply", () => {
 
     nexo.on("update", updateCallback);
 
-    const result = apply(wrapper.fn);
+    const result = Reflect.apply(proxy, undefined, []);
     const expectedResultProxy = nexo.create(expectedResult);
 
     const [updateEvent] = updateCallback.mock.lastCall;
