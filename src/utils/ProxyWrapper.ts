@@ -1,31 +1,44 @@
 import type nx from "../types/Nexo.js";
 import NexoEmitter from "../events/NexoEmitter.js";
-import map from "./maps.js";
 import Nexo from "../Nexo.js";
 
 class ProxyWrapper extends NexoEmitter {
-  private proxy: nx.proxy.data;
+  readonly id: string;
+  readonly nexo: Nexo;
+  readonly traceable: boolean;
+  readonly sandbox: void | nx.traceable;
+  private _revoked: boolean = false;
+  private _revoke: nx.voidFunction;
 
-  constructor(proxy: nx.Proxy) {
+  constructor(data: {
+    id: string;
+    nexo: Nexo;
+    traceable: boolean;
+    revoke: nx.voidFunction;
+  }) {
     super();
-    this.proxy = map.proxies.get(proxy);
-  }
 
-  get id(): string {
-    return this.proxy.id;
-  }
+    this.id = data.id;
+    this.nexo = data.nexo;
+    this.traceable = data.traceable;
+    this._revoke = data.revoke;
 
-  get nexo(): Nexo {
-    return this.proxy.nexo;
+    if (!data.traceable) {
+      // non-traceable targets get a sandbox to interact as traceable objects
+      this.sandbox = Object.create(null);
+    }
   }
 
   revoke(): void {
-    this.proxy.revoke();
-    this.proxy.revoked = true;
+    if (this._revoke) {
+      this._revoke();
+      delete this._revoke;
+    }
+    this._revoked = true;
   }
 
   get revoked(): boolean {
-    return this.proxy.revoked;
+    return this._revoked;
   }
 }
 

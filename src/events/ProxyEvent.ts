@@ -9,10 +9,10 @@ class ProxyEvent<Data = unknown> extends NexoEvent<nx.Proxy, Data> {
   ) {
     super(`proxy.${name}`, options);
 
-    const { wrapper, nexo } = map.proxies.get(this.target);
+    const wrapper = map.proxies.get(this.target);
 
     // Emit the proxy event to its listeners
-    nexo.emit(this.name, this);
+    wrapper.nexo.emit(this.name, this);
     wrapper.emit(this.name, this);
   }
 }

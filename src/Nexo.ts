@@ -9,7 +9,7 @@ class Nexo extends NexoEmitter {
   readonly entries: NexoMap<nx.Proxy> = new NexoMap();
 
   static wrap(proxy: nx.Proxy): ProxyWrapper {
-    return maps.proxies.get(proxy).wrapper;
+    return maps.proxies.get(proxy);
   }
 
   use(id: string, target?: nx.traceable): nx.Proxy {

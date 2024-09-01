@@ -10,7 +10,6 @@ describe("construct", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
-
     const constructListener = jest.fn();
 
     nexo.on("proxy.construct", constructListener);
@@ -19,18 +18,15 @@ describe("construct", () => {
     const args = ["foo", "bar"];
     const result = Reflect.construct(proxy, args);
 
-    const [constructEvent]: [ProxyEvent<{ target: object }>] =
-      constructListener.mock.lastCall;
+    const [constructEvent]: [
+      ProxyEvent<{ target: object; arguments: nx.arrayLike; result: nx.Proxy }>,
+    ] = constructListener.mock.lastCall;
 
     expect(constructListener).toHaveBeenCalledTimes(2);
     expect(constructEvent.target).toBe(proxy);
     expect(constructEvent.cancelable).toBe(true);
-
-    expect(constructEvent.data).toStrictEqual({
-      target: constructEvent.data.target,
-      arguments: args,
-      result,
-    });
+    expect(constructEvent.data.arguments).toStrictEqual(args);
+    expect(constructEvent.data.result).toBe(result);
   });
 
   it("Returns a new proxy by default", () => {

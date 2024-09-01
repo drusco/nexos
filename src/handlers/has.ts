@@ -2,19 +2,24 @@ import type nx from "../types/Nexo.js";
 import map from "../utils/maps.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 
-const has = (target: nx.traceable, key: nx.objectKey): boolean => {
+const has = (target: nx.traceable, property: nx.objectKey): boolean => {
   const proxy = map.tracables.get(target);
-  const data = map.proxies.get(proxy);
+  const { sandbox } = map.proxies.get(proxy);
 
-  const { sandbox } = data;
-
-  const event = new ProxyEvent("has", { target: proxy, data: { target, key } });
+  const event = new ProxyEvent("has", {
+    target: proxy,
+    data: { target, property },
+  });
 
   if (event.defaultPrevented) {
     return event.returnValue === true;
   }
 
-  return sandbox.has(key);
+  if (!sandbox) {
+    return Reflect.has(target, property);
+  }
+
+  return Reflect.has(sandbox, property);
 };
 
 export default has;

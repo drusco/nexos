@@ -27,21 +27,15 @@ const getProxy = (nexo: Nexo, target?: nx.traceable, id?: string): nx.Proxy => {
   // set information about this proxy
 
   const uid = id || randomUUID();
-
-  const data: nx.proxy.data = {
+  const wrapper = new ProxyWrapper({
     id: uid,
     nexo,
-    sandbox: new Map(),
     revoke: revocable.revoke,
-    revoked: false,
-    wrapper: new ProxyWrapper(proxy),
     traceable,
-  };
+  });
 
-  map.proxies.set(proxy, data);
+  map.proxies.set(proxy, wrapper);
   map.tracables.set(proxyTarget, proxy);
-
-  data.wrapper = new ProxyWrapper(proxy); // remove after proxy.data is replaced by proxywrapper
 
   if (traceable) {
     map.tracables.set(target, proxy);

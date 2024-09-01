@@ -8,9 +8,9 @@ class ProxyError extends Error {
     super(message);
     this.proxy = proxy;
 
-    const { nexo, wrapper } = map.proxies.get(proxy);
+    const wrapper = map.proxies.get(proxy);
 
-    nexo.emit("proxy.error", this);
+    wrapper.nexo.emit("proxy.error", this);
     wrapper.emit("proxy.error", this);
   }
 }

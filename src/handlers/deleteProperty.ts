@@ -1,22 +1,33 @@
 import type nx from "../types/Nexo.js";
 import map from "../utils/maps.js";
 import ProxyEvent from "../events/ProxyEvent.js";
+import ProxyError from "../errors/ProxyError.js";
 
-const deleteProperty = (target: nx.traceable, key: nx.objectKey): boolean => {
+const deleteProperty = (
+  target: nx.traceable,
+  property: nx.objectKey,
+): boolean => {
   const proxy = map.tracables.get(target);
-  const data = map.proxies.get(proxy);
-  const { sandbox } = data;
+  const { sandbox } = map.proxies.get(proxy);
 
   const event = new ProxyEvent("deleteProperty", {
     target: proxy,
-    data: { target, key },
+    data: { target, property },
   });
 
   if (event.defaultPrevented) {
     return false;
   }
 
-  return sandbox.delete(key);
+  if (!sandbox) {
+    return Reflect.deleteProperty(target, property);
+  }
+
+  try {
+    return Reflect.deleteProperty(sandbox, property);
+  } catch (error) {
+    throw new ProxyError(error.message, proxy);
+  }
 };
 
 export default deleteProperty;

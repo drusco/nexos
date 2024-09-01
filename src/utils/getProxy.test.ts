@@ -3,24 +3,8 @@ import ProxyEvent from "../events/ProxyEvent.js";
 import Nexo from "../Nexo.js";
 import getProxy from "./getProxy.js";
 import map from "./maps.js";
-import ProxyWrapper from "./ProxyWrapper.js";
 
 describe("getProxy", () => {
-  it("Creates a new proxy with custom data", () => {
-    const nexo = new Nexo();
-    const proxy = getProxy(nexo);
-    const wrapper = Nexo.wrap(proxy);
-    const data = map.proxies.get(proxy);
-
-    expect(data?.id).toBe(wrapper.id);
-    expect(data?.wrapper).toBeInstanceOf(ProxyWrapper);
-    expect(data?.nexo).toBeInstanceOf(Nexo);
-    expect(data?.revoke).toBeInstanceOf(Function);
-    expect(data?.sandbox).toBeInstanceOf(Map);
-    expect(data?.revoked).toBe(false);
-    expect(data?.traceable).toBe(false);
-  });
-
   it("Creates a new proxy with a custom target", () => {
     const nexo = new Nexo();
     const listener = jest.fn();
@@ -41,10 +25,17 @@ describe("getProxy", () => {
 
   it("Creates a new proxy with a custom id", () => {
     const nexo = new Nexo();
+    const listener = jest.fn();
+
+    nexo.on("proxy", listener);
+
     const proxy = getProxy(nexo, undefined, "foo");
     const wrapper = Nexo.wrap(proxy);
 
+    const [proxyEvent]: [ProxyEvent<{ id: string }>] = listener.mock.lastCall;
+
     expect(wrapper.id).toBe("foo");
+    expect(proxyEvent.data.id).toBe("foo");
   });
 
   it("Links internal data using weak maps", () => {

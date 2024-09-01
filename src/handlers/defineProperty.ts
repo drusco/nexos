@@ -14,7 +14,7 @@ const defineProperty = (
 
   const event = new ProxyEvent("defineProperty", {
     target: proxy,
-    cancelable: true,
+    cancelable: extensible,
     data: {
       target,
       property,
@@ -22,31 +22,56 @@ const defineProperty = (
     },
   });
 
-  // Target is not extensible and may be sealed or frozen as well
-  if (!extensible) {
-    return Reflect.defineProperty(target, property, descriptor);
-  }
-
   // Property descriptor can be modified by the event listeners
   // Property definition is cancelled whenever event.preventDefault is called
   if (event.defaultPrevented) {
     return false;
   }
 
-  if (sandbox.has(property)) {
-    try {
-      const mock = Object.create(null);
+  try {
+    // Traceable target objects
+    // ----
 
-      Object.defineProperty(mock, property, sandbox.get(property));
-      Object.defineProperty(mock, property, descriptor);
-    } catch (error) {
-      throw new ProxyError(error.message, proxy);
+    if (!sandbox) {
+      const current = Reflect.getOwnPropertyDescriptor(target, property);
+      const success = Reflect.defineProperty(target, property, descriptor);
+
+      if (!success) {
+        if (current) {
+          // Should throw an in detail error
+          const mock = Object.create(null);
+
+          Object.defineProperty(mock, property, current);
+          Object.defineProperty(mock, property, descriptor);
+        }
+
+        // Fallback error
+        throw TypeError(
+          `'defineProperty' on proxy: trap returned falsish for property '${String(property)}'"`,
+        );
+      }
+      return true;
     }
+
+    // Non-traceable target objects
+    // ----
+
+    // Target is not extensible and may be sealed or frozen as well
+    if (!extensible) {
+      if (!Reflect.defineProperty(target, property, descriptor)) {
+        throw TypeError(
+          `Cannot define property '${String(property)}', object is not extensible"`,
+        );
+      }
+      return true;
+    }
+
+    Object.defineProperty(sandbox, property, descriptor);
+
+    return true;
+  } catch (error) {
+    throw new ProxyError(error.message, proxy);
   }
-
-  sandbox.set(property, descriptor);
-
-  return true;
 };
 
 export default defineProperty;

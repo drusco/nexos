@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Nexo from "../Nexo.js";
-import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 declare namespace Nexo {
   type arrayLike = unknown[];
@@ -17,16 +15,6 @@ declare namespace Nexo {
   }
 
   namespace proxy {
-    type data = {
-      id: string;
-      nexo: Nexo;
-      sandbox: Map<objectKey, PropertyDescriptor>;
-      wrapper: ProxyWrapper;
-      revoke: voidFunction;
-      revoked: boolean;
-      traceable: boolean;
-    };
-
     type handler =
       | "get"
       | "has"

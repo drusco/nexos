@@ -1,17 +1,19 @@
 import Nexo from "../Nexo.js";
 import NexoEmitter from "../events/NexoEmitter.js";
+import ProxyWrapper from "./ProxyWrapper.js";
 
 describe("ProxyWrapper", () => {
-  it("Access the proxy data", () => {
+  it("Access the proxy details", () => {
     const nexo = new Nexo();
-    const target = [];
-    const proxy = nexo.use("foo", target);
+    const proxy = nexo.use("foo");
     const wrapper = Nexo.wrap(proxy);
 
-    expect(wrapper.id).toBe("foo");
+    expect(wrapper).toBeInstanceOf(ProxyWrapper);
     expect(wrapper).toBeInstanceOf(NexoEmitter);
+    expect(wrapper.id).toBe("foo");
     expect(wrapper.nexo).toBe(nexo);
     expect(wrapper.revoked).toBe(false);
+    expect(wrapper.traceable).toBe(false);
   });
 
   it("Can revoke a proxy", () => {

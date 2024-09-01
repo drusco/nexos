@@ -19,20 +19,22 @@ describe("apply", () => {
     const _this = {};
     const result = Reflect.apply(proxy, _this, args);
 
-    const [applyEvent]: [ProxyEvent<{ target: object }>] =
-      applyListener.mock.lastCall;
+    const [applyEvent]: [
+      ProxyEvent<{
+        target: object;
+        this?: object;
+        arguments: nx.arrayLike;
+        result: nx.Proxy;
+      }>,
+    ] = applyListener.mock.lastCall;
 
     expect(applyListener).toHaveBeenCalledTimes(2);
     expect(applyEvent).toBeInstanceOf(ProxyEvent);
     expect(applyEvent.target).toBe(proxy);
     expect(applyEvent.cancelable).toBe(true);
-
-    expect(applyEvent.data).toStrictEqual({
-      target: applyEvent.data.target,
-      this: _this,
-      arguments: args,
-      result,
-    });
+    expect(applyEvent.data.this).toBe(_this);
+    expect(applyEvent.data.arguments).toStrictEqual(args);
+    expect(applyEvent.data.result).toBe(result);
   });
 
   it("Returns a new proxy by default", () => {

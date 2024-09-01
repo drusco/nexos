@@ -32,19 +32,14 @@ describe("defineProperty", () => {
     });
   });
 
-  it("Returns false when the event is default prevented", () => {
+  it("Returns false when the event is prevented", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
 
-    wrapper.on(
-      "proxy.defineProperty",
-      (
-        event: ProxyEvent<{ property: string; descriptor: PropertyDescriptor }>,
-      ) => {
-        event.preventDefault();
-      },
-    );
+    wrapper.on("proxy.defineProperty", (event: ProxyEvent) => {
+      event.preventDefault();
+    });
 
     const result = Reflect.defineProperty(proxy, "foo", { value: 5 });
 
@@ -58,9 +53,10 @@ describe("defineProperty", () => {
 
     Object.freeze(proxy);
 
-    const result = Reflect.defineProperty(proxy, "foo", { value: 10 });
+    expect(
+      Reflect.defineProperty.bind(null, proxy, "foo", { value: 10 }),
+    ).toThrow(ProxyError);
 
-    expect(result).toBe(false);
     expect(Object.isFrozen(proxy)).toBe(true);
   });
 
@@ -70,9 +66,10 @@ describe("defineProperty", () => {
 
     Object.seal(proxy);
 
-    const result = Reflect.defineProperty(proxy, "foo", { value: 20 });
+    expect(
+      Reflect.defineProperty.bind(null, proxy, "foo", { value: 20 }),
+    ).toThrow(ProxyError);
 
-    expect(result).toBe(false);
     expect(Object.isSealed(proxy)).toBe(true);
   });
 
@@ -81,9 +78,10 @@ describe("defineProperty", () => {
     const proxy = nexo.create();
     Object.preventExtensions(proxy);
 
-    const result = Reflect.defineProperty(proxy, "foo", { value: 30 });
+    expect(
+      Reflect.defineProperty.bind(null, proxy, "foo", { value: 30 }),
+    ).toThrow(ProxyError);
 
-    expect(result).toBe(false);
     expect(Object.isExtensible(proxy)).toBe(false);
   });
 
