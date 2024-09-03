@@ -7,9 +7,9 @@ class NexoEmitter extends EventEmitter {
     super({ captureRejections: true });
   }
 
-  emit(
+  emit<Event extends NexoEvent>(
     eventName: nx.objectKey,
-    data: NexoEvent | Error,
+    data: Event | Error,
     ...args: nx.arrayLike
   ): boolean {
     const listeners = this.listeners(eventName);
