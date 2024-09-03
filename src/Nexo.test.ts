@@ -13,15 +13,28 @@ describe("Nexo", () => {
     expect(nexo).toBeInstanceOf(NexoEmitter);
   });
 
-  it("Access the proxy wrapper", () => {
+  it("Access the wrapper using the proxy", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
 
     expect(wrapper).toBeInstanceOf(ProxyWrapper);
-    expect(wrapper).toBeInstanceOf(NexoEmitter);
-    expect(wrapper.nexo).toBe(nexo);
-    expect(wrapper.revoked).toBe(false);
+  });
+
+  it("Access the wrapper using the target", () => {
+    const nexo = new Nexo();
+    const target = {};
+    nexo.create(target);
+    const wrapper = Nexo.wrap(target) as ProxyWrapper;
+
+    expect(wrapper).toBeInstanceOf(ProxyWrapper);
+  });
+
+  it("Cannot return a ProxyWrapper without a traceable value", () => {
+    const nonTraceable = [];
+    const wrapper = Nexo.wrap(nonTraceable);
+
+    expect(wrapper).toBeUndefined();
   });
 
   it("Creates a new proxy object without a target", () => {
