@@ -37,10 +37,6 @@ const getProxy = (nexo: Nexo, target?: nx.traceable, id?: string): nx.Proxy => {
   map.proxies.set(proxy, wrapper);
   map.tracables.set(proxyTarget, proxy);
 
-  if (traceable) {
-    map.tracables.set(target, proxy);
-  }
-
   const event = new NexoEvent("proxy", {
     target: proxy,
     data: {
