@@ -4,13 +4,14 @@ import isTraceable from "../utils/isTraceable.js";
 import getProxy from "../utils/getProxy.js";
 import map from "../utils/maps.js";
 
-type Proxy<Type> = nx.typeExtends<Type, nx.traceable, nx.Proxy>;
+function update(proxy: nx.Proxy, value: nx.traceable): nx.Proxy;
+function update<T>(proxy: nx.Proxy, value: T): T;
 
-const update = <Type>(proxy: nx.Proxy, value: Type): Proxy<Type> => {
+function update<T>(proxy: nx.Proxy, value: T): T | nx.Proxy {
   const { nexo } = map.proxies.get(proxy);
 
   if (isTraceable(value)) {
-    value = getProxy(nexo, value) as Type;
+    value = getProxy(nexo, value);
   }
 
   const event = new NexoEvent("update", {
@@ -26,7 +27,7 @@ const update = <Type>(proxy: nx.Proxy, value: Type): Proxy<Type> => {
    **/
   nexo.emit(event.name, event);
 
-  return value as Proxy<Type>;
-};
+  return value;
+}
 
 export default update;
