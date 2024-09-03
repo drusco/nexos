@@ -4,6 +4,7 @@ import ProxyEvent from "../events/ProxyEvent.js";
 import isProxy from "../utils/isProxy.js";
 import NexoEvent from "../events/NexoEvent.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
+import ProxyError from "../errors/ProxyError.js";
 
 describe("apply", () => {
   it("Emits an apply event", () => {
@@ -163,5 +164,21 @@ describe("apply", () => {
     expect(updateEvent.data).toBe(expectedResultProxy);
     expect(isProxy(expectedResultProxy)).toBe(true);
     expect(result).toBe(expectedResultProxy);
+  });
+
+  it("Can catch target errors on function call", () => {
+    const nexo = new Nexo();
+    const listener = jest.fn();
+    const target = () => {
+      throw Error("boom");
+    };
+
+    nexo.on("error", listener);
+    nexo.on("proxy.error", listener);
+
+    const proxy = nexo.create(target);
+
+    expect(proxy).toThrow(ProxyError);
+    expect(listener).toHaveBeenCalledTimes(2);
   });
 });

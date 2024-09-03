@@ -3,6 +3,7 @@ import getProxy from "../utils/getProxy.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
 import update from "./update.js";
+import ProxyError from "../errors/ProxyError.js";
 
 const apply = (
   target: nx.traceable,
@@ -31,8 +32,13 @@ const apply = (
 
   if (traceable && typeof target === "function") {
     // return the value from the original target call
+    let result: unknown;
 
-    const result = target.apply(that, args);
+    try {
+      result = Reflect.apply(target, that, args);
+    } catch (error) {
+      throw new ProxyError(error.message, proxy);
+    }
 
     // update the proxy
     return update(resultProxy, result);
