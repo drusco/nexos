@@ -57,13 +57,13 @@ class NexoMap<Target extends nx.traceable> extends Map<
 
     this._release = true;
 
-    this.forEach((weakRef, key) => {
+    for (const [key, weakRef] of this) {
       if (weakRef.deref() === undefined) {
         this.releaseKey = key;
         this.delete(key);
-        this.releaseKey = undefined;
+        delete this.releaseKey;
       }
-    });
+    }
 
     const event = new NexoEvent("release", { target: this });
     this.events.emit(event.name, event);
