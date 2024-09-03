@@ -7,6 +7,7 @@ declare namespace Nexo {
   type plainObject = Record<objectKey, unknown>;
   type voidFunction = (...args: arrayLike) => void;
   type functionLike = (...args: arrayLike) => any;
+  type constructable<T> = new (...args: arrayLike) => T;
   type typeExtends<Type, Base, Final> = Type extends Base ? Final : Type;
 
   interface Proxy extends functionLike {

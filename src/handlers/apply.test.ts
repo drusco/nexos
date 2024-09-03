@@ -3,12 +3,13 @@ import Nexo from "../Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import isProxy from "../utils/isProxy.js";
 import NexoEvent from "../events/NexoEvent.js";
+import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 describe("apply", () => {
   it("Emits an apply event", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
 
     const applyListener = jest.fn();
 
@@ -49,7 +50,7 @@ describe("apply", () => {
   it("Allows its return value to be defined by the event listener", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
 
     const expectedResult = "foo";
 
@@ -66,7 +67,7 @@ describe("apply", () => {
   it("Allows its return value to be converted to a proxy", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
     const proxyListener = jest.fn();
 
     const expectedResult = [];
@@ -112,7 +113,7 @@ describe("apply", () => {
     const updateCallback = jest.fn();
 
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
     const expectedResult = "test";
     let expectedProxy;
 
@@ -141,7 +142,7 @@ describe("apply", () => {
     const expectedResult = [];
     const functionTarget = () => expectedResult;
     const proxy = nexo.create(functionTarget);
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
 
     let expectedProxy;
 

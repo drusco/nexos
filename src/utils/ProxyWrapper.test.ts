@@ -6,7 +6,7 @@ describe("ProxyWrapper", () => {
   it("Access the proxy details", () => {
     const nexo = new Nexo();
     const proxy = nexo.use("foo");
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
 
     expect(wrapper).toBeInstanceOf(ProxyWrapper);
     expect(wrapper).toBeInstanceOf(NexoEmitter);
@@ -19,7 +19,7 @@ describe("ProxyWrapper", () => {
   it("Can revoke a proxy", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
 
     wrapper.revoke();
 

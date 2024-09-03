@@ -4,12 +4,13 @@ import isProxy from "../utils/isProxy.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import NexoEvent from "../events/NexoEvent.js";
 import ProxyError from "../errors/ProxyError.js";
+import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 describe("construct", () => {
   it("Emits a construct event", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
     const constructListener = jest.fn();
 
     nexo.on("proxy.construct", constructListener);
@@ -58,7 +59,7 @@ describe("construct", () => {
   it("Allows its return value to be defined by the event listener", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
     const listener = jest.fn();
 
     const expectedTarget = {};
@@ -82,7 +83,7 @@ describe("construct", () => {
   it("Throws when defining a non-object as the return value", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
 
     wrapper.on("proxy.construct", (event: ProxyEvent) => {
       event.preventDefault();
@@ -97,7 +98,7 @@ describe("construct", () => {
     const updateCallback = jest.fn();
 
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
     const expectedResult = {};
 
     let expectedProxy;
@@ -126,7 +127,7 @@ describe("construct", () => {
 
     const constructable = function () {};
     const proxy = nexo.create(constructable);
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
 
     let expectedProxy;
 

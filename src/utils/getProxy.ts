@@ -1,5 +1,5 @@
-import { randomUUID } from "node:crypto";
 import type nx from "../types/Nexo.js";
+import { randomUUID } from "node:crypto";
 import map from "./maps.js";
 import findProxy from "./findProxy.js";
 import isTraceable from "./isTraceable.js";
@@ -8,9 +8,19 @@ import handlers from "../handlers/index.js";
 import ProxyWrapper from "./ProxyWrapper.js";
 import Nexo from "../Nexo.js";
 
-const getProxy = (nexo: Nexo, target?: nx.traceable, id?: string): nx.Proxy => {
-  // find proxy by target
+function getProxy(nexo: Nexo, target?: undefined, id?: string): nx.Proxy;
+function getProxy<T extends nx.traceable>(
+  nexo: Nexo,
+  target?: T,
+  id?: string,
+): T;
 
+function getProxy<T extends nx.traceable>(
+  nexo: Nexo,
+  target?: T,
+  id?: string,
+): T | nx.Proxy {
+  // find proxy by target
   const usableProxy = findProxy(target);
 
   if (usableProxy) {
@@ -49,6 +59,6 @@ const getProxy = (nexo: Nexo, target?: nx.traceable, id?: string): nx.Proxy => {
   nexo.emit(event.name, event);
 
   return proxy;
-};
+}
 
 export default getProxy;

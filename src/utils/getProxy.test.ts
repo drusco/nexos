@@ -3,6 +3,7 @@ import ProxyEvent from "../events/ProxyEvent.js";
 import Nexo from "../Nexo.js";
 import getProxy from "./getProxy.js";
 import map from "./maps.js";
+import ProxyWrapper from "./ProxyWrapper.js";
 
 describe("getProxy", () => {
   it("Creates a new proxy with a custom target", () => {
@@ -30,7 +31,7 @@ describe("getProxy", () => {
     nexo.on("proxy", listener);
 
     const proxy = getProxy(nexo, undefined, "foo");
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
 
     const [proxyEvent]: [ProxyEvent<{ id: string }>] = listener.mock.lastCall;
 
