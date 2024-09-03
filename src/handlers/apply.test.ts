@@ -38,7 +38,7 @@ describe("apply", () => {
     expect(applyEvent.data.result).toBe(result);
   });
 
-  it("Returns a new proxy by default", () => {
+  it("Returns a new proxy when created without a target", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
 
