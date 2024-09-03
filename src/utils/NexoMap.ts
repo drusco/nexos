@@ -19,7 +19,7 @@ class NexoMap<Target extends nx.traceable> extends Map<
   set(key: string, value: WeakRef<Target>): this {
     super.set(key, value);
 
-    const event = new NexoEvent("map.set", {
+    const event = new NexoEvent("set", {
       target: this,
       data: { key, value },
     });
@@ -32,7 +32,7 @@ class NexoMap<Target extends nx.traceable> extends Map<
   delete(key: string): boolean {
     const existed = super.delete(key);
 
-    const event = new NexoEvent("map.delete", {
+    const event = new NexoEvent("delete", {
       target: this,
       data: {
         key,
@@ -48,7 +48,7 @@ class NexoMap<Target extends nx.traceable> extends Map<
   clear(): void {
     super.clear();
 
-    const event = new NexoEvent("map.clear", { target: this });
+    const event = new NexoEvent("clear", { target: this });
     this.events.emit(event.name, event);
   }
 
@@ -65,7 +65,7 @@ class NexoMap<Target extends nx.traceable> extends Map<
       }
     });
 
-    const event = new NexoEvent("map.release", { target: this });
+    const event = new NexoEvent("release", { target: this });
     this.events.emit(event.name, event);
 
     this._release = false;
