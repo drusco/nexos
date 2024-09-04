@@ -9,7 +9,8 @@ const apply = (
   args: nx.arrayLike = [],
 ): unknown => {
   const proxy = map.tracables.get(target);
-  const { traceable } = map.proxies.get(proxy);
+  const { nexo, traceable } = map.proxies.get(proxy);
+  const result = nexo.create();
 
   const event = new ProxyEvent("apply", {
     target: proxy,
@@ -18,22 +19,25 @@ const apply = (
       target,
       thisArg,
       args,
+      result,
     },
   });
 
   if (event.defaultPrevented) {
-    // return the value from the prevented event
+    // return value from the prevented event
     return event.returnValue;
   }
 
   if (traceable && typeof target === "function") {
-    // return the result of the traceable function target
+    // return result from the traceable function target
     try {
       return Reflect.apply(target, thisArg, args);
     } catch (error) {
       throw new ProxyError(error.message, proxy);
     }
   }
+
+  return result;
 };
 
 export default apply;

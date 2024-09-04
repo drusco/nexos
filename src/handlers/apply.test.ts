@@ -3,6 +3,7 @@ import Nexo from "../Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
 import ProxyError from "../errors/ProxyError.js";
+import { isProxy } from "util/types";
 
 describe("apply", () => {
   it("Emits an apply event with custom data", () => {
@@ -24,6 +25,7 @@ describe("apply", () => {
         target: nx.traceable;
         thisArg?: nx.traceable;
         args: nx.arrayLike;
+        result: nx.Proxy;
       }>,
     ] = applyListener.mock.lastCall;
 
@@ -33,15 +35,15 @@ describe("apply", () => {
     expect(applyEvent.cancelable).toBe(true);
     expect(applyEvent.data.thisArg).toBe(thisArg);
     expect(applyEvent.data.args).toStrictEqual(args);
-    expect(result).toBeUndefined();
+    expect(applyEvent.data.result).toBe(result);
   });
 
-  it("Returns undefined when proxy does not have a target function", () => {
+  it("Returns an empty proxy when the proxy does not have a target function", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
     const result = Reflect.apply(proxy, undefined, []);
 
-    expect(result).toBeUndefined();
+    expect(isProxy(result)).toBe(true);
   });
 
   it("Allows its return value to be defined by the event listener", () => {
