@@ -4,17 +4,18 @@ import ProxyEvent from "../events/ProxyEvent.js";
 
 const ownKeys = (target: nx.traceable): nx.objectKey[] => {
   const proxy = map.tracables.get(target);
+  const { sandbox } = map.proxies.get(proxy);
 
   // Event is emitted for inspection purposes only
-  // ProxyWrapper should have it's own 'keys' method to access the sandbox keys
+  // ProxyWrapper should have its own 'keys' method to access the sandbox keys
 
-  new ProxyEvent("ownKeys", {
-    target: proxy,
-    cancelable: false,
-  });
+  const targetKeys = Reflect.ownKeys(target);
+  const keys = sandbox ? Reflect.ownKeys(sandbox) : targetKeys;
 
-  // Returns the own keys from the void function target
-  return Reflect.ownKeys(target);
+  new ProxyEvent("ownKeys", { target: proxy, data: keys });
+
+  // Return the own keys from the current proxy target
+  return targetKeys;
 };
 
 export default ownKeys;
