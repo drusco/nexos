@@ -30,6 +30,8 @@ describe("ownKeys", () => {
     const [ownKeysEvent]: [ProxyEvent<nx.arrayLike>] = listener.mock.lastCall;
 
     expect(listener).toHaveBeenCalledTimes(1);
+    expect(ownKeysEvent.target).toBe(proxy);
+    expect(ownKeysEvent.cancelable).toBe(false);
     expect(ownKeysEvent.data).toStrictEqual(["foo", "bar"]);
   });
 });
