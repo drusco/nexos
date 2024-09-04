@@ -4,14 +4,11 @@ import ProxyEvent from "../events/ProxyEvent.js";
 
 const isExtensible = (target: nx.traceable): boolean => {
   const proxy = map.tracables.get(target);
+  const extensible = Reflect.isExtensible(target);
 
-  const event = new ProxyEvent("isExtensible", { target: proxy });
+  new ProxyEvent("isExtensible", { target: proxy, data: extensible });
 
-  if (event.defaultPrevented) {
-    return event.returnValue === true;
-  }
-
-  return Reflect.isExtensible(target);
+  return extensible;
 };
 
 export default isExtensible;
