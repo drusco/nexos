@@ -22,8 +22,7 @@ function update<T>(proxy: nx.Proxy, value: T): T | nx.Proxy {
 
   /**
    * Emits the 'update' event only to the nexo listeners
-   * Emitting this event to proxy wrappers separately must be avoided
-   * because adding this listener to each proxy on creation is expensive
+   * Emitting this event to each proxy wrapper is useless
    **/
   nexo.emit(event.name, event);
 

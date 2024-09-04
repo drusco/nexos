@@ -39,7 +39,7 @@ describe("construct", () => {
     expect(isProxy(result)).toBe(true);
   });
 
-  it("Creates an instance from a function target and returns its proxy", () => {
+  it("Creates an instance from a constructor target and returns its proxy", () => {
     const nexo = new Nexo();
     class MyTarget {}
     const proxy = nexo.create(MyTarget);

@@ -1,5 +1,4 @@
 import type nx from "../types/Nexo.js";
-import getProxy from "../utils/getProxy.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
 import update from "./update.js";
@@ -9,12 +8,16 @@ import isTraceable from "../utils/isTraceable.js";
 const construct = (target: nx.traceable, args: nx.arrayLike = []): object => {
   const proxy = map.tracables.get(target);
   const { nexo, traceable } = map.proxies.get(proxy);
-  const resultProxy = getProxy(nexo);
+  const resultProxy = nexo.create();
 
   const event = new ProxyEvent("construct", {
     target: proxy,
-    data: { target, arguments: args, result: resultProxy },
     cancelable: true,
+    data: {
+      target,
+      arguments: args,
+      result: resultProxy,
+    },
   });
 
   if (event.defaultPrevented) {
@@ -29,7 +32,7 @@ const construct = (target: nx.traceable, args: nx.arrayLike = []): object => {
   }
 
   if (traceable && typeof target === "function") {
-    // get the value from the original target instance
+    // get the instance from the original constructor
 
     const result: object = Reflect.construct(target, args);
 
