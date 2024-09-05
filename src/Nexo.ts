@@ -18,17 +18,17 @@ class Nexo extends NexoEmitter {
   ): void | PropertyDescriptor {
     const { sandbox } = Nexo.wrap(proxy);
     if (sandbox) {
-      return Object.getOwnPropertyDescriptor(sandbox, property);
+      return Reflect.getOwnPropertyDescriptor(sandbox, property);
     }
-    return Object.getOwnPropertyDescriptor(proxy, property);
+    return Reflect.getOwnPropertyDescriptor(proxy, property);
   }
 
   static keys(proxy: nx.Proxy): nx.objectKey[] {
     const { sandbox } = Nexo.wrap(proxy);
     if (sandbox) {
-      return Object.keys(sandbox);
+      return Reflect.ownKeys(sandbox);
     }
-    return Object.keys(proxy);
+    return Reflect.ownKeys(proxy);
   }
 
   use(id: string, target?: nx.traceable): nx.Proxy {
