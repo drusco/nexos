@@ -4,6 +4,7 @@ import NexoMap from "./utils/NexoMap.js";
 import NexoEmitter from "./events/NexoEmitter.js";
 import ProxyWrapper from "./utils/ProxyWrapper.js";
 import maps from "./utils/maps.js";
+import ProxyError from "./errors/ProxyError.js";
 
 class Nexo extends NexoEmitter {
   readonly entries: NexoMap<nx.Proxy> = new NexoMap();
@@ -37,12 +38,19 @@ class Nexo extends NexoEmitter {
       return this.entries.get(id).deref();
     }
 
-    // get a new or existing proxy for the target object
+    // get a new or existing proxy for the traceable target object
     const proxy = getProxy(this, target, id);
 
-    // update the entry id
     if (this.entries.has(id)) {
+      // update the existing entry id
       this.entries.set(id, new WeakRef(proxy));
+    } else {
+      const { id: currentId } = Nexo.wrap(proxy);
+      // the id cannot be changed for an existing target
+      throw new ProxyError(
+        `Cannot use '${id}' as the ID for the proxy because another proxy for the same target already exists with the ID '${currentId}'`,
+        proxy,
+      );
     }
 
     return proxy;

@@ -4,6 +4,7 @@ import NexoMap from "./utils/NexoMap.js";
 import isProxy from "./utils/isProxy.js";
 import NexoEvent from "./events/NexoEvent.js";
 import ProxyWrapper from "./utils/ProxyWrapper.js";
+import ProxyError from "./errors/ProxyError.js";
 
 describe("Nexo", () => {
   it("Creates a new nexo object", () => {
@@ -68,7 +69,7 @@ describe("Nexo", () => {
     expect(nexo.entries.has("foo")).toBe(true);
   });
 
-  it("Updates a proxy by name and target", () => {
+  it("Updates the proxy target", () => {
     const nexo = new Nexo();
     const targetA = {};
     const targetB = [];
@@ -89,6 +90,15 @@ describe("Nexo", () => {
     expect(nexo.entries.size).toBe(1);
     expect(proxyB).not.toBe(proxyA);
     expect(proxyC).toBe(proxyB);
+  });
+
+  it("Should not update a proxy name", () => {
+    const nexo = new Nexo();
+    const target = {};
+    const proxy = nexo.use("foo", target);
+
+    expect(nexo.use.bind(nexo, "bar", target)).toThrow(ProxyError);
+    expect(nexo.use("bar")).not.toBe(proxy);
   });
 
   it("Get the own property descriptor of a proxy", () => {
