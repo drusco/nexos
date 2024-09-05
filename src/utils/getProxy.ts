@@ -36,6 +36,16 @@ const getProxy = (nexo: Nexo, target?: nx.traceable, id?: string): nx.Proxy => {
   map.proxies.set(proxy, wrapper);
   map.tracables.set(proxyTarget, proxy);
 
+  if (!traceable) {
+    // Remove function related properties for proxies without traceable target
+    for (const key of Reflect.ownKeys(proxyTarget)) {
+      const descriptor = Object.getOwnPropertyDescriptor(proxyTarget, key);
+      if (descriptor.configurable) {
+        delete proxyTarget[key];
+      }
+    }
+  }
+
   const event = new NexoEvent("proxy", {
     target: proxy,
     data: {

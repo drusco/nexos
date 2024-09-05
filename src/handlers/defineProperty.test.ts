@@ -115,4 +115,26 @@ describe("defineProperty", () => {
     expect(listener).toHaveBeenCalledTimes(2);
     expect(proxyError).toBeInstanceOf(ProxyError);
   });
+
+  it("Cannot define non-configurable property on the target if it does not exist", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.create();
+
+    const defineProperty = Object.defineProperty.bind(null, proxy, "foo", {
+      configurable: false,
+    });
+
+    expect(defineProperty).toThrow(ProxyError);
+  });
+
+  it("Cannot define non-configurable property that is configurable on the target", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.create();
+
+    const defineProperty = Object.defineProperty.bind(null, proxy, "length", {
+      configurable: false,
+    });
+
+    expect(defineProperty).toThrow(ProxyError);
+  });
 });

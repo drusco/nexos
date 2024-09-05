@@ -39,13 +39,13 @@ const cloneModify = <Expected = void, Type = unknown>(
 
   cache.set(value, copy);
 
-  keys.forEach((key) => {
+  for (const key of keys) {
     if (deep) {
       copy[key] = cloneModify(value[key], true, modify);
-      return;
+      continue;
     }
     copy[key] = modify(value[key]);
-  });
+  }
 
   return copy as clone<Expected, Type>;
 };
