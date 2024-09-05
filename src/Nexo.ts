@@ -12,6 +12,25 @@ class Nexo extends NexoEmitter {
     return maps.proxies.get(proxy);
   }
 
+  static getOwnPropertyDescriptor(
+    proxy: nx.Proxy,
+    property: nx.objectKey,
+  ): void | PropertyDescriptor {
+    const { sandbox } = Nexo.wrap(proxy);
+    if (sandbox) {
+      return Object.getOwnPropertyDescriptor(sandbox, property);
+    }
+    return Object.getOwnPropertyDescriptor(proxy, property);
+  }
+
+  static keys(proxy: nx.Proxy): nx.objectKey[] {
+    const { sandbox } = Nexo.wrap(proxy);
+    if (sandbox) {
+      return Object.keys(sandbox);
+    }
+    return Object.keys(proxy);
+  }
+
   use(id: string, target?: nx.traceable): nx.Proxy {
     if (!target && this.entries.has(id)) {
       // returns an existing proxy by its id

@@ -90,4 +90,46 @@ describe("Nexo", () => {
     expect(proxyB).not.toBe(proxyA);
     expect(proxyC).toBe(proxyB);
   });
+
+  it("Get the own property descriptor of a proxy", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.create();
+    const proxyWithTarget = nexo.create({ foo: "test" });
+
+    const descriptor = Nexo.getOwnPropertyDescriptor(proxy, "foo");
+    const targetDescriptor = Nexo.getOwnPropertyDescriptor(
+      proxyWithTarget,
+      "foo",
+    );
+
+    expect(descriptor).toBeUndefined();
+    expect(targetDescriptor).toStrictEqual<PropertyDescriptor>({
+      configurable: true,
+      enumerable: true,
+      writable: true,
+      value: "test",
+    });
+  });
+
+  it("Get the own keys of a proxy", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.create();
+    const proxyWithTarget = nexo.create({ foo: true, bar: true, baz: true });
+
+    const emptyKeys = Nexo.keys(proxy);
+    const targetKeys = Nexo.keys(proxyWithTarget);
+
+    expect(emptyKeys).toStrictEqual([]);
+    expect(targetKeys).toStrictEqual(["foo", "bar", "baz"]);
+  });
+
+  it("Should add and get the own keys of a proxy", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.create();
+
+    proxy.foo = true;
+    const keys = Nexo.keys(proxy);
+
+    expect(keys).toStrictEqual(["foo"]);
+  });
 });
