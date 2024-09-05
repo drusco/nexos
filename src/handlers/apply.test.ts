@@ -1,7 +1,6 @@
 import type nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
-import ProxyWrapper from "../utils/ProxyWrapper.js";
 import ProxyError from "../errors/ProxyError.js";
 import { isProxy } from "util/types";
 
@@ -9,7 +8,7 @@ describe("apply", () => {
   it("Emits an apply event with custom data", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
+    const wrapper = Nexo.wrap(proxy);
 
     const applyListener = jest.fn();
 
@@ -49,7 +48,7 @@ describe("apply", () => {
   it("Allows its return value to be defined by the event listener", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
+    const wrapper = Nexo.wrap(proxy);
     const expectedResult = "foo";
 
     wrapper.on("proxy.apply", (event: ProxyEvent) => {

@@ -13,6 +13,15 @@ declare namespace Nexo {
   interface Proxy extends functionLike {
     new (...args: arrayLike): any;
     [x: objectKey]: any;
+    name: any;
+    apply: any;
+    arguments: any;
+    bind: any;
+    call: any;
+    caller: any;
+    length: any;
+    prototype: any;
+    toString: any;
   }
 
   namespace proxy {

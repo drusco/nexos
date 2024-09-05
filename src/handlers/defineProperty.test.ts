@@ -1,32 +1,30 @@
 import Nexo from "../Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
-import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 describe("defineProperty", () => {
-  it("Emits a defineProperty event", () => {
+  it("Emits a defineProperty event with custom data", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
+    const wrapper = Nexo.wrap(proxy);
 
-    const definePropertyListener = jest.fn();
+    const listener = jest.fn();
 
-    nexo.on("proxy.defineProperty", definePropertyListener);
-    wrapper.on("proxy.defineProperty", definePropertyListener);
+    nexo.on("proxy.defineProperty", listener);
+    wrapper.on("proxy.defineProperty", listener);
 
     const result = Reflect.defineProperty(proxy, "foo", { value: "bar" });
 
-    const [definePropertyEvent]: [ProxyEvent<{ target: object }>] =
-      definePropertyListener.mock.lastCall;
+    const [event]: [ProxyEvent<{ target: object }>] = listener.mock.lastCall;
 
     expect(result).toBe(true);
-    expect(definePropertyListener).toHaveBeenCalledTimes(2);
-    expect(definePropertyEvent.target).toBe(proxy);
-    expect(definePropertyEvent.cancelable).toBe(true);
+    expect(listener).toHaveBeenCalledTimes(2);
+    expect(event.target).toBe(proxy);
+    expect(event.cancelable).toBe(true);
 
-    expect(definePropertyEvent.data).toStrictEqual({
+    expect(event.data).toStrictEqual({
       property: "foo",
-      target: definePropertyEvent.data.target,
+      target: event.data.target,
       descriptor: {
         value: "bar",
       },
@@ -36,7 +34,7 @@ describe("defineProperty", () => {
   it("Returns false when the event is prevented", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
+    const wrapper = Nexo.wrap(proxy);
 
     wrapper.on("proxy.defineProperty", (event: ProxyEvent) => {
       event.preventDefault();
@@ -74,7 +72,7 @@ describe("defineProperty", () => {
     expect(Object.isSealed(proxy)).toBe(true);
   });
 
-  it("Cannot define properties on non-extensible proxies", () => {
+  it("Cannot define properties on unextensible proxies", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
     Object.preventExtensions(proxy);
@@ -99,11 +97,11 @@ describe("defineProperty", () => {
   it("Cannot redefine property: non writable, non configurable", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
-    const errorListener = jest.fn();
+    const wrapper = Nexo.wrap(proxy);
+    const listener = jest.fn();
 
-    nexo.on("proxy.error", errorListener);
-    wrapper.on("proxy.error", errorListener);
+    nexo.on("proxy.error", listener);
+    wrapper.on("proxy.error", listener);
 
     Reflect.defineProperty(proxy, "foo", { value: true });
 
@@ -111,10 +109,10 @@ describe("defineProperty", () => {
       Reflect.defineProperty.bind(null, proxy, "foo", { value: false }),
     ).toThrow(ProxyError);
 
-    const [proxyError] = errorListener.mock.lastCall;
+    const [proxyError] = listener.mock.lastCall;
 
     expect(proxy.foo).toBe(true);
-    expect(errorListener).toHaveBeenCalledTimes(2);
+    expect(listener).toHaveBeenCalledTimes(2);
     expect(proxyError).toBeInstanceOf(ProxyError);
   });
 });

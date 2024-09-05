@@ -8,18 +8,7 @@ import handlers from "../handlers/index.js";
 import ProxyWrapper from "./ProxyWrapper.js";
 import Nexo from "../Nexo.js";
 
-function getProxy(nexo: Nexo, target?: undefined, id?: string): nx.Proxy;
-function getProxy<T extends nx.traceable>(
-  nexo: Nexo,
-  target?: T,
-  id?: string,
-): T;
-
-function getProxy<T extends nx.traceable>(
-  nexo: Nexo,
-  target?: T,
-  id?: string,
-): T | nx.Proxy {
+const getProxy = (nexo: Nexo, target?: nx.traceable, id?: string): nx.Proxy => {
   // find proxy by target
   const usableProxy = findProxy(target);
 
@@ -59,6 +48,6 @@ function getProxy<T extends nx.traceable>(
   nexo.emit(event.name, event);
 
   return proxy;
-}
+};
 
 export default getProxy;

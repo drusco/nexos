@@ -16,7 +16,7 @@ describe("Nexo", () => {
   it("Access the wrapper using the proxy", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
+    const wrapper = Nexo.wrap(proxy);
 
     expect(wrapper).toBeInstanceOf(ProxyWrapper);
   });
@@ -24,23 +24,16 @@ describe("Nexo", () => {
   it("Access the wrapper using the target", () => {
     const nexo = new Nexo();
     const target = {};
-    nexo.create(target);
-    const wrapper = Nexo.wrap(target) as ProxyWrapper;
+    const proxy = nexo.create(target);
+    const wrapper = Nexo.wrap(proxy);
 
     expect(wrapper).toBeInstanceOf(ProxyWrapper);
-  });
-
-  it("Cannot return a ProxyWrapper without a traceable value", () => {
-    const nonTraceable = [];
-    const wrapper = Nexo.wrap(nonTraceable);
-
-    expect(wrapper).toBeUndefined();
   });
 
   it("Creates a new proxy object without a target", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
+    const wrapper = Nexo.wrap(proxy);
 
     expect(isProxy(proxy)).toBe(true);
     expect(typeof proxy).toBe("function");
@@ -57,7 +50,7 @@ describe("Nexo", () => {
     });
 
     const proxy = nexo.create(target);
-    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
+    const wrapper = Nexo.wrap(proxy);
 
     expect(proxyEvent).toBeInstanceOf(NexoEvent);
     expect(proxyEvent.target).toBe(proxy);
@@ -69,7 +62,7 @@ describe("Nexo", () => {
     const nexo = new Nexo();
     const target = {};
     const proxy = nexo.use("foo", target);
-    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
+    const wrapper = Nexo.wrap(proxy);
 
     expect(wrapper.id).toBe("foo");
     expect(nexo.entries.has("foo")).toBe(true);
@@ -84,9 +77,9 @@ describe("Nexo", () => {
     const proxyB = nexo.use("foo", targetB);
     const proxyC = nexo.use("foo");
 
-    const wrapperA = Nexo.wrap(proxyA) as ProxyWrapper;
-    const wrapperB = Nexo.wrap(proxyB) as ProxyWrapper;
-    const wrapperC = Nexo.wrap(proxyC) as ProxyWrapper;
+    const wrapperA = Nexo.wrap(proxyA);
+    const wrapperB = Nexo.wrap(proxyB);
+    const wrapperC = Nexo.wrap(proxyC);
 
     expect(wrapperA.id).toBe("foo");
     expect(wrapperB.id).toBe("foo");

@@ -24,7 +24,7 @@ class ProxyWrapper extends NexoEmitter {
     this._revoke = data.revoke;
 
     if (!data.traceable) {
-      // non-traceable targets get a sandbox to interact as traceable objects
+      // Untraceable targets get a sandbox to interact as traceable objects
       this.sandbox = Object.create(null);
     }
   }

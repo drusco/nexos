@@ -1,6 +1,5 @@
 import ProxyEvent from "../events/ProxyEvent.js";
 import Nexo from "../Nexo.js";
-import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 describe("isExtensible", () => {
   it("Returns true when the target object is extensible", () => {
@@ -26,7 +25,7 @@ describe("isExtensible", () => {
   it("Emits an isExtensible event", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
+    const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
     wrapper.on("proxy.isExtensible", listener);

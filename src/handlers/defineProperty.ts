@@ -33,27 +33,16 @@ const defineProperty = (
     // ----
 
     if (!sandbox) {
-      const current = Reflect.getOwnPropertyDescriptor(target, property);
-      const success = Reflect.defineProperty(target, property, descriptor);
-
-      if (!success) {
-        if (current) {
-          // Should throw an in detail error
-          const mock = Object.create(null);
-
-          Object.defineProperty(mock, property, current);
-          Object.defineProperty(mock, property, descriptor);
-        }
-
+      if (!Reflect.defineProperty(target, property, descriptor)) {
         // Fallback error
         throw TypeError(
-          `'defineProperty' on proxy: trap returned falsish for property '${String(property)}'"`,
+          `Cannot define property '${String(property)}' on proxy target"`,
         );
       }
       return true;
     }
 
-    // Non-traceable target objects
+    // Untraceable target objects
     // ----
 
     // Target is not extensible and may be sealed or frozen as well

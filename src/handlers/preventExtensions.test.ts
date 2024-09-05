@@ -1,6 +1,5 @@
 import ProxyEvent from "../events/ProxyEvent.js";
 import Nexo from "../Nexo.js";
-import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 describe("preventExtensions", () => {
   it("Returns true when the preventExtension operation succeeds", () => {
@@ -14,7 +13,7 @@ describe("preventExtensions", () => {
   it("Emits an preventExtensions event", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
+    const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
     wrapper.on("proxy.preventExtensions", listener);

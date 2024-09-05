@@ -1,7 +1,6 @@
 import type nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import ProxyEvent from "./ProxyEvent.js";
-import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 describe("ProxyEvent", () => {
   it("Prefixes 'proxy.' to the proxy handler event names", () => {
@@ -21,7 +20,7 @@ describe("ProxyEvent", () => {
   it("Emits the proxy event to the nexo and proxy listeners", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
+    const wrapper = Nexo.wrap(proxy);
     const handlerName: nx.proxy.handler = "apply";
     const callback = jest.fn();
 

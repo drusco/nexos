@@ -1,6 +1,5 @@
 import ProxyError from "./ProxyError.js";
 import Nexo from "../Nexo.js";
-import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 describe("ProxyError", () => {
   it("Creates a new proxy error", () => {
@@ -16,7 +15,7 @@ describe("ProxyError", () => {
   it("Emits proxy error events", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
+    const wrapper = Nexo.wrap(proxy);
     const errorListener = jest.fn();
 
     nexo.on("error", errorListener);

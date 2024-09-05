@@ -1,7 +1,6 @@
 import type nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import Nexo from "../Nexo.js";
-import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 describe("ownKeys", () => {
   it("Returns the proxy target own keys", () => {
@@ -17,7 +16,7 @@ describe("ownKeys", () => {
   it("Emits an ownKeys event", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy) as ProxyWrapper;
+    const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
     wrapper.on("proxy.ownKeys", listener);
