@@ -6,20 +6,16 @@ const has = (target: nx.traceable, property: nx.objectKey): boolean => {
   const proxy = map.tracables.get(target);
   const { sandbox } = map.proxies.get(proxy);
 
-  const event = new ProxyEvent("has", {
+  new ProxyEvent("has", {
     target: proxy,
     data: { target, property },
   });
 
-  if (event.defaultPrevented) {
-    return event.returnValue === true;
+  if (sandbox) {
+    return Reflect.has(sandbox, property);
   }
 
-  if (!sandbox) {
-    return Reflect.has(target, property);
-  }
-
-  return Reflect.has(sandbox, property);
+  return Reflect.has(target, property);
 };
 
 export default has;
