@@ -8,7 +8,6 @@ declare namespace Nexo {
   type voidFunction = (...args: arrayLike) => void;
   type functionLike = (...args: arrayLike) => any;
   type constructable<T> = new (...args: arrayLike) => T;
-  type typeExtends<Type, Base, Final> = Type extends Base ? Final : Type;
 
   interface Proxy extends functionLike {
     new (...args: arrayLike): any;
