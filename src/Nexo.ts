@@ -32,6 +32,14 @@ class Nexo extends NexoEmitter {
     return Reflect.ownKeys(proxy);
   }
 
+  static getPrototypeOf(proxy: nx.Proxy): object {
+    const { sandbox } = Nexo.wrap(proxy);
+    if (sandbox) {
+      return Reflect.getPrototypeOf(sandbox);
+    }
+    return Reflect.getPrototypeOf(proxy);
+  }
+
   use(id: string, target?: nx.traceable): nx.Proxy {
     if (!target && this.entries.has(id)) {
       // returns an existing proxy by its id

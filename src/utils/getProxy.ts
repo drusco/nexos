@@ -18,7 +18,8 @@ const getProxy = (nexo: Nexo, target?: nx.traceable, id?: string): nx.Proxy => {
 
   // create proxy
 
-  const proxyTarget = target || function () {};
+  const fn = Object.setPrototypeOf(function () {}, null);
+  const proxyTarget = target || fn;
   const revocable = Proxy.revocable(proxyTarget, handlers);
   const traceable = isTraceable(target);
   const proxy = revocable.proxy as nx.Proxy;
@@ -38,10 +39,10 @@ const getProxy = (nexo: Nexo, target?: nx.traceable, id?: string): nx.Proxy => {
 
   if (!traceable) {
     // Remove function related properties for proxies without traceable target
-    for (const key of Reflect.ownKeys(proxyTarget)) {
-      const descriptor = Object.getOwnPropertyDescriptor(proxyTarget, key);
+    for (const key of Reflect.ownKeys(fn)) {
+      const descriptor = Object.getOwnPropertyDescriptor(fn, key);
       if (descriptor.configurable) {
-        delete proxyTarget[key];
+        delete fn[key];
       }
     }
   }

@@ -142,4 +142,13 @@ describe("Nexo", () => {
 
     expect(keys).toStrictEqual(["foo"]);
   });
+
+  it("Gets the prototype of a proyx", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.create();
+    const proxyArray = nexo.create([]);
+
+    expect(Nexo.getPrototypeOf(proxy)).toBeNull();
+    expect(Nexo.getPrototypeOf(proxyArray)).toBe(Array.prototype);
+  });
 });
