@@ -6,7 +6,10 @@ const isExtensible = (target: nx.traceable): boolean => {
   const proxy = map.tracables.get(target);
   const extensible = Reflect.isExtensible(target);
 
-  new ProxyEvent("isExtensible", { target: proxy, data: extensible });
+  new ProxyEvent("isExtensible", {
+    target: proxy,
+    data: { target, result: extensible },
+  });
 
   return extensible;
 };

@@ -13,14 +13,14 @@ describe("getPrototypeOf", () => {
 
     const prototype = Reflect.getPrototypeOf(proxy);
 
-    const [event]: [ProxyEvent<{ data: object }>] = listener.mock.lastCall;
+    const [event]: [ProxyEvent<{ result: object }>] = listener.mock.lastCall;
 
     expect(listener).toHaveBeenCalledTimes(2);
     expect(prototype).toBeNull();
     expect(event).toBeInstanceOf(ProxyEvent);
     expect(event.cancelable).toBe(false);
     expect(event.target).toBe(proxy);
-    expect(event.data).toBe(prototype);
+    expect(event.data.result).toBe(prototype);
   });
 
   it("Returns the traceable target prototype", () => {

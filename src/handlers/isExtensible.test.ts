@@ -28,16 +28,17 @@ describe("isExtensible", () => {
     const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
+    nexo.on("proxy.isExtensible", listener);
     wrapper.on("proxy.isExtensible", listener);
 
     const result = Reflect.isExtensible(proxy);
 
-    const [event]: [ProxyEvent<boolean>] = listener.mock.lastCall;
+    const [event]: [ProxyEvent<{ result: boolean }>] = listener.mock.lastCall;
 
-    expect(listener).toHaveBeenCalledTimes(1);
+    expect(listener).toHaveBeenCalledTimes(2);
     expect(event.target).toBe(proxy);
     expect(event.cancelable).toBe(false);
-    expect(event.data).toBe(result);
+    expect(event.data.result).toBe(result);
     expect(result).toBe(true);
   });
 });

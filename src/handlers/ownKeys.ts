@@ -9,7 +9,7 @@ const ownKeys = (target: nx.traceable): nx.objectKey[] => {
   const targetKeys = Reflect.ownKeys(target);
   const keys = sandbox ? Reflect.ownKeys(sandbox) : targetKeys;
 
-  new ProxyEvent("ownKeys", { target: proxy, data: keys });
+  new ProxyEvent("ownKeys", { target: proxy, data: { target, result: keys } });
 
   // Return the own keys from the current proxy target
   return targetKeys;

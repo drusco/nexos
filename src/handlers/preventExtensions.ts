@@ -4,10 +4,14 @@ import ProxyEvent from "../events/ProxyEvent.js";
 
 const preventExtensions = (target: nx.traceable): boolean => {
   const proxy = map.tracables.get(target);
+  const result = Reflect.preventExtensions(target);
 
-  new ProxyEvent("preventExtensions", { target: proxy });
+  new ProxyEvent("preventExtensions", {
+    target: proxy,
+    data: { target, result },
+  });
 
-  return Reflect.preventExtensions(target);
+  return result;
 };
 
 export default preventExtensions;

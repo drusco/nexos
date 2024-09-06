@@ -9,7 +9,10 @@ const getPrototypeOf = (target: nx.traceable): object => {
   const prototype = Reflect.getPrototypeOf(target);
   const proto = sandbox ? Reflect.getPrototypeOf(sandbox) : prototype;
 
-  new ProxyEvent("getPrototypeOf", { target: proxy, data: proto });
+  new ProxyEvent("getPrototypeOf", {
+    target: proxy,
+    data: { target, result: proto },
+  });
 
   return prototype;
 };

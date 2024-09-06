@@ -10,6 +10,7 @@ const getOwnPropertyDescriptor = (
   const { sandbox } = map.proxies.get(proxy);
 
   const targetDescriptor = Reflect.getOwnPropertyDescriptor(target, property);
+
   const descriptor = sandbox
     ? Object.getOwnPropertyDescriptor(sandbox, property)
     : targetDescriptor;

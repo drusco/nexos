@@ -16,16 +16,17 @@ describe("preventExtensions", () => {
     const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
+    nexo.on("proxy.preventExtensions", listener);
     wrapper.on("proxy.preventExtensions", listener);
 
     const result = Reflect.preventExtensions(proxy);
 
-    const [event]: [ProxyEvent] = listener.mock.lastCall;
+    const [event]: [ProxyEvent<{ result: boolean }>] = listener.mock.lastCall;
 
-    expect(listener).toHaveBeenCalledTimes(1);
+    expect(listener).toHaveBeenCalledTimes(2);
     expect(event.target).toBe(proxy);
     expect(event.cancelable).toBe(false);
-    expect(event.data).toBeUndefined();
+    expect(event.data.result).toBe(true);
     expect(result).toBe(true);
   });
 });

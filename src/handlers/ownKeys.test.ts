@@ -19,6 +19,7 @@ describe("ownKeys", () => {
     const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
+    nexo.on("proxy.ownKeys", listener);
     wrapper.on("proxy.ownKeys", listener);
 
     proxy.foo = true;
@@ -26,11 +27,12 @@ describe("ownKeys", () => {
 
     Reflect.ownKeys(proxy);
 
-    const [ownKeysEvent]: [ProxyEvent<nx.arrayLike>] = listener.mock.lastCall;
+    const [ownKeysEvent]: [ProxyEvent<{ result: nx.arrayLike }>] =
+      listener.mock.lastCall;
 
-    expect(listener).toHaveBeenCalledTimes(1);
+    expect(listener).toHaveBeenCalledTimes(2);
     expect(ownKeysEvent.target).toBe(proxy);
     expect(ownKeysEvent.cancelable).toBe(false);
-    expect(ownKeysEvent.data).toStrictEqual(["foo", "bar"]);
+    expect(ownKeysEvent.data.result).toStrictEqual(["foo", "bar"]);
   });
 });
