@@ -1,5 +1,5 @@
 import type nx from "../types/Nexo.js";
-import { randomUUID } from "node:crypto";
+import { randomUUID } from "crypto";
 import map from "./maps.js";
 import findProxy from "./findProxy.js";
 import isTraceable from "./isTraceable.js";

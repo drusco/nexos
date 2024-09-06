@@ -13,8 +13,7 @@
     "clean": "rm -rf dist",
     "lint": "eslint --fix .",
     "check": "tsc --project .",
-    "test": "jest",
-    "test:memory": "node --expose-gc ./node_modules/.bin/jest --runInBand --logHeapUsage"
+    "test": "jest"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
@@ -36,9 +35,5 @@
     "prettier": "^3.0.0",
     "semantic-release": "^23.0.7",
     "typescript": "^5.1.6"
-  },
-  "dependencies": {
-    "events": "^3.3.0",
-    "is-plain-obj": "^4.1.0"
   }
 }
