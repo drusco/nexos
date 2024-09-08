@@ -1,8 +1,16 @@
 {
+  "collectCoverage": false,
+  "coverageThreshold": {
+    "global": {
+      "branches": 100,
+      "functions": 100,
+      "lines": 100,
+      "statements": -1
+    }
+  },
   "transform": {
     "^.+\\.(t|j)sx?$": "@swc/jest"
   },
-  "transformIgnorePatterns": ["node_modules/(?!(is-plain-obj))"],
   "runtime": "@side/jest-runtime",
   "moduleNameMapper": {
     "^(\\.{1,2}/.*)\\.js$": "$1"

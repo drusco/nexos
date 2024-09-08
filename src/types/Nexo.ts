@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 declare namespace Nexo {
   type arrayLike = unknown[];
   type traceable = NonNullable<object>;
