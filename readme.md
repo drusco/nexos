@@ -1,5 +1,7 @@
 ## Installation
 
+Node >=v16.20.2 (lts/gallium)
+
 #### Install dependencies
 
 `npm i`

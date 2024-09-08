@@ -1,7 +1,7 @@
 import type nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
-import { isProxy } from "util/types";
+import isProxy from "../utils/isProxy.js";
 
 describe("get", () => {
   it("Emits an event with custom data", () => {

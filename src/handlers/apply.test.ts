@@ -2,7 +2,7 @@ import type nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
-import { isProxy } from "util/types";
+import isProxy from "../utils/isProxy.js";
 
 describe("apply", () => {
   it("Emits an apply event with custom data", () => {
