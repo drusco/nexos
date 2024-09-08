@@ -6,12 +6,11 @@ import ProxyError from "../errors/ProxyError.js";
 const defineProperty = (
   target: nx.traceable,
   property: nx.objectKey,
-  descriptor: PropertyDescriptor = {},
+  descriptor: PropertyDescriptor,
 ): boolean => {
   const proxy = map.tracables.get(target);
   const { sandbox } = map.proxies.get(proxy);
   const extensible = Object.isExtensible(target);
-  const targetDescriptor = Reflect.getOwnPropertyDescriptor(target, property);
 
   const event = new ProxyEvent("defineProperty", {
     target: proxy,
@@ -46,6 +45,7 @@ const defineProperty = (
   // ----
 
   // Target is not extensible and may be sealed or frozen as well
+  // When the target is not extensible, frozen or sealed then the sandbox should be too
   if (!extensible) {
     if (!Reflect.defineProperty(target, property, descriptor)) {
       throw new ProxyError(
@@ -56,22 +56,24 @@ const defineProperty = (
     return true;
   }
 
+  const sandboxDescriptor = Reflect.getOwnPropertyDescriptor(sandbox, property);
+
   // If the property exists and is configurable, don't allow making it non-configurable
   if (
-    targetDescriptor &&
-    targetDescriptor.configurable &&
+    sandboxDescriptor &&
+    sandboxDescriptor.configurable &&
     descriptor.configurable === false
   ) {
     throw new ProxyError(
-      `Cannot define non-configurable property '${String(property)}' that is configurable on the target`,
+      `Cannot define non-configurable property '${String(property)}' that is configurable on the sandbox`,
       proxy,
     );
   }
 
   // If the property does not exist on the target, but you're trying to define it as non-configurable
-  if (!targetDescriptor && descriptor.configurable === false) {
+  if (!sandboxDescriptor && descriptor.configurable === false) {
     throw new ProxyError(
-      `Cannot define non-configurable property '${String(property)}' because it does not exist on the target`,
+      `Cannot define non-configurable property '${String(property)}' because it does not exist on the sandbox`,
       proxy,
     );
   }

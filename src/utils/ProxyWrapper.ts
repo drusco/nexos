@@ -30,12 +30,11 @@ class ProxyWrapper extends NexoEmitter {
   }
 
   revoke(): void {
-    if (!this._revoke) {
-      return;
+    if (this._revoke) {
+      this._revoke();
+      delete this._revoke;
+      this._revoked = true;
     }
-    this._revoke();
-    delete this._revoke;
-    this._revoked = true;
   }
 
   get revoked(): boolean {

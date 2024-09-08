@@ -116,7 +116,7 @@ describe("defineProperty", () => {
     expect(proxyError).toBeInstanceOf(ProxyError);
   });
 
-  it("Cannot define non-configurable property on the target if it does not exist", () => {
+  it("Throws an error when non-configurable property definition fails because it does not exists", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
 
@@ -127,9 +127,24 @@ describe("defineProperty", () => {
     expect(defineProperty).toThrow(ProxyError);
   });
 
-  it("Cannot define non-configurable property that is configurable on the target", () => {
+  it("Throws an error when property definition on the target fails", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.create({});
+
+    Reflect.defineProperty(proxy, "foo", { value: true });
+
+    const defineProperty = Object.defineProperty.bind(null, proxy, "foo", {
+      value: false,
+    });
+
+    expect(defineProperty).toThrow(ProxyError);
+  });
+
+  it("Cannot define non-configurable property that is configurable on the sandbox", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
+
+    proxy.length = 2;
 
     const defineProperty = Object.defineProperty.bind(null, proxy, "length", {
       configurable: false,

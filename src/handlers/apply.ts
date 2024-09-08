@@ -6,7 +6,7 @@ import ProxyError from "../errors/ProxyError.js";
 const apply = (
   target: nx.traceable,
   thisArg: unknown = undefined,
-  args: nx.arrayLike = [],
+  args: nx.arrayLike,
 ): unknown => {
   const proxy = map.tracables.get(target);
   const { nexo, traceable } = map.proxies.get(proxy);

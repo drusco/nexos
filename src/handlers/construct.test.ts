@@ -64,7 +64,7 @@ describe("construct", () => {
     expect(result).toBe(expectedResult);
   });
 
-  it("Throws when defining a non-object as the return value", () => {
+  it("Throws an error when defining a non-object as the return value", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
@@ -73,6 +73,18 @@ describe("construct", () => {
       event.preventDefault();
       return "non-object";
     });
+
+    expect(Reflect.construct.bind(null, proxy, [])).toThrow(ProxyError);
+  });
+
+  it("Throws an error when the target constructor fails", () => {
+    const nexo = new Nexo();
+    class target {
+      constructor() {
+        throw Error("boom");
+      }
+    }
+    const proxy = nexo.create(target);
 
     expect(Reflect.construct.bind(null, proxy, [])).toThrow(ProxyError);
   });

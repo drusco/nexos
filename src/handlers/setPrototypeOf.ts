@@ -35,26 +35,13 @@ const setPrototypeOf = (target: nx.traceable, prototype: object): boolean => {
     }
     // Try applying the returned prototype to either the sandbox or the target
     if (typeof event.returnValue === "object") {
-      if (!Reflect.setPrototypeOf(sandbox || target, event.returnValue)) {
-        throw new ProxyError(
-          `Could not set prototype of ${sandbox ? "sandbox" : "target"}`,
-          proxy,
-        );
-      }
-      return true;
+      return Reflect.setPrototypeOf(sandbox || target, event.returnValue);
     }
-    // The 'setPrototypeOf' event got prevented
+    // The event got prevented
     return false;
   }
 
-  if (!Reflect.setPrototypeOf(sandbox || target, prototype)) {
-    throw new ProxyError(
-      `Could not set prototype of ${sandbox ? "sandbox" : "target"}`,
-      proxy,
-    );
-  }
-
-  return true;
+  return Reflect.setPrototypeOf(sandbox || target, prototype);
 };
 
 export default setPrototypeOf;

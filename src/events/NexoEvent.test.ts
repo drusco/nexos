@@ -32,4 +32,11 @@ describe("NexoEvent", () => {
 
     expect(event.defaultPrevented).toBe(true);
   });
+
+  it("Cannot prevent a non cancelable event", () => {
+    const event = new NexoEvent("foo");
+    event.preventDefault();
+
+    expect(event.defaultPrevented).toBe(false);
+  });
 });

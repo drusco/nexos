@@ -18,7 +18,7 @@ const getProxy = (nexo: Nexo, target?: nx.traceable, id?: string): nx.Proxy => {
 
   // create proxy
 
-  const fn = Object.setPrototypeOf(function () {}, null);
+  const fn = Object.setPrototypeOf(new Function(), null);
   const proxyTarget = target || fn;
   const revocable = Proxy.revocable(proxyTarget, handlers);
   const traceable = isTraceable(target);

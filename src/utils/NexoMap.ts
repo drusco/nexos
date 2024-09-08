@@ -6,13 +6,11 @@ class NexoMap<Target extends nx.traceable> extends Map<
   string,
   WeakRef<Target>
 > {
-  private _release: boolean;
   private releaseKey: string;
   readonly events: NexoEmitter;
 
   constructor() {
     super();
-    this._release = false;
     this.events = new NexoEmitter();
   }
 
@@ -53,10 +51,6 @@ class NexoMap<Target extends nx.traceable> extends Map<
   }
 
   release(): void {
-    if (this._release) return;
-
-    this._release = true;
-
     for (const [key, weakRef] of this) {
       if (weakRef.deref() === undefined) {
         this.releaseKey = key;
@@ -66,9 +60,8 @@ class NexoMap<Target extends nx.traceable> extends Map<
     }
 
     const event = new NexoEvent("release", { target: this });
-    this.events.emit(event.name, event);
 
-    this._release = false;
+    this.events.emit(event.name, event);
   }
 }
 
