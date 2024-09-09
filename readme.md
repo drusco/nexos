@@ -1,6 +1,7 @@
 ## Installation
 
-Node >=v16.20.2 (lts/gallium)
+node >= v16.20.2
+npm >= v8.19.4
 
 #### Install dependencies
 
