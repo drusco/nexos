@@ -1,17 +1,19 @@
-name: Validate
+name: Build
 
 on: workflow_call
 
 jobs:
-  validate:
-    name: Validate code
+  test:
+    uses: ./.github/workflows/test.yml
+
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version-file: ".node-version"
@@ -19,11 +21,5 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run typescript check
-        run: npm run type-check
-
-      - name: Run linter check
-        run: npm run lint-check
-
-      - name: Run formatter check
-        run: npm run format-check
+      - name: Build project
+        run: npm run build

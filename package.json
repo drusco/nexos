@@ -1,18 +1,24 @@
 {
-  "name": "nexo",
+  "name": "nxo",
   "version": "1.0.0",
   "description": "Simplifies proxy creation and trap handling using events",
   "main": "dist/index.js",
   "type": "module",
   "author": "Pedro Gallardo",
   "license": "MIT",
+  "files": [
+    "dist/"
+  ],
   "scripts": {
     "prepare": "husky install",
     "dev": "tsc --watch",
     "build": "npm run clean && tsc --project src",
-    "clean": "rm -rf dist",
-    "lint": "eslint --fix --ext .js,.ts,.json .",
-    "type": "tsc --project .",
+    "clean": "rimraf dist coverage .eslintcache",
+    "type-check": "tsc --project .",
+    "lint": "eslint --cache --fix .",
+    "lint-check": "eslint .",
+    "format": "prettier --write --cache .",
+    "format-check": "prettier --check .",
     "test": "jest"
   },
   "devDependencies": {
@@ -29,13 +35,21 @@
     "@types/node": "^20.4.2",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.45.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^5.0.0",
     "husky": "^8.0.3",
     "jest": "^29.6.1",
     "prettier": "^3.0.0",
+    "rimraf": "~5.0.0",
     "semantic-release": "~19.0.0",
     "typescript": "~5.3.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
