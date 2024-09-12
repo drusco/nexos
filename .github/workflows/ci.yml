@@ -24,8 +24,13 @@ jobs:
   test:
     name: Run tests
     uses: ./.github/workflows/test.yml
+    needs: validate
 
   release:
     if: ${{ github.event_name == 'push' }}
     name: Continuous release
     uses: ./.github/workflows/release.yml
+    secrets: inherit
+    needs:
+      - validate
+      - test
