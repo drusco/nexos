@@ -6,9 +6,6 @@
   "type": "module",
   "author": "Pedro Gallardo",
   "license": "MIT",
-  "files": [
-    "dist/"
-  ],
   "scripts": {
     "prepare": "husky install",
     "dev": "tsc --watch",
