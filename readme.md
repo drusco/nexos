@@ -1,4 +1,4 @@
-![release](https://img.shields.io/github/actions/workflow/status/drusco/nexo/release.yml?branch=main&event=push)
+![release](https://img.shields.io/github/actions/workflow/status/drusco/nexo/ci.yml?branch=main&event=push)
 
 ## Nexo
 
