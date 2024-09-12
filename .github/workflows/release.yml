@@ -4,13 +4,17 @@ on:
   workflow_call:
 
 permissions:
-  contents: write
-  actions: write
+  contents: read
 
 jobs:
   release:
     if: ${{ github.event.repository.fork == false }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
 
     steps:
       - name: Checkout
@@ -28,7 +32,7 @@ jobs:
         run: npm run build
 
       - name: Run semantic-release
-        run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release
