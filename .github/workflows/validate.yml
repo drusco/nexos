@@ -1,14 +1,7 @@
 name: validate
 
 on:
-  push:
-    branches:
-      - main
-      - next
-  pull_request:
-    branches:
-      - main
-      - next
+  workflow_call:
 
 jobs:
   validate:

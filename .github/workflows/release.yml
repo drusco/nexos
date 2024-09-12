@@ -1,20 +1,14 @@
 name: release
 
 on:
-  workflow_run:
-    workflows: [build]
-    types:
-      - completed
-    branches:
-      - main
-      - next
+  workflow_call:
 
 permissions:
   contents: write
 
 jobs:
   release:
-    if: ${{ github.event.repository.fork == false && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' }}
+    if: ${{ github.event.repository.fork == false }}
     runs-on: ubuntu-latest
 
     steps:
@@ -28,6 +22,9 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+
+      - name: Build project
+        run: npm run build
 
       - name: Run semantic-release
         run: npx semantic-release
