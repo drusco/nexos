@@ -1,6 +1,6 @@
-![release](https://img.shields.io/github/actions/workflow/status/drusco/nexo/ci.yml?branch=main&event=push)
+![npm](https://img.shields.io/npm/v/nexo-proxy.svg) ![release](https://img.shields.io/github/actions/workflow/status/drusco/nexo/ci.yml?branch=main&event=push)
 
-## Nexo
+## nexo-proxy
 
 This library introduces support for the creation of ES6 proxies with or without a target object. Proxy handlers can be dynamically accessed through listeners attached either to the Nexo instance or to individual proxy wrappers. Each proxy event follows the naming convention `"proxy.handlerName"`, where `handlerName` corresponds to one of the standard handler functions specified in the [MDN Proxy API documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy). For example, events such as `"proxy.apply"`, `"proxy.construct"`, and others will be emitted when the corresponding handler functions (`apply`, `construct`, etc.) are invoked.
 
