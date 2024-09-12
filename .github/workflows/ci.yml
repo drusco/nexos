@@ -16,12 +16,10 @@ permissions:
 
 jobs:
   validate:
-    if: ${{ github.event_name == 'pull_request' }}
     name: Code validation
     uses: ./.github/workflows/validate.yml
 
   test:
-    if: ${{ github.event_name == 'pull_request' }}
     name: Run tests
     uses: ./.github/workflows/test.yml
 
