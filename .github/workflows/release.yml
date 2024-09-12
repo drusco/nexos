@@ -1,7 +1,10 @@
-name: Release
+name: release
 
 on:
-  push:
+  workflow_run:
+    workflows: [build]
+    types:
+      - completed
     branches:
       - main
       - next
@@ -10,12 +13,8 @@ permissions:
   contents: write
 
 jobs:
-  build:
-    uses: ./.github/workflows/build.yml
-
   release:
-    if: ${{ github.event.repository.fork == false }}
-    name: Release
+    if: ${{ github.event.repository.fork == false && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' }}
     runs-on: ubuntu-latest
 
     steps:

@@ -1,18 +1,17 @@
-name: Test
+name: test
 
 on:
-  workflow_call:
-  pull_request:
+  workflow_run:
+    workflows: [validate]
+    types:
+      - completed
     branches:
       - main
       - next
 
 jobs:
-  validate:
-    uses: ./.github/workflows/validate.yml
-
   test:
-    name: Run Tests
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
