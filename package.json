@@ -1,5 +1,5 @@
 {
-  "name": "nxo",
+  "name": "nexo-proxy",
   "version": "1.0.0",
   "description": "Simplifies proxy creation and trap handling using events",
   "main": "dist/index.js",
