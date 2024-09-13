@@ -1,5 +1,4 @@
 {
-  "collectCoverage": true,
   "coverageThreshold": {
     "global": {
       "branches": 100,
