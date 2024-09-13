@@ -1,4 +1,4 @@
-![npm](https://img.shields.io/npm/v/nexo-proxy.svg) ![release](https://img.shields.io/github/actions/workflow/status/drusco/nexo/ci.yml?branch=main&event=push)
+![npm](https://img.shields.io/npm/v/nexo-proxy.svg) ![release](https://img.shields.io/github/actions/workflow/status/drusco/nexo/ci.yml?branch=main&event=push) [![codecov](https://codecov.io/gh/drusco/nexo-proxy/graph/badge.svg?token=ALMIPSLT4U)](https://codecov.io/gh/drusco/nexo-proxy)
 
 ## nexo-proxy
 
