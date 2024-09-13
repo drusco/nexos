@@ -16,7 +16,8 @@
     "lint-check": "eslint .",
     "format": "prettier --write --cache .",
     "format-check": "prettier --check .",
-    "test": "jest"
+    "test": "jest",
+    "test-coverage": "jest --coverage"
   },
   "devDependencies": {
     "@jest/globals": "^29.6.1",

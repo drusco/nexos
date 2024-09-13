@@ -4,4 +4,4 @@
 npm run type-check
 npm run lint-check
 npm run format-check
-npm test
+npm run test-coverage
