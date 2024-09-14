@@ -1,6 +1,6 @@
 {
   "name": "nexo-proxy",
-  "version": "1.0.0",
+  "version": "0.0.0-development",
   "description": "Simplifies proxy creation and trap handling using events",
   "main": "dist/index.js",
   "type": "module",
@@ -53,5 +53,15 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/drusco/nexo-proxy.git"
-  }
+  },
+  "keywords": [
+    "proxy",
+    "events",
+    "watch",
+    "observe",
+    "trap",
+    "handler",
+    "mock",
+    "objects"
+  ]
 }
