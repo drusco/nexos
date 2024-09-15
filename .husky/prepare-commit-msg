@@ -1,6 +1,1 @@
-# Skip checks if the commit is made by GitHub Actions bot
-if [ "$GIT_AUTHOR_NAME" = "github-actions[bot]" ]; then
-  exit 0
-fi
-
 exec < /dev/tty && npx cz --hook || true

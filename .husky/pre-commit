@@ -1,11 +1,6 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Skip checks if the commit is made by GitHub Actions bot
-if [ "$GIT_AUTHOR_NAME" = "github-actions[bot]" ]; then
-  exit 0
-fi
-
 npm run type-check
 npm run lint-check
 npm run format-check

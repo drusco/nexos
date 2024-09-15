@@ -13,24 +13,23 @@ on:
 permissions:
   contents: write
   issues: write
+  pages: write
   pull-requests: write
   id-token: write
 
 jobs:
   validate:
-    if: github.actor != 'github-actions[bot]'
     name: Code validation
     uses: ./.github/workflows/validate.yml
 
   test:
-    if: github.actor != 'github-actions[bot]'
     name: Run tests
     uses: ./.github/workflows/test.yml
     secrets: inherit
     needs: validate
 
   docs:
-    if: ${{ github.event_name == 'push' && github.actor != 'github-actions[bot]' }}
+    if: ${{ github.event_name == 'push' }}
     name: Generate docs
     uses: ./.github/workflows/docs.yml
     secrets: inherit
@@ -39,7 +38,7 @@ jobs:
       - test
 
   release:
-    if: ${{ github.event_name == 'push' && github.actor != 'github-actions[bot]' }}
+    if: ${{ github.event_name == 'push' }}
     name: Continuous release
     uses: ./.github/workflows/release.yml
     secrets: inherit
