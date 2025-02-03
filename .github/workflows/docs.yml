@@ -23,13 +23,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get Version from Git Tag
+        run: echo "VERSION=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version-file: ".node-version"
 
-      - name: Cache node_modules
+      - name: Cache root node_modules
         uses: actions/cache@v4
         with:
           path: node_modules
@@ -37,16 +42,31 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Install dependencies
+      - name: Install root dependencies
         run: npm install
 
-      - name: Generate documentation
+      - name: Cache Docusaurus node_modules
+        uses: actions/cache@v4
+        with:
+          path: docusaurus/node_modules
+          key: ${{ runner.os }}-node-docusaurus-${{ hashFiles('docusaurus/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-docusaurus-
+
+      - name: Install Docusaurus dependencies
+        run: npm install
+        working-directory: ./docusaurus
+
+      - name: Generate TypeDoc documentation
         run: npm run docs
+
+      - name: Move TypeDoc Docs to Versioned Folder
+        run: npm run docusaurus docs:version $VERSION
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "./docs"
+          path: "./docusaurus/build"
 
       - name: Deploy to GitHub Pages
         id: deployment
