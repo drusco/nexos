@@ -60,8 +60,12 @@ jobs:
       - name: Generate TypeDoc documentation
         run: npm run docs
 
+      - name: Move TypeDoc docs to Docusaurus
+        run: mv docs docusaurus/docs
+
       - name: Move TypeDoc Docs to Versioned Folder
         run: npm run docusaurus docs:version $VERSION
+        working-directory: ./docusaurus
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -71,3 +75,6 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          branch: main
+          folder: docusaurus/build
