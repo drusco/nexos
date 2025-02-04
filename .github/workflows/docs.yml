@@ -61,6 +61,10 @@ jobs:
         run: npm run docusaurus docs:version $VERSION
         working-directory: ./docusaurus
 
+      - name: Build Docusaurus
+        run: npm run build
+        working-directory: ./docusaurus
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
