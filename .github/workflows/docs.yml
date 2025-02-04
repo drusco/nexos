@@ -57,12 +57,6 @@ jobs:
         run: npm install
         working-directory: ./docusaurus
 
-      - name: Generate TypeDoc documentation
-        run: npm run docs
-
-      - name: Move TypeDoc docs to Docusaurus
-        run: mv docs docusaurus/docs
-
       - name: Move TypeDoc Docs to Versioned Folder
         run: npm run docusaurus docs:version $VERSION
         working-directory: ./docusaurus

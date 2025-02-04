@@ -5,15 +5,15 @@ import type * as Preset from "@docusaurus/preset-classic";
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: "Nexos Docs",
+  title: "Docs",
   tagline: "Simplifies proxy creation and trap handling using events",
   favicon: "img/favicon.ico",
 
   // Set the production url of your site here
-  url: "https://drusco.github.io/nexos/",
+  url: "https://drusco.github.io/",
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: "/nexos/",
+  baseUrl: "/nexos",
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -37,7 +37,6 @@ const config: Config = {
       {
         docs: {
           sidebarPath: "./sidebars.ts",
-          path: "docs",
         },
         blog: {
           showReadingTime: true,
@@ -59,61 +58,49 @@ const config: Config = {
 
   themeConfig: {
     // Replace with your project's social card
-    image: "img/docusaurus-social-card.jpg",
     navbar: {
-      title: "My Site",
+      title: "Nexos",
       logo: {
-        alt: "My Site Logo",
+        alt: "Nexos npm package",
         src: "img/logo.svg",
       },
       items: [
         {
           type: "docSidebar",
-          sidebarId: "tutorialSidebar",
+          sidebarId: "typedocSidebar",
           position: "left",
-          label: "Tutorial",
+          label: "Docs",
         },
-        { to: "/blog", label: "Blog", position: "left" },
         {
-          href: "https://github.com/facebook/docusaurus",
+          href: "https://github.com/drusco/nexos",
           label: "GitHub",
           position: "right",
         },
       ],
-    },
-    footer: {
-      style: "dark",
-      links: [
-        {
-          title: "Docs",
-          items: [
-            {
-              label: "Tutorial",
-              to: "/docs/intro",
-            },
-          ],
-        },
-        {
-          title: "More",
-          items: [
-            {
-              label: "Blog",
-              to: "/blog",
-            },
-            {
-              label: "GitHub",
-              href: "https://github.com/drusco/nexos",
-            },
-          ],
-        },
-      ],
-      copyright: `Copyright © ${new Date().getFullYear()} Pedro Gallardo. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
     },
   } satisfies Preset.ThemeConfig,
+  plugins: [
+    [
+      "docusaurus-plugin-typedoc",
+      {
+        out: "./docs",
+        entryPoints: ["../src/index.ts"],
+        readme: "none",
+        tsconfig: "../tsconfig.json",
+        plugin: ["typedoc-plugin-markdown"],
+        githubPages: true,
+        entryFileName: "index.md",
+        sidebar: {
+          autoConfiguration: true,
+          pretty: false,
+        },
+      },
+    ],
+  ],
 };
 
 export default config;
