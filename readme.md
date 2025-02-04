@@ -1,4 +1,4 @@
-![npm](https://img.shields.io/npm/v/nexos.svg) ![release](https://img.shields.io/github/actions/workflow/status/drusco/nexos/ci.yml?branch=main&event=push) [![codecov](https://codecov.io/gh/drusco/nexos/graph/badge.svg?token=ALMIPSLT4U)](https://codecov.io/gh/drusco/nexos) ![Static Badge](https://img.shields.io/badge/node-v18.20.4-43853D?style=flat)
+![npm](https://img.shields.io/npm/v/nexos.svg) ![release](https://img.shields.io/github/actions/workflow/status/drusco/nexos/release.yml?branch=main&event=push) [![codecov](https://codecov.io/gh/drusco/nexos/graph/badge.svg?token=ALMIPSLT4U)](https://codecov.io/gh/drusco/nexos) ![Static Badge](https://img.shields.io/badge/node-v18.20.4-43853D?style=flat)
 
 ## Overview
 
