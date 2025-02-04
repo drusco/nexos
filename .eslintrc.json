@@ -19,5 +19,5 @@
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/no-namespace": "off"
   },
-  "ignorePatterns": ["dist/*", "coverage/*", "docs/*"]
+  "ignorePatterns": ["dist/*", "coverage/*", "docs/*", ".docusaurus/*"]
 }

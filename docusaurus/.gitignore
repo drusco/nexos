@@ -8,6 +8,11 @@
 .docusaurus
 .cache-loader
 
+# File Versioning
+versioned_docs
+versioned_sidebars
+versions.json
+
 # Misc
 .DS_Store
 .env.local
