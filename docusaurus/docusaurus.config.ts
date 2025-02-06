@@ -5,9 +5,10 @@ import type * as Preset from "@docusaurus/preset-classic";
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: "Docs",
+  title: "Nexos Docs",
   tagline: "Simplifies proxy creation and trap handling using events",
   favicon: "img/favicon.ico",
+  titleDelimiter: "·",
 
   // Set the production url of your site here
   url: "https://drusco.github.io/",
@@ -57,7 +58,6 @@ const config: Config = {
   ],
 
   themeConfig: {
-    // Replace with your project's social card
     navbar: {
       title: "Nexos",
       logo: {
@@ -68,7 +68,7 @@ const config: Config = {
         {
           type: "docSidebar",
           sidebarId: "typedocSidebar",
-          position: "left",
+          position: "right",
           label: "Docs",
         },
         {
@@ -79,8 +79,14 @@ const config: Config = {
       ],
     },
     prism: {
-      theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
+      theme: prismThemes.oneLight,
+      darkTheme: prismThemes.oneDark,
+    },
+    colorMode: {
+      // Set to 'dark' to always use dark mode
+      defaultMode: "dark",
+      disableSwitch: true, // Disable the theme switch button in the UI
+      respectPrefersColorScheme: false,
     },
   } satisfies Preset.ThemeConfig,
   plugins: [

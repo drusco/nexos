@@ -19,6 +19,7 @@ const sidebars: SidebarsConfig = {
     {
       type: "category",
       label: "Nexos",
+      collapsed: false,
       link: {
         type: "doc",
         id: "index",
