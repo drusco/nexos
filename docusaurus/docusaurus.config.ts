@@ -1,32 +1,55 @@
 import { themes as prismThemes } from "prism-react-renderer";
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
+import type { VersionOptions } from "@docusaurus/plugin-content-docs";
+import docVersions from "./versions.json";
 
-// This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
+const versions: string[] = docVersions;
+
+const reduceVersions = (amount: number): string[] => {
+  const result = [];
+  if (amount < 1) return result;
+
+  versions.forEach((version) => {
+    if (result.length === amount) return;
+    if (!/^\d+\.\d+\.\d+$/.test(version)) return;
+    result.push(version);
+  });
+
+  return result;
+};
+
+const getVersionsMetadata = (
+  versions: string[],
+): { [v: string]: VersionOptions } => {
+  const result: { [v: string]: VersionOptions } = {};
+  versions.forEach((version) => {
+    result[version] = {
+      label: `v${version}`,
+      path: version,
+    };
+  });
+  return result;
+};
+
+const visibleVersions = reduceVersions(3);
+const versionsMetadata = getVersionsMetadata(visibleVersions);
 
 const config: Config = {
-  title: "Nexos Docs",
+  title: "nexos",
   tagline: "Simplifies proxy creation and trap handling using events",
   favicon: "img/favicon.ico",
   titleDelimiter: "·",
 
-  // Set the production url of your site here
   url: "https://drusco.github.io/",
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: "/nexos/",
 
-  // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: "drusco", // Usually your GitHub org/user name.
-  projectName: "nexos", // Usually your repo name.
+  organizationName: "drusco",
+  projectName: "nexos",
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
 
-  // Even if you don't use internationalization, you can use this field to set
-  // useful metadata like html lang. For example, if your site is Chinese, you
-  // may want to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: "en",
     locales: ["en"],
@@ -37,18 +60,18 @@ const config: Config = {
       "classic",
       {
         docs: {
-          sidebarPath: "./sidebars.ts",
-        },
-        blog: {
-          showReadingTime: true,
-          feedOptions: {
-            type: ["rss", "atom"],
-            xslt: true,
+          includeCurrentVersion: false,
+          onlyIncludeVersions: [...visibleVersions, "next"],
+          lastVersion: visibleVersions[0],
+          versions: {
+            next: {
+              label: "@next",
+              path: "next",
+              //banner: "none",
+            },
+            ...versionsMetadata,
           },
-          // Useful options to enforce blogging best practices
-          onInlineTags: "warn",
-          onInlineAuthors: "warn",
-          onUntruncatedBlogPosts: "warn",
+          sidebarPath: "./sidebars.ts",
         },
         theme: {
           customCss: "./src/css/custom.css",
@@ -57,14 +80,22 @@ const config: Config = {
     ],
   ],
 
+  customFields: {
+    latestVersion: visibleVersions[0] || "next",
+  },
+
   themeConfig: {
     navbar: {
       title: "Nexos",
       logo: {
-        alt: "Nexos npm package",
+        alt: "Nexos logo",
         src: "img/logo.svg",
       },
       items: [
+        {
+          type: "docsVersionDropdown",
+          position: "left",
+        },
         {
           type: "docSidebar",
           sidebarId: "typedocSidebar",
@@ -79,13 +110,12 @@ const config: Config = {
       ],
     },
     prism: {
-      theme: prismThemes.oneLight,
-      darkTheme: prismThemes.oneDark,
+      theme: prismThemes.vsLight,
+      darkTheme: prismThemes.vsDark,
     },
     colorMode: {
-      // Set to 'dark' to always use dark mode
       defaultMode: "dark",
-      disableSwitch: true, // Disable the theme switch button in the UI
+      disableSwitch: true,
       respectPrefersColorScheme: false,
     },
   } satisfies Preset.ThemeConfig,
