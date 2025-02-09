@@ -80,5 +80,5 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
         with:
-          branch: main
+          branch: ${{ github.ref == 'refs/heads/main' && 'main' || 'next' }} # Conditionally use 'main' or 'next'
           folder: docusaurus/build
