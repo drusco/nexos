@@ -2,7 +2,7 @@ import { themes as prismThemes } from "prism-react-renderer";
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
 import type { VersionOptions } from "@docusaurus/plugin-content-docs";
-import docVersions from "./versions.json";
+import docVersions from "./docusaurus/versions.json";
 
 const versions: string[] = docVersions;
 

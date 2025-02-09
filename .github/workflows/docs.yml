@@ -57,6 +57,12 @@ jobs:
         run: npm install
         working-directory: ./docusaurus
 
+      - name: Generate versions.json
+        run: |
+          if [ ! -f ./docusaurus/versions.json ]; then
+            echo '{}' > ./docusaurus/versions.json
+          fi
+
       - name: Build Docusaurus
         run: npm run build
         working-directory: ./docusaurus
