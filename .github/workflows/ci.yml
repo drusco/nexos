@@ -31,6 +31,7 @@ jobs:
   version-check:
     name: Version Check
     uses: ./.github/workflows/version-check.yml
+    secrets: inherit
     needs:
       - validate
       - test
