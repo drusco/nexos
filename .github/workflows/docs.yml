@@ -60,8 +60,11 @@ jobs:
       - name: Generate versions.json
         run: |
           if [ ! -f ./docusaurus/versions.json ]; then
-            versions=$(git tag -l)
-            echo "{\"versions\": [$versions]}" > ./docusaurus/versions.json
+            # Get the directory names under versioned_docs, remove 'version-' prefix, and create a JSON array
+            versions=$(find ./versioned_docs -maxdepth 1 -type d -name 'version-*' -exec basename {} \; | sed 's/^version-//' | sed 's/^/"/;s/$/"/' | paste -sd, -)
+            
+            # Create a valid JSON file with the versions
+            echo "[${versions}]" > ./docusaurus/versions.json
           fi
 
       - name: Build Docusaurus
