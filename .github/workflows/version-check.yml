@@ -16,23 +16,15 @@ jobs:
         id: last_tag
         run: echo "tag=$(git describe --tags --abbrev=0 2>/dev/null || echo '0.0.0')" >> $GITHUB_ENV
 
-      - name: Set up Node.js
+      - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: ".node-version"
-
-      - name: Cache root node_modules
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          node-version: 20
 
       - name: Determine next version
         id: next_version
         run: |
-          npm install -g semantic-release@21 @semantic-release/commit-analyzer@8
+          npm install -g semantic-release @semantic-release/commit-analyzer
           NEXT_VERSION=$(npx semantic-release --dry-run | grep -oP 'The next release version is \K[0-9]+\.[0-9]+\.[0-9]+')
           echo "next_version=$NEXT_VERSION" >> $GITHUB_ENV
 
