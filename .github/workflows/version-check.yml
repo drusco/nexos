@@ -1,0 +1,59 @@
+name: version-check
+
+on:
+  workflow_call:
+
+jobs:
+  check_version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Ensures all tags are fetched
+
+      - name: Get last tag
+        id: last_tag
+        run: echo "tag=$(git describe --tags --abbrev=0 2>/dev/null || echo '0.0.0')" >> $GITHUB_ENV
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".node-version"
+
+      - name: Cache root node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Determine next version
+        id: next_version
+        run: |
+          npm install -g semantic-release @semantic-release/commit-analyzer
+          NEXT_VERSION=$(npx semantic-release --dry-run | grep -oP 'The next release version is \K[0-9]+\.[0-9]+\.[0-9]+')
+          echo "next_version=$NEXT_VERSION" >> $GITHUB_ENV
+
+      - name: Compare version changes
+        id: version_check
+        run: |
+          OLD_VERSION="${{ env.tag }}"
+          NEW_VERSION="${{ env.next_version }}"
+
+          OLD_MAJOR=$(echo "$OLD_VERSION" | cut -d. -f1)
+          OLD_MINOR=$(echo "$OLD_VERSION" | cut -d. -f2)
+          OLD_PATCH=$(echo "$OLD_VERSION" | cut -d. -f3)
+
+          NEW_MAJOR=$(echo "$NEW_VERSION" | cut -d. -f1)
+          NEW_MINOR=$(echo "$NEW_VERSION" | cut -d. -f2)
+          NEW_PATCH=$(echo "$NEW_VERSION" | cut -d. -f3)
+
+          if [[ "$NEW_MAJOR" -gt "$OLD_MAJOR" || "$NEW_MINOR" -gt "$OLD_MINOR" ]]; then
+            echo "✅ Allowed: Major or minor update detected."
+            exit 0
+          else
+            echo "❌ Disallowed: Patch update detected."
+            exit 1
+          fi

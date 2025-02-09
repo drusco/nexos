@@ -58,7 +58,13 @@ jobs:
         working-directory: ./docusaurus
 
       - name: Move TypeDoc Docs to Versioned Folder
+        if: github.ref == 'refs/heads/main'
         run: npm run docusaurus docs:version $VERSION
+        working-directory: ./docusaurus
+
+      - name: Move TypeDoc Docs to @next Folder
+        if: github.ref == 'refs/heads/next'
+        run: npm run docusaurus docs:version next
         working-directory: ./docusaurus
 
       - name: Build Docusaurus

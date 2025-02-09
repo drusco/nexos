@@ -28,14 +28,22 @@ jobs:
     secrets: inherit
     needs: validate
 
+  version-check:
+    name: Version Check
+    uses: ./.github/workflows/version-check.yml
+    needs:
+      - validate
+      - test
+
   docs:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    if: ${{ github.event_name == 'push' }}
     name: Generate docs
     uses: ./.github/workflows/docs.yml
     secrets: inherit
     needs:
       - validate
       - test
+      - version-check
 
   release:
     if: ${{ github.event_name == 'push' }}
@@ -45,3 +53,4 @@ jobs:
     needs:
       - validate
       - test
+      - version-check
