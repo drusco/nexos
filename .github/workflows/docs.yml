@@ -60,7 +60,8 @@ jobs:
       - name: Generate versions.json
         run: |
           if [ ! -f ./docusaurus/versions.json ]; then
-            echo '{}' > ./docusaurus/versions.json
+            versions=$(git tag -l)
+            echo "{\"versions\": [$versions]}" > ./docusaurus/versions.json
           fi
 
       - name: Build Docusaurus
