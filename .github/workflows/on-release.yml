@@ -1,0 +1,82 @@
+name: on-release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_run:
+    workflows: ["release"]
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+jobs:
+  onrelease:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Ensure we fetch all tags
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".node-version"
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install Root dependencies
+        run: npm install
+
+      - name: Cache Docusaurus node_modules
+        uses: actions/cache@v4
+        with:
+          path: docusaurus/node_modules
+          key: ${{ runner.os }}-node-docusaurus-${{ hashFiles('docusaurus/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-docusaurus-
+
+      - name: Install Docusaurus dependencies
+        run: npm install
+        working-directory: ./docusaurus
+
+      - name: Get Latest Tag Created by Semantic Release
+        id: get_tag
+        run: |
+          TAG_NAME=$(git tag --sort=-creatordate | head -n 1)
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+
+      - name: Version Docs with Docusaurus
+        run: |
+          cd docusaurus
+          npx docusaurus docs:version $TAG_NAME
+
+          # Ensure versioned_docs folder exists
+          if [ -d "versioned_docs/version-$TAG_NAME" ]; then
+            # Create the tar.gz file with only the versioned docs content
+            tar -czf docs.tar.gz -C versioned_docs "version-$TAG_NAME"
+          else
+            echo "Error: versioned_docs/version-$TAG_NAME does not exist!"
+            exit 1
+          fi
+
+      - name: Upload Docs as Release Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: docusaurus/docs.tar.gz
+          token: ${{ secrets.GITHUB_TOKEN }}

@@ -36,18 +36,6 @@ jobs:
       - name: Install Root dependencies
         run: npm install
 
-      - name: Cache Docusaurus node_modules
-        uses: actions/cache@v4
-        with:
-          path: docusaurus/node_modules
-          key: ${{ runner.os }}-node-docusaurus-${{ hashFiles('docusaurus/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-docusaurus-
-
-      - name: Install Docusaurus dependencies
-        run: npm install
-        working-directory: ./docusaurus
-
       - name: Build project
         run: npm run build
 
@@ -56,25 +44,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
-
-      - name: Get Latest Tag Created by Semantic Release
-        id: get_tag
-        run: |
-          TAG_NAME=$(git describe --tags --abbrev=0)
-          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-
-      - name: Version Docs with Docusaurus
-        run: |
-          cd docusaurus
-          npx docusaurus docs:version $TAG_NAME
-          mv versioned_docs/version-$TAG_NAME docs_backup
-          rm -rf versioned_docs
-          mv docs_backup docs
-          cd ..
-          tar -czf docs.tar.gz docusaurus
-
-      - name: Upload Docs as Release Asset
-        uses: softprops/action-gh-release@v2
-        with:
-          files: docs-${{ env.TAG_NAME }}.tar.gz
-          token: ${{ secrets.GITHUB_TOKEN }}
