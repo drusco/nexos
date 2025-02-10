@@ -55,3 +55,11 @@ jobs:
       - validate
       - test
       - version-check
+
+  onrelease:
+    name: On Successful Release
+    uses: ./.github/workflows/on-release.yml
+    secrets: inherit
+    needs:
+      - release
+    if: success()

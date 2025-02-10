@@ -1,13 +1,7 @@
 name: on-release
 
 on:
-  push:
-    branches:
-      - main
-  workflow_run:
-    workflows: ["release"]
-    types:
-      - completed
+  workflow_call:
 
 permissions:
   contents: read
