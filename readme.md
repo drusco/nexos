@@ -22,4 +22,4 @@ https://drusco.github.io/nexos/
 
 [MIT](https://opensource.org/licenses/MIT)
 
-Copyright (c) 2024 Pedro Gallardo
+Copyright (c) 2025 Pedro Gallardo
