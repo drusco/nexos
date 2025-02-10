@@ -11,6 +11,7 @@
 # File Versioning
 versioned_docs
 versioned_sidebars
+versions.json
 
 # Misc
 .DS_Store
