@@ -33,7 +33,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Install root dependencies
+      - name: Install Root dependencies
         run: npm install
 
       - name: Cache Docusaurus node_modules
