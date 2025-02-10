@@ -33,8 +33,40 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Install dependencies
+      - name: Install root dependencies
         run: npm install
+
+      - name: Cache Docusaurus node_modules
+        uses: actions/cache@v4
+        with:
+          path: docusaurus/node_modules
+          key: ${{ runner.os }}-node-docusaurus-${{ hashFiles('docusaurus/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-docusaurus-
+
+      - name: Install Docusaurus dependencies
+        run: npm install
+        working-directory: ./docusaurus
+
+      - name: Get Current Tag
+        id: get_tag
+        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - name: Version Docs with Docusaurus
+        run: |
+          cd docusaurus
+          npx docusaurus docs:version $TAG_NAME
+          mv versioned_docs/$TAG_NAME docs_backup
+          rm -rf versioned_docs
+          mv docs_backup docs
+          cd ..
+          tar -czf docs.tar.gz docusaurus
+
+      - name: Upload Docs as Release Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: docs-${{ env.TAG_NAME }}.tar.gz
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build project
         run: npm run build
