@@ -67,7 +67,7 @@ jobs:
         run: |
           cd docusaurus
           npx docusaurus docs:version $TAG_NAME
-          mv versioned_docs/$TAG_NAME docs_backup
+          mv versioned_docs/version-$TAG_NAME docs_backup
           rm -rf versioned_docs
           mv docs_backup docs
           cd ..
