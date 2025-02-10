@@ -52,6 +52,9 @@ jobs:
         id: get_tag
         run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
+      - name: Debug Tag Name
+        run: echo "Tag Name is $TAG_NAME"
+
       - name: Version Docs with Docusaurus
         run: |
           cd docusaurus
