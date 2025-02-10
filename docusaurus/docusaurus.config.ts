@@ -35,6 +35,22 @@ const getVersionsMetadata = (
 const visibleVersions = reduceVersions(3);
 const versionsMetadata = getVersionsMetadata(visibleVersions);
 
+if (versions.includes("next")) {
+  visibleVersions.push("next");
+  versionsMetadata.next = {
+    label: "@next",
+    path: "next",
+  };
+}
+
+if (!versions.length) {
+  visibleVersions.push("current");
+  versionsMetadata.current = {
+    label: "current",
+    path: "",
+  };
+}
+
 const config: Config = {
   title: "nexos",
   tagline: "Simplifies proxy creation and trap handling using events",
@@ -60,17 +76,10 @@ const config: Config = {
       "classic",
       {
         docs: {
-          includeCurrentVersion: false,
-          onlyIncludeVersions: [...visibleVersions, "next"],
+          includeCurrentVersion: versions.length === 0,
+          onlyIncludeVersions: visibleVersions,
           lastVersion: visibleVersions[0],
-          versions: {
-            next: {
-              label: "@next",
-              path: "next",
-              //banner: "none",
-            },
-            ...versionsMetadata,
-          },
+          versions: versionsMetadata,
           sidebarPath: "./sidebars.ts",
         },
         theme: {
@@ -127,9 +136,12 @@ const config: Config = {
         entryPoints: ["../src/index.ts"],
         readme: "none",
         tsconfig: "../tsconfig.json",
-        plugin: ["typedoc-plugin-markdown"],
+        plugin: ["typedoc-plugin-no-inherit"],
         githubPages: true,
         entryFileName: "index.md",
+        // typedoc-plugin-no-inherit
+        inheritNone: true,
+        // sidebar options
         sidebar: {
           autoConfiguration: true,
           pretty: false,
