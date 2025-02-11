@@ -90,11 +90,12 @@ jobs:
 
           # Ensure versioned_docs folder exists
           if [ -d "versioned_docs/version-$TAG_NAME" ] || [ -d "versioned_docs/version-next" ]; then
-            # Create the tar.gz file with the versioned docs content
+            # Create the tar.gz file with versioned_docs and versioned_sidebars as top-level directories
             if [ -d "versioned_docs/version-next" ]; then
-              tar -czf docs.tar.gz -C versioned_docs "version-next"
+              # Tar with both versioned_docs and versioned_sidebars as top-level directories
+              tar -czf docs.tar.gz -C docusaurus versioned_docs/version-next -C docusaurus versioned_sidebars
             else
-              tar -czf docs.tar.gz -C versioned_docs "version-$TAG_NAME"
+              tar -czf docs.tar.gz -C docusaurus versioned_docs/version-$TAG_NAME -C docusaurus versioned_sidebars
             fi
           else
             echo "Error: versioned_docs/version-$TAG_NAME or version-next does not exist!"
