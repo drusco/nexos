@@ -89,13 +89,11 @@ jobs:
             npx docusaurus docs:version $TAG_NAME
           fi
 
-          ls -la
-
           # Ensure versioned_docs and versioned_sidebars directories exist
           if [ -d "versioned_docs" ] && [ -d "versioned_sidebars" ]; then
             # Tar with both versioned_docs and versioned_sidebars as top-level directories
             if [ -d "versioned_docs/version-next" ]; then
-              tar -czf docs.tar.gz -C versioned_docs "version-next" -C versioned_sidebars .
+              tar -czf docs.tar.gz -C versioned_docs version-next -C versioned_sidebars .
             else
               tar -czf docs.tar.gz -C versioned_docs "version-$TAG_NAME" -C versioned_sidebars .
             fi
