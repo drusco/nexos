@@ -51,15 +51,21 @@ jobs:
 
       - name: Get the Git tag
         run: |
+          # Debug: Check the status of the repository
+          git status
+
           # Try to get the latest tag, fallback if no tag exists
           TAG_NAME=$(git describe --tags --abbrev=0 || echo "No tags found")
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+
+          # Debug: Print out the list of tags
+          git tag
 
           # Check if the tag is a pre-release (adjust logic if needed)
           if [[ "$TAG_NAME" == "No tags found" ]]; then
             IS_PRERELEASE="false"
           else
-            IS_PRERELEASE=$(git tag -l "$TAG_NAME" | grep -E "^$TAG_NAME$" | grep -i "prerelease")
+            IS_PRERELEASE=$(git tag -l "$TAG_NAME" | grep -E "^$TAG_NAME$" | grep -i "prerelease" || echo "false")
           fi
           echo "IS_PRERELEASE=$IS_PRERELEASE" >> $GITHUB_ENV
 
