@@ -29,7 +29,7 @@ jobs:
     needs: validate
 
   version-check:
-    name: Version Check
+    name: Version check
     uses: ./.github/workflows/version-check.yml
     secrets: inherit
     needs:
