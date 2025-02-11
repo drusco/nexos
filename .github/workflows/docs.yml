@@ -75,15 +75,12 @@ jobs:
         run: |
           mkdir -p docusaurus/versioned_docs
 
-          # Fetch and extract pre-release docs (rename to "version-next")
+          # Fetch and extract pre-release docs (already named version-next)
           if [ -n "$PRE_RELEASE_TAG" ]; then
             gh release view "$PRE_RELEASE_TAG" --json assets -q '.assets[].name' | grep -q "docs.tar.gz" && {
               gh release download "$PRE_RELEASE_TAG" --pattern "docs.tar.gz" --dir .
               tar -xzf docs.tar.gz -C docusaurus/versioned_docs
               rm docs.tar.gz
-              # Rename extracted directory to "version-next"
-              PRE_RELEASE_DIR=$(ls docusaurus/versioned_docs | grep "version-")
-              mv "docusaurus/versioned_docs/$PRE_RELEASE_DIR" "docusaurus/versioned_docs/version-next"
             } || echo "Skipping $PRE_RELEASE_TAG: No docs.tar.gz found"
           fi
 

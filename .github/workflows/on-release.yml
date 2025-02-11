@@ -53,18 +53,32 @@ jobs:
         run: |
           TAG_NAME=$(git describe --tags --abbrev=0)
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+          IS_PRERELEASE=$(git tag -l "$TAG_NAME" | grep -E "^$TAG_NAME$" | grep -i "prerelease")
+          echo "IS_PRERELEASE=$IS_PRERELEASE" >> $GITHUB_ENV
 
       - name: Version Docs with Docusaurus
         run: |
           cd docusaurus
-          npx docusaurus docs:version $TAG_NAME
+
+          # Run docs:version with 'next' for pre-releases, else use the tag name
+          if [ "$IS_PRERELEASE" ]; then
+            echo "Pre-release detected. Using 'next' as the version name."
+            npx docusaurus docs:version next
+          else
+            echo "Stable release detected. Using $TAG_NAME as the version name."
+            npx docusaurus docs:version $TAG_NAME
+          fi
 
           # Ensure versioned_docs folder exists
-          if [ -d "versioned_docs/version-$TAG_NAME" ]; then
-            # Create the tar.gz file with only the versioned docs content
-            tar -czf docs.tar.gz -C versioned_docs "version-$TAG_NAME"
+          if [ -d "versioned_docs/version-$TAG_NAME" ] || [ -d "versioned_docs/version-next" ]; then
+            # Create the tar.gz file with the versioned docs content
+            if [ -d "versioned_docs/version-next" ]; then
+              tar -czf docs.tar.gz -C versioned_docs "version-next"
+            else
+              tar -czf docs.tar.gz -C versioned_docs "version-$TAG_NAME"
+            fi
           else
-            echo "Error: versioned_docs/version-$TAG_NAME does not exist!"
+            echo "Error: versioned_docs/version-$TAG_NAME or version-next does not exist!"
             exit 1
           fi
 
