@@ -89,6 +89,8 @@ jobs:
             npx docusaurus docs:version $TAG_NAME
           fi
 
+          ls -la
+
           # Ensure versioned_docs and versioned_sidebars directories exist
           if [ -d "versioned_docs" ] && [ -d "versioned_sidebars" ]; then
             # Tar with both versioned_docs and versioned_sidebars as top-level directories
