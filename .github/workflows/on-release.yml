@@ -89,17 +89,12 @@ jobs:
             npx docusaurus docs:version $TAG_NAME
           fi
 
-          # Ensure versioned_docs folder exists
-          if [ -d "versioned_docs/version-$TAG_NAME" ] || [ -d "versioned_docs/version-next" ]; then
-            # Create the tar.gz file with versioned_docs and versioned_sidebars as top-level directories
-            if [ -d "versioned_docs/version-next" ]; then
-              # Tar with both versioned_docs and versioned_sidebars as top-level directories
-              tar -czf ../docs.tar.gz -C . versioned_docs/version-next -C . versioned_sidebars
-            else
-              tar -czf ../docs.tar.gz -C . versioned_docs/version-$TAG_NAME -C . versioned_sidebars
-            fi
+          # Check if the versioned_docs and versioned_sidebars directories exist after versioning
+          if [ -d "versioned_docs" ] && [ -d "versioned_sidebars" ]; then
+            # Tar with both versioned_docs and versioned_sidebars as top-level directories
+            tar -czf ../docs.tar.gz -C . versioned_docs versioned_sidebars
           else
-            echo "Error: versioned_docs/version-$TAG_NAME or version-next does not exist!"
+            echo "Error: versioned_docs or versioned_sidebars directories do not exist!"
             exit 1
           fi
 

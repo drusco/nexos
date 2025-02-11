@@ -6,12 +6,10 @@ import docVersions from "./versions.json";
 
 const versions: string[] = docVersions;
 
-const reduceVersions = (amount: number): string[] => {
+const reduceVersions = (): string[] => {
   const result = [];
-  if (amount < 1) return result;
 
   versions.forEach((version) => {
-    if (result.length === amount) return;
     if (!/^\d+\.\d+\.\d+$/.test(version)) return;
     result.push(version);
   });
@@ -32,7 +30,7 @@ const getVersionsMetadata = (
   return result;
 };
 
-const visibleVersions = reduceVersions(3);
+const visibleVersions = reduceVersions();
 const versionsMetadata = getVersionsMetadata(visibleVersions);
 
 if (versions.includes("next")) {
