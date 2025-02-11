@@ -103,9 +103,15 @@ jobs:
         run: |
           if [ -n "$PRE_RELEASE_TAG" ]; then
             echo '["next"]' > docusaurus/versions.json
-            echo "$STABLE_TAGS" | jq -c 'map(sub("^v"; "")) as $tags | ["next"] + $tags' >> docusaurus/versions.json
+            if [ -n "$STABLE_TAGS" ]; then
+              echo "$STABLE_TAGS" | jq -c 'map(sub("^v"; "")) as $tags | ["next"] + $tags' >> docusaurus/versions.json
+            fi
           else
-            echo "$STABLE_TAGS" | jq -c 'map(sub("^v"; ""))' > docusaurus/versions.json
+            if [ -n "$STABLE_TAGS" ]; then
+              echo "$STABLE_TAGS" | jq -c 'map(sub("^v"; ""))' > docusaurus/versions.json
+            else
+              echo '[]' > docusaurus/versions.json  # Default case: No tags at all
+            fi
           fi
 
       - name: Build Docusaurus
