@@ -61,12 +61,18 @@ jobs:
           # Debug: Print out the list of tags
           git tag
 
-          # Check if the tag is a pre-release (adjust logic if needed)
+          # Check if the tag is a pre-release (adjust logic for `next` versions)
           if [[ "$TAG_NAME" == "No tags found" ]]; then
             IS_PRERELEASE="false"
           else
-            IS_PRERELEASE=$(git tag -l "$TAG_NAME" | grep -E "^$TAG_NAME$" | grep -i "prerelease" || echo "false")
+            # Check if the tag contains '-next' to consider it a pre-release
+            if [[ "$TAG_NAME" == *"-next"* ]]; then
+              IS_PRERELEASE="true"
+            else
+              IS_PRERELEASE="false"
+            fi
           fi
+
           echo "IS_PRERELEASE=$IS_PRERELEASE" >> $GITHUB_ENV
 
       - name: Version Docs with Docusaurus
