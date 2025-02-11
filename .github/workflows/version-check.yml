@@ -15,8 +15,8 @@ jobs:
       - name: Get last stable or pre-release tag
         id: last_tag
         run: |
-          # Get the most recent tag (can be pre-release or stable)
-          tag=$(git describe --tags --abbrev=0 2>/dev/null || echo '0.0.0')
+          # Get the most recent tag, fallback to empty string if no tags exist
+          tag=$(git describe --tags --abbrev=0 2>/dev/null || echo '')
           echo "tag=$tag" >> $GITHUB_ENV
 
       - name: Set up Node.js
@@ -41,7 +41,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         id: next_version
         run: |
-          NEXT_VERSION=$(npx semantic-release --dry-run | grep -oP 'The next release version is \K[0-9]+\.[0-9]+\.[0-9]+')
+          NEXT_VERSION=$(npx semantic-release --dry-run | grep -oP 'The next release version is \K[0-9]+\.[0-9]+\.[0-9]+(-next\.[0-9]+)?')
           echo "next_version=$NEXT_VERSION" >> $GITHUB_ENV
 
       - name: Compare version changes
@@ -50,22 +50,28 @@ jobs:
           OLD_VERSION="${{ env.tag }}"
           NEW_VERSION="${{ env.next_version }}"
 
-          # Parse major, minor, and patch versions
-          OLD_MAJOR=$(echo "$OLD_VERSION" | cut -d. -f1)
-          OLD_MINOR=$(echo "$OLD_VERSION" | cut -d. -f2)
-          OLD_PATCH=$(echo "$OLD_VERSION" | cut -d. -f3)
-
-          NEW_MAJOR=$(echo "$NEW_VERSION" | cut -d. -f1)
-          NEW_MINOR=$(echo "$NEW_VERSION" | cut -d. -f2)
-          NEW_PATCH=$(echo "$NEW_VERSION" | cut -d. -f3)
-
-          # If the last tag is a pre-release (contains '-next'), allow stable version release (even patch)
-          if [[ "$OLD_VERSION" == *"-next"* && "$NEW_VERSION" != *"-next"* ]]; then
-            echo "✅ Allowed: Transitioning from pre-release to stable release (patch allowed)."
+          # Handle the case where there are no previous tags
+          if [[ -z "$OLD_VERSION" ]]; then
+            echo "✅ Allowed: No previous tag found, allowing release."
             exit 0
           fi
 
-          # Allow major or minor version updates, disallow patch updates for stable versions
+          # Extract numeric parts only
+          OLD_MAJOR=$(echo "$OLD_VERSION" | grep -oP '^[0-9]+' || echo 0)
+          OLD_MINOR=$(echo "$OLD_VERSION" | grep -oP '(?<=^[0-9]+\.)[0-9]+' || echo 0)
+          OLD_PATCH=$(echo "$OLD_VERSION" | grep -oP '(?<=^[0-9]+\.[0-9]+\.)[0-9]+' || echo 0)
+
+          NEW_MAJOR=$(echo "$NEW_VERSION" | grep -oP '^[0-9]+' || echo 0)
+          NEW_MINOR=$(echo "$NEW_VERSION" | grep -oP '(?<=^[0-9]+\.)[0-9]+' || echo 0)
+          NEW_PATCH=$(echo "$NEW_VERSION" | grep -oP '(?<=^[0-9]+\.[0-9]+\.)[0-9]+' || echo 0)
+
+          # If transitioning from pre-release (-next) to stable
+          if [[ "$OLD_VERSION" == *"-next"* && "$NEW_VERSION" != *"-next"* ]]; then
+            echo "✅ Allowed: Transitioning from pre-release to stable release."
+            exit 0
+          fi
+
+          # Allow major or minor updates
           if [[ "$NEW_MAJOR" -gt "$OLD_MAJOR" || "$NEW_MINOR" -gt "$OLD_MINOR" ]]; then
             echo "✅ Allowed: Major or minor update detected."
             exit 0
@@ -73,6 +79,6 @@ jobs:
             echo "❌ Disallowed: Patch update detected for stable release."
             exit 1
           else
-            echo "✅ Allowed: No version changes detected (major/minor unchanged)."
+            echo "✅ Allowed: No version changes detected."
             exit 0
           fi
