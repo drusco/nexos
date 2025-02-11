@@ -44,21 +44,13 @@ jobs:
           NEXT_VERSION=$(npx semantic-release --dry-run | grep -oP 'The next release version is \K[0-9]+\.[0-9]+\.[0-9]+')
           echo "next_version=$NEXT_VERSION" >> $GITHUB_ENV
 
-      - name: Check for relevant changes
-        id: changes_check
-        run: |
-          CHANGES=$(git diff --name-only HEAD~1..HEAD)
-          if [[ "$CHANGES" =~ ^(docs/|chore/) ]]; then
-            echo "❌ Skipping release due to non-essential changes (docs or chores)."
-            exit 0
-          fi
-
       - name: Compare version changes
         id: version_check
         run: |
           OLD_VERSION="${{ env.tag }}"
           NEW_VERSION="${{ env.next_version }}"
 
+          # Parse major, minor, and patch versions
           OLD_MAJOR=$(echo "$OLD_VERSION" | cut -d. -f1)
           OLD_MINOR=$(echo "$OLD_VERSION" | cut -d. -f2)
           OLD_PATCH=$(echo "$OLD_VERSION" | cut -d. -f3)
@@ -67,11 +59,13 @@ jobs:
           NEW_MINOR=$(echo "$NEW_VERSION" | cut -d. -f2)
           NEW_PATCH=$(echo "$NEW_VERSION" | cut -d. -f3)
 
+          # If the last tag is a pre-release (contains '-next'), allow stable version release (even patch)
           if [[ "$OLD_VERSION" == *"-next"* && "$NEW_VERSION" != *"-next"* ]]; then
             echo "✅ Allowed: Transitioning from pre-release to stable release (patch allowed)."
             exit 0
           fi
 
+          # Allow major or minor version updates, disallow patch updates for stable versions
           if [[ "$NEW_MAJOR" -gt "$OLD_MAJOR" || "$NEW_MINOR" -gt "$OLD_MINOR" ]]; then
             echo "✅ Allowed: Major or minor update detected."
             exit 0
