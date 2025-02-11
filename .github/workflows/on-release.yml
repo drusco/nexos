@@ -49,10 +49,9 @@ jobs:
         run: npm install
         working-directory: ./docusaurus
 
-      - name: Get Latest Tag Created by Semantic Release
-        id: get_tag
+      - name: Get the Git tag
         run: |
-          TAG_NAME=$(git tag --sort=-creatordate | head -n 1)
+          TAG_NAME=$(git describe --tags --abbrev=0)
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
 
       - name: Version Docs with Docusaurus
@@ -73,4 +72,5 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: docusaurus/docs.tar.gz
+          tag_name: ${{ env.TAG_NAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
