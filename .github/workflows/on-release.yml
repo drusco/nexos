@@ -98,7 +98,7 @@ jobs:
             exit 1
           fi
 
-      - name: Upload Docs as Release Asset
+      - name: Upload docs as release asset
         uses: softprops/action-gh-release@v2
         with:
           files: docusaurus/docs.tar.gz
