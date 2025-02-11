@@ -35,7 +35,17 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         id: next_version
         run: |
-          next_version=$(npx semantic-release --dry-run | grep -oP 'The next release version is \K[0-9]+\.[0-9]+\.[0-9]+(-next\.[0-9]+)?')
+          set -e
+
+          # Run semantic-release in dry-run mode and extract the next version
+          next_version=$(npx semantic-release --dry-run 2>&1 | grep -oP 'The next release version is \K[0-9]+\.[0-9]+\.[0-9]+(-next\.[0-9]+)?' || echo "")
+
+          # If no version is found, default to 1.0.0
+          if [[ -z "$next_version" ]]; then
+            echo "⚠️ No previous version detected, defaulting to 1.0.0"
+            next_version="1.0.0"
+          fi
+
           echo "next_version=$next_version" >> $GITHUB_ENV
 
       - name: Compare versions
