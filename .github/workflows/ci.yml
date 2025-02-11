@@ -36,16 +36,6 @@ jobs:
       - validate
       - test
 
-  docs:
-    if: ${{ github.event_name == 'push' }}
-    name: Generate docs
-    uses: ./.github/workflows/docs.yml
-    secrets: inherit
-    needs:
-      - validate
-      - test
-      - version-check
-
   release:
     if: ${{ github.event_name == 'push' }}
     name: Continuous release
@@ -62,4 +52,12 @@ jobs:
     secrets: inherit
     needs:
       - release
+    if: success()
+
+  docs:
+    name: Generate docs
+    uses: ./.github/workflows/docs.yml
+    secrets: inherit
+    needs:
+      - onrelease
     if: success()
