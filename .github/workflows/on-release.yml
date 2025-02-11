@@ -92,11 +92,7 @@ jobs:
           # Ensure versioned_docs and versioned_sidebars directories exist
           if [ -d "$PWD/versioned_docs" ] && [ -d "$PWD/versioned_sidebars" ]; then
             # Tar with both versioned_docs and versioned_sidebars at the top level
-            if [ -d "$PWD/versioned_docs/version-next" ]; then
-              tar -czf docs.tar.gz -C "$PWD" versioned_docs/version-next -C "$PWD" versioned_sidebars
-            else
-              tar -czf docs.tar.gz -C "$PWD" "versioned_docs/version-$TAG_NAME" -C "$PWD" versioned_sidebars
-            fi
+            tar -czf docs.tar.gz -C "$PWD" versioned_docs -C "$PWD" versioned_sidebars
           else
             echo "Error: versioned_docs or versioned_sidebars directories do not exist!"
             exit 1
