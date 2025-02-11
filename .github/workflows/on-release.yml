@@ -91,8 +91,8 @@ jobs:
 
           # Check if the versioned_docs and versioned_sidebars directories exist after versioning
           if [ -d "versioned_docs" ] && [ -d "versioned_sidebars" ]; then
-            # Tar with both versioned_docs and versioned_sidebars as top-level directories
-            tar -czf ../docs.tar.gz -C . versioned_docs versioned_sidebars
+            echo "Creating tarball with versioned_docs and versioned_sidebars."
+            tar -czf ../docs.tar.gz -C docusaurus versioned_docs versioned_sidebars
           else
             echo "Error: versioned_docs or versioned_sidebars directories do not exist!"
             exit 1
