@@ -77,6 +77,7 @@ jobs:
 
       - name: Version Docs with Docusaurus
         run: |
+          # Ensure you're in the correct directory
           cd docusaurus
 
           # Run docs:version with 'next' for pre-releases, else use the tag name
@@ -93,9 +94,9 @@ jobs:
             # Create the tar.gz file with versioned_docs and versioned_sidebars as top-level directories
             if [ -d "versioned_docs/version-next" ]; then
               # Tar with both versioned_docs and versioned_sidebars as top-level directories
-              tar -czf docs.tar.gz -C docusaurus versioned_docs/version-next -C docusaurus versioned_sidebars
+              tar -czf ../docs.tar.gz -C . versioned_docs/version-next -C . versioned_sidebars
             else
-              tar -czf docs.tar.gz -C docusaurus versioned_docs/version-$TAG_NAME -C docusaurus versioned_sidebars
+              tar -czf ../docs.tar.gz -C . versioned_docs/version-$TAG_NAME -C . versioned_sidebars
             fi
           else
             echo "Error: versioned_docs/version-$TAG_NAME or version-next does not exist!"
