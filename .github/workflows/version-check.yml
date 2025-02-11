@@ -12,9 +12,12 @@ jobs:
         with:
           fetch-depth: 0 # Ensures all tags are fetched
 
-      - name: Get last tag
+      - name: Get last stable or pre-release tag
         id: last_tag
-        run: echo "tag=$(git describe --tags --abbrev=0 2>/dev/null || echo '0.0.0')" >> $GITHUB_ENV
+        run: |
+          # Get the most recent tag (can be pre-release or stable)
+          tag=$(git describe --tags --abbrev=0 2>/dev/null || echo '0.0.0')
+          echo "tag=$tag" >> $GITHUB_ENV
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -47,6 +50,7 @@ jobs:
           OLD_VERSION="${{ env.tag }}"
           NEW_VERSION="${{ env.next_version }}"
 
+          # Parse major, minor, and patch versions
           OLD_MAJOR=$(echo "$OLD_VERSION" | cut -d. -f1)
           OLD_MINOR=$(echo "$OLD_VERSION" | cut -d. -f2)
           OLD_PATCH=$(echo "$OLD_VERSION" | cut -d. -f3)
@@ -55,10 +59,14 @@ jobs:
           NEW_MINOR=$(echo "$NEW_VERSION" | cut -d. -f2)
           NEW_PATCH=$(echo "$NEW_VERSION" | cut -d. -f3)
 
+          # Allow major or minor version updates, disallow patch updates
           if [[ "$NEW_MAJOR" -gt "$OLD_MAJOR" || "$NEW_MINOR" -gt "$OLD_MINOR" ]]; then
             echo "✅ Allowed: Major or minor update detected."
             exit 0
-          else
+          elif [[ "$NEW_PATCH" -gt "$OLD_PATCH" && "$NEW_MAJOR" -eq "$OLD_MAJOR" && "$NEW_MINOR" -eq "$OLD_MINOR" ]]; then
             echo "❌ Disallowed: Patch update detected."
             exit 1
+          else
+            echo "✅ Allowed: No version changes detected (major/minor unchanged)."
+            exit 0
           fi
