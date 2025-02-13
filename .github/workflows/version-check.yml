@@ -41,10 +41,10 @@ jobs:
           echo "$output"
 
           # Extract next version
-          next_version=$(echo "$output" | awk -i '/next release version is/ {print $NF}' || echo "")
+          next_version=$(echo "$output" | awk 'BEGIN {IGNORECASE=1} /next release version is/ {print $NF}' || echo "")
 
           # Extract last released version
-          last_version=$(echo "$output" | awk -i '/last release version:/ {print $NF}' || echo "")
+          last_version=$(echo "$output" | awk 'BEGIN {IGNORECASE=1} /last release version:/ {print $NF}' || echo "")
 
           echo "last_version:" 
           echo "$last_version"
