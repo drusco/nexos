@@ -44,7 +44,7 @@ jobs:
           next_version=$(echo "$output" | awk 'BEGIN {IGNORECASE=1} /next release version is/ {print $NF}' || echo "")
 
           # Extract last released version
-          last_version=$(echo "$output" | awk 'BEGIN {IGNORECASE=1} /found git tag/ {print $NF}' || echo "")
+          last_version=$(echo "$output" | awk 'BEGIN {IGNORECASE=1} /found git tag/ {print $3}' || echo "")
 
           echo "last: $last_version"   
           echo "next: $next_version"
