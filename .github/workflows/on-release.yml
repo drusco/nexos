@@ -63,7 +63,7 @@ jobs:
 
           # Check if the tag is a pre-release (adjust logic for `next` versions)
           if [[ "$TAG_NAME" == "No tags found" ]]; then
-            IS_PRERELEASE="false"
+            IS_PRERELEASE="true"
           else
             # Check if the tag contains '-next' to consider it a pre-release
             if [[ "$TAG_NAME" == *"-next"* ]]; then
