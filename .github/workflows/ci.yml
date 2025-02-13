@@ -18,7 +18,46 @@ permissions:
   id-token: write
 
 jobs:
+  validate:
+    name: Code validation
+    uses: ./.github/workflows/validate.yml
+
+  test:
+    name: Run tests
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
+    needs: validate
+
   version-check:
     name: Version check
     uses: ./.github/workflows/version-check.yml
     secrets: inherit
+    needs:
+      - validate
+      - test
+
+  release:
+    if: ${{ github.event_name == 'push' }}
+    name: Continuous release
+    uses: ./.github/workflows/release.yml
+    secrets: inherit
+    needs:
+      - validate
+      - test
+      - version-check
+
+  onrelease:
+    name: On Successful Release
+    uses: ./.github/workflows/on-release.yml
+    secrets: inherit
+    needs:
+      - release
+    if: success()
+
+  docs:
+    name: Generate docs
+    uses: ./.github/workflows/docs.yml
+    secrets: inherit
+    needs:
+      - onrelease
+    if: success()
