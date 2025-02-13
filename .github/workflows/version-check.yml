@@ -46,11 +46,8 @@ jobs:
           # Extract last released version
           last_version=$(echo "$output" | awk 'BEGIN {IGNORECASE=1} /last release version:/ {print $NF}' || echo "")
 
-          echo "last_version:" 
-          echo "$last_version"
-
-          echo "next_version:"
-          echo "$next_version"
+          echo "last: $last_version"   
+          echo "next: $next_version"
 
           echo "next_version=$next_version" >> $GITHUB_ENV
           echo "last_version=$last_version" >> $GITHUB_ENV
