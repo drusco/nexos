@@ -37,7 +37,7 @@ jobs:
           set -e
 
           # Run semantic-release in dry-run mode and capture full output
-          output=$(npx semantic-release --dry-run --debug || echo "")
+          output=$(npx semantic-release --dry-run || echo "")
           echo "Semantic Release Output:"
           echo "$output"
 
@@ -47,6 +47,12 @@ jobs:
           # Extract last released version
           last_version=$(echo "$output" | awk '/Last release version:/ {print $NF}' || echo "")
 
+          echo "last_version:" 
+          echo "$last_version"
+
+          echo "next_version:"
+          echo "$next_version"
+
           if [[ -z "$next_version" ]]; then
             echo "⚠️ No version found, defaulting to 0.0.0"
             next_version="0.0.0"
@@ -54,6 +60,8 @@ jobs:
 
           echo "next_version=$next_version" >> $GITHUB_ENV
           echo "last_version=$last_version" >> $GITHUB_ENV
+
+          exit 1
 
       - name: Compare versions
         id: version_check
