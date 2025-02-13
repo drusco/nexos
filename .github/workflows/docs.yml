@@ -102,7 +102,7 @@ jobs:
           fi
 
           # Fetch and extract stable docs
-          for TAG in $(echo $STABLE_TAGS | jq -r '.[]'); do
+          for TAG in $(echo "$STABLE_TAGS" | tr ',' '\n'); do
             gh release view "$TAG" --json assets -q '.assets[].name' | grep -q "docs.tar.gz" && {
               gh release download "$TAG" --pattern "docs.tar.gz" --dir .
               # Extract versioned_docs and versioned_sidebars from tarball
@@ -111,6 +111,7 @@ jobs:
               rm docs.tar.gz
             } || echo "Skipping $TAG: No docs.tar.gz found"
           done
+
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
