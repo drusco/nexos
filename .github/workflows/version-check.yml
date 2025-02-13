@@ -42,7 +42,7 @@ jobs:
           echo "$output"
 
           # Extract next version
-          next_version=$(echo "$output" | awk '/The next release version is/ {print $NF}' || echo "")
+          next_version=$(echo "$output" | awk '/the next release version is/ {print $NF}' || echo "")
 
           # Extract last released version
           last_version=$(echo "$output" | awk '/Last release version:/ {print $NF}' || echo "")
