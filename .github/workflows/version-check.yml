@@ -64,6 +64,12 @@ jobs:
             exit 0
           fi
 
+          # If NEXT_VERSION is empty, fail the workflow
+          if [[ -z "$NEXT_VERSION" ]]; then
+            echo "❌ No new version detected. Exiting with failure."
+            exit 1
+          fi
+
           # Remove "v" prefix if it exists
           LAST_VERSION=${LAST_VERSION#v}
           NEXT_VERSION=${NEXT_VERSION#v}
