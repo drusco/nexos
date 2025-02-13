@@ -73,10 +73,11 @@ jobs:
 
           # If no tags found, make STABLE_TAGS an empty array
           if [ -z "$STABLE_TAGS" ]; then
-            STABLE_TAGS="[]"
+            STABLE_TAGS=""
           else
-            # Convert to a valid JSON array format using jq
-            STABLE_TAGS=$(echo "$STABLE_TAGS" | jq -c -R 'split("\n") | map(select(length > 0))')
+            # Convert to a comma-separated string
+            STABLE_TAGS=$(echo "$STABLE_TAGS" | tr '\n' ',')
+            STABLE_TAGS="${STABLE_TAGS%,}"  # Remove trailing comma if present
           fi
 
           # Set the stable tags environment variable
