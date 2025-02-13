@@ -86,7 +86,7 @@ jobs:
             npx docusaurus docs:version next
           else
             echo "Stable release detected. Using $TAG_NAME as the version name."
-            npx docusaurus docs:version $TAG_NAME
+            npx docusaurus docs:version "${TAG_NAME#v}"
           fi
 
           # Ensure versioned_docs and versioned_sidebars directories exist
