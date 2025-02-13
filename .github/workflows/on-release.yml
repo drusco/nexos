@@ -81,12 +81,12 @@ jobs:
           cd docusaurus
 
           # Run docs:version with 'next' for pre-releases, else use the tag name
-          if [ "$env.IS_PRERELEASE" == "true" ]; then
+          if [ "$IS_PRERELEASE" == "true" ]; then
             echo "Pre-release detected. Using 'next' as the version name."
             npx docusaurus docs:version next
           else
-            echo "Stable release detected. Using $env.TAG_NAME as the version name."
-            npx docusaurus docs:version $env.TAG_NAME
+            echo "Stable release detected. Using $TAG_NAME as the version name."
+            npx docusaurus docs:version $TAG_NAME
           fi
 
           # Ensure versioned_docs and versioned_sidebars directories exist
