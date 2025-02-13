@@ -13,46 +13,52 @@ jobs:
           fetch-depth: 0 # Fetch all tags
           fetch-tags: true
 
-      - name: Get last tag
-        id: last_tag
-        run: |
-          # Get the most recent tag (if any)
-          last_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          # Remove the "v" prefix if it exists
-          last_tag=${last_tag#v}
-          echo "last_tag=$last_tag" >> $GITHUB_ENV
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version-file: ".node-version"
 
-      - name: Install dependencies
+      - name: Cache root node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install root dependencies
         run: npm install
 
-      - name: Determine next version
+      - name: Determine next and previous version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        id: next_version
         run: |
           set -e
 
-          # Run semantic-release in dry-run mode and extract the next version
-          next_version=$(npx semantic-release --dry-run 2>&1 | grep -oP 'The next release version is \K[0-9]+\.[0-9]+\.[0-9]+(-next\.[0-9]+)?' || echo "")
+          # Run semantic-release in dry-run mode and capture full output
+          output=$(npx semantic-release --dry-run --debug || echo "")
+          echo "Semantic Release Output:"
+          echo "$output"
 
-          # If no version is found, default to 0.0.0
+          # Extract next version
+          next_version=$(echo "$output" | awk '/The next release version is/ {print $NF}' || echo "")
+
+          # Extract last released version
+          last_version=$(echo "$output" | awk '/Last release version:/ {print $NF}' || echo "")
+
           if [[ -z "$next_version" ]]; then
-            echo "⚠️ No previous version detected, defaulting to 0.0.0"
+            echo "⚠️ No version found, defaulting to 0.0.0"
             next_version="0.0.0"
           fi
 
           echo "next_version=$next_version" >> $GITHUB_ENV
+          echo "last_version=$last_version" >> $GITHUB_ENV
 
       - name: Compare versions
         id: version_check
         run: |
-          LAST_VERSION="${{ env.last_tag }}"
+          LAST_VERSION="${{ env.last_version }}"
           NEXT_VERSION="${{ env.next_version }}"
 
           # If no last tag exists, allow deployment
@@ -60,6 +66,10 @@ jobs:
             echo "✅ No previous tag found, allowing deployment."
             exit 0
           fi
+
+          # Remove "v" prefix if it exists
+          LAST_VERSION=${LAST_VERSION#v}
+          NEXT_VERSION=${NEXT_VERSION#v}
 
           # Remove pre-release suffix to compare base versions
           LAST_BASE_VERSION=$(echo "$LAST_VERSION" | sed -E 's/-next\.[0-9]+$//')
