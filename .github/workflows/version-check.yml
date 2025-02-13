@@ -37,7 +37,7 @@ jobs:
           set -e
 
           # Run semantic-release in dry-run mode and capture full output
-          output=$(npx semantic-release --dry-run || echo "")
+          output=$(npx semantic-release --dry-run --debug || echo "")
           echo "Semantic Release Output:"
           echo "$output"
 
