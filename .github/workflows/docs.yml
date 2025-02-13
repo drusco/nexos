@@ -65,9 +65,23 @@ jobs:
       - name: Fetch Last Stable Release Tags (With Docs)
         id: stable_release_tags
         run: |
+          # Set the desired number of stable tags
           STABLE_TAGS_TOTAL=3
+
+          # Get stable tags (not prereleases) using GitHub CLI
           STABLE_TAGS=$(gh release list --json tagName,isPrerelease -q '.[] | select(.isPrerelease | not) | .tagName' | head -n $STABLE_TAGS_TOTAL)
-          echo "STABLE_TAGS=$(echo $STABLE_TAGS | jq -c '[.[]]')" >> $GITHUB_ENV
+
+          # If no tags found, make STABLE_TAGS an empty array
+          if [ -z "$STABLE_TAGS" ]; then
+            STABLE_TAGS="[]"
+          else
+            # Convert to a valid JSON array format using jq
+            STABLE_TAGS=$(echo "$STABLE_TAGS" | jq -c -R 'split("\n") | map(select(length > 0))')
+          fi
+
+          # Set the stable tags environment variable
+          echo "STABLE_TAGS=$STABLE_TAGS" >> $GITHUB_ENV
+
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
