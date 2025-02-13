@@ -119,15 +119,15 @@ jobs:
           if [ -n "$PRE_RELEASE_TAG" ]; then
             echo '["next"]' > docusaurus/versions.json
             if [ -n "$STABLE_TAGS" ]; then
-              # Convert STABLE_TAGS to a JSON array and remove the 'v' prefix from each tag
-              STABLE_TAGS_JSON=$(echo "$STABLE_TAGS" | tr ',' '\n' | jq -R 'map(sub("^v"; ""))')
+              # Convert STABLE_TAGS into a JSON array, removing the 'v' prefix from each tag
+              STABLE_TAGS_JSON=$(echo "$STABLE_TAGS" | tr ',' '\n' | jq -R . | jq -s 'map(sub("^v"; ""))')
               # Append the tags, with 'next' as the first item
               echo "$STABLE_TAGS_JSON" | jq -c '. | ["next"] + .' >> docusaurus/versions.json
             fi
           else
             if [ -n "$STABLE_TAGS" ]; then
-              # Convert STABLE_TAGS to a JSON array and remove the 'v' prefix from each tag
-              STABLE_TAGS_JSON=$(echo "$STABLE_TAGS" | tr ',' '\n' | jq -R 'map(sub("^v"; ""))')
+              # Convert STABLE_TAGS into a JSON array, removing the 'v' prefix from each tag
+              STABLE_TAGS_JSON=$(echo "$STABLE_TAGS" | tr ',' '\n' | jq -R . | jq -s 'map(sub("^v"; ""))')
               echo "$STABLE_TAGS_JSON" > docusaurus/versions.json
             else
               echo '[]' > docusaurus/versions.json  # Default case: No tags at all
