@@ -103,10 +103,11 @@ jobs:
 
           # Fetch and extract stable docs
           for TAG in $(echo "$STABLE_TAGS" | tr ',' '\n'); do
+            CLEAN_TAG=${TAG#v} # Remove leading 'v' if present
             gh release view "$TAG" --json assets -q '.assets[].name' | grep -q "docs.tar.gz" && {
               gh release download "$TAG" --pattern "docs.tar.gz" --dir .
               # Extract versioned_docs and versioned_sidebars from tarball
-              tar -xzf docs.tar.gz -C docusaurus versioned_docs/version-$TAG
+              tar -xzf docs.tar.gz -C docusaurus versioned_docs/version-$CLEAN_TAG
               tar -xzf docs.tar.gz -C docusaurus versioned_sidebars
               rm docs.tar.gz
             } || echo "Skipping $TAG: No docs.tar.gz found"
@@ -127,11 +128,19 @@ jobs:
             fi
           else
             if [ -n "$STABLE_TAGS" ]; then
-              # Convert STABLE_TAGS into a JSON array, removing the 'v' prefix from each tag
+              # Convert STABLE_TAGS into a JSON array, removing the 'v' prefix
               STABLE_TAGS_JSON=$(echo "$STABLE_TAGS" | tr ',' '\n' | jq -R . | jq -s 'map(sub("^v"; ""))')
-              echo "$STABLE_TAGS_JSON" > docusaurus/versions.json
+              if [ -n "$PRE_RELEASE_TAG" ]; then
+                echo "$STABLE_TAGS_JSON" | jq -c '. | ["next"] + .' > docusaurus/versions.json
+              else
+                echo "$STABLE_TAGS_JSON" > docusaurus/versions.json
+              fi
             else
-              echo '[]' > docusaurus/versions.json  # Default case: No tags at all
+              if [ -n "$PRE_RELEASE_TAG" ]; then
+                echo '["next"]' > docusaurus/versions.json
+              else
+                echo '[]' > docusaurus/versions.json
+              fi
             fi
           fi
 
