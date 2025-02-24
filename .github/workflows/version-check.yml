@@ -36,15 +36,15 @@ jobs:
         run: |
           set -e
 
+          # Get the last version from GitHub tags
+          last_version=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
           # Run semantic-release in dry-run mode and capture full output
           output=$(npx semantic-release --dry-run || echo "")
           echo "$output"
 
           # Extract next version
           next_version=$(echo "$output" | awk 'BEGIN {IGNORECASE=1} /next release version is/ {print $NF}' || echo "")
-
-          # Extract last released version
-          last_version=$(echo "$output" | awk 'BEGIN {IGNORECASE=1} /found git tag/ {match($0, /v[0-9]+\.[0-9]+\.[0-9]+/, arr); print arr[0]}' || echo "")
 
           echo "last: $last_version"   
           echo "next: $next_version"
