@@ -36,73 +36,26 @@ jobs:
         run: |
           set -e
 
-          # Get the last version from GitHub tags
-          last_version=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-
           # Run semantic-release in dry-run mode and capture full output
           output=$(npx semantic-release --dry-run || echo "")
+
           echo "$output"
 
           # Extract next version
           next_version=$(echo "$output" | awk 'BEGIN {IGNORECASE=1} /next release version is/ {print $NF}' || echo "")
 
-          echo "last: $last_version"   
-          echo "next: $next_version"
-
           echo "next_version=$next_version" >> $GITHUB_ENV
-          echo "last_version=$last_version" >> $GITHUB_ENV
 
-      - name: Compare versions
-        id: version_check
+      - name: Check next version
+        id: check_version
         run: |
-          LAST_VERSION="${{ env.last_version }}"
           NEXT_VERSION="${{ env.next_version }}"
 
-          # If no last tag exists, allow deployment
-          if [[ -z "$LAST_VERSION" ]]; then
-            echo "✅ No previous tag found, allowing deployment."
-            exit 0
-          fi
-
-          # If NEXT_VERSION is empty, fail the workflow
           if [[ -z "$NEXT_VERSION" ]]; then
-            echo "❌ No new version detected. Exiting with failure."
+            echo "❌ No new version detected."
+            echo "SKIP_DEPLOY=true" >> $GITHUB_ENV
             exit 1
           fi
 
-          # Remove "v" prefix if it exists
-          LAST_VERSION=${LAST_VERSION#v}
-          NEXT_VERSION=${NEXT_VERSION#v}
-
-          # Remove pre-release suffix to compare base versions
-          LAST_BASE_VERSION=$(echo "$LAST_VERSION" | sed -E 's/-next\.[0-9]+$//')
-          NEXT_BASE_VERSION=$(echo "$NEXT_VERSION" | sed -E 's/-next\.[0-9]+$//')
-
-          # Extract major, minor, and patch numbers
-          LAST_MAJOR=$(echo "$LAST_BASE_VERSION" | cut -d. -f1)
-          LAST_MINOR=$(echo "$LAST_BASE_VERSION" | cut -d. -f2)
-          LAST_PATCH=$(echo "$LAST_BASE_VERSION" | cut -d. -f3)
-
-          NEXT_MAJOR=$(echo "$NEXT_BASE_VERSION" | cut -d. -f1)
-          NEXT_MINOR=$(echo "$NEXT_BASE_VERSION" | cut -d. -f2)
-          NEXT_PATCH=$(echo "$NEXT_BASE_VERSION" | cut -d. -f3)
-
-          # Check if last version is a pre-release
-          if [[ "$LAST_VERSION" == *"-next"* ]]; then
-            echo "🔎 Last version is a pre-release."
-            if [[ "$LAST_BASE_VERSION" == "$NEXT_BASE_VERSION" ]]; then
-              echo "✅ Allowed: Transitioning pre-release ($LAST_VERSION) to stable ($NEXT_VERSION)."
-              exit 0
-            fi
-            if [[ "$NEXT_MAJOR" -gt "$LAST_MAJOR" || "$NEXT_MINOR" -gt "$LAST_MINOR" ]]; then
-              echo "✅ Allowed: Pre-release transitioning with major/minor bump."
-              exit 0
-            else
-              echo "❌ Disallowed: Patch update for pre-release."
-              exit 1
-            fi
-          fi
-
-          # If it's a stable release, allow major, minor, or patch updates
-          echo "✅ Allowed: Stable version update (major/minor/patch)."
+          echo "✅ New version detected: $NEXT_VERSION"
           exit 0
