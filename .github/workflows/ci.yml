@@ -26,38 +26,48 @@ jobs:
     name: Run tests
     uses: ./.github/workflows/test.yml
     secrets: inherit
-    needs: validate
+    needs:
+      - validate
+    if: success()
 
-  version-check:
+  version_check:
     name: Version check
     uses: ./.github/workflows/version-check.yml
     secrets: inherit
     needs:
       - validate
       - test
+    if: success()
 
   release:
-    if: ${{ github.event_name == 'push' }}
     name: Continuous release
     uses: ./.github/workflows/release.yml
     secrets: inherit
     needs:
-      - validate
-      - test
-      - version-check
+      - version_check
+    if: needs.version_check.result == 'success'
 
-  onrelease:
-    name: On Successful Release
-    uses: ./.github/workflows/on-release.yml
+  docs_check:
+    name: Docs validation
+    uses: ./.github/workflows/docs-check.yml
     secrets: inherit
     needs:
-      - release
+      - validate
+      - test
     if: success()
 
+  build_docs:
+    name: Build documentation files
+    uses: ./.github/workflows/build-docs.yml
+    secrets: inherit
+    needs:
+      - docs_check
+    if: needs.docs_check.result == 'success'
+
   docs:
-    name: Generate docs
+    name: Publish docs to GitHub Pages
     uses: ./.github/workflows/docs.yml
     secrets: inherit
     needs:
-      - onrelease
-    if: success()
+      - build_docs
+    if: needs.build_docs.result == 'success'

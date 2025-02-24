@@ -1,4 +1,4 @@
-name: on-release
+name: build-docs
 
 on:
   workflow_call:
@@ -7,7 +7,7 @@ permissions:
   contents: read
 
 jobs:
-  onrelease:
+  build_docs:
     runs-on: ubuntu-latest
     permissions:
       contents: write

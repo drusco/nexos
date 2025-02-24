@@ -10,8 +10,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetch all tags
-          fetch-tags: true
+          fetch-depth: 0 # Fetch all commits and tags
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -35,27 +34,22 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           set -e
-
-          # Run semantic-release in dry-run mode and capture full output
           output=$(npx semantic-release --dry-run || echo "")
 
           echo "$output"
 
-          # Extract next version
-          next_version=$(echo "$output" | awk 'BEGIN {IGNORECASE=1} /next release version is/ {print $NF}' || echo "")
+          # Extract next version safely
+          next_version=$(echo "$output" | grep -oP '(?<=next release version is )[^ ]+' || echo "")
 
-          echo "next_version=$next_version" >> $GITHUB_ENV
+          echo "NEXT_VERSION=$next_version" >> $GITHUB_ENV
 
       - name: Check next version
         id: check_version
         run: |
-          NEXT_VERSION="${{ env.next_version }}"
-
-          if [[ -z "$NEXT_VERSION" ]]; then
+          if [[ -z "${{ env.NEXT_VERSION }}" ]]; then
             echo "❌ No new version detected."
-            echo "SKIP_DEPLOY=true" >> $GITHUB_ENV
             exit 1
+          else
+            echo "✅ New version detected: ${{ env.NEXT_VERSION }}"
+            exit 0
           fi
-
-          echo "✅ New version detected: $NEXT_VERSION"
-          exit 0
