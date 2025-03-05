@@ -1,6 +1,6 @@
-import type nx from "../types/Nexo.js";
+import type * as nx from "../types/Nexo.js";
 
-const isTraceable = (value: unknown): value is nx.traceable => {
+const isTraceable = (value: unknown): value is nx.Traceable => {
   const isObject = typeof value === "object";
   const isFunction = typeof value === "function";
 

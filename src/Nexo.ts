@@ -1,4 +1,4 @@
-import type nx from "./types/Nexo.js";
+import type * as nx from "./types/Nexo.js";
 import getProxy from "./utils/getProxy.js";
 import NexoMap from "./utils/NexoMap.js";
 import NexoEmitter from "./events/NexoEmitter.js";
@@ -78,7 +78,7 @@ class Nexo extends NexoEmitter {
    */
   static getOwnPropertyDescriptor(
     proxy: nx.Proxy,
-    property: nx.objectKey,
+    property: nx.ObjectKey,
   ): void | PropertyDescriptor {
     const { sandbox } = Nexo.wrap(proxy);
     if (sandbox) {
@@ -100,7 +100,7 @@ class Nexo extends NexoEmitter {
    * @returns An Array of the proxy object's own property keys, including strings and symbols
    *
    */
-  static keys(proxy: nx.Proxy): nx.objectKey[] {
+  static keys(proxy: nx.Proxy): nx.ObjectKey[] {
     const { sandbox } = Nexo.wrap(proxy);
     if (sandbox) {
       return Reflect.ownKeys(sandbox);
@@ -153,7 +153,7 @@ class Nexo extends NexoEmitter {
    * @returns A proxy that can be accessed by its id
    *
    */
-  use(id: string, target?: nx.traceable): nx.Proxy {
+  use(id: string, target?: nx.Traceable): nx.Proxy {
     if (!target && this.entries.has(id)) {
       // returns an existing proxy by its id
       return this.entries.get(id).deref();
@@ -191,7 +191,7 @@ class Nexo extends NexoEmitter {
    * @returns A new proxy object
    *
    */
-  create(target?: nx.traceable): nx.Proxy {
+  create(target?: nx.Traceable): nx.Proxy {
     return getProxy(this, target);
   }
 }

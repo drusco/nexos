@@ -1,4 +1,4 @@
-import type nx from "../types/Nexo.js";
+import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import isProxy from "../utils/isProxy.js";
@@ -20,7 +20,7 @@ describe("deleteProperty", () => {
     const result = Reflect.deleteProperty(proxy, "foo");
 
     const [event]: [
-      ProxyEvent<{ property: nx.objectKey; target: nx.traceable }>,
+      ProxyEvent<{ property: nx.ObjectKey; target: nx.Traceable }>,
     ] = listener.mock.lastCall;
 
     expect(result).toBe(true);

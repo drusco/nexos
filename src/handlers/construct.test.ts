@@ -1,4 +1,4 @@
-import type nx from "../types/Nexo.js";
+import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import isProxy from "../utils/isProxy.js";
 import ProxyEvent from "../events/ProxyEvent.js";
@@ -18,7 +18,7 @@ describe("construct", () => {
     const result = Reflect.construct(proxy, args);
 
     const [constructEvent]: [
-      ProxyEvent<{ target: object; args: nx.arrayLike; result: nx.Proxy }>,
+      ProxyEvent<{ target: object; args: nx.ArrayLike; result: nx.Proxy }>,
     ] = constructListener.mock.lastCall;
 
     expect(constructListener).toHaveBeenCalledTimes(2);

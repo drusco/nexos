@@ -1,4 +1,4 @@
-import type nx from "../types/Nexo.js";
+import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
@@ -21,9 +21,9 @@ describe("apply", () => {
 
     const [applyEvent]: [
       ProxyEvent<{
-        target: nx.traceable;
-        thisArg?: nx.traceable;
-        args: nx.arrayLike;
+        target: nx.Traceable;
+        thisArg?: nx.Traceable;
+        args: nx.ArrayLike;
         result: nx.Proxy;
       }>,
     ] = applyListener.mock.lastCall;

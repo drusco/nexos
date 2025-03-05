@@ -1,4 +1,4 @@
-import type nx from "../types/Nexo.js";
+import type * as nx from "../types/Nexo.js";
 import NexoEmitter from "../events/NexoEmitter.js";
 import Nexo from "../Nexo.js";
 
@@ -6,15 +6,15 @@ class ProxyWrapper extends NexoEmitter {
   readonly id: string;
   readonly nexo: Nexo;
   readonly traceable: boolean;
-  readonly sandbox: void | nx.traceable;
+  readonly sandbox: void | nx.Traceable;
   private _revoked: boolean = false;
-  private _revoke: nx.voidFunction;
+  private _revoke: nx.VoidFunction;
 
   constructor(data: {
     id: string;
     nexo: Nexo;
     traceable: boolean;
-    revoke: nx.voidFunction;
+    revoke: nx.VoidFunction;
   }) {
     super();
 

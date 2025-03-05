@@ -1,4 +1,4 @@
-import type nx from "../types/Nexo.js";
+import type * as nx from "../types/Nexo.js";
 import NexoEvent from "../events/NexoEvent.js";
 import NexoEmitter from "../events/NexoEmitter.js";
 
@@ -8,7 +8,7 @@ import NexoEmitter from "../events/NexoEmitter.js";
  *
  * @template Target - The type of objects stored in the map, which must be traceable.
  */
-class NexoMap<Target extends nx.traceable> extends Map<
+class NexoMap<Target extends nx.Traceable> extends Map<
   string,
   WeakRef<Target>
 > {

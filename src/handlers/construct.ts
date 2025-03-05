@@ -1,10 +1,10 @@
-import type nx from "../types/Nexo.js";
+import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
 import ProxyError from "../errors/ProxyError.js";
 import isTraceable from "../utils/isTraceable.js";
 
-const construct = (target: nx.traceable, args: nx.arrayLike): object => {
+const construct = (target: nx.Traceable, args: nx.ArrayLike): object => {
   const proxy = map.tracables.get(target);
   const { nexo, traceable } = map.proxies.get(proxy);
   const result = nexo.create();

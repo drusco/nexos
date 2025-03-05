@@ -1,12 +1,12 @@
-import type nx from "../types/Nexo.js";
+import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
 import ProxyError from "../errors/ProxyError.js";
 
 const apply = (
-  target: nx.traceable,
+  target: nx.Traceable,
   thisArg: unknown = undefined,
-  args: nx.arrayLike,
+  args: nx.ArrayLike,
 ): unknown => {
   const proxy = map.tracables.get(target);
   const { nexo, traceable } = map.proxies.get(proxy);

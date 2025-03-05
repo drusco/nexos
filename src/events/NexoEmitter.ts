@@ -1,4 +1,4 @@
-import type nx from "../types/Nexo.js";
+import type * as nx from "../types/Nexo.js";
 import EventEmitter from "events";
 import NexoEvent from "./NexoEvent.js";
 
@@ -8,9 +8,9 @@ class NexoEmitter extends EventEmitter {
   }
 
   emit<Event extends NexoEvent>(
-    eventName: nx.objectKey,
+    eventName: nx.ObjectKey,
     data: Event | Error,
-    ...args: nx.arrayLike
+    ...args: nx.ArrayLike
   ): boolean {
     const listeners = this.listeners(eventName);
     const hasListeners = listeners.length > 0;

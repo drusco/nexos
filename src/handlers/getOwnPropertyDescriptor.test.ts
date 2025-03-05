@@ -1,4 +1,4 @@
-import type nx from "../types/Nexo.js";
+import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import Nexo from "../Nexo.js";
 
@@ -17,7 +17,7 @@ describe("getOwnPropertyDescriptor", () => {
     const descriptor = Reflect.getOwnPropertyDescriptor(proxy, "foo");
 
     const [event]: [
-      ProxyEvent<{ property: nx.objectKey; descriptor: PropertyDescriptor }>,
+      ProxyEvent<{ property: nx.ObjectKey; descriptor: PropertyDescriptor }>,
     ] = listener.mock.lastCall;
 
     expect(listener).toHaveBeenCalledTimes(2);

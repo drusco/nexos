@@ -1,11 +1,11 @@
-import type nx from "../types/Nexo.js";
+import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import map from "../utils/maps.js";
 import ProxyError from "../errors/ProxyError.js";
 
 const defineProperty = (
-  target: nx.traceable,
-  property: nx.objectKey,
+  target: nx.Traceable,
+  property: nx.ObjectKey,
   descriptor: PropertyDescriptor,
 ): boolean => {
   const proxy = map.tracables.get(target);

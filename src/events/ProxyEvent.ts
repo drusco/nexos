@@ -1,12 +1,9 @@
-import type nx from "../types/Nexo.js";
+import type * as nx from "../types/Nexo.js";
 import NexoEvent from "./NexoEvent.js";
 import map from "../utils/maps.js";
 
 class ProxyEvent<Data = unknown> extends NexoEvent<nx.Proxy, Data> {
-  constructor(
-    name: nx.proxy.handler,
-    options: nx.event.options<nx.Proxy, Data>,
-  ) {
+  constructor(name: nx.ProxyHandler, options: nx.Event<nx.Proxy, Data>) {
     super(`proxy.${name}`, options);
 
     const wrapper = map.proxies.get(this.target);

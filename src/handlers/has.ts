@@ -1,8 +1,8 @@
-import type nx from "../types/Nexo.js";
+import type * as nx from "../types/Nexo.js";
 import map from "../utils/maps.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 
-const has = (target: nx.traceable, property: nx.objectKey): boolean => {
+const has = (target: nx.Traceable, property: nx.ObjectKey): boolean => {
   const proxy = map.tracables.get(target);
   const { sandbox } = map.proxies.get(proxy);
   const targetHasProperty = Reflect.has(target, property);

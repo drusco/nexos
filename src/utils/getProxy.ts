@@ -1,4 +1,4 @@
-import type nx from "../types/Nexo.js";
+import type * as nx from "../types/Nexo.js";
 import { randomUUID } from "crypto";
 import map from "./maps.js";
 import findProxy from "./findProxy.js";
@@ -8,7 +8,7 @@ import handlers from "../handlers/index.js";
 import ProxyWrapper from "./ProxyWrapper.js";
 import Nexo from "../Nexo.js";
 
-const getProxy = (nexo: Nexo, target?: nx.traceable, id?: string): nx.Proxy => {
+const getProxy = (nexo: Nexo, target?: nx.Traceable, id?: string): nx.Proxy => {
   // find proxy by target
   const usableProxy = findProxy(target);
 

@@ -1,9 +1,9 @@
-import type nx from "../types/Nexo.js";
+import type * as nx from "../types/Nexo.js";
 import map from "../utils/maps.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
 
-const setPrototypeOf = (target: nx.traceable, prototype: object): boolean => {
+const setPrototypeOf = (target: nx.Traceable, prototype: object): boolean => {
   const proxy = map.tracables.get(target);
   const { sandbox } = map.proxies.get(proxy);
   const extensible = Reflect.isExtensible(target);

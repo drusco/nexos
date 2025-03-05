@@ -1,4 +1,4 @@
-import type nx from "../types/Nexo.js";
+import type * as nx from "../types/Nexo.js";
 
 class NexoEvent<Target = unknown, Data = unknown> {
   readonly name: string;
@@ -9,7 +9,7 @@ class NexoEvent<Target = unknown, Data = unknown> {
   public returnValue: unknown;
   private _defaultPrevented: boolean;
 
-  constructor(name: string, options: nx.event.options<Target, Data> = {}) {
+  constructor(name: string, options: nx.Event<Target, Data> = {}) {
     options = { cancelable: false, ...options };
     this.name = name;
     this.data = options.data;
