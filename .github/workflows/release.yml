@@ -7,6 +7,11 @@ permissions:
   contents: read
 
 jobs:
+  version_check:
+    name: Version check
+    uses: ./.github/workflows/version-check.yml
+    secrets: inherit
+
   release:
     if: ${{ github.event.repository.fork == false }}
     runs-on: ubuntu-latest
