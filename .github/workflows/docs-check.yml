@@ -10,7 +10,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Ensure full commit history
+          fetch-depth: 0
 
       - name: Check for documentation commits
         id: check_docs
@@ -21,8 +21,8 @@ jobs:
           # Check if any commit includes "docs:" or "docs(anything):"
           if echo "$COMMITS" | grep -E '^docs(\([a-zA-Z0-9_-]+\))?:' > /dev/null; then
             echo "✅ New commits for docs found."
-            exit 0
+            echo "success=true" >> $GITHUB_ENV
           else
             echo "❌ No commits for docs found."
-            exit 1
+            echo "success=false" >> $GITHUB_ENV
           fi
