@@ -7,11 +7,6 @@ permissions:
   contents: read
 
 jobs:
-  docs_check:
-    name: Docs Check
-    uses: ./.github/workflows/docs-check.yml
-    secrets: inherit
-
   build_docs:
     runs-on: ubuntu-latest
     permissions:
