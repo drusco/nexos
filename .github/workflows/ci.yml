@@ -27,6 +27,14 @@ jobs:
       - version_check
     if: needs.version_check.result == 'success'
 
+  test_coverage:
+    name: Upload results to Codecov on Release
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
+    needs:
+      - release
+    if: needs.release.result == 'success'
+
   docs_check:
     name: Docs Check
     uses: ./.github/workflows/docs-check.yml
