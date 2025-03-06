@@ -1,0 +1,26 @@
+name: branch-validation
+
+on:
+  pull_request:
+    branches:
+      - main
+      - next
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  validate_code:
+    name: Code Validation
+    uses: ./.github/workflows/code-validation.yml
+
+  test_code:
+    name: Test Runner
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
+    needs:
+      - validate
+    if: success()

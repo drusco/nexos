@@ -5,10 +5,6 @@ on:
     branches:
       - main
       - next
-  pull_request:
-    branches:
-      - main
-      - next
 
 permissions:
   contents: write
@@ -18,55 +14,19 @@ permissions:
   id-token: write
 
 jobs:
-  validate:
-    name: Code validation
-    uses: ./.github/workflows/validate.yml
-
-  test:
-    name: Run tests
-    uses: ./.github/workflows/test.yml
-    secrets: inherit
-    needs:
-      - validate
-    if: success()
-
-  version_check:
-    name: Version check
-    uses: ./.github/workflows/version-check.yml
-    secrets: inherit
-    needs:
-      - validate
-      - test
-    if: success()
-
   release:
-    name: Continuous release
+    name: Continuous Release
     uses: ./.github/workflows/release.yml
     secrets: inherit
-    needs:
-      - version_check
-    if: needs.version_check.result == 'success'
-
-  docs_check:
-    name: Docs validation
-    uses: ./.github/workflows/docs-check.yml
-    secrets: inherit
-    needs:
-      - validate
-      - test
-    if: success()
 
   build_docs:
-    name: Build documentation files
+    name: Build Documentation
     uses: ./.github/workflows/build-docs.yml
     secrets: inherit
-    needs:
-      - docs_check
-    if: needs.docs_check.result == 'success'
 
-  docs:
-    name: Publish docs to GitHub Pages
-    uses: ./.github/workflows/docs.yml
+  publish_docs:
+    name: Publish Docs to GitHub Pages
+    uses: ./.github/workflows/publish-docs.yml
     secrets: inherit
     needs:
       - build_docs

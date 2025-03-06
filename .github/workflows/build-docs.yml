@@ -7,6 +7,11 @@ permissions:
   contents: read
 
 jobs:
+  docs_check:
+    name: Docs Check
+    uses: ./.github/workflows/docs-check.yml
+    secrets: inherit
+
   build_docs:
     runs-on: ubuntu-latest
     permissions:
@@ -19,7 +24,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Ensure we fetch all tags
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
