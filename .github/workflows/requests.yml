@@ -1,4 +1,4 @@
-name: branch-validation
+name: Requests
 
 on:
   pull_request:
@@ -13,11 +13,11 @@ permissions:
   id-token: write
 
 jobs:
-  validate_code:
+  code:
     name: Code Validation
     uses: ./.github/workflows/code-validation.yml
 
-  test_code:
+  tests:
     name: Test Runner
     uses: ./.github/workflows/test.yml
     secrets: inherit
