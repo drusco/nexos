@@ -22,5 +22,5 @@ jobs:
     uses: ./.github/workflows/test.yml
     secrets: inherit
     needs:
-      - validate
+      - validate_code
     if: success()
