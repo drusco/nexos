@@ -11,7 +11,7 @@ import ProxyError from "./errors/ProxyError.js";
  *
  * @remarks
  * This class is used to easily create and access proxy objects.
- * It emits the following events: 'proxy', 'error', 'proxy.{@link types.proxy.handler | handlerName}', 'proxy.error'.
+ * It emits the following events: 'proxy', 'error', 'proxy.{@link Types.ProxyHandler | handlerName}', 'proxy.error'.
  *
  * @example
  * Accesing the 'proxy' {@link NexoEvent} every time a new proxy is created.
@@ -41,8 +41,8 @@ class Nexo extends NexoEmitter {
    *
    * @example
    * Accessing a {@link ProxyEvent}.
-   * Each proxy event follows the naming convention 'proxy.{@link types.proxy.handler | handlerName}',
-   * where {@link types.proxy.handler | handlerName} corresponds to one of the standard handler functions specified in the
+   * Each proxy event follows the naming convention 'proxy.{@link Types.ProxyHandler | handlerName}',
+   * where {@link Types.ProxyHandler | handlerName} corresponds to one of the standard handler functions specified in the
    * [MDN Proxy API documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy).
    * For example, events such as 'proxy.apply', 'proxy.construct',
    * and others will be emitted when the corresponding handler functions ('apply', 'construct', etc.) are invoked.
