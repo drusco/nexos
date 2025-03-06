@@ -2,10 +2,16 @@ name: version-check
 
 on:
   workflow_call:
+    outputs:
+      success:
+        description: "Indicates if a new release version is found"
+        value: ${{ jobs.check.outputs.success }}
 
 jobs:
-  check_version:
+  check:
     runs-on: ubuntu-latest
+    outputs:
+      success: ${{ steps.check_version.outputs.success }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -48,8 +54,6 @@ jobs:
         run: |
           if [[ -z "${{ env.NEXT_VERSION }}" ]]; then
             echo "❌ No new version detected."
-            echo "success=false" >> $GITHUB_ENV
           else
             echo "✅ New version detected: ${{ env.NEXT_VERSION }}"
-            echo "success=true" >> $GITHUB_ENV
           fi
