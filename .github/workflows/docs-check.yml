@@ -21,10 +21,8 @@ jobs:
       - name: Check for documentation commits
         id: set-success
         run: |
-          # Get all commit messages in the current push
           COMMITS=$(git log --pretty=%s ${{ github.event.before }}..${{ github.sha }} 2>/dev/null || echo "")
 
-          # Check if any commit includes "docs:" or "docs(anything):"
           if echo "$COMMITS" | grep -E '^docs(\([a-zA-Z0-9_-]+\))?:' > /dev/null; then
             echo "✅ New commits for docs found."
             echo "success=true" >> $GITHUB_ENV
@@ -33,4 +31,3 @@ jobs:
             echo "❌ No commits for docs found."
             echo "success=false" >> $GITHUB_ENV
             echo "success=false" >> $GITHUB_OUTPUT
-          fi
