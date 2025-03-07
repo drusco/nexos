@@ -134,6 +134,7 @@ const config: Config = {
         entryPoints: ["../src/index.ts"],
         readme: "none",
         tsconfig: "../tsconfig.json",
+        watch: process.env.TYPEDOC_WATCH,
         plugin: ["typedoc-plugin-no-inherit"],
         githubPages: true,
         entryFileName: "index.md",
