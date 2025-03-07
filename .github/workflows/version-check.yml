@@ -54,6 +54,10 @@ jobs:
         run: |
           if [[ -z "${{ env.NEXT_VERSION }}" ]]; then
             echo "❌ No new version detected."
+            echo "success=false" >> $GITHUB_ENV
+            echo "success=false" >> $GITHUB_OUTPUT
           else
             echo "✅ New version detected: ${{ env.NEXT_VERSION }}"
+            echo "success=true" >> $GITHUB_ENV
+            echo "success=true" >> $GITHUB_OUTPUT
           fi
