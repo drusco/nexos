@@ -4,7 +4,7 @@ import NexoEmitter from "../events/NexoEmitter.js";
 
 /**
  * A specialized `Map` that holds weak references to traceable targets.
- * This class extends `Map<string, WeakRef<Target>>` and emits events when modifications occur.
+ * This class emits events when modifications occur.
  *
  * @template Target - The type of objects stored in the map, which must be traceable.
  */
