@@ -41,6 +41,7 @@ jobs:
     secrets: inherit
     needs:
       - release
+    if: always()
 
   build_docs:
     name: Build Documentation
