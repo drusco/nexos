@@ -7,74 +7,67 @@ import maps from "./utils/maps.js";
 import ProxyError from "./errors/ProxyError.js";
 
 /**
- * Represents a proxy factory.
+ * Represents a proxy factory for creating and managing proxy objects.
  *
  * @remarks
- * This class is used to easily create and access proxy objects.
- * It emits the following events: 'proxy', 'error', 'proxy.{@link Types.ProxyHandler | handlerName}', 'proxy.error'.
+ * This class provides utilities for creating proxies, retrieving existing ones by unique IDs, and interacting with them through event-driven mechanisms.
+ *
+ * It emits the following events:
+ * - `'proxy'`: Fired whenever a new proxy is created.
+ * - `'error'`: Fired when an error occurs.
+ * - `'proxy.{@link Types.ProxyHandler | handlerName}'`: Fired when any proxy handler function (e.g., `get`, `set`, etc.) is invoked.
+ * - `'proxy.error'`: Fired when a proxy operation fails.
  *
  * @example
- * Accesing the 'proxy' {@link NexoEvent} every time a new proxy is created.
- *
- * ```ts
+ * // Example of listening to 'proxy' event every time a new proxy is created.
  * const nexo = new Nexo();
  * const listener = (event: NexoEvent) => {};
  *
  * nexo.on('proxy', listener);
  *
- * // listener will be called
- * const proxy = nexo.create()
- * ```
- *
+ * // The listener will be called when a new proxy is created.
+ * const proxy = nexo.create();
  */
 class Nexo extends NexoEmitter {
   /**
-   * A map of unique proxy IDs that holds {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakRef | WeakRef} references to the proxy objects.
+   * A map that stores unique proxy IDs associated with their respective {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakRef | WeakRef} references to the proxy objects.
+   *
+   * @remarks
+   * This map allows quick access to proxies by their unique ID, ensuring that proxies are properly managed and referenced.
    */
   readonly entries: NexoMap<nx.Proxy> = new NexoMap();
 
   /**
-   * Returns a proxy wrapper.
+   * Provides a wrapper for an existing proxy.
    *
    * @remarks
-   * This method allows to interact with the proxy object.
+   * This method wraps a proxy object and allows interaction with the proxy's events and properties.
+   * Proxy-related events follow the format `'proxy.{@link Types.ProxyHandler | handlerName}'`, where the handler name corresponds to one of the standard proxy handler functions such as `apply`, `construct`, `get`, etc.
    *
    * @example
-   * Accessing a {@link ProxyEvent}.
-   * Each proxy event follows the naming convention 'proxy.{@link Types.ProxyHandler | handlerName}',
-   * where {@link Types.ProxyHandler | handlerName} corresponds to one of the standard handler functions specified in the
-   * [MDN Proxy API documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy).
-   * For example, events such as 'proxy.apply', 'proxy.construct',
-   * and others will be emitted when the corresponding handler functions ('apply', 'construct', etc.) are invoked.
-   *
-   * ```ts
+   * // Wrapping an existing proxy and listening to 'proxy.get' event
    * const nexo = new Nexo();
    * const proxy = nexo.create();
    * const wrapper = Nexo.wrap(proxy);
    *
-   * wrapper.on('proxy.get', (event: ProxyEvent) => {})
-   * ```
+   * wrapper.on('proxy.get', (event: ProxyEvent) => {});
    *
    * @param proxy - An existing proxy object
-   * @returns A wrapper for the proxy
-   *
+   * @returns A wrapper for the proxy that allows interaction with proxy events
    */
   static wrap(proxy: nx.Proxy): ProxyWrapper {
     return maps.proxies.get(proxy);
   }
 
   /**
-   * When working with proxies that were created without targets,
-   * their property descriptors are retrieved from a sandbox target instead
+   * Retrieves the property descriptor for a proxy, considering its sandbox target if applicable.
    *
    * @remarks
-   * When using Reflect.getOwnPropertyDescriptor on a proxy,
-   * the returned value may differ from the real property descriptor due to how proxies work.
-   * Nexo.getOwnPropertyDescriptor, however, reveals the actual descriptor from the sandbox target.
+   * Since proxies can have altered behavior, using `Reflect.getOwnPropertyDescriptor` directly may not return the expected results. This method ensures the correct descriptor is fetched from the sandbox target if the proxy was created without a direct target.
    *
    * @param proxy - An existing proxy object
-   * @returns A property descriptor of the given property if it exists on the proxy, undefined otherwise.
-   *
+   * @param property - The property name (key) to retrieve the descriptor for
+   * @returns The property descriptor if the property exists, or `undefined` otherwise
    */
   static getOwnPropertyDescriptor(
     proxy: nx.Proxy,
@@ -88,17 +81,13 @@ class Nexo extends NexoEmitter {
   }
 
   /**
-   * When working with proxies that were created without targets,
-   * their own keys are retrieved from a sandbox target instead
+   * Retrieves the own property keys of a proxy, considering its sandbox target if applicable.
    *
    * @remarks
-   * When using Reflect.ownKeys on a proxy,
-   * the returned value may differ from the real keys due to how proxies work.
-   * Nexo.keys, however, reveals the actual keys from the sandbox target.
+   * Similar to the property descriptor method, this method ensures that the keys returned are from the sandbox target when the proxy was created without a direct target.
    *
    * @param proxy - An existing proxy object
-   * @returns An Array of the proxy object's own property keys, including strings and symbols
-   *
+   * @returns An array of the proxy object's own property keys, including both strings and symbols
    */
   static keys(proxy: nx.Proxy): nx.ObjectKey[] {
     const { sandbox } = Nexo.wrap(proxy);
@@ -109,17 +98,13 @@ class Nexo extends NexoEmitter {
   }
 
   /**
-   * When working with proxies that were created without targets,
-   * their prototypes are retrieved from a sandbox target instead
+   * Retrieves the prototype of a proxy, considering its sandbox target if applicable.
    *
    * @remarks
-   * When using Reflect.getPrototypeOf on a proxy,
-   * the returned value may differ from the real prototype due to how proxies work.
-   * Nexo.getPrototypeOf, however, reveals the actual prototype from the sandbox target.
+   * This method ensures that the prototype returned is the one from the sandbox target when the proxy was created without a direct target.
    *
    * @param proxy - An existing proxy object
-   * @returns The prototype of the given proxy, which may be an object or null.
-   *
+   * @returns The prototype of the proxy, which can be an object or `null`
    */
   static getPrototypeOf(proxy: nx.Proxy): object {
     const { sandbox } = Nexo.wrap(proxy);
@@ -130,41 +115,37 @@ class Nexo extends NexoEmitter {
   }
 
   /**
-   * Allows creating or retrieving an existing proxy using its unique ID.
+   * Creates or retrieves an existing proxy by its unique ID.
    *
    * @remarks
-   * Proxies can be created with or without a target.
-   * This method lets you create proxies that can later be accessed by their unique ID.
-   * Creating a new proxy with an existing ID and a different target will fail.
-   * {@link Nexo} and {@link ProxyWrapper} emit a 'proxy' {@link NexoEvent} every time a new proxy is created.
+   * If a proxy is already created with the provided ID, this method will return the existing proxy.
+   * If a new proxy is requested with a different target, the method will create a new proxy associated with that target.
+   * A `ProxyError` is thrown if an attempt is made to use the same ID for different targets.
    *
    * @example
-   * ```ts
+   * // Creating or retrieving a proxy by its ID
    * const nexo = new Nexo();
    * const proxy = nexo.use('foo');
-   * nexo.use('foo') === proxy;
-   * ```
+   * nexo.use('foo') === proxy; // True, retrieves the same proxy by ID
    *
-   * @throws {@link ProxyError}
-   * This exception is thrown when the ID is already being used by another proxy with a different target.
+   * @throws {@link ProxyError} - If the ID is already used by another proxy with a different target
    *
-   * @param id - A unique id that will represent the proxy
-   * @param target - An optional object that will be used as the proxy target
-   * @returns A proxy that can be accessed by its id
-   *
+   * @param id - A unique identifier for the proxy
+   * @param target - An optional target object to associate with the proxy
+   * @returns A proxy object associated with the provided ID and target
    */
   use(id: string, target?: nx.Traceable): nx.Proxy {
     if (!target && this.entries.has(id)) {
-      // returns an existing proxy by its id
+      // Returns an existing proxy by its ID
       return this.entries.get(id).deref();
     }
 
-    // get a new or existing proxy for the traceable target object
+    // Create a new proxy for the target
     const proxy = getProxy(this, target, id);
 
     if (!this.entries.has(id)) {
       const { id: currentId } = Nexo.wrap(proxy);
-      // the id cannot be changed for an existing target
+      // Ensure ID cannot be changed for an existing target
       throw new ProxyError(
         `Cannot use '${id}' as the ID for the proxy because another proxy for the same target already exists with the ID '${currentId}'`,
         proxy,
@@ -175,21 +156,19 @@ class Nexo extends NexoEmitter {
   }
 
   /**
-   * Allows to create new proxy objects.
+   * Creates a new proxy object or retrieves an existing one with the specified target.
    *
    * @remarks
-   * Proxies can be created with or without a target.
-   * {@link Nexo} and {@link ProxyWrapper} emit a 'proxy' {@link NexoEvent} every time a new proxy is created.
+   * Proxies can be created with or without a target. If a target is provided, it will be used as the proxy target.
+   * The method will emit a `proxy` event every time a new proxy is created.
    *
    * @example
-   * ```ts
+   * // Creating a new proxy
    * const nexo = new Nexo();
    * const proxy = nexo.create();
-   * ```
    *
-   * @param target - An optional object that will be used as the proxy target
+   * @param target - An optional target object for the proxy
    * @returns A new proxy object
-   *
    */
   create(target?: nx.Traceable): nx.Proxy {
     return getProxy(this, target);
