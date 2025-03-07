@@ -39,6 +39,8 @@ jobs:
     name: Docs Check
     uses: ./.github/workflows/docs-check.yml
     secrets: inherit
+    needs:
+      - release
 
   build_docs:
     name: Build Documentation
