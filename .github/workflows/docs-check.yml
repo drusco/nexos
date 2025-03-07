@@ -27,6 +27,10 @@ jobs:
           # Check if any commit includes "docs:" or "docs(anything):"
           if echo "$COMMITS" | grep -E '^docs(\([a-zA-Z0-9_-]+\))?:' > /dev/null; then
             echo "✅ New commits for docs found."
+            echo "success=true" >> $GITHUB_ENV
+            echo "success=true" >> $GITHUB_OUTPUT
           else
             echo "❌ No commits for docs found."
+            echo "success=false" >> $GITHUB_ENV
+            echo "success=false" >> $GITHUB_OUTPUT
           fi
