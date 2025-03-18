@@ -11,7 +11,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     outputs:
-      success: ${{ steps.set-success.outputs.success }}
+      success: ${{ steps.set_success.outputs.success }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 0
 
       - name: Check for documentation commits
-        id: set-success
+        id: set_success
         run: |
           COMMITS=$(git log --pretty=%s ${{ github.event.before }}..${{ github.sha }} 2>/dev/null || echo "")
 
@@ -31,3 +31,4 @@ jobs:
             echo "❌ No commits for docs found."
             echo "success=false" >> $GITHUB_ENV
             echo "success=false" >> $GITHUB_OUTPUT
+          fi
