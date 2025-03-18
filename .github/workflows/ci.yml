@@ -33,7 +33,7 @@ jobs:
     secrets: inherit
     needs:
       - release
-    if: needs.release.result == 'success'
+    if: success()
 
   docs_check:
     name: Docs Check
@@ -57,4 +57,4 @@ jobs:
     secrets: inherit
     needs:
       - build_docs
-    if: needs.build_docs.result == 'success'
+    if: success()
