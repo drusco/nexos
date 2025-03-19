@@ -20,19 +20,11 @@ jobs:
     secrets: inherit
 
   release:
-    name: Continuous Release
+    name: Release
     uses: ./.github/workflows/release.yml
     secrets: inherit
     needs:
       - version_check
-    if: needs.version_check.outputs.success == 'true'
-
-  test_coverage:
-    name: Upload results to Codecov on Release
-    uses: ./.github/workflows/test.yml
-    secrets: inherit
-    needs:
-      - release
     if: success()
 
   docs_check:
@@ -43,13 +35,21 @@ jobs:
       - release
     if: always()
 
+  test_coverage:
+    name: Upload results to Codecov on Release
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
+    needs:
+      - release
+    if: success()
+
   build_docs:
     name: Build Documentation
     uses: ./.github/workflows/build-docs.yml
     secrets: inherit
     needs:
       - docs_check
-    if: needs.docs_check.outputs.success == 'true'
+    if: success()
 
   publish_docs:
     name: Publish Docs to GitHub Pages
