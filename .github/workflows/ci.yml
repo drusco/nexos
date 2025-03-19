@@ -27,14 +27,6 @@ jobs:
       - version_check
     if: success()
 
-  docs_check:
-    name: Docs Check
-    uses: ./.github/workflows/docs-check.yml
-    secrets: inherit
-    needs:
-      - release
-    if: always()
-
   test_coverage:
     name: Upload results to Codecov on Release
     uses: ./.github/workflows/test.yml
@@ -42,6 +34,14 @@ jobs:
     needs:
       - release
     if: success()
+
+  docs_check:
+    name: Docs Check
+    uses: ./.github/workflows/docs-check.yml
+    secrets: inherit
+    needs:
+      - release
+    if: always()
 
   build_docs:
     name: Build Documentation
