@@ -1,5 +1,1 @@
-if [ -t 0 ]; then
-  exec < /dev/tty && npx cz --hook || true
-else
-  echo "Skipping commit message prompt (non-interactive environment)"
-fi
+exec < /dev/tty && npx cz --hook || true
