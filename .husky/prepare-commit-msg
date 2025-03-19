@@ -1,14 +1,1 @@
-# Try to open /dev/tty and store the result
-exec 3</dev/tty 2>/dev/null
-TTY_AVAILABLE=$?
-
-if [ $TTY_AVAILABLE -eq 0 ]; then
-  # TTY is available, run `npx cz` with TTY access
-  exec < /dev/tty && npx cz --hook || true
-else
-  echo "No TTY found, proceeding without TTY access."
-  npx cz --hook || true
-fi
-
-# Close the file descriptor after use
-exec 3<&-
+exec < /dev/tty && npx cz --hook || true
