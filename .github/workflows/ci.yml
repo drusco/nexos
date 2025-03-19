@@ -18,7 +18,6 @@ jobs:
     name: Version check
     uses: ./.github/workflows/version-check.yml
     secrets: inherit
-    continue-on-error: true
 
   release:
     name: Release
@@ -27,7 +26,6 @@ jobs:
     needs:
       - version_check
     if: ${{ needs.version_check.outcome == 'success' }}
-    continue-on-error: true
 
   test_coverage:
     name: Upload results to Codecov on Release
@@ -36,7 +34,6 @@ jobs:
     needs:
       - release
     if: ${{ needs.release.outcome == 'success' }}
-    continue-on-error: true
 
   docs_check:
     name: Docs Check
@@ -45,7 +42,6 @@ jobs:
     needs:
       - release
     if: success() || failure() # same as '!cancelled()' which allows to cancel the job manually
-    continue-on-error: true
 
   build_docs:
     name: Build Documentation
@@ -54,7 +50,6 @@ jobs:
     needs:
       - docs_check
     if: ${{ needs.docs_check.outcome == 'success' }}
-    continue-on-error: true
 
   publish_docs:
     name: Publish Docs to GitHub Pages
@@ -63,4 +58,3 @@ jobs:
     needs:
       - build_docs
     if: ${{ needs.build_docs.outcome == 'success' }}
-    continue-on-error: true
