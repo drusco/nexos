@@ -43,6 +43,13 @@ jobs:
       - release
     if: success() || failure() # same as '!cancelled()' which allows to cancel the job manually
 
+  debug:
+    name: Debug Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug Job Context
+        run: echo '${{ toJSON(steps) }}'
+
   build_docs:
     name: Build Documentation
     uses: ./.github/workflows/build-docs.yml
