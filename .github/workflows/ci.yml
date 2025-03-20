@@ -51,7 +51,7 @@ jobs:
     if: success() || failure()
     steps:
       - name: Debug Job Context
-        run: echo '${{ toJSON(steps) }}'
+        run: echo '${{ toJSON(needs) }}'
 
   build_docs:
     name: Build Documentation
