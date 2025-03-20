@@ -46,6 +46,9 @@ jobs:
   debug:
     name: Debug Job
     runs-on: ubuntu-latest
+    needs:
+      - docs_check
+    if: success() || failure()
     steps:
       - name: Debug Job Context
         run: echo '${{ toJSON(steps) }}'
