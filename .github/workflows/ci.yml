@@ -25,7 +25,7 @@ jobs:
     secrets: inherit
     needs:
       - version_check
-    if: ${{ needs.version_check.outputs.success == 'true' }}
+    if: ${{ needs.version_check.outputs.success == "true" }}
 
   test_coverage:
     name: Upload results to Codecov on Release
@@ -58,8 +58,9 @@ jobs:
     uses: ./.github/workflows/build-docs.yml
     secrets: inherit
     needs:
+      - release
       - docs_check
-    if: ${{ needs.docs_check.outputs.success }}
+    if: ${{ needs.docs_check.outputs.success == "true" }}
 
   publish_docs:
     name: Publish Docs to GitHub Pages
