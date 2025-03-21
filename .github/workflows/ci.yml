@@ -41,14 +41,14 @@ jobs:
     secrets: inherit
     needs:
       - release
-    if: success() || failure() # Same as '!cancelled()'
+    if: always()
 
   debug_needs:
     name: Debug Needs Context
     runs-on: ubuntu-latest
     needs:
       - docs_check
-    if: success() || failure()
+    if: success() || failure() # Same as '!cancelled()'
     steps:
       - name: Debug Needs Context
         run: echo '${{ toJSON(needs) }}'
