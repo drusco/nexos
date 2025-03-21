@@ -25,7 +25,7 @@ jobs:
     secrets: inherit
     needs:
       - version_check
-    if: ${{ needs.version_check.outputs.success == 'true' }}
+    if: always() && needs.version_check.outputs.success == 'true'
 
   test_coverage:
     name: Upload results to Codecov on Release
@@ -33,7 +33,7 @@ jobs:
     secrets: inherit
     needs:
       - release
-    if: success()
+    if: always() && needs.release.result == 'success'
 
   docs_check:
     name: Docs Check
@@ -42,16 +42,6 @@ jobs:
     needs:
       - release
     if: always()
-
-  debug_needs:
-    name: Debug Needs Context
-    runs-on: ubuntu-latest
-    needs:
-      - docs_check
-    if: always()
-    steps:
-      - name: Debug Needs Context
-        run: echo '${{ toJSON(needs) }}'
 
   build_docs:
     name: Build Documentation
@@ -67,4 +57,14 @@ jobs:
     secrets: inherit
     needs:
       - build_docs
-    if: success()
+    if: always() && needs.build_docs.result == 'success'
+
+  debug_needs:
+    name: Debug Needs Context
+    runs-on: ubuntu-latest
+    needs:
+      - publish_docs
+    if: always()
+    steps:
+      - name: Debug Needs Context
+        run: echo '${{ toJSON(needs) }}'
