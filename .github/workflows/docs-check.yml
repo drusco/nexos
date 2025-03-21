@@ -5,13 +5,13 @@ on:
     outputs:
       success:
         description: "Indicates if new documentation commits were found"
-        value: ${{ jobs.check.outputs.success || 'false' }}
+        value: ${{ jobs.check.outputs.success }}
 
 jobs:
   check:
     runs-on: ubuntu-latest
     outputs:
-      success: ${{ steps.set_success.outputs.success || 'false' }}
+      success: ${{ steps.set_success.outputs.success }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
