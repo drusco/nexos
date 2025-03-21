@@ -5,13 +5,13 @@ on:
     outputs:
       success:
         description: "Indicates if new documentation commits were found"
-        value: ${{ jobs.check.outputs.success }}
+        value: ${{ jobs.check.outputs.success || 'false' }}
 
 jobs:
   check:
     runs-on: ubuntu-latest
     outputs:
-      success: ${{ steps.set_success.outputs.success }}
+      success: ${{ steps.set_success.outputs.success || 'false' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,10 +25,8 @@ jobs:
 
           if echo "$COMMITS" | grep -E '^docs(\([a-zA-Z0-9_-]+\))?:' > /dev/null; then
             echo "✅ New commits for docs found."
-            echo "success=true" >> $GITHUB_ENV
             echo "success=true" >> $GITHUB_OUTPUT
           else
             echo "❌ No commits for docs found."
-            echo "success=false" >> $GITHUB_ENV
             echo "success=false" >> $GITHUB_OUTPUT
           fi
