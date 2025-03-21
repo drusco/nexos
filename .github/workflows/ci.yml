@@ -48,7 +48,6 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - docs_check
-    if: success() || failure() # Same as '!cancelled()'
     steps:
       - name: Debug Needs Context
         run: echo '${{ toJSON(needs) }}'
@@ -59,7 +58,7 @@ jobs:
     secrets: inherit
     needs:
       - docs_check
-    if: ${{ needs.docs_check.outputs.success == 'true' }}
+    if: ${{ needs.docs_check.outputs.success }}
 
   publish_docs:
     name: Publish Docs to GitHub Pages
