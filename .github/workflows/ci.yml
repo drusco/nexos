@@ -25,7 +25,7 @@ jobs:
     secrets: inherit
     needs:
       - version_check
-    if: ${{ needs.version_check.status == 'success' }}
+    if: ${{ needs.version_check.outputs.success == 'true' }}
 
   test_coverage:
     name: Upload results to Codecov on Release
@@ -33,7 +33,7 @@ jobs:
     secrets: inherit
     needs:
       - release
-    if: ${{ needs.release.status == 'success' }}
+    if: success()
 
   docs_check:
     name: Docs Check
@@ -59,7 +59,7 @@ jobs:
     secrets: inherit
     needs:
       - docs_check
-    if: ${{ needs.docs_check.outputs && needs.docs_check.outputs.success == 'true' }}
+    if: ${{ needs.docs_check.outputs.success == 'true' }}
 
   publish_docs:
     name: Publish Docs to GitHub Pages
