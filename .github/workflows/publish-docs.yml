@@ -144,6 +144,9 @@ jobs:
             fi
           fi
 
+      - name: Check versions.json
+        run: cat ./docusaurus/versions.json
+
       - name: Build Docusaurus
         run: npm run build
         working-directory: ./docusaurus
