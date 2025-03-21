@@ -59,7 +59,7 @@ jobs:
     secrets: inherit
     needs:
       - docs_check
-    if: ${{ needs.docs_check.outputs.success == true }}
+    if: ${{ needs.docs_check.outputs.success == 'true' }}
 
   publish_docs:
     name: Publish Docs to GitHub Pages
