@@ -119,28 +119,21 @@ jobs:
       - name: Create versions.json
         run: |
           if [ -n "$PRE_RELEASE_TAG" ]; then
+            # Initialize versions.json with "next" if PRE_RELEASE_TAG exists
             echo '["next"]' > docusaurus/versions.json
             if [ -n "$STABLE_TAGS" ]; then
               # Convert STABLE_TAGS into a JSON array, removing the 'v' prefix from each tag
               STABLE_TAGS_JSON=$(echo "$STABLE_TAGS" | tr ',' '\n' | jq -R . | jq -s 'map(sub("^v"; ""))')
-              # Append the tags, with 'next' as the first item
-              echo "$STABLE_TAGS_JSON" | jq -c '. | ["next"] + .' >> docusaurus/versions.json
+              # Append stable versions after "next"
+              echo "$STABLE_TAGS_JSON" | jq -c '. | ["next"] + .' > docusaurus/versions.json
             fi
           else
             if [ -n "$STABLE_TAGS" ]; then
               # Convert STABLE_TAGS into a JSON array, removing the 'v' prefix
               STABLE_TAGS_JSON=$(echo "$STABLE_TAGS" | tr ',' '\n' | jq -R . | jq -s 'map(sub("^v"; ""))')
-              if [ -n "$PRE_RELEASE_TAG" ]; then
-                echo "$STABLE_TAGS_JSON" | jq -c '. | ["next"] + .' > docusaurus/versions.json
-              else
-                echo "$STABLE_TAGS_JSON" > docusaurus/versions.json
-              fi
+              echo "$STABLE_TAGS_JSON" > docusaurus/versions.json
             else
-              if [ -n "$PRE_RELEASE_TAG" ]; then
-                echo '["next"]' > docusaurus/versions.json
-              else
-                echo '[]' > docusaurus/versions.json
-              fi
+              echo '[]' > docusaurus/versions.json
             fi
           fi
 
