@@ -58,7 +58,6 @@ jobs:
     uses: ./.github/workflows/build-docs.yml
     secrets: inherit
     needs:
-      - release
       - docs_check
     if: ${{ needs.docs_check.outputs.success == 'true' }}
 
