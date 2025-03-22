@@ -49,7 +49,7 @@ jobs:
     secrets: inherit
     needs:
       - docs_check
-    if: always() && needs.docs_check.outputs.success == 'true'
+    if: always() && (needs.docs_check.outputs.success == 'true' || needs.semantic_release.result == 'success')
 
   publish_docs:
     name: Publish Docs to GitHub Pages
