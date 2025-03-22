@@ -27,9 +27,9 @@ jobs:
       - version_check
     if: always() && needs.version_check.outputs.success == 'true'
 
-  test_coverage:
-    name: Upload results to Codecov on Release
-    uses: ./.github/workflows/test.yml
+  unit_tests:
+    name: Run Unit Tests and Upload Coverage to Codecov
+    uses: ./.github/workflows/unit-tests.yml
     secrets: inherit
     needs:
       - release

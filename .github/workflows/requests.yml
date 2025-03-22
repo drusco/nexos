@@ -14,12 +14,12 @@ permissions:
 
 jobs:
   code:
-    name: Code Validation
+    name: Run Code Validation
     uses: ./.github/workflows/code-validation.yml
 
-  tests:
-    name: Test Runner
-    uses: ./.github/workflows/test.yml
+  unit_tests:
+    name: Run Unit Tests
+    uses: ./.github/workflows/unit-tests.yml
     secrets: inherit
     needs:
       - code
