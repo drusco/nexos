@@ -44,7 +44,7 @@ if (versions.includes("next")) {
 if (!versions.length) {
   visibleVersions.push("current");
   versionsMetadata.current = {
-    label: "current",
+    label: "0.0.0-development",
     path: "",
   };
 }

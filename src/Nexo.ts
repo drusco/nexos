@@ -13,10 +13,10 @@ import ProxyError from "./errors/ProxyError.js";
  * This class provides utilities for creating proxies, retrieving existing ones by unique IDs, and interacting with them through event-driven mechanisms.
  *
  * It emits the following events:
- * - `'proxy'`: Fired whenever a new proxy is created.
- * - `'error'`: Fired when an error occurs.
- * - `'proxy.{@link Types.ProxyHandler | handlerName}'`: Fired when any proxy handler function (e.g., `get`, `set`, etc.) is invoked.
- * - `'proxy.error'`: Fired when a proxy operation fails.
+ * - `proxy`: Fired whenever a new proxy is created.
+ * - `error`: Fired when an error occurs.
+ * - `proxy.handler`: Fired when any proxy **{@link Types.ProxyHandler | handler}** function is invoked.
+ * - `proxy.error`: Fired when a proxy operation fails.
  *
  * @example
  * // Example of listening to 'proxy' event every time a new proxy is created.
@@ -42,7 +42,7 @@ class Nexo extends NexoEmitter {
    *
    * @remarks
    * This method wraps a proxy object and allows interaction with the proxy's events and properties.
-   * Proxy-related events follow the format `'proxy.{@link Types.ProxyHandler | handlerName}'`, where the handler name corresponds to one of the standard proxy handler functions such as `apply`, `construct`, `get`, etc.
+   * Proxy-related events follow the format `proxy.handler`, where the **{@link Types.ProxyHandler | handler}** corresponds to one of the standard proxy handler functions such as `apply`, `construct`, `get`, etc.
    *
    * @example
    * // Wrapping an existing proxy and listening to 'proxy.get' event
