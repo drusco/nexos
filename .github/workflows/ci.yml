@@ -19,9 +19,9 @@ jobs:
     uses: ./.github/workflows/version-check.yml
     secrets: inherit
 
-  release:
-    name: Release
-    uses: ./.github/workflows/release.yml
+  semantic_release:
+    name: Run Semantic Release
+    uses: ./.github/workflows/semantic-release.yml
     secrets: inherit
     needs:
       - version_check
@@ -32,15 +32,15 @@ jobs:
     uses: ./.github/workflows/unit-tests.yml
     secrets: inherit
     needs:
-      - release
-    if: always() && needs.release.result == 'success'
+      - semantic_release
+    if: always() && needs.semantic_release.result == 'success'
 
   docs_check:
     name: Docs Check
     uses: ./.github/workflows/docs-check.yml
     secrets: inherit
     needs:
-      - release
+      - semantic_release
     if: always()
 
   build_docs:
