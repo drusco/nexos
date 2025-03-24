@@ -105,7 +105,7 @@ const config: Config = {
         },
         {
           type: "docSidebar",
-          sidebarId: "typedocSidebar",
+          sidebarId: "docs",
           position: "right",
           label: "Docs",
         },
@@ -130,12 +130,15 @@ const config: Config = {
     [
       "docusaurus-plugin-typedoc",
       {
-        out: "./docs",
+        out: "./docs/api",
         entryPoints: ["../src/index.ts"],
         readme: "none",
         tsconfig: "../tsconfig.json",
         watch: process.env.TYPEDOC_WATCH === "true",
-        plugin: ["typedoc-plugin-no-inherit"],
+        plugin: [
+          "typedoc-plugin-no-inherit",
+          "./plugins/typedoc-plugin-hooks.mjs",
+        ],
         githubPages: true,
         entryFileName: "index.md",
         // typedoc-plugin-no-inherit
@@ -143,7 +146,7 @@ const config: Config = {
         // sidebar options
         sidebar: {
           autoConfiguration: true,
-          pretty: false,
+          pretty: true,
         },
       },
     ],
