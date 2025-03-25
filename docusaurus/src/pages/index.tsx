@@ -5,12 +5,8 @@ import Link from "@docusaurus/Link";
 
 export default function Home() {
   const { siteConfig } = useDocusaurusContext();
-  const lastVersion = siteConfig.customFields.latestVersion;
-  let versionPath = lastVersion;
-
-  if (versionPath === "current") {
-    versionPath = "";
-  }
+  const { lastVersion } = siteConfig.customFields;
+  const versionPath = lastVersion === "current" ? "" : lastVersion;
 
   return (
     <Layout title="Welcome!">
