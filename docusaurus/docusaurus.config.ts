@@ -4,12 +4,14 @@ import type * as Preset from "@docusaurus/preset-classic";
 import type { VersionOptions } from "@docusaurus/plugin-content-docs";
 import docVersions from "./versions.json";
 
+const SEMANTIC_VERSION = /^\d+\.\d+\.\d+$/;
+
 const getVersionsMetadata = (
   versions: string[],
 ): { [v: string]: VersionOptions } => {
   const result: { [v: string]: VersionOptions } = {};
   versions.forEach((version) => {
-    const hasPrefix = /^\d+\.\d+\.\d+$/.test(version);
+    const hasPrefix = SEMANTIC_VERSION.test(version);
     result[version] = {
       label: `${hasPrefix ? "v" : ""}${version}`,
       path: version,
@@ -21,10 +23,11 @@ const getVersionsMetadata = (
 const versions: string[] = docVersions;
 const versionsMetadata = getVersionsMetadata(versions);
 
+// At least one version should exist for docs to work
 if (!versions.length) {
   versions.push("current");
   versionsMetadata.current = {
-    label: "0.0.0-development",
+    label: "development",
     path: "",
   };
 }
@@ -55,7 +58,9 @@ const config: Config = {
       {
         docs: {
           includeCurrentVersion: versions.includes("current"),
-          lastVersion: versions[0],
+          lastVersion:
+            versions.find((version) => SEMANTIC_VERSION.test(version)) ||
+            versions[0],
           versions: versionsMetadata,
           sidebarPath: "./sidebars.ts",
         },
