@@ -32,6 +32,9 @@ if (!versions.length) {
   };
 }
 
+const lastVersion =
+  versions.find((version) => SEMANTIC_VERSION.test(version)) || versions[0];
+
 const config: Config = {
   title: "nexos",
   tagline: "Simplifies proxy creation and trap handling using events",
@@ -58,9 +61,7 @@ const config: Config = {
       {
         docs: {
           includeCurrentVersion: versions.includes("current"),
-          lastVersion:
-            versions.find((version) => SEMANTIC_VERSION.test(version)) ||
-            versions[0],
+          lastVersion,
           versions: versionsMetadata,
           sidebarPath: "./sidebars.ts",
         },
@@ -72,7 +73,7 @@ const config: Config = {
   ],
 
   customFields: {
-    latestVersion: versions[0],
+    lastVersion,
   },
 
   themeConfig: {
