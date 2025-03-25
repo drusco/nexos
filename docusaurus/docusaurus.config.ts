@@ -4,45 +4,25 @@ import type * as Preset from "@docusaurus/preset-classic";
 import type { VersionOptions } from "@docusaurus/plugin-content-docs";
 import docVersions from "./versions.json";
 
-const versions: string[] = docVersions;
-
-const reduceVersions = (): string[] => {
-  const result = [];
-
-  versions.forEach((version) => {
-    if (!/^\d+\.\d+\.\d+$/.test(version)) return;
-    result.push(version);
-  });
-
-  return result;
-};
-
 const getVersionsMetadata = (
   versions: string[],
 ): { [v: string]: VersionOptions } => {
   const result: { [v: string]: VersionOptions } = {};
   versions.forEach((version) => {
+    const hasPrefix = /^\d+\.\d+\.\d+$/.test(version);
     result[version] = {
-      label: `v${version}`,
+      label: `${hasPrefix ? "v" : ""}${version}`,
       path: version,
     };
   });
   return result;
 };
 
-const visibleVersions = reduceVersions();
-const versionsMetadata = getVersionsMetadata(visibleVersions);
-
-if (versions.includes("next")) {
-  visibleVersions.push("next");
-  versionsMetadata.next = {
-    label: "@next",
-    path: "next",
-  };
-}
+const versions: string[] = docVersions;
+const versionsMetadata = getVersionsMetadata(versions);
 
 if (!versions.length) {
-  visibleVersions.push("current");
+  versions.push("current");
   versionsMetadata.current = {
     label: "0.0.0-development",
     path: "",
@@ -74,9 +54,8 @@ const config: Config = {
       "classic",
       {
         docs: {
-          includeCurrentVersion: versions.length === 0,
-          onlyIncludeVersions: visibleVersions,
-          lastVersion: visibleVersions[0],
+          includeCurrentVersion: versions.includes("current"),
+          lastVersion: versions[0],
           versions: versionsMetadata,
           sidebarPath: "./sidebars.ts",
         },
@@ -88,7 +67,7 @@ const config: Config = {
   ],
 
   customFields: {
-    latestVersion: visibleVersions[0] || "next",
+    latestVersion: versions[0],
   },
 
   themeConfig: {
