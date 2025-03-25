@@ -69,7 +69,7 @@ jobs:
           STABLE_TAGS_TOTAL=3
 
           # Get stable tags (not prereleases) using GitHub CLI
-          STABLE_TAGS=$(gh release list --json tagName,isPrerelease -q '.[] | select(.isPrerelease | not) | .tagName' | head -n $STABLE_TAGS_TOTAL)
+          STABLE_TAGS=$(gh release list --json tagName,isPrerelease -q '.[] | select(.isPrerelease | not) | .tagName' | grep -v '\-next' | head -n $STABLE_TAGS_TOTAL)
 
           # If no tags found, make STABLE_TAGS an empty array
           if [ -z "$STABLE_TAGS" ]; then
