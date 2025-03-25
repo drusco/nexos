@@ -18,6 +18,11 @@
         "tag": "next"
       }
     ],
-    "@semantic-release/github"
+    [
+      "@semantic-release/github",
+      {
+        "prerelease": "${branch.prerelease}"
+      }
+    ]
   ]
 }
