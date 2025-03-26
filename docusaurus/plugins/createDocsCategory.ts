@@ -5,9 +5,8 @@ import {
   SidebarItemConfig,
   SidebarItemCategory,
   SidebarItemDoc,
+  SidebarItem,
 } from "@docusaurus/plugin-content-docs/src/sidebars/types.js";
-
-type SidebarItem = SidebarItemCategory | SidebarItemDoc;
 
 const wordsUpperCase = (text: string): string =>
   text
@@ -39,7 +38,12 @@ const sortSidebarItems = (items: SidebarItem[]): SidebarItem[] => {
 
     if (aIsCategory && !bIsCategory) return -1;
     if (!aIsCategory && bIsCategory) return 1;
-    return (a.label || "").localeCompare(b.label || "");
+
+    if (a.type !== "html" && b.type !== "html") {
+      return (a.label || "").localeCompare(b.label || "");
+    }
+
+    return 0;
   });
 };
 
@@ -68,7 +72,7 @@ const buildSidebarItems = (
 
       folders.push({
         type: "category",
-        label: wordsUpperCase(path.basename(item)),
+        label: wordsUpperCase(path.basename(item).replace(/-/g, " ")),
         ...(hasSubIndexFile
           ? { link: { type: "doc", id: `${dir}/${relativePath}/index` } }
           : {}),
@@ -92,22 +96,51 @@ const buildSidebarItems = (
   return sortSidebarItems([...folders, ...files]);
 };
 
-const createSidebarGroup = (
+const convertItemsToMarkdown = (items: SidebarItem[]): string => {
+  let markdown = "";
+  items.forEach((item) => {
+    if (item.type === "category") {
+      markdown += `\n## ${item.label}`;
+      if (item.items) {
+        markdown += convertItemsToMarkdown(item.items);
+      }
+    } else if (item.type === "doc") {
+      markdown += `\n* [${item.label}](../${item.id})`;
+    }
+  });
+  return markdown;
+};
+
+const createDocsCategory = (
   dir: string,
   options?: { label?: string; collapsed?: boolean; collapsible?: boolean },
 ): SidebarItemConfig => {
+  const label = options?.label ?? wordsUpperCase(path.basename(dir));
   const fullPath = path.resolve(`./docs/${dir}`);
+  const sidebarItems = buildSidebarItems(fullPath, dir, fullPath, {
+    collapsed: options?.collapsed,
+    collapsible: options?.collapsible,
+  });
 
-  const sidebarItems = buildSidebarItems(fullPath, dir, fullPath, options);
-  const hasRootIndex = fs.existsSync(path.join(fullPath, "index.md"));
+  fs.writeFileSync(
+    path.resolve(fullPath, "index.md"),
+    `
+    ---
+    title: ${label}
+    hide_table_of_contents: false
+    ---
+    ${convertItemsToMarkdown(sidebarItems)}
+    `.replace(/^\s+/gm, ""),
+    { encoding: "utf-8" },
+  );
 
   return {
     type: "category",
-    label: wordsUpperCase(path.basename(dir)),
-    ...(hasRootIndex ? { link: { type: "doc", id: `${dir}/index` } } : {}),
+    label: label,
+    link: { type: "doc", id: `${dir}/index` },
     items: sidebarItems,
     ...options,
   };
 };
 
-export default createSidebarGroup;
+export default createDocsCategory;
