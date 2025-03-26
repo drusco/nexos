@@ -1,7 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import { SidebarItemConfig } from "@docusaurus/plugin-content-docs/src/sidebars/types.js";
+import {
+  SidebarItemConfig,
+  SidebarItemCategory,
+  SidebarItemDoc,
+} from "@docusaurus/plugin-content-docs/src/sidebars/types.js";
+
+type SidebarItem = SidebarItemCategory | SidebarItemDoc;
 
 const wordsUpperCase = (text: string): string =>
   text
@@ -26,7 +32,7 @@ const getFileLabel = (filePath: string): string => {
 /**
  * Sorts sidebar items to ensure folders appear before files.
  */
-const sortSidebarItems = (items: SidebarItemConfig[]): SidebarItemConfig[] => {
+const sortSidebarItems = (items: SidebarItem[]): SidebarItem[] => {
   return items.sort((a, b) => {
     const aIsCategory = a.type === "category";
     const bIsCategory = b.type === "category";
@@ -45,9 +51,9 @@ const buildSidebarItems = (
   dir: string,
   fullPath: string,
   options?: { collapsed?: boolean; collapsible?: boolean },
-): SidebarItemConfig[] => {
-  const folders: SidebarItemConfig[] = [];
-  const files: SidebarItemConfig[] = [];
+): SidebarItem[] => {
+  const folders: SidebarItemCategory[] = [];
+  const files: SidebarItemDoc[] = [];
   // let hasIndexFile = false;
 
   fs.readdirSync(currentDir, { encoding: "utf-8" }).forEach((item) => {
