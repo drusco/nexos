@@ -12,7 +12,7 @@
     "dev": "tsc --watch",
     "build": "npm run clean && tsc --project src",
     "clean": "rimraf dist coverage .eslintcache",
-    "type-check": "tsc --project .",
+    "type-check": "tsc --project . && cd docusaurus && npm run typecheck",
     "lint": "eslint --cache --fix .",
     "lint-check": "eslint .",
     "format": "prettier --write --cache .",
