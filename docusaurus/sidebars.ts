@@ -1,5 +1,5 @@
 import type { SidebarsConfig } from "@docusaurus/plugin-content-docs";
-import createSidebarGroup from "./plugins/createSidebarGroup.js";
+import createDocsCategory from "./plugins/createDocsCategory.js";
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
@@ -25,7 +25,7 @@ const sidebars: SidebarsConfig = {
       label: "Quick Start",
       id: "quick-start",
     },
-    createSidebarGroup("examples"),
+    createDocsCategory("examples"),
     {
       type: "category",
       label: "API",
