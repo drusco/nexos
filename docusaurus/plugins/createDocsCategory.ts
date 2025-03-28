@@ -113,33 +113,47 @@ const convertItemsToMarkdown = (items: SidebarItem[]): string => {
 
 const createDocsCategory = (
   dir: string,
-  options?: { label?: string; collapsed?: boolean; collapsible?: boolean },
+  options: {
+    label?: string;
+    collapsed?: boolean;
+    collapsible?: boolean;
+    createIndex?: boolean;
+  } = { createIndex: true },
 ): SidebarItemConfig => {
-  const label = options?.label ?? wordsUpperCase(path.basename(dir));
+  const label = options.label ?? wordsUpperCase(path.basename(dir));
   const fullPath = path.resolve(`./docs/${dir}`);
+  const hasRootIndex = fs.existsSync(path.join(fullPath, "index.md"));
+
   const sidebarItems = buildSidebarItems(fullPath, dir, fullPath, {
-    collapsed: options?.collapsed,
-    collapsible: options?.collapsible,
+    collapsed: options.collapsed,
+    collapsible: options.collapsible,
   });
 
-  fs.writeFileSync(
-    path.resolve(fullPath, "index.md"),
-    `
-    ---
-    title: ${label}
-    hide_table_of_contents: false
-    ---
-    ${convertItemsToMarkdown(sidebarItems)}
-    `.replace(/^\s+/gm, ""),
-    { encoding: "utf-8" },
-  );
+  if (options.createIndex) {
+    const indexContents = `
+      ---
+      title: ${label}
+      hide_table_of_contents: false
+      ---
+      ${convertItemsToMarkdown(sidebarItems)}
+      `;
+
+    fs.writeFileSync(
+      path.resolve(fullPath, "index.md"),
+      indexContents.replace(/^\s+/gm, ""),
+      { encoding: "utf-8" },
+    );
+  }
 
   return {
     type: "category",
-    label: label,
-    link: { type: "doc", id: `${dir}/index` },
     items: sidebarItems,
-    ...options,
+    ...(hasRootIndex ? { link: { type: "doc", id: `${dir}/index` } } : {}),
+    ...{
+      label: label,
+      collapsed: options.collapsed,
+      collapsible: options.collapsible,
+    },
   };
 };
 
