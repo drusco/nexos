@@ -26,16 +26,16 @@ const sidebars: SidebarsConfig = {
       id: "quick-start",
     },
     createDocsCategory("examples"),
-    // {
-    //   type: "category",
-    //   label: "API",
-    //   collapsed: true,
-    //   link: {
-    //     type: "doc",
-    //     id: "api/index",
-    //   },
-    //   items: require("./docs/api/typedoc-sidebar.cjs"),
-    // },
+    {
+      type: "category",
+      label: "API",
+      collapsed: true,
+      link: {
+        type: "doc",
+        id: "api/index",
+      },
+      items: require("./docs/api/typedoc-sidebar.cjs"),
+    },
   ],
 };
 
