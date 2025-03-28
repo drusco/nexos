@@ -36,14 +36,14 @@ const lastVersion =
   versions.find((version) => SEMANTIC_VERSION.test(version)) || versions[0];
 
 const config: Config = {
-  title: "Project",
-  tagline: "Project description",
+  title: "nexos",
+  tagline: "Simplifies proxy creation and trap handling using events",
   favicon: "img/favicon.ico",
   titleDelimiter: "·",
-  url: "http://localhost/",
-  baseUrl: "/project/",
+  url: "https://drusco.github.io/",
+  baseUrl: "/nexos/",
   organizationName: "drusco",
-  projectName: "",
+  projectName: "nexos",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
 
@@ -75,9 +75,9 @@ const config: Config = {
 
   themeConfig: {
     navbar: {
-      title: "Project",
+      title: "Nexos",
       logo: {
-        alt: "logo",
+        alt: "Nexos logo",
         src: "img/logo.svg",
       },
       items: [
@@ -92,7 +92,7 @@ const config: Config = {
           label: "Docs",
         },
         {
-          href: "https://github.com/drusco",
+          href: "https://github.com/drusco/nexos",
           label: "GitHub",
           position: "right",
         },
@@ -113,9 +113,9 @@ const config: Config = {
       "docusaurus-plugin-typedoc",
       {
         out: "./docs/api",
-        entryPoints: [],
+        entryPoints: ["../src/index.ts"],
         readme: "none",
-        tsconfig: "./tsconfig.json",
+        tsconfig: "../tsconfig.json",
         watch: process.env.TYPEDOC_WATCH === "true",
         plugin: [
           "typedoc-plugin-no-inherit",
