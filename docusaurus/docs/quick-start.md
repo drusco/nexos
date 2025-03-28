@@ -24,7 +24,7 @@ console.log(proxy.message); // Logs: Property 'message' accessed.
 With Nexos, we can achieve the same but with event-driven control:
 
 ```javascript
-import Nexo from "nexos";
+import { Nexo } from "nexos";
 
 const nexo = new Nexo();
 const proxy = nexo.create({ message: "Hello, world!" });
