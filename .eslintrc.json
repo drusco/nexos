@@ -18,5 +18,5 @@
   "rules": {
     "@typescript-eslint/no-unused-vars": "error"
   },
-  "ignorePatterns": ["node_modules/*", "dist/*", "coverage/*", "docusaurus/*"]
+  "ignorePatterns": ["node_modules/*", "dist/*", "coverage/*"]
 }
