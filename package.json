@@ -14,7 +14,7 @@
     "clean": "rimraf dist coverage .eslintcache",
     "type-check": "tsc --project . && cd docusaurus && npm run type-check",
     "lint": "eslint --cache --fix .",
-    "lint-check": "eslint .",
+    "lint-check": "eslint --resolve-plugins-relative-to . .",
     "format": "prettier --write --cache .",
     "format-check": "prettier --check .",
     "test": "jest",
