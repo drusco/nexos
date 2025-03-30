@@ -3,8 +3,8 @@ import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
 import type { VersionOptions } from "@docusaurus/plugin-content-docs";
 import docVersions from "./versions.json";
+import projectConfig from "./docusaurus.json";
 
-export const projectName = "nexos";
 const semanticVersion = /^\d+\.\d+\.\d+$/;
 
 const getVersionsMetadata = (
@@ -36,15 +36,14 @@ if (!versions.length) {
 const lastVersion =
   versions.find((version) => semanticVersion.test(version)) || versions[0];
 
+const { projectName } = projectConfig;
+
 const config: Config = {
   title: projectName,
-  tagline: "Simplifies proxy creation and trap handling using events",
+  url: "http://localhost/",
+  baseUrl: `/${projectName}/`,
   favicon: "img/favicon.ico",
   titleDelimiter: "·",
-  url: "https://drusco.github.io/",
-  baseUrl: `/${projectName}/`,
-  organizationName: "drusco",
-  projectName: projectName,
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
 
@@ -135,6 +134,7 @@ const config: Config = {
       },
     ],
   ],
+  ...projectConfig,
 };
 
 export default config;
