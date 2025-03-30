@@ -6,7 +6,7 @@
   "type": "module",
   "author": "Pedro Gallardo",
   "license": "MIT",
-  "homepage": "https://github.com/drusco/nexos",
+  "homepage": "https://drusco.github.io/nexos/",
   "scripts": {
     "prepare": "husky install",
     "dev": "tsc --watch",
