@@ -1,6 +1,6 @@
 const wordsUpperCase = (text: string): string =>
   text
-    .split(" ")
+    .split(/\W+/gm)
     .map((word) =>
       word.length < 3 ? word : word[0].toUpperCase() + word.slice(1),
     )
