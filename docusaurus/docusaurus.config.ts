@@ -4,6 +4,7 @@ import type * as Preset from "@docusaurus/preset-classic";
 import type { VersionOptions } from "@docusaurus/plugin-content-docs";
 import docVersions from "./versions.json";
 import projectConfig from "./docusaurus.json";
+import wordsUpperCase from "./utils/wordsUpperCase";
 
 const semanticVersion = /^\d+\.\d+\.\d+$/;
 
@@ -39,7 +40,7 @@ const lastVersion =
 const { projectName } = projectConfig;
 
 const config: Config = {
-  title: projectName,
+  title: "Nexos Documentation",
   url: "http://localhost/",
   baseUrl: `/${projectName}/`,
   favicon: "img/favicon.ico",
@@ -76,9 +77,9 @@ const config: Config = {
 
   themeConfig: {
     navbar: {
-      title: projectName,
+      title: wordsUpperCase(projectName),
       logo: {
-        alt: "Nexos logo",
+        alt: "logo",
         src: "img/logo.svg",
       },
       items: [

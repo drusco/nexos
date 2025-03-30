@@ -15,10 +15,7 @@ import {
 const getFileLabel = (filePath: string): string => {
   const fileContent = fs.readFileSync(filePath, "utf-8");
   const { data: frontmatter } = matter(fileContent);
-  return (
-    frontmatter.title ||
-    wordsUpperCase(path.basename(filePath, ".md").replace(/-/g, " "))
-  );
+  return frontmatter.title || wordsUpperCase(path.basename(filePath, ".md"));
 };
 
 /**
@@ -65,7 +62,7 @@ const buildSidebarItems = (
 
       folders.push({
         type: "category",
-        label: wordsUpperCase(path.basename(item).replace(/-/g, " ")),
+        label: wordsUpperCase(path.basename(item)),
         ...(hasSubIndexFile
           ? { link: { type: "doc", id: `${dir}/${relativePath}/index` } }
           : {}),
