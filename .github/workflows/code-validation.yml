@@ -39,11 +39,11 @@ jobs:
         run: npm ci
         working-directory: ./docusaurus
 
-      - name: Run typescript check
-        run: npm run type-check
+      - name: Run nexos validation
+        run: |
+          npm run type-check && npm run lint-check && npm run format-check
 
-      - name: Run linter check
-        run: npm run lint-check
-
-      - name: Run formatter check
-        run: npm run format-check
+      - name: Run docusaurus validation
+        working-directory: ./docusaurus
+        run: |
+          npm run type-check && npm run lint-check && npm run format-check

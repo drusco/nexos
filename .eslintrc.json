@@ -18,14 +18,5 @@
   "rules": {
     "@typescript-eslint/no-unused-vars": "error"
   },
-  "ignorePatterns": [
-    "node_modules/*",
-    "dist/*",
-    "coverage/*",
-    "docs/*",
-    ".docusaurus/*",
-    "docusaurus/build/*",
-    "docusaurus/versioned_docs/*",
-    "docusaurus/versioned_sidebars/*"
-  ]
+  "ignorePatterns": ["node_modules/*", "dist/*", "coverage/*", "docusaurus/*"]
 }
