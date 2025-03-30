@@ -4,8 +4,8 @@
 # Production
 /build
 
-# Typedoc
-/docs/api
+# Docs
+/docs
 
 # Generated files
 .docusaurus
