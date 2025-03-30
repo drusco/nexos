@@ -40,7 +40,7 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install root dependencies
-        run: npm install
+        run: npm ci
 
       - name: Cache Docusaurus node_modules
         uses: actions/cache@v4
@@ -51,7 +51,7 @@ jobs:
             ${{ runner.os }}-node-docusaurus-
 
       - name: Install Docusaurus dependencies
-        run: npm install
+        run: npm ci
         working-directory: ./docusaurus
 
       - name: Fetch Latest Pre-Release Tag

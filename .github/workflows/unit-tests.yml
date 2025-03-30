@@ -25,7 +25,7 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Run production tests
         if: github.event.pull_request.base.ref == 'main'
