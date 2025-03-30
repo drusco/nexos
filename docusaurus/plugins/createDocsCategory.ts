@@ -1,20 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+import wordsUpperCase from "../utils/wordsUpperCase.js";
 import {
   SidebarItemConfig,
   SidebarItemCategory,
   SidebarItemDoc,
   SidebarItem,
 } from "@docusaurus/plugin-content-docs/src/sidebars/types.js";
-
-const wordsUpperCase = (text: string): string =>
-  text
-    .split(" ")
-    .map((word) =>
-      word.length < 3 ? word : word[0].toUpperCase() + word.slice(1),
-    )
-    .join(" ");
 
 /**
  * Extracts the label from frontmatter, or falls back to a formatted filename.
