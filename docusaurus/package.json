@@ -3,7 +3,7 @@
   "version": "0.0.0-development",
   "private": true,
   "scripts": {
-    "prepare": "husky install",
+    "prepare": "cd .. && husky install docusaurus/.husky",
     "docusaurus": "docusaurus",
     "start": "TYPEDOC_WATCH=true docusaurus start",
     "build": "docusaurus build",
