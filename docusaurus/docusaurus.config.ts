@@ -4,14 +4,15 @@ import type * as Preset from "@docusaurus/preset-classic";
 import type { VersionOptions } from "@docusaurus/plugin-content-docs";
 import docVersions from "./versions.json";
 
-const SEMANTIC_VERSION = /^\d+\.\d+\.\d+$/;
+export const projectName = "nexos";
+const semanticVersion = /^\d+\.\d+\.\d+$/;
 
 const getVersionsMetadata = (
   versions: string[],
 ): { [v: string]: VersionOptions } => {
   const result: { [v: string]: VersionOptions } = {};
   versions.forEach((version) => {
-    const hasPrefix = SEMANTIC_VERSION.test(version);
+    const hasPrefix = semanticVersion.test(version);
     result[version] = {
       label: `${hasPrefix ? "v" : ""}${version}`,
       path: version,
@@ -33,17 +34,17 @@ if (!versions.length) {
 }
 
 const lastVersion =
-  versions.find((version) => SEMANTIC_VERSION.test(version)) || versions[0];
+  versions.find((version) => semanticVersion.test(version)) || versions[0];
 
 const config: Config = {
-  title: "nexos",
+  title: projectName,
   tagline: "Simplifies proxy creation and trap handling using events",
   favicon: "img/favicon.ico",
   titleDelimiter: "·",
   url: "https://drusco.github.io/",
-  baseUrl: "/nexos/",
+  baseUrl: `/${projectName}/`,
   organizationName: "drusco",
-  projectName: "nexos",
+  projectName: projectName,
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
 
@@ -71,11 +72,12 @@ const config: Config = {
 
   customFields: {
     lastVersion,
+    projectName,
   },
 
   themeConfig: {
     navbar: {
-      title: "Nexos",
+      title: projectName,
       logo: {
         alt: "Nexos logo",
         src: "img/logo.svg",
@@ -92,7 +94,7 @@ const config: Config = {
           label: "Docs",
         },
         {
-          href: "https://github.com/drusco/nexos",
+          href: `https://github.com/drusco/${projectName}`,
           label: "GitHub",
           position: "right",
         },
