@@ -23,8 +23,9 @@ const target = {};
 const proxy = nexo.use("foo", target);
 const proxyByName = nexo.use("foo");
 
-(proxy === proxyByName) === true // true
+(proxy === proxyByName) === true; // true
 ```
+
 ## Updating a proxy target
 
 ```javascript
@@ -39,6 +40,10 @@ const barProxy = nexo.use("foo", bar);
 
 const proxy = nexo.use("foo");
 
-(fooProxy === barProxy) === false // true
-(proxy === barProxy) === true // true
+((fooProxy === barProxy) ===
+  false(
+    // true
+    proxy === barProxy,
+  )) ===
+  true; // true
 ```
