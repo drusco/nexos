@@ -95,7 +95,7 @@ const convertItemsToMarkdown = (items: SidebarItem[]): string => {
         markdown += convertItemsToMarkdown(item.items);
       }
     } else if (item.type === "doc") {
-      markdown += `\n* [${item.label}](../${item.id})`;
+      markdown += `\n* [${item.label}](/docs/${item.id}.md)`;
     }
   });
   return markdown;
