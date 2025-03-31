@@ -13,7 +13,7 @@ const handler = {
   get(target, property) {
     console.log(`Property '${property}' accessed.`);
     return target[property];
-  }
+  },
 };
 
 const proxy = new Proxy(target, handler);
@@ -21,6 +21,7 @@ console.log(proxy.message); // Logs: Property 'message' accessed.
 ```
 
 ## Nexos Proxy
+
 With Nexos, we can achieve the same but with event-driven control:
 
 ```javascript
@@ -37,6 +38,7 @@ console.log(proxy.message); // Logs: Property 'message' accessed.
 ```
 
 ## Listening to Proxy Creation
+
 You can listen to the creation of proxies with the `proxy` event:
 
 ```javascript
