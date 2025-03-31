@@ -28,10 +28,6 @@ const versionsMetadata = getVersionsMetadata(versions);
 // At least one version should exist for docs to work
 if (!versions.length) {
   versions.push("current");
-  versionsMetadata.current = {
-    label: "development",
-    path: "",
-  };
 }
 
 const lastVersion =
@@ -137,5 +133,13 @@ const config: Config = {
   ],
   ...projectConfig,
 };
+
+// Overwrite version metadata for current version
+if (lastVersion === "current") {
+  versionsMetadata.current = {
+    label: "development",
+    path: "",
+  };
+}
 
 export default config;
