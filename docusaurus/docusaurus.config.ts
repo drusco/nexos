@@ -37,7 +37,7 @@ const { projectName } = projectConfig;
 
 const config: Config = {
   title: "Nexos Documentation",
-  url: "http://localhost/",
+  url: "https://drusco.github.io",
   baseUrl: `/${projectName}/`,
   favicon: "img/favicon.ico",
   titleDelimiter: "·",
