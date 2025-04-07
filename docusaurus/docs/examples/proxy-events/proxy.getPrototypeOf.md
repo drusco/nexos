@@ -3,6 +3,8 @@ title: "proxy.getPrototypeOf"
 hide_table_of_contents: false
 ---
 
+Type: [`ProxyEvent`](/docs/api/classes/ProxyEvent)
+
 Fired when the prototype of a proxy is retrieved.
 
 ```javascript

@@ -3,6 +3,8 @@ title: "proxy.setPrototypeOf"
 hide_table_of_contents: false
 ---
 
+Type: [`ProxyEvent`](/docs/api/classes/ProxyEvent)
+
 Fired when changing the prototype with `Object.setPrototypeOf`.
 
 ```javascript
