@@ -15,23 +15,23 @@ This page serves as a complete reference to all `proxy.*` events that can be lis
 
 These are general-purpose proxy events that aren't tied to specific traps:
 
-- [proxy](/docs/examples/proxy-events/proxy) — Emitted whenever a new proxy is created.
-- [proxy.error](/docs/examples/basics/error-handling) — Captures exceptions thrown during proxy operations.
+- [proxy](proxy) — Emitted whenever a new proxy is created.
+- [proxy.error](../basics/error-handling#proxy-specific-errors) — Captures exceptions thrown during proxy operations.
 
 ## Proxy Trap Events
 
 Each Proxy trap in JavaScript corresponds to a `proxy.*` event. You can hook into these to monitor or override behavior at a very granular level:
 
-- [proxy.get](/docs/examples/proxy-events/proxy.get)
-- [proxy.set](/docs/examples/proxy-events/proxy.set)
-- [proxy.has](/docs/examples/proxy-events/proxy.has)
-- [proxy.apply](/docs/examples/proxy-events/proxy.apply)
-- [proxy.construct](/docs/examples/proxy-events/proxy.construct)
-- [proxy.ownKeys](/docs/examples/proxy-events/proxy.ownKeys)
-- [proxy.getOwnPropertyDescriptor](/docs/examples/proxy-events/proxy.getOwnPropertyDescriptor)
-- [proxy.defineProperty](/docs/examples/proxy-events/proxy.defineProperty)
-- [proxy.deleteProperty](/docs/examples/proxy-events/proxy.deleteProperty)
-- [proxy.getPrototypeOf](/docs/examples/proxy-events/proxy.getPrototypeOf)
-- [proxy.setPrototypeOf](/docs/examples/proxy-events/proxy.setPrototypeOf)
-- [proxy.isExtensible](/docs/examples/proxy-events/proxy.isExtensible)
-- [proxy.preventExtensions](/docs/examples/proxy-events/proxy.preventExtensions)
+- [proxy.get](proxy.get)
+- [proxy.set](proxy.set)
+- [proxy.has](proxy.has)
+- [proxy.apply](proxy.apply)
+- [proxy.construct](proxy.construct)
+- [proxy.ownKeys](proxy.ownKeys)
+- [proxy.getOwnPropertyDescriptor](proxy.getOwnPropertyDescriptor)
+- [proxy.defineProperty](proxy.defineProperty)
+- [proxy.deleteProperty](proxy.deleteProperty)
+- [proxy.getPrototypeOf](proxy.getPrototypeOf)
+- [proxy.setPrototypeOf](proxy.setPrototypeOf)
+- [proxy.isExtensible](proxy.isExtensible)
+- [proxy.preventExtensions](proxy.preventExtensions)

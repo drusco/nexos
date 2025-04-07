@@ -3,7 +3,7 @@ title: "proxy.isExtensible"
 hide_table_of_contents: false
 ---
 
-Type: [`ProxyEvent`](/docs/api/classes/ProxyEvent)
+Type: [`ProxyEvent`](../../api/classes/ProxyEvent)
 
 Fired when checking if new properties can be added to the proxy.
 
