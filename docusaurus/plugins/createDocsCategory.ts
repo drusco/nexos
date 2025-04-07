@@ -26,8 +26,8 @@ const sortSidebarItems = (items: SidebarItem[]): SidebarItem[] => {
     const aIsCategory = a.type === "category";
     const bIsCategory = b.type === "category";
 
-    if (aIsCategory && !bIsCategory) return -1;
-    if (!aIsCategory && bIsCategory) return 1;
+    if (aIsCategory && !bIsCategory) return 1;
+    if (!aIsCategory && bIsCategory) return -1;
 
     if (a.type !== "html" && b.type !== "html") {
       return (a.label || "").localeCompare(b.label || "");
