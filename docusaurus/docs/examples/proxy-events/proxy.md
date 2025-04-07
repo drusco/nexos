@@ -3,14 +3,14 @@ title: proxy
 hide_table_of_contents: false
 ---
 
-Type: [`ProxyEvent`](/docs/api/classes/ProxyEvent)
+Type: [`ProxyEvent`](../../api/classes/ProxyEvent)
 
 This event is emitted whenever a new proxy is created. It can only be listened to from the `Nexo` class, not from individual proxies. It provides useful information about the created proxy instance.
 
 ### Data Properties
 
 - **id** `string`: A unique identifier for the proxy instance.
-- **target** [`Traceable`](/docs/api/type-aliases/Traceable): The underlying target object, if applicable. If the proxy was created without a target, this property may be `undefined`.
+- **target** [`Traceable`](../../api/type-aliases/Traceable): The underlying target object, if applicable. If the proxy was created without a target, this property may be `undefined`.
 
 ### Example Usage
 
