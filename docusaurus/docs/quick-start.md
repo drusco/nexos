@@ -105,8 +105,8 @@ This works globally for all proxies managed by the same `Nexo` instance.
 
 ## 🚀 Next Steps
 
-- Dive into specific [proxy events](/docs/examples/proxy-events)
-- Learn how to [handle errors](/docs/examples/basics/error-handling)
-- Explore [more examples](/docs/examples)
+- Dive into specific [proxy events](./examples/proxy-events)
+- Learn how to [handle errors](./examples/basics/error-handling)
+- Explore [more examples](./examples)
 
 Nexos makes proxies more powerful, observable, and testable — perfect for building reactive systems, debugging, and dynamic API layers.

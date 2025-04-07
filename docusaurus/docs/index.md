@@ -7,7 +7,7 @@ hide_table_of_contents: false
 
 Nexos is a powerful JavaScript library that simplifies the creation and management of javascript proxies. It enables dynamic access to proxy handlers through event listeners, making it easy to track and control proxy behavior. Unlike traditional proxies, Nexos allows for proxy creation with or without a target object, offering greater flexibility for various use cases.
 
-Each proxy operation emits structured events, allowing developers to intercept, modify, or log interactions with proxied objects in real-time. Events follow a standardized naming convention: `"proxy.handler"`, where **[handler](/docs/api/type-aliases/ProxyHandler)** corresponds to one of the built-in trap methods defined in the [MDN Proxy API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy). Examples of such events include:
+Each proxy operation emits structured events, allowing developers to intercept, modify, or log interactions with proxied objects in real-time. Events follow a standardized naming convention: `"proxy.handler"`, where **[handler](./api/type-aliases/ProxyHandler)** corresponds to one of the built-in trap methods defined in the [MDN Proxy API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy). Examples of such events include:
 
 - `"proxy.get"` – Triggered when a property is accessed.
 - `"proxy.set"` – Triggered when a property is modified.
