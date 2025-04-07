@@ -3,6 +3,8 @@ title: "proxy.deleteProperty"
 hide_table_of_contents: false
 ---
 
+Type: [`ProxyEvent`](/docs/api/classes/ProxyEvent)
+
 Triggered when a property is deleted from the proxy.
 
 ```javascript
