@@ -3,6 +3,8 @@ title: "proxy.set"
 hide_table_of_contents: false
 ---
 
+Type: [`ProxyEvent`](/docs/api/classes/ProxyEvent)
+
 Fired when a property value is set.
 
 ```javascript

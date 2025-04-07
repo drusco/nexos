@@ -7,7 +7,6 @@ hide_table_of_contents: false
 
 - [Creating a Proxy](examples/basics/creating-new-proxy.md)
 - [Error Handling](examples/basics/error-handling.md)
-- [Proxy Events](examples/basics/proxy-events.md)
 - [Proxy Internals](examples/basics/proxy-object-internals.md)
 
 ## Proxy Events

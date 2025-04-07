@@ -3,6 +3,8 @@ title: "proxy.ownKeys"
 hide_table_of_contents: false
 ---
 
+Type: [`ProxyEvent`](/docs/api/classes/ProxyEvent)
+
 Fired when listing all enumerable property keys.
 
 ```javascript

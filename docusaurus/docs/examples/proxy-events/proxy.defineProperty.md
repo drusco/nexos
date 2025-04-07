@@ -3,6 +3,8 @@ title: "proxy.defineProperty"
 hide_table_of_contents: false
 ---
 
+Type: [`ProxyEvent`](/docs/api/classes/ProxyEvent)
+
 Triggered when `Object.defineProperty` is used.
 
 ```javascript

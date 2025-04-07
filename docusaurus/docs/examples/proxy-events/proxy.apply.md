@@ -3,6 +3,8 @@ title: "proxy.apply"
 hide_table_of_contents: false
 ---
 
+Type: [`ProxyEvent`](/docs/api/classes/ProxyEvent)
+
 Fired when a proxy-wrapped function is invoked.
 
 ```javascript
