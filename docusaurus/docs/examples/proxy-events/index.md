@@ -15,23 +15,23 @@ This page serves as a complete reference to all `proxy.*` events that can be lis
 
 These are general-purpose proxy events that aren't tied to specific traps:
 
-- [proxy](proxy) — Emitted whenever a new proxy is created.
-- [proxy.error](../basics/error-handling#proxy-specific-errors) — Captures exceptions thrown during proxy operations.
+- [proxy](proxy.md) — Emitted whenever a new proxy is created.
+- [proxy.error](../basics/error-handling.md#proxy-specific-errors) — Captures exceptions thrown during proxy operations.
 
 ## Proxy Trap Events
 
 Each Proxy trap in JavaScript corresponds to a `proxy.*` event. You can hook into these to monitor or override behavior at a very granular level:
 
-- [proxy.get](proxy.get)
-- [proxy.set](proxy.set)
-- [proxy.has](proxy.has)
-- [proxy.apply](proxy.apply)
-- [proxy.construct](proxy.construct)
-- [proxy.ownKeys](proxy.ownKeys)
-- [proxy.getOwnPropertyDescriptor](proxy.getOwnPropertyDescriptor)
-- [proxy.defineProperty](proxy.defineProperty)
-- [proxy.deleteProperty](proxy.deleteProperty)
-- [proxy.getPrototypeOf](proxy.getPrototypeOf)
-- [proxy.setPrototypeOf](proxy.setPrototypeOf)
-- [proxy.isExtensible](proxy.isExtensible)
-- [proxy.preventExtensions](proxy.preventExtensions)
+- [proxy.get](proxy.get.md)
+- [proxy.set](proxy.set.md)
+- [proxy.has](proxy.has.md)
+- [proxy.apply](proxy.apply.md)
+- [proxy.construct](proxy.construct.md)
+- [proxy.ownKeys](proxy.ownKeys.md)
+- [proxy.getOwnPropertyDescriptor](proxy.getOwnPropertyDescriptor.md)
+- [proxy.defineProperty](proxy.defineProperty.md)
+- [proxy.deleteProperty](proxy.deleteProperty.md)
+- [proxy.getPrototypeOf](proxy.getPrototypeOf.md)
+- [proxy.setPrototypeOf](proxy.setPrototypeOf.md)
+- [proxy.isExtensible](proxy.isExtensible.md)
+- [proxy.preventExtensions](proxy.preventExtensions.md)
