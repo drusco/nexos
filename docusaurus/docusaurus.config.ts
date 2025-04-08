@@ -39,6 +39,7 @@ const config: Config = {
   title: "Nexos Documentation",
   url: "https://drusco.github.io",
   baseUrl: `/${projectName}/`,
+  trailingSlash: false,
   favicon: "img/favicon.ico",
   titleDelimiter: "·",
   onBrokenLinks: "throw",
