@@ -19,7 +19,7 @@ const getFileLabel = (filePath: string): string => {
 };
 
 /**
- * Sorts sidebar items to ensure folders appear before files.
+ * Sorts sidebar items to ensure files appear before folders.
  */
 const sortSidebarItems = (items: SidebarItem[]): SidebarItem[] => {
   return items.sort((a, b) => {
@@ -90,12 +90,12 @@ const convertItemsToMarkdown = (items: SidebarItem[]): string => {
   let markdown = "";
   items.forEach((item) => {
     if (item.type === "category") {
-      markdown += `\n## ${item.label}`;
+      markdown += `\n## ${item.label}\n\n`;
       if (item.items) {
         markdown += convertItemsToMarkdown(item.items);
       }
     } else if (item.type === "doc") {
-      markdown += `\n* [${item.label}](${item.id}.md)`;
+      markdown += `- [${item.label}](${item.id}.md)\n`;
     }
   });
   return markdown;
@@ -120,19 +120,17 @@ const createDocsCategory = (
   });
 
   if (options.createIndex) {
-    const indexContents = `
-      ---
-      title: ${label}
-      hide_table_of_contents: false
-      ---
-      ${convertItemsToMarkdown(sidebarItems)}
-      `;
+    const indexContents = [
+      "---",
+      `title: ${label}`,
+      "hide_table_of_contents: false",
+      "---",
+      convertItemsToMarkdown(sidebarItems),
+    ].join("\n");
 
-    fs.writeFileSync(
-      path.resolve(fullPath, "index.md"),
-      indexContents.replace(/^\s+/gm, ""),
-      { encoding: "utf-8" },
-    );
+    fs.writeFileSync(path.resolve(fullPath, "index.md"), indexContents, {
+      encoding: "utf-8",
+    });
   }
 
   return {
