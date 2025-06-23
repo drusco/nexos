@@ -2,7 +2,7 @@ import React from "react";
 import Layout from "@theme/Layout";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Link from "@docusaurus/Link";
-import wordsUpperCase from "@site/utils/wordsUpperCase";
+import wordsUpperCase from "@site/utils/words-uppercase";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 
 type customFields = {

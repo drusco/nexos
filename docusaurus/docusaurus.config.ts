@@ -1,9 +1,15 @@
 import type { Config } from "@docusaurus/types";
 import { i18nConfig } from "./config/i18n";
-import { presetsConfig, lastVersion } from "./config/presets";
+import { classicPreset } from "./config/presets/preset-classic";
 import { themeConfig } from "./config/theme";
-import { docusaurusPuginTypedoc } from "./config/plugins/docusaurusPuginTypedoc";
-import { projectName, organizationName, tagline } from "./config/constants";
+import { docusaurusPuginTypedoc } from "./config/plugins/docusaurus-plugin-typedoc";
+import {
+  projectName,
+  organizationName,
+  tagline,
+  lastVersion,
+} from "./config/constants";
+import { docusaurusSearchLocal } from "./config/themes/docusaurus-search-local";
 
 const config: Config = {
   organizationName,
@@ -18,9 +24,10 @@ const config: Config = {
   onBrokenMarkdownLinks: "throw",
 
   i18n: i18nConfig,
-  presets: presetsConfig,
+  presets: [classicPreset],
   themeConfig: themeConfig,
-  plugins: [docusaurusPuginTypedoc],
+  plugins: [docusaurusPuginTypedoc, "docusaurus-plugin-sass"],
+  themes: [docusaurusSearchLocal],
 
   customFields: {
     lastVersion,
