@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import wordsUpperCase from "../utils/wordsUpperCase.js";
+import wordsUpperCase from "../utils/words-uppercase.js";
 import {
   SidebarItemConfig,
   SidebarItemCategory,
