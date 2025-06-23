@@ -1,6 +1,6 @@
 import type * as Preset from "@docusaurus/preset-classic";
 import { themes as prismThemes } from "prism-react-renderer";
-import wordsUpperCase from "../utils/wordsUpperCase";
+import wordsUpperCase from "../utils/words-uppercase";
 import { organizationName, projectName } from "./constants";
 
 export const themeConfig = {
@@ -22,9 +22,14 @@ export const themeConfig = {
         label: "Docs",
       },
       {
-        href: `https://github.com/${organizationName}/${projectName}`,
-        label: "GitHub",
+        type: "search",
         position: "right",
+      },
+      {
+        href: `https://github.com/${organizationName}/${projectName}`,
+        position: "right",
+        className: "header-github-link",
+        "aria-label": "GitHub repository",
       },
     ],
   },
@@ -33,8 +38,8 @@ export const themeConfig = {
     darkTheme: prismThemes.vsDark,
   },
   colorMode: {
-    defaultMode: "dark",
-    disableSwitch: true,
-    respectPrefersColorScheme: false,
+    defaultMode: "light",
+    disableSwitch: false,
+    respectPrefersColorScheme: true,
   },
 } satisfies Preset.ThemeConfig;
