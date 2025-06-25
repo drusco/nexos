@@ -4,7 +4,7 @@ import docVersions from "../versions.json";
 export const projectName = "nexos";
 export const organizationName = "drusco";
 export const tagline =
-  "Simplifies proxy creation and trap handling using events";
+  "Create JavaScript proxies with full event-driven trap control.";
 
 export const versions: string[] = docVersions;
 export const versionsMetadata = getVersionsMetadata(versions);
