@@ -100,6 +100,7 @@ describe("defineProperty", () => {
     const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
+    nexo.on("error", listener);
     nexo.on("proxy.error", listener);
     wrapper.on("proxy.error", listener);
 
