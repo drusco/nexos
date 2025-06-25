@@ -1,10 +1,10 @@
 import type * as nx from "./types/Nexo.js";
 import getProxy from "./utils/getProxy.js";
 import NexoMap from "./utils/NexoMap.js";
-import NexoEmitter from "./events/NexoEmitter.js";
 import ProxyWrapper from "./utils/ProxyWrapper.js";
 import maps from "./utils/maps.js";
 import ProxyError from "./errors/ProxyError.js";
+import NexoEmitter from "./events/NexoEmitter.js";
 
 /**
  * Represents a proxy factory for creating and managing proxy objects.
@@ -28,7 +28,7 @@ import ProxyError from "./errors/ProxyError.js";
  * // The listener will be called when a new proxy is created.
  * const proxy = nexo.create();
  */
-class Nexo implements nx.EventEmitter {
+class Nexo extends NexoEmitter {
   /**
    * A map that stores unique proxy IDs associated with their respective {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakRef | WeakRef} references to the proxy objects.
    *
@@ -36,8 +36,6 @@ class Nexo implements nx.EventEmitter {
    * This map allows quick access to proxies by their unique ID, ensuring that proxies are properly managed and referenced.
    */
   readonly entries: NexoMap<nx.Proxy> = new NexoMap();
-
-  private eventEmitter: nx.EventEmitter;
 
   /**
    * Provides a wrapper for an existing proxy.
@@ -117,77 +115,14 @@ class Nexo implements nx.EventEmitter {
   }
 
   /**
-   * Creates an instance of the class and sets up the internal event emitter.
+   * Initializes the Nexo proxy system and event hooks.
    *
    * @remarks
-   * You can optionally provide a custom event emitter through the config object.
-   * If no emitter is provided, a default `{@link NexoEmitter}` instance is used.
-   *
-   * @param config - Optional configuration object. Can include a custom `{@link Types.EventEmitter | EventEmitter}`.
-   *
-   * @example
-   * const instance = new SomeClass({
-   *   eventEmitter: new CustomEmitter()
-   * });
+   * Inherits all event management behavior from {@link NexoEmitter}.
+   * Use `on()` and `emit()` to subscribe and react to internal proxy lifecycle events.
    */
-  constructor(config: nx.NexoConfig = {}) {
-    this.eventEmitter = config.eventEmitter || new NexoEmitter();
-  }
-
-  /**
-   * Subscribes to a specific event.
-   *
-   * @remarks
-   * The provided listener will be called every time the specified event is emitted.
-   * Listeners are called in the order they were registered.
-   *
-   * @param event - The name of the event to listen to.
-   * @param listener - The callback function to invoke when the event is emitted.
-   *
-   * @example
-   * instance.on('proxy.get', (event) => {
-   *   console.log('Property accessed:', event.key);
-   * });
-   */
-  on(event: string, listener: (...args: nx.ArrayLike) => void): void {
-    this.eventEmitter.on(event, listener);
-  }
-
-  /**
-   * Unsubscribes a previously registered listener from a specific event.
-   *
-   * @remarks
-   * If the listener is not found, nothing happens. Only the exact function reference
-   * used in `on()` will be removed.
-   *
-   * @param event - The name of the event to unsubscribe from.
-   * @param listener - The exact callback function to remove.
-   *
-   * @example
-   * const handler = (event) => console.log('Property set:', event.key);
-   * instance.on('proxy.set', handler);
-   * instance.off('proxy.set', handler);
-   */
-  off(event: string, listener: (...args: nx.ArrayLike) => void): void {
-    this.eventEmitter.off(event, listener);
-  }
-
-  /**
-   * Emits an event, triggering all registered listeners for that event.
-   *
-   * @remarks
-   * This method forwards the call to the internal event emitter.
-   * Any additional arguments are passed to the listener functions.
-   * The execution is synchronous, and listener return values are ignored here.
-   *
-   * @param event - The name of the event to emit.
-   * @param args - Optional arguments to pass to the listeners.
-   *
-   * @example
-   * instance.emit('proxy.get', new NexoEvent({ key: 'username' }));
-   */
-  emit(event: string, ...args: nx.ArrayLike): void {
-    this.eventEmitter.emit(event, ...args);
+  constructor() {
+    super();
   }
 
   /**
@@ -208,7 +143,8 @@ class Nexo implements nx.EventEmitter {
    *
    * @param id - A unique identifier for the proxy
    * @param target - An optional target object to associate with the proxy
-   * @returns A proxy object associated with the provided ID and target
+   * @returns A proxy uniquely associated with the provided ID and optional target.
+   * Use this method to retrieve or memoize proxies tied to stable identifiers.
    */
   use(id: string, target?: nx.Traceable): nx.Proxy {
     if (!target && this.entries.has(id)) {

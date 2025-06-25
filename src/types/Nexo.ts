@@ -36,16 +36,6 @@ export interface Proxy extends FunctionLike {
   toString: any;
 }
 
-export interface NexoConfig {
-  eventEmitter?: EventEmitter;
-}
-
-export interface EventEmitter {
-  on(event: ObjectKey, listener: FunctionLike): unknown;
-  off(event: ObjectKey, listener: FunctionLike): unknown;
-  emit(event: ObjectKey, ...args: ArrayLike): unknown;
-}
-
 export interface Event<Target, Data> {
   target?: Target;
   data?: Data;
