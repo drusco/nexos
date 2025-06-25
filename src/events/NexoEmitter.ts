@@ -6,7 +6,7 @@ import NexoEvent from "./NexoEvent.js";
  *
  * @remarks
  * This class manages event subscriptions and emissions for internal proxy instrumentation.
- * Unlike Node.js `EventEmitter`, this implementation is portable and fully synchronous,
+ * This implementation is portable and fully synchronous,
  * making it suitable for performance-sensitive contexts like JavaScript proxy handlers.
  *
  * ### Emitted Events
