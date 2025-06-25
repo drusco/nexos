@@ -22,6 +22,17 @@ describe("NexoEmitter", () => {
     expect(errorEvent.message).toBe(errorMessage);
   });
 
+  it("Unregisters a listener from the specified event", () => {
+    const nexoEmitter = new NexoEmitter();
+    const listener = jest.fn();
+
+    nexoEmitter.on("test", listener);
+    nexoEmitter.off("test", listener);
+    nexoEmitter.emit("test", new NexoEvent("test"));
+
+    expect(listener).not.toHaveBeenCalled();
+  });
+
   it("Re-emits events that use error as first arguments to the 'error' listeners", () => {
     const nexoEmitter = new NexoEmitter();
     const customError = new Error("oops");
@@ -38,6 +49,18 @@ describe("NexoEmitter", () => {
     expect(error).toBe(customError);
   });
 
+  it("Throws an error when a listener throws and no 'error' listener exists", () => {
+    const nexoEmitter = new NexoEmitter();
+
+    nexoEmitter.on("unhandledError", () => {
+      throw new Error("Error inside listener");
+    });
+
+    expect(() => {
+      nexoEmitter.emit("unhandledError", new NexoEvent("test"));
+    }).toThrow();
+  });
+
   it("Emits NexoEvent with optional arguments", () => {
     const nexoEmitter = new NexoEmitter();
     const nexoEvent = new NexoEvent("test");
@@ -50,7 +73,7 @@ describe("NexoEmitter", () => {
 
     const [event, ...args]: [NexoEvent, ...unknown[]] = listener.mock.lastCall;
 
-    expect(listener).toHaveBeenCalledTimes(2);
+    expect(listener).toHaveBeenCalledTimes(1);
     expect(event).toBe(nexoEvent);
     expect(event.name).toBe("test");
     expect(args).toStrictEqual([1, 2, 3]);
