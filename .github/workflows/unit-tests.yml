@@ -28,13 +28,13 @@ jobs:
         run: npm ci
 
       - name: Run production tests
-        if: github.event.pull_request.base.ref == 'main'
+        if: github.ref_name == 'main'
         env:
           COVERAGE_THRESHOLD: '{"global": {"branches": 100, "functions": 100, "lines": 100, "statements": 100}}'
         run: npx jest --coverage --coverageThreshold="$COVERAGE_THRESHOLD"
 
       - name: Run development tests
-        if: github.event.pull_request.base.ref == 'next'
+        if: github.ref_name == 'next'
         run: npm run test-coverage
 
       - name: Upload results to Codecov
@@ -42,3 +42,4 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/lcov.info
