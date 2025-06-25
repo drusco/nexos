@@ -2,31 +2,37 @@ import type * as nx from "../types/Nexo.js";
 import NexoEvent from "./NexoEvent.js";
 
 /**
- * A custom event emitter for proxy-related events.
+ * A minimal, synchronous event emitter for proxy-related instrumentation.
  *
  * @remarks
- * This class manages event subscriptions and emissions for internal proxy instrumentation.
- * This implementation is portable and fully synchronous,
- * making it suitable for performance-sensitive contexts like JavaScript proxy handlers.
+ * `NexoEmitter` is a purpose-built event manager designed for performance-critical
+ * environments such as JavaScript Proxy traps. It executes listeners synchronously
+ * and supports event cancellation (`defaultPrevented`) and return value capture (`returnValue`).
  *
- * ### Emitted Events
- * - `'error'` — Emitted on unhandled errors.
- * - `'proxy'` — General proxy events.
- * - `'proxy.get'`, `'proxy.set'`, etc. — Specific proxy handler hooks.
+ * This emitter intentionally does **not** support async listener chaining,
+ * and errors thrown by listeners will crash the app unless an `'error'` handler is attached.
  *
- * ### Notes
- * - **Listeners are executed synchronously.** If a listener returns a Promise,
- *   its rejection is not captured automatically — consumers must handle rejections inside listeners.
- * - If an error is passed as the event data and the event is not `'error'`, the same error is also emitted on `'error'`.
+ * ### Usage Notes
+ * - Use `on(event, fn)` to attach listeners.
+ * - Use `off(event, fn)` to remove them.
+ * - Use `emit(event, data)` to dispatch a `NexoEvent` or `Error`.
  *
- * @example
+ * ### Behavior
+ * - If an `Error` is passed to `emit()` (and the event is not `"error"`), it is re-emitted on `"error"`.
+ * - If no `"error"` listener exists, the app will throw to ensure fail-fast behavior.
+ * - If a `NexoEvent` is emitted and `defaultPrevented` is `false`, listeners' `returnValue` will be ignored.
+ *
+ * ### Example
+ * ```ts
  * const emitter = new NexoEmitter();
- * emitter.on('proxy.get', (event) => {
- *   if (event.key === 'secret') event.preventDefault();
+ * emitter.on("proxy.set", (event) => {
+ *   if (event.key === "password") event.preventDefault();
  * });
- * emitter.emit('proxy.get', new NexoEvent({ key: 'secret' }));
+ *
+ * emitter.emit("proxy.set", new NexoEvent({ key: "password" }));
+ * ```
  */
-class NexoEmitter implements nx.EventEmitter {
+class NexoEmitter {
   private listeners = new Map<nx.ObjectKey, Set<nx.FunctionLike>>();
 
   /**
