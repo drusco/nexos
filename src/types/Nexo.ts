@@ -22,9 +22,9 @@ export type ProxyHandler =
   | "preventExtensions"
   | "setPrototypeOf";
 
-export interface Proxy extends FunctionLike {
+export interface Proxy {
   new (...args: ArrayLike): any;
-  [x: ObjectKey]: any;
+  (...args: ArrayLike): any;
   name: any;
   apply: any;
   arguments: any;
@@ -34,6 +34,7 @@ export interface Proxy extends FunctionLike {
   length: any;
   prototype: any;
   toString: any;
+  [key: ObjectKey]: any;
 }
 
 export interface Event<Target, Data> {
