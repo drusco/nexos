@@ -1,3 +1,4 @@
+import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 
@@ -13,7 +14,7 @@ describe("getPrototypeOf", () => {
 
     const prototype = Reflect.getPrototypeOf(proxy);
 
-    const [event]: [ProxyEvent<{ result: object }>] = listener.mock.lastCall;
+    const [event]: [nx.ProxyGetPrototypeOfEvent] = listener.mock.lastCall;
 
     expect(listener).toHaveBeenCalledTimes(2);
     expect(prototype).toBeNull();

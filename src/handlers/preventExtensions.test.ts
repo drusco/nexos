@@ -1,4 +1,4 @@
-import ProxyEvent from "../events/ProxyEvent.js";
+import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 
 describe("preventExtensions", () => {
@@ -21,7 +21,7 @@ describe("preventExtensions", () => {
 
     const result = Reflect.preventExtensions(proxy);
 
-    const [event]: [ProxyEvent<{ result: boolean }>] = listener.mock.lastCall;
+    const [event]: [nx.ProxyPreventExtensionsEvent] = listener.mock.lastCall;
 
     expect(listener).toHaveBeenCalledTimes(2);
     expect(event.target).toBe(proxy);

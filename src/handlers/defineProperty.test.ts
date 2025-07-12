@@ -1,5 +1,5 @@
+import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
-import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
 
 describe("defineProperty", () => {
@@ -15,7 +15,7 @@ describe("defineProperty", () => {
 
     const result = Reflect.defineProperty(proxy, "foo", { value: "bar" });
 
-    const [event]: [ProxyEvent<{ target: object }>] = listener.mock.lastCall;
+    const [event]: [nx.ProxyDefinePropertyEvent] = listener.mock.lastCall;
 
     expect(result).toBe(true);
     expect(listener).toHaveBeenCalledTimes(2);
@@ -36,7 +36,7 @@ describe("defineProperty", () => {
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
 
-    wrapper.on("proxy.defineProperty", (event: ProxyEvent) => {
+    wrapper.on("proxy.defineProperty", (event: nx.ProxyDefinePropertyEvent) => {
       event.preventDefault();
     });
 

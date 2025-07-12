@@ -1,3 +1,4 @@
+import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import ProxyError from "../errors/ProxyError.js";
 import ProxyEvent from "../events/ProxyEvent.js";
@@ -13,7 +14,7 @@ describe("setPrototypeOf", () => {
     wrapper.on("proxy.setPrototypeOf", listener);
 
     Reflect.setPrototypeOf(proxy, Array.prototype);
-    const [event]: [ProxyEvent<{ prototype: object }>] = listener.mock.lastCall;
+    const [event]: [nx.ProxySetPrototypeOfEvent] = listener.mock.lastCall;
 
     expect(listener).toHaveBeenCalledTimes(2);
     expect(event).toBeInstanceOf(ProxyEvent);

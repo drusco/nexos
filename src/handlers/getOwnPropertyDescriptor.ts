@@ -17,6 +17,7 @@ const getOwnPropertyDescriptor = (
 
   new ProxyEvent("getOwnPropertyDescriptor", {
     target: proxy,
+    cancelable: false,
     data: {
       target,
       property,

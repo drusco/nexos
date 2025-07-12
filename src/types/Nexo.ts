@@ -45,6 +45,7 @@ export interface NexoEvent<Target, Data> {
   readonly timestamp: number;
   readonly cancelable: boolean;
   readonly defaultPrevented: boolean;
+  returnValue: unknown;
   preventDefault(): void;
 }
 
@@ -62,9 +63,95 @@ export interface ProxyConstructEvent
     target: Traceable;
     args: ArrayLike;
     result?: Proxy;
+  }> {
+  returnValue: object;
+}
+
+export interface ProxyDefinePropertyEvent
+  extends ProxyEvent<{
+    target: Traceable;
+    property: ObjectKey;
+    descriptor: PropertyDescriptor;
   }> {}
+
+export interface ProxyDeletePropertyEvent
+  extends ProxyEvent<{
+    target: Traceable;
+    property: ObjectKey;
+  }> {}
+
+export interface ProxyGetEvent
+  extends ProxyEvent<{
+    target: Traceable;
+    property: ObjectKey;
+    result: unknown;
+  }> {}
+
+export interface ProxyGetOwnPropertyDescriptorEvent
+  extends ProxyEvent<{
+    target: Traceable;
+    property: ObjectKey;
+    descriptor: PropertyDescriptor;
+  }> {}
+
+export interface ProxyGetPrototypeOfEvent
+  extends ProxyEvent<{
+    target: Traceable;
+    result: object;
+  }> {}
+
+export interface ProxyHasEvent
+  extends ProxyEvent<{
+    target: Traceable;
+    property: ObjectKey;
+    result: boolean;
+  }> {}
+
+export interface ProxyIsExtensibleEvent
+  extends ProxyEvent<{
+    target: Traceable;
+    result: boolean;
+  }> {}
+
+export interface ProxyOwnKeysEvent
+  extends ProxyEvent<{
+    target: Traceable;
+    result: ObjectKey[];
+  }> {}
+
+export interface ProxyPreventExtensionsEvent
+  extends ProxyEvent<{
+    target: Traceable;
+    result: boolean;
+  }> {}
+
+export interface ProxySetEvent
+  extends ProxyEvent<{
+    target: Traceable;
+    property: ObjectKey;
+    value: unknown;
+  }> {}
+
+export interface ProxySetPrototypeOfEvent
+  extends ProxyEvent<{
+    target: Traceable;
+    prototype: object;
+  }> {
+  returnValue: object;
+}
 
 export interface ProxyEvents {
   "proxy.apply": ProxyApplyEvent;
   "proxy.construct": ProxyConstructEvent;
+  "proxy.defineProperty": ProxyDefinePropertyEvent;
+  "proxy.deleteProperty": ProxyDeletePropertyEvent;
+  "proxy.get": ProxyGetEvent;
+  "proxy.getOwnPropertyDescriptor": ProxyGetOwnPropertyDescriptorEvent;
+  "proxy.getPrototypeOf": ProxyGetPrototypeOfEvent;
+  "proxy.has": ProxyHasEvent;
+  "proxy.isExtensible": ProxyIsExtensibleEvent;
+  "proxy.ownKeys": ProxyOwnKeysEvent;
+  "proxy.preventExtensions": ProxyPreventExtensionsEvent;
+  "proxy.set": ProxySetEvent;
+  "proxy.setPrototypeOf": ProxySetPrototypeOfEvent;
 }

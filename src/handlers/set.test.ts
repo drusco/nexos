@@ -15,8 +15,7 @@ describe("set", () => {
 
     proxy.foo = true;
 
-    const [event]: [ProxyEvent<{ property: nx.ObjectKey; value: unknown }>] =
-      listener.mock.lastCall;
+    const [event]: [nx.ProxySetEvent] = listener.mock.lastCall;
 
     expect(listener).toHaveBeenCalledTimes(2);
     expect(event).toBeInstanceOf(ProxyEvent);
@@ -32,7 +31,7 @@ describe("set", () => {
     const proxyWithTarget = nexo.create({});
     const replacement = false;
 
-    nexo.on("proxy.set", (event: ProxyEvent) => {
+    nexo.on("proxy.set", (event: nx.ProxySetEvent) => {
       event.preventDefault();
       return replacement;
     });
@@ -50,7 +49,7 @@ describe("set", () => {
     const proxyWithTarget = nexo.create({});
     const replacement = false;
 
-    nexo.on("proxy.set", (event: ProxyEvent) => {
+    nexo.on("proxy.set", (event: nx.ProxySetEvent) => {
       event.preventDefault();
       return replacement;
     });
