@@ -8,6 +8,7 @@ const preventExtensions = (target: nx.Traceable): boolean => {
 
   new ProxyEvent("preventExtensions", {
     target: proxy,
+    cancelable: false,
     data: { target, result },
   });
 

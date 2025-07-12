@@ -1,5 +1,4 @@
 import type * as nx from "../types/Nexo.js";
-import ProxyEvent from "../events/ProxyEvent.js";
 import Nexo from "../Nexo.js";
 
 describe("ownKeys", () => {
@@ -27,8 +26,7 @@ describe("ownKeys", () => {
 
     Reflect.ownKeys(proxy);
 
-    const [ownKeysEvent]: [ProxyEvent<{ result: nx.ArrayLike }>] =
-      listener.mock.lastCall;
+    const [ownKeysEvent]: [nx.ProxyOwnKeysEvent] = listener.mock.lastCall;
 
     expect(listener).toHaveBeenCalledTimes(2);
     expect(ownKeysEvent.target).toBe(proxy);
