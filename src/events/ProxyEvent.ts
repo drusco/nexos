@@ -42,6 +42,8 @@ class ProxyEvent<Data = unknown>
     // Retrieve the wrapper for the proxy and emit the event
     const wrapper = map.proxies.get(this.target);
 
+    if (!wrapper) return;
+
     // Emit the proxy event to its listeners on the 'nexo' emitter
     wrapper.nexo.emit(this.name, this);
     // Emit the proxy event to its listeners on the wrapper's event emitter
