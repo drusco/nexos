@@ -10,16 +10,19 @@ const apply = (
 ): unknown => {
   const proxy = map.tracables.get(target);
   const { nexo, traceable } = map.proxies.get(proxy);
-  const result = nexo.create();
 
-  const event = new ProxyEvent("apply", {
+  const event = new ProxyEvent<{
+    target: nx.Traceable;
+    thisArg: unknown;
+    args: nx.ArrayLike;
+    result?: nx.Proxy;
+  }>("apply", {
     target: proxy,
     cancelable: true,
     data: {
       target,
       thisArg,
       args,
-      result,
     },
   });
 
@@ -36,6 +39,11 @@ const apply = (
       throw new ProxyError(error.message, proxy);
     }
   }
+
+  // create a new proxy
+  const result = nexo.create();
+  // assign the previous proxy as the function return value
+  event.data.result = result;
 
   return result;
 };

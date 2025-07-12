@@ -54,9 +54,17 @@ export interface ProxyApplyEvent
     target: Traceable;
     thisArg: unknown;
     args: ArrayLike;
-    result: Proxy;
+    result?: Proxy;
+  }> {}
+
+export interface ProxyConstructEvent
+  extends ProxyEvent<{
+    target: Traceable;
+    args: ArrayLike;
+    result?: Proxy;
   }> {}
 
 export interface ProxyEvents {
   "proxy.apply": ProxyApplyEvent;
+  "proxy.construct": ProxyConstructEvent;
 }
