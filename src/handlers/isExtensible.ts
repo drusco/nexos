@@ -8,6 +8,7 @@ const isExtensible = (target: nx.Traceable): boolean => {
 
   new ProxyEvent("isExtensible", {
     target: proxy,
+    cancelable: false,
     data: { target, result: extensible },
   });
 

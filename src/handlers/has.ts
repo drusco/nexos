@@ -11,6 +11,7 @@ const has = (target: nx.Traceable, property: nx.ObjectKey): boolean => {
 
   new ProxyEvent("has", {
     target: proxy,
+    cancelable: false,
     data: { target, property, result },
   });
 

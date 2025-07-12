@@ -11,6 +11,7 @@ const getPrototypeOf = (target: nx.Traceable): object => {
 
   new ProxyEvent("getPrototypeOf", {
     target: proxy,
+    cancelable: false,
     data: { target, result: proto },
   });
 

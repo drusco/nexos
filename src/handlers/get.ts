@@ -5,16 +5,16 @@ import map from "../utils/maps.js";
 const get = (target: nx.Traceable, property: nx.ObjectKey): unknown => {
   const proxy = map.tracables.get(target);
   const { sandbox, nexo } = map.proxies.get(proxy);
-  const targetValue = Reflect.get(target, property);
 
   const result = sandbox
     ? Reflect.has(sandbox, property)
       ? Reflect.get(sandbox, property)
       : nexo.create()
-    : targetValue;
+    : Reflect.get(target, property);
 
   new ProxyEvent("get", {
     target: proxy,
+    cancelable: false,
     data: { target, property, result },
   });
 

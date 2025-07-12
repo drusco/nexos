@@ -1,4 +1,4 @@
-import ProxyEvent from "../events/ProxyEvent.js";
+import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 
 describe("isExtensible", () => {
@@ -33,7 +33,7 @@ describe("isExtensible", () => {
 
     const result = Reflect.isExtensible(proxy);
 
-    const [event]: [ProxyEvent<{ result: boolean }>] = listener.mock.lastCall;
+    const [event]: [nx.ProxyIsExtensibleEvent] = listener.mock.lastCall;
 
     expect(listener).toHaveBeenCalledTimes(2);
     expect(event.target).toBe(proxy);
