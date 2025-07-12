@@ -55,6 +55,13 @@ class NexoEmitter {
    *   console.log('Property set:', event.key);
    * });
    */
+
+  on<K extends keyof nx.ProxyEvents>(
+    event: K,
+    listener: nx.FunctionLike<[nx.ProxyEvents[K]]>,
+  ): this;
+
+  on(event: nx.ObjectKey, listener: nx.FunctionLike): this;
   on(event: nx.ObjectKey, listener: nx.FunctionLike): this {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, new Set());

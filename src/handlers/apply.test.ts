@@ -19,14 +19,7 @@ describe("apply", () => {
     const thisArg = {};
     const result = Reflect.apply(proxy, thisArg, args);
 
-    const [applyEvent]: [
-      ProxyEvent<{
-        target: nx.Traceable;
-        thisArg?: nx.Traceable;
-        args: nx.ArrayLike;
-        result: nx.Proxy;
-      }>,
-    ] = applyListener.mock.lastCall;
+    const [applyEvent]: [nx.ProxyApplyEvent] = applyListener.mock.lastCall;
 
     expect(applyListener).toHaveBeenCalledTimes(2);
     expect(applyEvent).toBeInstanceOf(ProxyEvent);
@@ -51,7 +44,7 @@ describe("apply", () => {
     const wrapper = Nexo.wrap(proxy);
     const expectedResult = "foo";
 
-    wrapper.on("proxy.apply", (event: ProxyEvent) => {
+    wrapper.on("proxy.apply", (event: nx.ProxyApplyEvent) => {
       event.preventDefault();
       return expectedResult;
     });
