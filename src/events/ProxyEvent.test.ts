@@ -3,6 +3,14 @@ import Nexo from "../Nexo.js";
 import ProxyEvent from "./ProxyEvent.js";
 
 describe("ProxyEvent", () => {
+  it("Creates an event with default options", () => {
+    const event = new ProxyEvent("get");
+
+    expect(event.target).toBeUndefined();
+    expect(event.data).toBeUndefined();
+    expect(event.cancelable).toBe(false);
+  });
+
   it("Prefixes 'proxy.' to the proxy handler event names", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
