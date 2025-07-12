@@ -14,8 +14,7 @@ describe("has", () => {
 
     Reflect.has(proxy, "foo");
 
-    const [event]: [ProxyEvent<{ property: nx.ObjectKey; result: boolean }>] =
-      listener.mock.lastCall;
+    const [event]: [nx.ProxyHasEvent] = listener.mock.lastCall;
 
     expect(listener).toHaveBeenCalledTimes(2);
     expect(event).toBeInstanceOf(ProxyEvent);

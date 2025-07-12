@@ -17,8 +17,7 @@ describe("get", () => {
 
     const result = proxy.name;
 
-    const [event]: [ProxyEvent<{ property: nx.ObjectKey; result: unknown }>] =
-      listener.mock.lastCall;
+    const [event]: [nx.ProxyGetEvent] = listener.mock.lastCall;
 
     expect(listener).toHaveBeenCalledTimes(2);
     expect(event).toBeInstanceOf(ProxyEvent);
