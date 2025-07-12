@@ -54,7 +54,7 @@ export interface NexoEvent<Target, Data> {
 export interface ProxyEvent<Data = unknown> extends NexoEvent<Proxy, Data> {}
 export interface ProxyApplyEvent
   extends ProxyEvent<{
-    target: Traceable;
+    target: FunctionLike;
     thisArg: unknown;
     args: ArrayLike;
     result?: Proxy;
@@ -62,7 +62,7 @@ export interface ProxyApplyEvent
 
 export interface ProxyConstructEvent
   extends ProxyEvent<{
-    target: Traceable;
+    target: FunctionLike;
     args: ArrayLike;
     result?: Proxy;
   }> {
