@@ -1,11 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 export type ArrayLike = unknown[];
 export type Traceable = NonNullable<object>;
 export type ObjectKey = string | symbol;
 export type PlainObject = Record<ObjectKey, unknown>;
 export type VoidFunction = (...args: ArrayLike) => void;
-export type FunctionLike = (...args: ArrayLike) => any;
+export type FunctionLike<
+  Args extends ArrayLike = ArrayLike,
+  Return = unknown,
+> = (...args: Args) => Return;
 export type Constructable<T> = new (...args: ArrayLike) => T;
 export type ProxyHandler =
   | "get"
@@ -23,22 +24,39 @@ export type ProxyHandler =
   | "setPrototypeOf";
 
 export interface Proxy {
-  new (...args: ArrayLike): any;
-  (...args: ArrayLike): any;
-  name: any;
-  apply: any;
-  arguments: any;
-  bind: any;
-  call: any;
-  caller: any;
-  length: any;
-  prototype: any;
-  toString: any;
-  [key: ObjectKey]: any;
+  new (...args: ArrayLike): unknown;
+  (...args: ArrayLike): unknown;
+  name: unknown;
+  apply: unknown;
+  arguments: unknown;
+  bind: unknown;
+  call: unknown;
+  caller: unknown;
+  length: unknown;
+  prototype: unknown;
+  toString: unknown;
+  [key: ObjectKey]: unknown;
 }
 
-export interface Event<Target, Data> {
-  target?: Target;
-  data?: Data;
-  cancelable?: boolean;
+export interface NexoEvent<Target, Data> {
+  readonly name: string;
+  readonly data: Data;
+  readonly target: Target;
+  readonly timestamp: number;
+  readonly cancelable: boolean;
+  readonly defaultPrevented: boolean;
+  preventDefault(): void;
+}
+
+export interface ProxyEvent<Data = unknown> extends NexoEvent<Proxy, Data> {}
+export interface ProxyApplyEvent
+  extends ProxyEvent<{
+    target: Traceable;
+    thisArg: unknown;
+    args: ArrayLike;
+    result: Proxy;
+  }> {}
+
+export interface ProxyEvents {
+  "proxy.apply": ProxyApplyEvent;
 }

@@ -13,7 +13,10 @@ import map from "../utils/maps.js";
  * const proxyEvent = new ProxyEvent('get', { target: someProxyInstance, data: someData });
  * // This will emit the 'proxy.get' event to listeners.
  */
-class ProxyEvent<Data = unknown> extends NexoEvent<nx.Proxy, Data> {
+class ProxyEvent<Data = unknown>
+  extends NexoEvent<nx.Proxy, Data>
+  implements nx.ProxyEvent<Data>
+{
   /**
    * Creates an instance of the `ProxyEvent`.
    * This constructor initializes the event with the name prefixed by `proxy.` and emits the event
@@ -26,7 +29,14 @@ class ProxyEvent<Data = unknown> extends NexoEvent<nx.Proxy, Data> {
    * const proxyEvent = new ProxyEvent('get', { target: someProxyInstance, data: someData });
    * // This emits the 'proxy.get' event on the proxy's `nexo` emitter and its wrapper.
    */
-  constructor(name: nx.ProxyHandler, options: nx.Event<nx.Proxy, Data>) {
+  constructor(
+    name: nx.ProxyHandler,
+    options: Partial<{
+      data: Data;
+      target: nx.Proxy;
+      cancelable: boolean;
+    }> = {},
+  ) {
     super(`proxy.${name}`, options);
 
     // Retrieve the wrapper for the proxy and emit the event
