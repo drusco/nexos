@@ -12,7 +12,9 @@ import type * as nx from "../types/Nexo.js";
  * const event = new NexoEvent('proxy', { data: { message: 'New proxy created!' }, cancelable: true });
  * event.preventDefault();
  */
-class NexoEvent<Target = unknown, Data = unknown> {
+class NexoEvent<Target = unknown, Data = unknown>
+  implements nx.NexoEvent<Target, Data>
+{
   /** The name of the event. */
   readonly name: string;
 
@@ -46,12 +48,16 @@ class NexoEvent<Target = unknown, Data = unknown> {
    * @example
    * const event = new NexoEvent('proxy', { data: { message: 'New proxy created!' }, cancelable: true });
    */
-  constructor(name: string, options: nx.Event<Target, Data> = {}) {
-    options = { cancelable: false, ...options };
+  constructor(
+    name: string,
+    options: Partial<{ data: Data; target: Target; cancelable: boolean }> = {},
+  ) {
+    const { data, target, cancelable = false } = options;
+
     this.name = name;
-    this.data = options.data;
-    this.target = options.target;
-    this.cancelable = options.cancelable;
+    this.data = data;
+    this.target = target;
+    this.cancelable = cancelable;
     this.timestamp = Date.now();
     this._defaultPrevented = false;
   }
