@@ -4,7 +4,7 @@ import map from "../utils/maps.js";
 import ProxyError from "../errors/ProxyError.js";
 
 const apply = (
-  target: nx.Traceable,
+  target: nx.FunctionLike,
   thisArg: unknown = undefined,
   args: nx.ArrayLike,
 ): unknown => {
@@ -12,7 +12,7 @@ const apply = (
   const { nexo, traceable } = map.proxies.get(proxy);
 
   const event = new ProxyEvent<{
-    target: nx.Traceable;
+    target: nx.FunctionLike;
     thisArg: unknown;
     args: nx.ArrayLike;
     result?: nx.Proxy;
