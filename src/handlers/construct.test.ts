@@ -1,7 +1,6 @@
 import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import isProxy from "../utils/isProxy.js";
-import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
 
 describe("construct", () => {
@@ -17,9 +16,8 @@ describe("construct", () => {
     const args = ["foo", "bar"];
     const result = Reflect.construct(proxy, args);
 
-    const [constructEvent]: [
-      ProxyEvent<{ target: object; args: nx.ArrayLike; result: nx.Proxy }>,
-    ] = constructListener.mock.lastCall;
+    const [constructEvent]: [nx.ProxyConstructEvent] =
+      constructListener.mock.lastCall;
 
     expect(constructListener).toHaveBeenCalledTimes(2);
     expect(constructEvent.target).toBe(proxy);
@@ -54,7 +52,7 @@ describe("construct", () => {
 
     const expectedResult = {};
 
-    wrapper.on("proxy.construct", (event: ProxyEvent) => {
+    wrapper.on("proxy.construct", (event: nx.ProxyConstructEvent) => {
       event.preventDefault();
       return expectedResult;
     });
@@ -69,7 +67,7 @@ describe("construct", () => {
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
 
-    wrapper.on("proxy.construct", (event: ProxyEvent) => {
+    wrapper.on("proxy.construct", (event: nx.ProxyConstructEvent) => {
       event.preventDefault();
       return "non-object";
     });
