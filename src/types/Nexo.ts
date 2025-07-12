@@ -142,7 +142,11 @@ export interface ProxySetPrototypeOfEvent
   returnValue: object;
 }
 
+export interface ProxyCreateEvent
+  extends ProxyEvent<{ id: string; target?: Traceable }> {}
+
 export interface ProxyEvents {
+  proxy: ProxyCreateEvent;
   "proxy.apply": ProxyApplyEvent;
   "proxy.construct": ProxyConstructEvent;
   "proxy.defineProperty": ProxyDefinePropertyEvent;

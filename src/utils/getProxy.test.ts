@@ -1,5 +1,5 @@
+import type * as nx from "../types/Nexo.js";
 import NexoEvent from "../events/NexoEvent.js";
-import ProxyEvent from "../events/ProxyEvent.js";
 import Nexo from "../Nexo.js";
 import getProxy from "./getProxy.js";
 import map from "./maps.js";
@@ -14,8 +14,7 @@ describe("getProxy", () => {
 
     const proxy = getProxy(nexo, target);
 
-    const [proxyEvent]: [ProxyEvent<{ target: object }>] =
-      listener.mock.lastCall;
+    const [proxyEvent]: [nx.ProxyCreateEvent] = listener.mock.lastCall;
 
     expect(listener).toHaveBeenCalledTimes(1);
     expect(proxyEvent).toBeInstanceOf(NexoEvent);
@@ -32,7 +31,7 @@ describe("getProxy", () => {
     const proxy = getProxy(nexo, undefined, "foo");
     const wrapper = Nexo.wrap(proxy);
 
-    const [proxyEvent]: [ProxyEvent<{ id: string }>] = listener.mock.lastCall;
+    const [proxyEvent]: [nx.ProxyCreateEvent] = listener.mock.lastCall;
 
     expect(wrapper.id).toBe("foo");
     expect(proxyEvent.data.id).toBe("foo");
@@ -47,8 +46,7 @@ describe("getProxy", () => {
 
     const proxy = getProxy(nexo, target);
 
-    const [proxyEvent]: [ProxyEvent<{ target: object }>] =
-      listener.mock.lastCall;
+    const [proxyEvent]: [nx.ProxyCreateEvent] = listener.mock.lastCall;
 
     expect(map.proxies.has(proxy)).toBe(true);
     expect(map.tracables.has(target)).toBe(true);
