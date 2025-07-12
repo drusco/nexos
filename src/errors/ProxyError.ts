@@ -34,9 +34,9 @@ class ProxyError extends Error {
     const wrapper = map.proxies.get(proxy);
 
     // Emit the error event on the 'nexo' event emitter
-    wrapper.nexo.emit("proxy.error", this);
+    wrapper?.nexo?.emit("proxy.error", this);
     // Emit the error event on the wrapper's event emitter
-    wrapper.emit("proxy.error", this);
+    wrapper?.emit("proxy.error", this);
   }
 }
 
