@@ -5,6 +5,8 @@ import ProxyWrapper from "./utils/ProxyWrapper.js";
 import maps from "./utils/maps.js";
 import ProxyError from "./errors/ProxyError.js";
 import NexoEmitter from "./events/NexoEmitter.js";
+import isProxy from "./utils/isProxy.js";
+import findProxy from "./utils/findProxy.js";
 
 /**
  * Represents a proxy factory for creating and managing proxy objects.
@@ -58,6 +60,10 @@ class Nexo extends NexoEmitter {
   static wrap(proxy: nx.Proxy): ProxyWrapper {
     return maps.proxies.get(proxy);
   }
+
+  static isProxy = isProxy;
+
+  static findProxy = findProxy;
 
   /**
    * Retrieves the property descriptor for a proxy, considering its sandbox target if applicable.
