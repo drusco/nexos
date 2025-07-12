@@ -7,6 +7,7 @@ import ProxyError from "./errors/ProxyError.js";
 import NexoEmitter from "./events/NexoEmitter.js";
 import isProxy from "./utils/isProxy.js";
 import findProxy from "./utils/findProxy.js";
+import isTraceable from "./utils/isTraceable.js";
 
 /**
  * Represents a proxy factory for creating and managing proxy objects.
@@ -62,8 +63,8 @@ class Nexo extends NexoEmitter {
   }
 
   static isProxy = isProxy;
-
   static findProxy = findProxy;
+  static isTraceable = isTraceable;
 
   /**
    * Retrieves the property descriptor for a proxy, considering its sandbox target if applicable.
