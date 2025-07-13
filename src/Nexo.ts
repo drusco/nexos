@@ -98,7 +98,7 @@ class Nexo extends NexoEmitter {
    * @param proxy - An existing proxy object
    * @returns An array of the proxy object's own property keys, including both strings and symbols
    */
-  keys(proxy: nx.Proxy): nx.ObjectKey[] {
+  ownKeys(proxy: nx.Proxy): nx.ObjectKey[] {
     const { sandbox } = this.wrap(proxy);
     if (sandbox) {
       return Reflect.ownKeys(sandbox);
