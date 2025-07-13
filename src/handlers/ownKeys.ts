@@ -13,6 +13,7 @@ export default function ownKeys(nexoId: symbol) {
     new ProxyEvent("ownKeys", {
       target: proxy,
       cancelable: false,
+      nexoId: nexoId,
       data: { target, result: keys },
     });
 
