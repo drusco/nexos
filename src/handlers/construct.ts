@@ -16,6 +16,7 @@ export default function construct(nexoId: symbol) {
     }>("construct", {
       target: proxy,
       cancelable: true,
+      nexoId: nexoId,
       data: {
         target,
         args,
@@ -30,6 +31,7 @@ export default function construct(nexoId: symbol) {
       throw new ProxyError(
         'Cannot return non-object on "construct" proxy trap',
         proxy,
+        nexoId,
       );
     }
 
@@ -38,7 +40,7 @@ export default function construct(nexoId: symbol) {
       try {
         return Reflect.construct(target, args);
       } catch (error) {
-        throw new ProxyError(error.message, proxy);
+        throw new ProxyError(error.message, proxy, nexoId);
       }
     }
 

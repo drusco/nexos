@@ -15,6 +15,7 @@ export default function set(nexoId: symbol) {
     const event = new ProxyEvent("set", {
       target: proxy,
       cancelable: true,
+      nexoId: nexoId,
       data: { target, property, value },
     });
 
@@ -23,6 +24,7 @@ export default function set(nexoId: symbol) {
         throw new ProxyError(
           `Cannot set property '${String(property)}' on the ${sandbox ? "sandbox" : "target"}`,
           proxy,
+          nexoId,
         );
       }
       return true;
@@ -32,6 +34,7 @@ export default function set(nexoId: symbol) {
       throw new ProxyError(
         `Cannot set property '${String(property)}' on the ${sandbox ? "sandbox" : "target"}`,
         proxy,
+        nexoId,
       );
     }
 

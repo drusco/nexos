@@ -22,7 +22,7 @@ export default function resolveProxy(
   const proxy = findProxy(target, nexoId);
 
   if (!proxy) {
-    throw new Error(`No proxy found for target in current Nexo instance.`);
+    throw new ProxyError(`No proxy found...`, target as nx.Proxy, nexoId);
   }
 
   const wrapper = map.proxies.get(proxy)?.get(nexoId);
@@ -31,6 +31,7 @@ export default function resolveProxy(
     throw new ProxyError(
       `No ProxyWrapper found for proxy in current instance.`,
       proxy,
+      nexoId,
     );
   }
 
