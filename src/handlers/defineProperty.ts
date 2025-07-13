@@ -16,6 +16,7 @@ export default function defineProperty(nexoId: symbol) {
     const event = new ProxyEvent("defineProperty", {
       target: proxy,
       cancelable: extensible,
+      nexoId: nexoId,
       data: {
         target,
         property,
@@ -37,6 +38,7 @@ export default function defineProperty(nexoId: symbol) {
         throw new ProxyError(
           `Cannot define property '${String(property)}' on proxy target"`,
           proxy,
+          nexoId,
         );
       }
       return true;
@@ -52,6 +54,7 @@ export default function defineProperty(nexoId: symbol) {
         throw new ProxyError(
           `Cannot define property '${String(property)}', object is not extensible"`,
           proxy,
+          nexoId,
         );
       }
       return true;
@@ -71,6 +74,7 @@ export default function defineProperty(nexoId: symbol) {
       throw new ProxyError(
         `Cannot define non-configurable property '${String(property)}' that is configurable on the sandbox`,
         proxy,
+        nexoId,
       );
     }
 
@@ -79,6 +83,7 @@ export default function defineProperty(nexoId: symbol) {
       throw new ProxyError(
         `Cannot define non-configurable property '${String(property)}' because it does not exist on the sandbox`,
         proxy,
+        nexoId,
       );
     }
 
@@ -87,6 +92,7 @@ export default function defineProperty(nexoId: symbol) {
       throw new ProxyError(
         `Cannot define property '${String(property)}' on proxy sandbox"`,
         proxy,
+        nexoId,
       );
     }
 

@@ -172,6 +172,7 @@ class Nexo extends NexoEmitter {
       throw new ProxyError(
         `Cannot use '${id}' as the ID for the proxy because another proxy for the same target already exists with the ID '${currentId}'`,
         proxy,
+        this.id,
       );
     }
 

@@ -13,6 +13,7 @@ export default function setPrototypeOf(nexoId: symbol) {
     const event = new ProxyEvent("setPrototypeOf", {
       target: proxy,
       cancelable: true,
+      nexoId: nexoId,
       data: { target, prototype },
     });
 
@@ -20,6 +21,7 @@ export default function setPrototypeOf(nexoId: symbol) {
       throw new ProxyError(
         "Prototype cannot be changed because the target object is not extensible",
         proxy,
+        nexoId,
       );
     }
 
@@ -32,6 +34,7 @@ export default function setPrototypeOf(nexoId: symbol) {
         throw new ProxyError(
           "Cannot set the new prototype because it is not an object or null",
           proxy,
+          nexoId,
         );
       }
       // Try applying the returned prototype to either the sandbox or the target

@@ -13,6 +13,7 @@ export default function has(nexoId: symbol) {
     new ProxyEvent("has", {
       target: proxy,
       cancelable: false,
+      nexoId: nexoId,
       data: { target, property, result },
     });
 

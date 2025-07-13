@@ -10,6 +10,7 @@ export default function preventExtensions(nexoId: symbol) {
     new ProxyEvent("preventExtensions", {
       target: proxy,
       cancelable: false,
+      nexoId: nexoId,
       data: { target, result },
     });
 

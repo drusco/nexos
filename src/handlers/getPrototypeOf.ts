@@ -12,6 +12,7 @@ export default function getPrototypeOf(nexoId: symbol) {
     new ProxyEvent("getPrototypeOf", {
       target: proxy,
       cancelable: false,
+      nexoId: nexoId,
       data: { target, result: proto },
     });
 

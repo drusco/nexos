@@ -16,6 +16,7 @@ export default function getOwnPropertyDescriptor(nexoId: symbol) {
     new ProxyEvent("getOwnPropertyDescriptor", {
       target: proxy,
       cancelable: false,
+      nexoId: nexoId,
       data: {
         target,
         property,

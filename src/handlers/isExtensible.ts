@@ -10,6 +10,7 @@ export default function isExtensible(nexoId: symbol) {
     new ProxyEvent("isExtensible", {
       target: proxy,
       cancelable: false,
+      nexoId: nexoId,
       data: { target, result: extensible },
     });
 

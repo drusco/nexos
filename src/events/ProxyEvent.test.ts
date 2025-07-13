@@ -37,6 +37,7 @@ describe("ProxyEvent", () => {
 
     new ProxyEvent(handlerName, {
       target: proxy,
+      nexoId: nexo.id,
     });
 
     const [[proxyEvent], [proxyEvt]]: ProxyEvent[][] = callback.mock.calls;

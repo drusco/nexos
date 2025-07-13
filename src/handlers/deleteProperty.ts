@@ -11,6 +11,7 @@ export default function deleteProperty(nexoId: symbol) {
     const event = new ProxyEvent("deleteProperty", {
       target: proxy,
       cancelable: true,
+      nexoId: nexoId,
       data: { target, property },
     });
 
@@ -29,6 +30,7 @@ export default function deleteProperty(nexoId: symbol) {
         throw new ProxyError(
           `Cannot delete property '${String(property)}' because it is non-configurable`,
           proxy,
+          nexoId,
         );
       }
 
@@ -38,6 +40,7 @@ export default function deleteProperty(nexoId: symbol) {
         throw new ProxyError(
           `Cannot delete property '${String(property)}' from proxy sandbox`,
           proxy,
+          nexoId,
         );
       }
     }
@@ -47,6 +50,7 @@ export default function deleteProperty(nexoId: symbol) {
       throw new ProxyError(
         `Cannot delete property '${String(property)}' from proxy target`,
         proxy,
+        nexoId,
       );
     }
 
