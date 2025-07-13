@@ -15,7 +15,7 @@ describe("ownKeys", () => {
   it("Emits an ownKeys event", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = nexo.wrap(proxy);
     const listener = jest.fn();
 
     nexo.on("proxy.ownKeys", listener);

@@ -7,7 +7,7 @@ describe("setPrototypeOf", () => {
   it("Emits an event with custom data", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = nexo.wrap(proxy);
     const listener = jest.fn();
 
     nexo.on("proxy.setPrototypeOf", listener);
@@ -36,7 +36,7 @@ describe("setPrototypeOf", () => {
 
     expect(Reflect.getPrototypeOf(proxy)).toBeNull();
     expect(Object.getPrototypeOf(proxy)).toBeNull();
-    expect(Nexo.getPrototypeOf(proxy)).toBeNull();
+    expect(nexo.getPrototypeOf(proxy)).toBeNull();
   });
 
   it("Cannot replace the prototype with a non-object", () => {
@@ -57,7 +57,7 @@ describe("setPrototypeOf", () => {
     expect(setPrototypeOf).toThrow(ProxyError);
     expect(Reflect.getPrototypeOf(proxy)).toBeNull();
     expect(Object.getPrototypeOf(proxy)).toBeNull();
-    expect(Nexo.getPrototypeOf(proxy)).toBeNull();
+    expect(nexo.getPrototypeOf(proxy)).toBeNull();
   });
 
   it("Can set a new prototype on a proxy without traceable target", () => {
@@ -73,7 +73,7 @@ describe("setPrototypeOf", () => {
 
     expect(Reflect.getPrototypeOf(proxy)).toBeNull();
     expect(Object.getPrototypeOf(proxy)).toBeNull();
-    expect(Nexo.getPrototypeOf(proxy)).toBe(Array.prototype);
+    expect(nexo.getPrototypeOf(proxy)).toBe(Array.prototype);
   });
 
   it("Can set a new prototype on a proxy with traceable target", () => {
@@ -92,7 +92,7 @@ describe("setPrototypeOf", () => {
     expect(Reflect.getPrototypeOf(target)).toBe(Array.prototype);
     expect(Object.getPrototypeOf(proxy)).toBe(Array.prototype);
     expect(Object.getPrototypeOf(target)).toBe(Array.prototype);
-    expect(Nexo.getPrototypeOf(proxy)).toBe(Array.prototype);
+    expect(nexo.getPrototypeOf(proxy)).toBe(Array.prototype);
   });
 
   it("Throws an error when the traceable target is not extensible", () => {
@@ -110,7 +110,7 @@ describe("setPrototypeOf", () => {
     const setSamePrototype = Reflect.setPrototypeOf.bind(
       null,
       proxy,
-      Nexo.getPrototypeOf(proxy),
+      nexo.getPrototypeOf(proxy),
     );
 
     expect(setNewPrototype).toThrow(ProxyError);
