@@ -6,7 +6,7 @@ describe("getPrototypeOf", () => {
   it("Emits an event with custom data", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = nexo.wrap(proxy);
     const listener = jest.fn();
 
     nexo.on("proxy.getPrototypeOf", listener);
@@ -33,7 +33,7 @@ describe("getPrototypeOf", () => {
 
     expect(Reflect.getPrototypeOf(proxy)).toBe(prototype);
     expect(Object.getPrototypeOf(proxy)).toBe(prototype);
-    expect(Nexo.getPrototypeOf(proxy)).toBe(prototype);
+    expect(nexo.getPrototypeOf(proxy)).toBe(prototype);
   });
 
   it("Returns null for proxies without a traceable target", () => {
@@ -42,7 +42,7 @@ describe("getPrototypeOf", () => {
 
     expect(Reflect.getPrototypeOf(proxy)).toBeNull();
     expect(Object.getPrototypeOf(proxy)).toBeNull();
-    expect(Nexo.getPrototypeOf(proxy)).toBeNull();
+    expect(nexo.getPrototypeOf(proxy)).toBeNull();
   });
 
   it("Returns a custom prototype", () => {
@@ -53,7 +53,7 @@ describe("getPrototypeOf", () => {
 
     expect(Reflect.getPrototypeOf(proxy)).toBeNull();
     expect(Object.getPrototypeOf(proxy)).toBeNull();
-    expect(Nexo.getPrototypeOf(proxy)).toBe(Array.prototype);
+    expect(nexo.getPrototypeOf(proxy)).toBe(Array.prototype);
   });
 
   it("Updates the targets current prototype", () => {
@@ -65,6 +65,6 @@ describe("getPrototypeOf", () => {
 
     expect(Reflect.getPrototypeOf(proxy)).toBe(Array.prototype);
     expect(Object.getPrototypeOf(proxy)).toBe(Array.prototype);
-    expect(Nexo.getPrototypeOf(proxy)).toBe(Array.prototype);
+    expect(nexo.getPrototypeOf(proxy)).toBe(Array.prototype);
   });
 });

@@ -28,7 +28,7 @@ describe("ProxyEvent", () => {
   it("Emits the proxy event to the nexo and proxy listeners", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = nexo.wrap(proxy);
     const handlerName: nx.ProxyHandler = "apply";
     const callback = jest.fn();
 

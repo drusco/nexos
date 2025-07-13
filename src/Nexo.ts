@@ -32,6 +32,8 @@ import isTraceable from "./utils/isTraceable.js";
  * const proxy = nexo.create();
  */
 class Nexo extends NexoEmitter {
+  readonly id = Symbol("nexo");
+
   /**
    * A map that stores unique proxy IDs associated with their respective {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakRef | WeakRef} references to the proxy objects.
    *
@@ -51,15 +53,15 @@ class Nexo extends NexoEmitter {
    * // Wrapping an existing proxy and listening to 'proxy.get' event
    * const nexo = new Nexo();
    * const proxy = nexo.create();
-   * const wrapper = Nexo.wrap(proxy);
+   * const wrapper = nexo.wrap(proxy);
    *
    * wrapper.on('proxy.get', (event: ProxyEvent) => {});
    *
    * @param proxy - An existing proxy object
    * @returns A wrapper for the proxy that allows interaction with proxy events
    */
-  static wrap(proxy: nx.Proxy): ProxyWrapper {
-    return maps.proxies.get(proxy);
+  wrap(proxy: nx.Proxy): ProxyWrapper {
+    return maps.proxies.get(proxy)?.get(this.id);
   }
 
   static isProxy = isProxy;
@@ -76,11 +78,11 @@ class Nexo extends NexoEmitter {
    * @param property - The property name (key) to retrieve the descriptor for
    * @returns The property descriptor if the property exists, or `undefined` otherwise
    */
-  static getOwnPropertyDescriptor(
+  getOwnPropertyDescriptor(
     proxy: nx.Proxy,
     property: nx.ObjectKey,
   ): void | PropertyDescriptor {
-    const { sandbox } = Nexo.wrap(proxy);
+    const { sandbox } = this.wrap(proxy);
     if (sandbox) {
       return Reflect.getOwnPropertyDescriptor(sandbox, property);
     }
@@ -96,8 +98,8 @@ class Nexo extends NexoEmitter {
    * @param proxy - An existing proxy object
    * @returns An array of the proxy object's own property keys, including both strings and symbols
    */
-  static keys(proxy: nx.Proxy): nx.ObjectKey[] {
-    const { sandbox } = Nexo.wrap(proxy);
+  keys(proxy: nx.Proxy): nx.ObjectKey[] {
+    const { sandbox } = this.wrap(proxy);
     if (sandbox) {
       return Reflect.ownKeys(sandbox);
     }
@@ -113,8 +115,8 @@ class Nexo extends NexoEmitter {
    * @param proxy - An existing proxy object
    * @returns The prototype of the proxy, which can be an object or `null`
    */
-  static getPrototypeOf(proxy: nx.Proxy): object {
-    const { sandbox } = Nexo.wrap(proxy);
+  getPrototypeOf(proxy: nx.Proxy): object {
+    const { sandbox } = this.wrap(proxy);
     if (sandbox) {
       return Reflect.getPrototypeOf(sandbox);
     }
@@ -163,7 +165,7 @@ class Nexo extends NexoEmitter {
     const proxy = getProxy(this, target, id);
 
     if (!this.entries.has(id)) {
-      const { id: currentId } = Nexo.wrap(proxy);
+      const { id: currentId } = this.wrap(proxy);
       // Ensure ID cannot be changed for an existing target
       throw new ProxyError(
         `Cannot use '${id}' as the ID for the proxy because another proxy for the same target already exists with the ID '${currentId}'`,

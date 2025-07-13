@@ -1,18 +1,18 @@
 import type * as nx from "../types/Nexo.js";
-import map from "../utils/maps.js";
 import ProxyEvent from "../events/ProxyEvent.js";
+import resolveProxy from "../utils/resolveProxy.js";
 
-const preventExtensions = (target: nx.Traceable): boolean => {
-  const proxy = map.tracables.get(target);
-  const result = Reflect.preventExtensions(target);
+export default function preventExtensions(nexoId: symbol) {
+  return (target: nx.Traceable): boolean => {
+    const [proxy] = resolveProxy(target, nexoId);
+    const result = Reflect.preventExtensions(target);
 
-  new ProxyEvent("preventExtensions", {
-    target: proxy,
-    cancelable: false,
-    data: { target, result },
-  });
+    new ProxyEvent("preventExtensions", {
+      target: proxy,
+      cancelable: false,
+      data: { target, result },
+    });
 
-  return result;
-};
-
-export default preventExtensions;
+    return result;
+  };
+}

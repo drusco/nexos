@@ -6,7 +6,7 @@ describe("defineProperty", () => {
   it("Emits a defineProperty event with custom data", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = nexo.wrap(proxy);
 
     const listener = jest.fn();
 
@@ -34,7 +34,7 @@ describe("defineProperty", () => {
   it("Returns false when the event is prevented", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = nexo.wrap(proxy);
 
     wrapper.on("proxy.defineProperty", (event: nx.ProxyDefinePropertyEvent) => {
       event.preventDefault();
@@ -97,7 +97,7 @@ describe("defineProperty", () => {
   it("Cannot redefine property: non writable, non configurable", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = nexo.wrap(proxy);
     const listener = jest.fn();
 
     nexo.on("error", listener);

@@ -29,7 +29,7 @@ describe("getProxy", () => {
     nexo.on("proxy", listener);
 
     const proxy = getProxy(nexo, undefined, "foo");
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = nexo.wrap(proxy);
 
     const [proxyEvent]: [nx.ProxyCreateEvent] = listener.mock.lastCall;
 

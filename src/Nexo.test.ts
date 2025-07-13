@@ -17,7 +17,7 @@ describe("Nexo", () => {
   it("Access the wrapper using the proxy", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = nexo.wrap(proxy);
 
     expect(wrapper).toBeInstanceOf(ProxyWrapper);
   });
@@ -26,7 +26,7 @@ describe("Nexo", () => {
     const nexo = new Nexo();
     const target = {};
     const proxy = nexo.create(target);
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = nexo.wrap(proxy);
 
     expect(wrapper).toBeInstanceOf(ProxyWrapper);
   });
@@ -34,7 +34,7 @@ describe("Nexo", () => {
   it("Creates a new proxy object without a target", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = nexo.wrap(proxy);
 
     expect(isProxy(proxy)).toBe(true);
     expect(typeof proxy).toBe("function");
@@ -51,7 +51,7 @@ describe("Nexo", () => {
     });
 
     const proxy = nexo.create(target);
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = nexo.wrap(proxy);
 
     expect(proxyEvent).toBeInstanceOf(NexoEvent);
     expect(proxyEvent.target).toBe(proxy);
@@ -63,7 +63,7 @@ describe("Nexo", () => {
     const nexo = new Nexo();
     const target = {};
     const proxy = nexo.use("foo", target);
-    const wrapper = Nexo.wrap(proxy);
+    const wrapper = nexo.wrap(proxy);
 
     expect(wrapper.id).toBe("foo");
     expect(nexo.entries.has("foo")).toBe(true);
@@ -78,9 +78,9 @@ describe("Nexo", () => {
     const proxyB = nexo.use("foo", targetB);
     const proxyC = nexo.use("foo");
 
-    const wrapperA = Nexo.wrap(proxyA);
-    const wrapperB = Nexo.wrap(proxyB);
-    const wrapperC = Nexo.wrap(proxyC);
+    const wrapperA = nexo.wrap(proxyA);
+    const wrapperB = nexo.wrap(proxyB);
+    const wrapperC = nexo.wrap(proxyC);
 
     expect(wrapperA.id).toBe("foo");
     expect(wrapperB.id).toBe("foo");
@@ -106,8 +106,8 @@ describe("Nexo", () => {
     const proxy = nexo.create();
     const proxyWithTarget = nexo.create({ foo: "test" });
 
-    const descriptor = Nexo.getOwnPropertyDescriptor(proxy, "foo");
-    const targetDescriptor = Nexo.getOwnPropertyDescriptor(
+    const descriptor = nexo.getOwnPropertyDescriptor(proxy, "foo");
+    const targetDescriptor = nexo.getOwnPropertyDescriptor(
       proxyWithTarget,
       "foo",
     );
@@ -126,8 +126,8 @@ describe("Nexo", () => {
     const proxy = nexo.create();
     const proxyWithTarget = nexo.create({ foo: true, bar: true, baz: true });
 
-    const emptyKeys = Nexo.keys(proxy);
-    const targetKeys = Nexo.keys(proxyWithTarget);
+    const emptyKeys = nexo.keys(proxy);
+    const targetKeys = nexo.keys(proxyWithTarget);
 
     expect(emptyKeys).toStrictEqual([]);
     expect(targetKeys).toStrictEqual(["foo", "bar", "baz"]);
@@ -138,7 +138,7 @@ describe("Nexo", () => {
     const proxy = nexo.create();
 
     proxy.foo = true;
-    const keys = Nexo.keys(proxy);
+    const keys = nexo.keys(proxy);
 
     expect(keys).toStrictEqual(["foo"]);
   });
@@ -148,7 +148,7 @@ describe("Nexo", () => {
     const proxy = nexo.create();
     const proxyArray = nexo.create([]);
 
-    expect(Nexo.getPrototypeOf(proxy)).toBeNull();
-    expect(Nexo.getPrototypeOf(proxyArray)).toBe(Array.prototype);
+    expect(nexo.getPrototypeOf(proxy)).toBeNull();
+    expect(nexo.getPrototypeOf(proxyArray)).toBe(Array.prototype);
   });
 });

@@ -1,24 +1,24 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
-import map from "../utils/maps.js";
+import resolveProxy from "../utils/resolveProxy.js";
 
-const get = (target: nx.Traceable, property: nx.ObjectKey): unknown => {
-  const proxy = map.tracables.get(target);
-  const { sandbox, nexo } = map.proxies.get(proxy);
+export default function get(nexoId: symbol) {
+  return (target: nx.Traceable, property: nx.ObjectKey): unknown => {
+    const [proxy, wrapper] = resolveProxy(target, nexoId);
+    const { sandbox, nexo } = wrapper;
 
-  const result = sandbox
-    ? Reflect.has(sandbox, property)
-      ? Reflect.get(sandbox, property)
-      : nexo.create()
-    : Reflect.get(target, property);
+    const result = sandbox
+      ? Reflect.has(sandbox, property)
+        ? Reflect.get(sandbox, property)
+        : nexo.create()
+      : Reflect.get(target, property);
 
-  new ProxyEvent("get", {
-    target: proxy,
-    cancelable: false,
-    data: { target, property, result },
-  });
+    new ProxyEvent("get", {
+      target: proxy,
+      cancelable: false,
+      data: { target, property, result },
+    });
 
-  return result;
-};
-
-export default get;
+    return result;
+  };
+}

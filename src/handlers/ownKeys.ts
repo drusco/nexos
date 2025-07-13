@@ -1,22 +1,22 @@
 import type * as nx from "../types/Nexo.js";
-import map from "../utils/maps.js";
 import ProxyEvent from "../events/ProxyEvent.js";
+import resolveProxy from "../utils/resolveProxy.js";
 
-const ownKeys = (target: nx.Traceable): nx.ObjectKey[] => {
-  const proxy = map.tracables.get(target);
-  const { sandbox } = map.proxies.get(proxy);
+export default function ownKeys(nexoId: symbol) {
+  return (target: nx.Traceable): nx.ObjectKey[] => {
+    const [proxy, wrapper] = resolveProxy(target, nexoId);
+    const { sandbox } = wrapper;
 
-  const targetKeys = Reflect.ownKeys(target);
-  const keys = sandbox ? Reflect.ownKeys(sandbox) : targetKeys;
+    const targetKeys = Reflect.ownKeys(target);
+    const keys = sandbox ? Reflect.ownKeys(sandbox) : targetKeys;
 
-  new ProxyEvent("ownKeys", {
-    target: proxy,
-    cancelable: false,
-    data: { target, result: keys },
-  });
+    new ProxyEvent("ownKeys", {
+      target: proxy,
+      cancelable: false,
+      data: { target, result: keys },
+    });
 
-  // Return the own keys from the current proxy target
-  return targetKeys;
-};
-
-export default ownKeys;
+    // Return the own keys from the current proxy target
+    return targetKeys;
+  };
+}
