@@ -16,6 +16,7 @@ export default function get(nexoId: symbol) {
     new ProxyEvent("get", {
       target: proxy,
       cancelable: false,
+      nexoId: nexoId,
       data: { target, property, result },
     });
 

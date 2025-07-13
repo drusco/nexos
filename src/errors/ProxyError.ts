@@ -21,26 +21,23 @@ class ProxyError extends Error {
    *
    * @param message - The error message to be associated with this error.
    * @param proxy - The proxy instance that is the source of the error.
+   * @param nexoId - The symbol identifying the Nexo instance context. If provided, it enables optional event emission.
    *
    * @example
    * const proxyError = new ProxyError('An error occurred with the proxy', someProxyInstance);
    * // This will emit 'proxy.error' events on both the proxy's nexo emitter and wrapper.
    */
-  constructor(message: string, proxy: nx.Proxy) {
+  constructor(message: string, proxy: nx.Proxy, nexoId?: symbol) {
     super(message);
     this.proxy = proxy;
 
-    // Retrieve the wrappers for the proxy and emit the error events
-    const wrappers = map.proxies.get(proxy);
+    // Retrieve the wrapper for the proxy
+    const wrapper = map.proxies.get(proxy)?.get(nexoId);
 
-    if (wrappers) {
-      for (const wrapper of wrappers.values()) {
-        // Emit the error event on the 'nexo' event emitter
-        wrapper.nexo?.emit("proxy.error", this);
-        // Emit the error event on the wrapper's event emitter
-        wrapper.emit("proxy.error", this);
-      }
-    }
+    // Emit the error event on the 'nexo' event emitter
+    wrapper?.nexo?.emit("proxy.error", this);
+    // Emit the error event on the wrapper's event emitter
+    wrapper?.emit("proxy.error", this);
   }
 }
 
