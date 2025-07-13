@@ -4,13 +4,15 @@ import map from "./maps.js";
 import findProxy from "./findProxy.js";
 import isTraceable from "./isTraceable.js";
 import NexoEvent from "../events/NexoEvent.js";
-import handlers from "../handlers/index.js";
+import createHandlers from "../handlers/index.js";
 import ProxyWrapper from "./ProxyWrapper.js";
 import Nexo from "../Nexo.js";
 
 const getProxy = (nexo: Nexo, target?: nx.Traceable, id?: string): nx.Proxy => {
+  const instanceId = nexo.id;
+
   // find proxy by target
-  const usableProxy = findProxy(target);
+  const usableProxy = findProxy(target, instanceId);
 
   if (usableProxy) {
     return usableProxy;
@@ -20,7 +22,10 @@ const getProxy = (nexo: Nexo, target?: nx.Traceable, id?: string): nx.Proxy => {
 
   const fn = Object.setPrototypeOf(new Function(), null);
   const proxyTarget = target || fn;
-  const revocable = Proxy.revocable<nx.Proxy>(proxyTarget, handlers);
+  const revocable = Proxy.revocable<nx.Proxy>(
+    proxyTarget,
+    createHandlers(nexo.id),
+  );
   const traceable = isTraceable(target);
   const proxy = revocable.proxy;
 
@@ -34,8 +39,17 @@ const getProxy = (nexo: Nexo, target?: nx.Traceable, id?: string): nx.Proxy => {
     traceable,
   });
 
-  map.proxies.set(proxy, wrapper);
-  map.tracables.set(proxyTarget, proxy);
+  if (!map.proxies.has(proxy)) {
+    map.proxies.set(proxy, new Map());
+  }
+
+  map.proxies.get(proxy).set(instanceId, wrapper);
+
+  if (!map.tracables.has(proxyTarget)) {
+    map.tracables.set(proxyTarget, new Map());
+  }
+
+  map.tracables.get(proxyTarget).set(instanceId, proxy);
 
   if (!traceable) {
     // Remove function related properties for proxies without traceable target

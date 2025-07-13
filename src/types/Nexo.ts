@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export type ArrayLike = unknown[];
-export type Traceable = NonNullable<object>;
+export type Traceable = NonNullable<object | FunctionLike>;
 export type ObjectKey = string | symbol;
 export type PlainObject = Record<ObjectKey, unknown>;
 export type VoidFunction = (...args: ArrayLike) => void;
