@@ -32,7 +32,11 @@ import resolveProxy from "./utils/resolveProxy.js";
  * const proxy = nexo.create();
  */
 class Nexo extends NexoEmitter {
-  readonly id = Symbol("nexo");
+  /**
+   * A unique symbol that identifies this Nexo instance.
+   * Used as the key in per-instance maps.
+   */
+  readonly id: symbol = Symbol("nexo");
 
   /**
    * A map that stores unique proxy IDs associated with their respective {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakRef | WeakRef} references to the proxy objects.
