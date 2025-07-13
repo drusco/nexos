@@ -151,4 +151,71 @@ describe("Nexo", () => {
     expect(nexo.getPrototypeOf(proxy)).toBeNull();
     expect(nexo.getPrototypeOf(proxyArray)).toBe(Array.prototype);
   });
+
+  it("Encapsulates proxies to their original Nexo instaces", () => {
+    const nexoA = new Nexo();
+    const nexoB = new Nexo();
+    const target = () => {};
+
+    const proxyA = nexoA.create(target);
+    const proxyB = nexoB.create(target);
+
+    expect(proxyA).not.toBe(proxyB);
+  });
+
+  it("Reuses proxy for same target within the same Nexo instance", () => {
+    const nexo = new Nexo();
+    const target = () => {};
+
+    const proxy1 = nexo.create(target);
+    const proxy2 = nexo.create(target);
+
+    expect(proxy1).toBe(proxy2);
+  });
+
+  it("Throws when resolving a proxy with a different Nexo instance", () => {
+    const nexoA = new Nexo();
+    const nexoB = new Nexo();
+    const target = () => {};
+
+    const proxy = nexoA.create(target);
+
+    expect(() => Nexo.resolveProxy(proxy, nexoB.id)).toThrow(ProxyError);
+  });
+
+  it("Does not emit events across different Nexo instances", () => {
+    const nexoA = new Nexo();
+    const nexoB = new Nexo();
+    const target = {};
+
+    const proxyA = nexoA.create(target);
+    const proxyB = nexoB.create(target);
+
+    const listenerA = jest.fn();
+    const listenerB = jest.fn();
+
+    nexoA.on("proxy.set", listenerA);
+    nexoB.on("proxy.set", listenerB);
+
+    proxyA.foo = 123;
+    proxyB.bar = 456;
+
+    expect(listenerA).toHaveBeenCalledTimes(1);
+    expect(listenerB).toHaveBeenCalledTimes(1);
+  });
+
+  it("Only revokes proxy in its own instance", () => {
+    const nexoA = new Nexo();
+    const nexoB = new Nexo();
+    const target = {};
+
+    const proxyA = nexoA.create(target);
+    const proxyB = nexoB.create(target);
+
+    const wrapperA = nexoA.wrap(proxyA);
+    wrapperA.revoke();
+
+    expect(() => proxyA.foo).toThrow(); // should throw
+    expect(() => proxyB.foo).not.toThrow(); // should not throw
+  });
 });
