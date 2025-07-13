@@ -39,13 +39,17 @@ class ProxyEvent<Data = unknown>
   ) {
     super(`proxy.${name}`, options);
 
-    // Retrieve the wrapper for the proxy and emit the event
-    const wrapper = map.proxies.get(this.target);
+    // Retrieve the wrappers for the proxy and emit the event
+    const wrappers = map.proxies.get(this.target);
 
-    // Emit the proxy event to its listeners on the 'nexo' emitter
-    wrapper?.nexo?.emit(this.name, this);
-    // Emit the proxy event to its listeners on the wrapper's event emitter
-    wrapper?.emit(this.name, this);
+    if (wrappers) {
+      for (const wrapper of wrappers.values()) {
+        // Emit the proxy event to its listeners on the 'nexo' emitter
+        wrapper.nexo?.emit(this.name, this);
+        // Emit the proxy event to its listeners on the wrapper's event emitter
+        wrapper.emit(this.name, this);
+      }
+    }
   }
 }
 
