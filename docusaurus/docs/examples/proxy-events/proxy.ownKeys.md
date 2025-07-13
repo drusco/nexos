@@ -14,5 +14,5 @@ nexo.on("proxy.ownKeys", () => {
   console.log("Listing keys");
 });
 
-Object.keys(proxy); // Logs: Listing keys
+Reflect.ownKeys(proxy); // Logs: Listing keys
 ```

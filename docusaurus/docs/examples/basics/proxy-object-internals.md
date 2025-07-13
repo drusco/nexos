@@ -49,7 +49,7 @@ import { Nexo } from "nexos";
 
 const nexo = new Nexo();
 const proxy = nexo.create();
-const emptyKeys = Nexo.keys(proxy);
+const emptyKeys = nexo.ownKeys(proxy);
 
 console.log(emptyKeys); // prints []
 ```
@@ -63,7 +63,7 @@ import { Nexo } from "nexos";
 
 const nexo = new Nexo();
 const proxyWithTarget = nexo.create({ foo: true, bar: true, baz: true });
-const targetKeys = Nexo.keys(proxyWithTarget);
+const targetKeys = nexo.ownKeys(proxyWithTarget);
 
 console.log(targetKeys); // prints ["foo", "bar", "baz"]
 ```
@@ -81,7 +81,7 @@ const nexo = new Nexo();
 const proxy = nexo.create();
 
 proxy.foo = true;
-const keys = Nexo.keys(proxy);
+const keys = nexo.ownKeys(proxy);
 
 console.log(keys); // prints ["foo"]
 ```

@@ -126,8 +126,8 @@ describe("Nexo", () => {
     const proxy = nexo.create();
     const proxyWithTarget = nexo.create({ foo: true, bar: true, baz: true });
 
-    const emptyKeys = nexo.keys(proxy);
-    const targetKeys = nexo.keys(proxyWithTarget);
+    const emptyKeys = nexo.ownKeys(proxy);
+    const targetKeys = nexo.ownKeys(proxyWithTarget);
 
     expect(emptyKeys).toStrictEqual([]);
     expect(targetKeys).toStrictEqual(["foo", "bar", "baz"]);
@@ -138,7 +138,7 @@ describe("Nexo", () => {
     const proxy = nexo.create();
 
     proxy.foo = true;
-    const keys = nexo.keys(proxy);
+    const keys = nexo.ownKeys(proxy);
 
     expect(keys).toStrictEqual(["foo"]);
   });
