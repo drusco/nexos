@@ -2,12 +2,12 @@ import type * as nx from "./types/Nexo.js";
 import getProxy from "./utils/getProxy.js";
 import NexoMap from "./utils/NexoMap.js";
 import ProxyWrapper from "./utils/ProxyWrapper.js";
-import maps from "./utils/maps.js";
 import ProxyError from "./errors/ProxyError.js";
 import NexoEmitter from "./events/NexoEmitter.js";
 import isProxy from "./utils/isProxy.js";
 import findProxy from "./utils/findProxy.js";
 import isTraceable from "./utils/isTraceable.js";
+import resolveProxy from "./utils/resolveProxy.js";
 
 /**
  * Represents a proxy factory for creating and managing proxy objects.
@@ -61,12 +61,14 @@ class Nexo extends NexoEmitter {
    * @returns A wrapper for the proxy that allows interaction with proxy events
    */
   wrap(proxy: nx.Proxy): ProxyWrapper {
-    return maps.proxies.get(proxy)?.get(this.id);
+    const [, wrapper] = resolveProxy(proxy, this.id);
+    return wrapper;
   }
 
   static isProxy = isProxy;
   static findProxy = findProxy;
   static isTraceable = isTraceable;
+  static resolveProxy = resolveProxy;
 
   /**
    * Retrieves the property descriptor for a proxy, considering its sandbox target if applicable.
