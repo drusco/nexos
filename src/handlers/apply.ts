@@ -20,6 +20,7 @@ export default function apply(nexoId: symbol) {
     }>("apply", {
       target: proxy,
       cancelable: true,
+      nexoId: nexoId,
       data: {
         target,
         thisArg,
@@ -37,7 +38,7 @@ export default function apply(nexoId: symbol) {
       try {
         return Reflect.apply(target, thisArg, args);
       } catch (error) {
-        throw new ProxyError(error.message, proxy);
+        throw new ProxyError(error.message, proxy, nexoId);
       }
     }
 

@@ -23,7 +23,11 @@ class ProxyEvent<Data = unknown>
    * on the proxy's associated event emitters.
    *
    * @param name - The name of the proxy handler (e.g., 'get', 'set').
-   * @param options - The options for the event, including the `target` proxy and any associated data.
+   * @param options - Options to configure the event (e.g., `data`, `target`, `cancelable`).
+   * @param options.data - The data associated with the event.
+   * @param options.target - The target of the event.
+   * @param options.cancelable - A boolean flag indicating whether the event can be canceled (default: `false`).
+   * @param options.nexoId - The symbol identifying the Nexo instance context. If provided, it enables optional event emission.
    *
    * @example
    * const proxyEvent = new ProxyEvent('get', { target: someProxyInstance, data: someData });
@@ -35,21 +39,18 @@ class ProxyEvent<Data = unknown>
       data: Data;
       target: nx.Proxy;
       cancelable: boolean;
+      nexoId: symbol;
     }> = {},
   ) {
     super(`proxy.${name}`, options);
 
-    // Retrieve the wrappers for the proxy and emit the event
-    const wrappers = map.proxies.get(this.target);
+    // Retrieve the wrapper for the proxy
+    const wrapper = map.proxies.get(this.target)?.get(options.nexoId);
 
-    if (wrappers) {
-      for (const wrapper of wrappers.values()) {
-        // Emit the proxy event to its listeners on the 'nexo' emitter
-        wrapper.nexo?.emit(this.name, this);
-        // Emit the proxy event to its listeners on the wrapper's event emitter
-        wrapper.emit(this.name, this);
-      }
-    }
+    // Emit the proxy event to its listeners on the 'nexo' emitter
+    wrapper?.nexo?.emit(this.name, this);
+    // Emit the proxy event to its listeners on the wrapper's event emitter
+    wrapper?.emit(this.name, this);
   }
 }
 
