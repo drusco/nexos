@@ -26,8 +26,10 @@ export type ProxyHandler =
   | "setPrototypeOf";
 
 export interface Proxy {
-  new (...args: ArrayLike): any;
-  (...args: ArrayLike): any;
+  new <Return extends Traceable = Proxy, Args extends ArrayLike = ArrayLike>(
+    ...args: Args
+  ): Return;
+  <Return = Proxy, Args extends ArrayLike = ArrayLike>(...args: Args): Return;
   name: any;
   apply: any;
   arguments: any;
