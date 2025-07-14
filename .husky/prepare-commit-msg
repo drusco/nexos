@@ -1,3 +1,1 @@
-if [ "$HUSKY" != "0" ] && [ ! -f .git/rebase-merge/message ]; then
-  exec < /dev/tty && npx cz --hook || true
-fi
+exec < /dev/tty && npx cz --hook || true
