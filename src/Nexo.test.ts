@@ -5,6 +5,7 @@ import isProxy from "./utils/isProxy.js";
 import NexoEvent from "./events/NexoEvent.js";
 import ProxyWrapper from "./utils/ProxyWrapper.js";
 import ProxyError from "./errors/ProxyError.js";
+import maps from "./utils/maps.js";
 
 describe("Nexo", () => {
   it("Creates a new nexo object", () => {
@@ -89,16 +90,16 @@ describe("Nexo", () => {
     expect(nexo.entries.has("foo")).toBe(true);
     expect(nexo.entries.size).toBe(1);
     expect(proxyB).not.toBe(proxyA);
-    expect(proxyC).toBe(proxyB);
+    expect((() => proxyC === proxyB)()).toBe(true);
   });
 
-  it("Should not update a proxy name", () => {
+  it("Allows creating proxies for the same target under different ids", () => {
     const nexo = new Nexo();
     const target = {};
-    const proxy = nexo.use("foo", target);
+    const foo = nexo.use("foo", target);
+    const bar = nexo.use("bar", target);
 
-    expect(nexo.use.bind(nexo, "bar", target)).toThrow(ProxyError);
-    expect(nexo.use("bar")).not.toBe(proxy);
+    expect(foo).not.toBe(bar);
   });
 
   it("Get the own property descriptor of a proxy", () => {
@@ -163,24 +164,26 @@ describe("Nexo", () => {
     expect(proxyA).not.toBe(proxyB);
   });
 
-  it("Reuses proxy for same target within the same Nexo instance", () => {
+  it("Creates unique proxies using the same target object", () => {
     const nexo = new Nexo();
     const target = () => {};
 
     const proxy1 = nexo.create(target);
     const proxy2 = nexo.create(target);
 
-    expect(proxy1).toBe(proxy2);
+    expect(proxy1).not.toBe(proxy2);
   });
 
-  it("Throws when resolving a proxy with a different Nexo instance", () => {
-    const nexoA = new Nexo();
-    const nexoB = new Nexo();
+  it("Throws when the wrapper cannot be found", () => {
+    const nexo = new Nexo();
     const target = () => {};
 
-    const proxy = nexoA.create(target);
+    const proxy = nexo.create(target);
 
-    expect(() => Nexo.resolveProxy(proxy, nexoB.id)).toThrow(ProxyError);
+    // force proxy removal from map of proxies
+    maps.proxies.delete(proxy);
+
+    expect(() => nexo.wrap(proxy)).toThrow(ProxyError);
   });
 
   it("Does not emit events across different Nexo instances", () => {

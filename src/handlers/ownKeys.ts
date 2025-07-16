@@ -1,10 +1,9 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
-import resolveProxy from "../utils/resolveProxy.js";
 
-export default function ownKeys(nexoId: symbol) {
+export default function ownKeys(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable): nx.ObjectKey[] => {
-    const [proxy, wrapper] = resolveProxy(target, nexoId);
+    const [proxy, wrapper] = resolveProxy();
     const { sandbox } = wrapper;
 
     const targetKeys = Reflect.ownKeys(target);
@@ -13,7 +12,6 @@ export default function ownKeys(nexoId: symbol) {
     new ProxyEvent("ownKeys", {
       target: proxy,
       cancelable: false,
-      nexoId: nexoId,
       data: { target, result: keys },
     });
 

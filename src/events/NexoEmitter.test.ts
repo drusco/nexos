@@ -61,22 +61,22 @@ describe("NexoEmitter", () => {
     }).toThrow();
   });
 
-  it("Emits NexoEvent with optional arguments", () => {
+  it("Emits a NexoEvent with optional event data", () => {
     const nexoEmitter = new NexoEmitter();
-    const nexoEvent = new NexoEvent("test");
+    const nexoEvent = new NexoEvent("test", { data: true });
     const listener = jest.fn();
 
     nexoEmitter.on("test", listener);
     nexoEmitter.on("test", listener);
 
-    nexoEmitter.emit("test", nexoEvent, 1, 2, 3);
+    nexoEmitter.emit("test", nexoEvent);
 
-    const [event, ...args]: [NexoEvent, ...unknown[]] = listener.mock.lastCall;
+    const [event]: [NexoEvent] = listener.mock.lastCall;
 
     expect(listener).toHaveBeenCalledTimes(1);
     expect(event).toBe(nexoEvent);
     expect(event.name).toBe("test");
-    expect(args).toStrictEqual([1, 2, 3]);
+    expect(event.data).toBe(true);
   });
 
   it("Prevents default behaviors and exposes listener return values to the event", () => {
