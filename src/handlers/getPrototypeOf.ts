@@ -1,10 +1,9 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
-import resolveProxy from "../utils/resolveProxy.js";
 
-export default function getPrototypeOf(nexoId: symbol) {
+export default function getPrototypeOf(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable): object => {
-    const [proxy, wrapper] = resolveProxy(target, nexoId);
+    const [proxy, wrapper] = resolveProxy();
     const { sandbox } = wrapper;
     const prototype = Reflect.getPrototypeOf(target);
     const proto = sandbox ? Reflect.getPrototypeOf(sandbox) : prototype;
@@ -12,7 +11,6 @@ export default function getPrototypeOf(nexoId: symbol) {
     new ProxyEvent("getPrototypeOf", {
       target: proxy,
       cancelable: false,
-      nexoId: nexoId,
       data: { target, result: proto },
     });
 
