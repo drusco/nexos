@@ -5,7 +5,7 @@ describe("getOwnPropertyDescriptor", () => {
   it("Emits an event with custom data", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
     proxy.foo = true;

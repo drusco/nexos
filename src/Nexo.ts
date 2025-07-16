@@ -38,6 +38,9 @@ class Nexo extends NexoEmitter implements nx.Nexo {
    */
   readonly entries: nx.NexoMap<nx.Proxy> = new NexoMap();
 
+  static isProxy = isProxy;
+  static isTraceable = isTraceable;
+
   /**
    * Provides a wrapper for an existing proxy.
    *
@@ -49,7 +52,7 @@ class Nexo extends NexoEmitter implements nx.Nexo {
    * // Wrapping an existing proxy and listening to 'proxy.get' event
    * const nexo = new Nexo();
    * const proxy = nexo.create();
-   * const wrapper = nexo.wrap(proxy);
+   * const wrapper = Nexo.wrap(proxy);
    *
    * wrapper.on('proxy.get', (event: ProxyEvent) => {});
    *
@@ -57,7 +60,7 @@ class Nexo extends NexoEmitter implements nx.Nexo {
    * @returns A wrapper for the proxy that allows interaction with proxy events
    * @throws Error if the wrapper cannot be found.
    */
-  wrap(proxy: nx.Proxy): nx.ProxyWrapper {
+  static wrap(proxy: nx.Proxy): nx.ProxyWrapper {
     const wrapper = maps.proxies.get(proxy);
 
     if (!wrapper) {
@@ -65,9 +68,6 @@ class Nexo extends NexoEmitter implements nx.Nexo {
     }
     return wrapper;
   }
-
-  static isProxy = isProxy;
-  static isTraceable = isTraceable;
 
   /**
    * Retrieves the property descriptor for a proxy, considering its sandbox target if applicable.
@@ -79,11 +79,11 @@ class Nexo extends NexoEmitter implements nx.Nexo {
    * @param property - The property name (key) to retrieve the descriptor for
    * @returns The property descriptor if the property exists, or `undefined` otherwise
    */
-  getOwnPropertyDescriptor(
+  static getOwnPropertyDescriptor(
     proxy: nx.Proxy,
     property: nx.ObjectKey,
   ): void | PropertyDescriptor {
-    const { sandbox } = this.wrap(proxy);
+    const { sandbox } = Nexo.wrap(proxy);
     if (sandbox) {
       return Reflect.getOwnPropertyDescriptor(sandbox, property);
     }
@@ -99,8 +99,8 @@ class Nexo extends NexoEmitter implements nx.Nexo {
    * @param proxy - An existing proxy object
    * @returns An array of the proxy object's own property keys, including both strings and symbols
    */
-  ownKeys(proxy: nx.Proxy): nx.ObjectKey[] {
-    const { sandbox } = this.wrap(proxy);
+  static ownKeys(proxy: nx.Proxy): nx.ObjectKey[] {
+    const { sandbox } = Nexo.wrap(proxy);
     if (sandbox) {
       return Reflect.ownKeys(sandbox);
     }
@@ -116,8 +116,8 @@ class Nexo extends NexoEmitter implements nx.Nexo {
    * @param proxy - An existing proxy object
    * @returns The prototype of the proxy, which can be an object or `null`
    */
-  getPrototypeOf(proxy: nx.Proxy): object {
-    const { sandbox } = this.wrap(proxy);
+  static getPrototypeOf(proxy: nx.Proxy): object {
+    const { sandbox } = Nexo.wrap(proxy);
     if (sandbox) {
       return Reflect.getPrototypeOf(sandbox);
     }
