@@ -1,22 +1,20 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
-import resolveProxy from "../utils/resolveProxy.js";
 
-export default function defineProperty(nexoId: symbol) {
+export default function defineProperty(resolveProxy: nx.resolveProxy) {
   return (
     target: nx.Traceable,
     property: nx.ObjectKey,
     descriptor: PropertyDescriptor,
   ): boolean => {
-    const [proxy, wrapper] = resolveProxy(target, nexoId);
+    const [proxy, wrapper] = resolveProxy();
     const { sandbox } = wrapper;
     const extensible = Object.isExtensible(target);
 
     const event = new ProxyEvent("defineProperty", {
       target: proxy,
       cancelable: extensible,
-      nexoId: nexoId,
       data: {
         target,
         property,
@@ -38,7 +36,6 @@ export default function defineProperty(nexoId: symbol) {
         throw new ProxyError(
           `Cannot define property '${String(property)}' on proxy target"`,
           proxy,
-          nexoId,
         );
       }
       return true;
@@ -54,7 +51,6 @@ export default function defineProperty(nexoId: symbol) {
         throw new ProxyError(
           `Cannot define property '${String(property)}', object is not extensible"`,
           proxy,
-          nexoId,
         );
       }
       return true;
@@ -74,7 +70,6 @@ export default function defineProperty(nexoId: symbol) {
       throw new ProxyError(
         `Cannot define non-configurable property '${String(property)}' that is configurable on the sandbox`,
         proxy,
-        nexoId,
       );
     }
 
@@ -83,7 +78,6 @@ export default function defineProperty(nexoId: symbol) {
       throw new ProxyError(
         `Cannot define non-configurable property '${String(property)}' because it does not exist on the sandbox`,
         proxy,
-        nexoId,
       );
     }
 
@@ -92,7 +86,6 @@ export default function defineProperty(nexoId: symbol) {
       throw new ProxyError(
         `Cannot define property '${String(property)}' on proxy sandbox"`,
         proxy,
-        nexoId,
       );
     }
 

@@ -1,21 +1,19 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
-import resolveProxy from "../utils/resolveProxy.js";
 
-export default function set(nexoId: symbol) {
+export default function set(resolveProxy: nx.resolveProxy) {
   return (
     target: nx.Traceable,
     property: nx.ObjectKey,
     value: unknown,
   ): boolean => {
-    const [proxy, wrapper] = resolveProxy(target, nexoId);
+    const [proxy, wrapper] = resolveProxy();
     const { sandbox } = wrapper;
 
     const event = new ProxyEvent("set", {
       target: proxy,
       cancelable: true,
-      nexoId: nexoId,
       data: { target, property, value },
     });
 
@@ -24,7 +22,6 @@ export default function set(nexoId: symbol) {
         throw new ProxyError(
           `Cannot set property '${String(property)}' on the ${sandbox ? "sandbox" : "target"}`,
           proxy,
-          nexoId,
         );
       }
       return true;
@@ -34,7 +31,6 @@ export default function set(nexoId: symbol) {
       throw new ProxyError(
         `Cannot set property '${String(property)}' on the ${sandbox ? "sandbox" : "target"}`,
         proxy,
-        nexoId,
       );
     }
 
