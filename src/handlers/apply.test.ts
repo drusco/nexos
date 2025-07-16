@@ -8,7 +8,7 @@ describe("apply", () => {
   it("Emits an apply event with custom data", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     const applyListener = jest.fn();
 
@@ -41,7 +41,7 @@ describe("apply", () => {
   it("Allows its return value to be defined by the event listener", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy);
     const expectedResult = "foo";
 
     wrapper.on("proxy.apply", (event: nx.ProxyApplyEvent) => {

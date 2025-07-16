@@ -7,7 +7,7 @@ describe("construct", () => {
   it("Emits a construct event with custom data", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy);
     const constructListener = jest.fn();
 
     nexo.on("proxy.construct", constructListener);
@@ -48,7 +48,7 @@ describe("construct", () => {
   it("Allows its return value to be defined by the event listener", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     const expectedResult = {};
 
@@ -65,7 +65,7 @@ describe("construct", () => {
   it("Throws an error when defining a non-object as the return value", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     wrapper.on("proxy.construct", (event: nx.ProxyConstructEvent) => {
       event.preventDefault();
