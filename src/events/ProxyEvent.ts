@@ -27,7 +27,6 @@ class ProxyEvent<Data = unknown>
    * @param options.data - The data associated with the event.
    * @param options.target - The target of the event.
    * @param options.cancelable - A boolean flag indicating whether the event can be canceled (default: `false`).
-   * @param options.nexoId - The symbol identifying the Nexo instance context. If provided, it enables optional event emission.
    *
    * @example
    * const proxyEvent = new ProxyEvent('get', { target: someProxyInstance, data: someData });
@@ -39,13 +38,12 @@ class ProxyEvent<Data = unknown>
       data: Data;
       target: nx.Proxy;
       cancelable: boolean;
-      nexoId: symbol;
     }> = {},
   ) {
     super(`proxy.${name}`, options);
 
     // Retrieve the wrapper for the proxy
-    const wrapper = map.proxies.get(this.target)?.get(options.nexoId);
+    const wrapper = map.proxies.get(this.target);
 
     // Emit the proxy event to its listeners on the 'nexo' emitter
     wrapper?.nexo?.emit(this.name, this);

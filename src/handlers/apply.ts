@@ -1,15 +1,14 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
-import resolveProxy from "../utils/resolveProxy.js";
 
-export default function apply(nexoId: symbol) {
+export default function apply(resolveProxy: nx.resolveProxy) {
   return (
     target: nx.FunctionLike,
     thisArg: unknown = undefined,
     args: nx.ArrayLike,
   ): unknown => {
-    const [proxy, wrapper] = resolveProxy(target, nexoId);
+    const [proxy, wrapper] = resolveProxy();
     const { traceable, nexo } = wrapper;
 
     const event = new ProxyEvent<{
@@ -20,7 +19,6 @@ export default function apply(nexoId: symbol) {
     }>("apply", {
       target: proxy,
       cancelable: true,
-      nexoId: nexoId,
       data: {
         target,
         thisArg,
@@ -38,7 +36,7 @@ export default function apply(nexoId: symbol) {
       try {
         return Reflect.apply(target, thisArg, args);
       } catch (error) {
-        throw new ProxyError(error.message, proxy, nexoId);
+        throw new ProxyError(error.message, proxy);
       }
     }
 

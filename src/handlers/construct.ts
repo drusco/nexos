@@ -2,11 +2,10 @@ import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
 import isTraceable from "../utils/isTraceable.js";
-import resolveProxy from "../utils/resolveProxy.js";
 
-export default function construct(nexoId: symbol) {
+export default function construct(resolveProxy: nx.resolveProxy) {
   return (target: nx.FunctionLike, args: nx.ArrayLike): object => {
-    const [proxy, wrapper] = resolveProxy(target, nexoId);
+    const [proxy, wrapper] = resolveProxy();
     const { traceable, nexo } = wrapper;
 
     const event = new ProxyEvent<{
@@ -16,7 +15,6 @@ export default function construct(nexoId: symbol) {
     }>("construct", {
       target: proxy,
       cancelable: true,
-      nexoId: nexoId,
       data: {
         target,
         args,
@@ -31,7 +29,6 @@ export default function construct(nexoId: symbol) {
       throw new ProxyError(
         'Cannot return non-object on "construct" proxy trap',
         proxy,
-        nexoId,
       );
     }
 
@@ -40,7 +37,7 @@ export default function construct(nexoId: symbol) {
       try {
         return Reflect.construct(target, args);
       } catch (error) {
-        throw new ProxyError(error.message, proxy, nexoId);
+        throw new ProxyError(error.message, proxy);
       }
     }
 

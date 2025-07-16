@@ -1,33 +1,42 @@
 import type * as nx from "../types/Nexo.js";
 import { randomUUID } from "crypto";
-import map from "./maps.js";
-import findProxy from "./findProxy.js";
+import maps from "./maps.js";
 import isTraceable from "./isTraceable.js";
 import NexoEvent from "../events/NexoEvent.js";
 import createHandlers from "../handlers/index.js";
 import ProxyWrapper from "./ProxyWrapper.js";
-import Nexo from "../Nexo.js";
+import isProxy from "../utils/isProxy.js";
 
-const getProxy = (nexo: Nexo, target?: nx.Traceable, id?: string): nx.Proxy => {
-  const instanceId = nexo.id;
-
-  // find proxy by target
-  const usableProxy = findProxy(target, instanceId);
-
-  if (usableProxy) {
-    return usableProxy;
+const getProxy = (
+  nexo: nx.Nexo,
+  target?: nx.Traceable,
+  id?: string,
+): nx.Proxy => {
+  // Return existing proxy
+  if (isProxy(target)) {
+    return target;
   }
 
-  // create proxy
+  // Return proxy used by the ID
+  if (id && !target && nexo.entries.has(id)) {
+    const existingProxy = nexo.entries.get(id)?.deref();
+    if (existingProxy) {
+      return existingProxy;
+    }
+  }
 
+  // create new proxy
+
+  // eslint-disable-next-line prefer-const
+  let proxy: nx.Proxy;
   const fn = Object.setPrototypeOf(new Function(), null);
   const proxyTarget = target || fn;
   const revocable = Proxy.revocable<nx.Proxy>(
     proxyTarget,
-    createHandlers(nexo.id),
+    createHandlers(() => [proxy, nexo.wrap(proxy)]),
   );
   const traceable = isTraceable(target);
-  const proxy = revocable.proxy;
+  proxy = revocable.proxy;
 
   // set information about this proxy
 
@@ -39,17 +48,7 @@ const getProxy = (nexo: Nexo, target?: nx.Traceable, id?: string): nx.Proxy => {
     traceable,
   });
 
-  if (!map.proxies.has(proxy)) {
-    map.proxies.set(proxy, new Map());
-  }
-
-  map.proxies.get(proxy).set(instanceId, wrapper);
-
-  if (!map.tracables.has(proxyTarget)) {
-    map.tracables.set(proxyTarget, new Map());
-  }
-
-  map.tracables.get(proxyTarget).set(instanceId, proxy);
+  maps.proxies.set(proxy, wrapper);
 
   if (!traceable) {
     // Remove function related properties for proxies without traceable target

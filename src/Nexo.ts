@@ -1,13 +1,11 @@
 import type * as nx from "./types/Nexo.js";
 import getProxy from "./utils/getProxy.js";
 import NexoMap from "./utils/NexoMap.js";
-import ProxyWrapper from "./utils/ProxyWrapper.js";
-import ProxyError from "./errors/ProxyError.js";
 import NexoEmitter from "./events/NexoEmitter.js";
 import isProxy from "./utils/isProxy.js";
-import findProxy from "./utils/findProxy.js";
 import isTraceable from "./utils/isTraceable.js";
-import resolveProxy from "./utils/resolveProxy.js";
+import maps from "./utils/maps.js";
+import ProxyError from "./errors/ProxyError.js";
 
 /**
  * Represents a proxy factory for creating and managing proxy objects.
@@ -31,20 +29,14 @@ import resolveProxy from "./utils/resolveProxy.js";
  * // The listener will be called when a new proxy is created.
  * const proxy = nexo.create();
  */
-class Nexo extends NexoEmitter {
-  /**
-   * A unique symbol that identifies this Nexo instance.
-   * Used as the key in per-instance maps.
-   */
-  readonly id: symbol = Symbol("nexo");
-
+class Nexo extends NexoEmitter implements nx.Nexo {
   /**
    * A map that stores unique proxy IDs associated with their respective {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakRef | WeakRef} references to the proxy objects.
    *
    * @remarks
    * This map allows quick access to proxies by their unique ID, ensuring that proxies are properly managed and referenced.
    */
-  readonly entries: NexoMap<nx.Proxy> = new NexoMap();
+  readonly entries: nx.NexoMap<nx.Proxy> = new NexoMap();
 
   /**
    * Provides a wrapper for an existing proxy.
@@ -63,16 +55,19 @@ class Nexo extends NexoEmitter {
    *
    * @param proxy - An existing proxy object
    * @returns A wrapper for the proxy that allows interaction with proxy events
+   * @throws Error if the wrapper cannot be found.
    */
-  wrap(proxy: nx.Proxy): ProxyWrapper {
-    const [, wrapper] = resolveProxy(proxy, this.id);
+  wrap(proxy: nx.Proxy): nx.ProxyWrapper {
+    const wrapper = maps.proxies.get(proxy);
+
+    if (!wrapper) {
+      throw new ProxyError(`No wrapper found for the proxy.`, proxy);
+    }
     return wrapper;
   }
 
   static isProxy = isProxy;
-  static findProxy = findProxy;
   static isTraceable = isTraceable;
-  static resolveProxy = resolveProxy;
 
   /**
    * Retrieves the property descriptor for a proxy, considering its sandbox target if applicable.
@@ -141,62 +136,59 @@ class Nexo extends NexoEmitter {
   }
 
   /**
-   * Creates or retrieves an existing proxy by its unique ID.
+   * Creates or retrieves a proxy by its unique ID.
    *
    * @remarks
-   * If a proxy is already created with the provided ID, this method will return the existing proxy.
-   * If a new proxy is requested with a different target, the method will create a new proxy associated with that target.
-   * A `ProxyError` is thrown if an attempt is made to use the same ID for different targets.
+   * - If an ID already exists and no target is provided, the existing proxy is returned.
+   * - If a target is provided, a new proxy is created and associated with the given ID,
+   *   regardless of whether the ID was used before.
+   *
+   * This allows reusing the same ID with updated targets and also creating multiple proxies
+   * for the same target under different IDs.
    *
    * @example
-   * // Creating or retrieving a proxy by its ID
    * const nexo = new Nexo();
-   * const proxy = nexo.use('foo');
-   * nexo.use('foo') === proxy; // True, retrieves the same proxy by ID
    *
-   * @throws {@link ProxyError} - If the ID is already used by another proxy with a different target
+   * // First use creates a proxy
+   * const proxy1 = nexo.use('foo', {});
    *
-   * @param id - A unique identifier for the proxy
-   * @param target - An optional target object to associate with the proxy
-   * @returns A proxy uniquely associated with the provided ID and optional target.
-   * Use this method to retrieve or memoize proxies tied to stable identifiers.
+   * // Retrieves the existing proxy by ID
+   * const proxy2 = nexo.use('foo');
+   * console.log(proxy1 === proxy2); // true
+   *
+   * // Replaces the proxy under the same ID with a new target
+   * const proxy3 = nexo.use('foo', { updated: true });
+   * console.log(proxy3 !== proxy1); // true
+   *
+   * @param id - A stable identifier to associate with the proxy.
+   * @param target - An optional object to wrap in a proxy.
+   * @returns A proxy associated with the ID and optional target.
    */
+
   use(id: string, target?: nx.Traceable): nx.Proxy {
-    if (!target && this.entries.has(id)) {
-      // Returns an existing proxy by its ID
-      return this.entries.get(id).deref();
-    }
-
-    // Create a new proxy for the target
-    const proxy = getProxy(this, target, id);
-
-    if (!this.entries.has(id)) {
-      const { id: currentId } = this.wrap(proxy);
-      // Ensure ID cannot be changed for an existing target
-      throw new ProxyError(
-        `Cannot use '${id}' as the ID for the proxy because another proxy for the same target already exists with the ID '${currentId}'`,
-        proxy,
-        this.id,
-      );
-    }
-
-    return proxy;
+    return getProxy(this, target, id);
   }
 
   /**
-   * Creates a new proxy object or retrieves an existing one with the specified target.
+   * Creates a new proxy for a given target.
    *
    * @remarks
-   * Proxies can be created with or without a target. If a target is provided, it will be used as the proxy target.
-   * The method will emit a `proxy` event every time a new proxy is created.
+   * This method always returns a new proxy, even when called multiple times with the same target.
+   * Use this method when you need isolated proxies or don't require a persistent reference by ID.
+   *
+   * To retrieve or reuse proxies by ID, prefer using `nexo.use(id, target)` instead.
+   *
+   * @param target - An optional object to associate with the proxy. Defaults to a blank function.
+   * @returns A new proxy wrapping the given target.
    *
    * @example
-   * // Creating a new proxy
    * const nexo = new Nexo();
    * const proxy = nexo.create();
    *
-   * @param target - An optional target object for the proxy
-   * @returns A new proxy object
+   * // Create proxies for the same target
+   * const proxy1 = nexo.create(console.log);
+   * const proxy2 = nexo.create(console.log);
+   * console.log(proxy1 === proxy2); // false
    */
   create(target?: nx.Traceable): nx.Proxy {
     return getProxy(this, target);

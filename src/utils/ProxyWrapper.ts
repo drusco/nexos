@@ -1,6 +1,5 @@
 import type * as nx from "../types/Nexo.js";
 import NexoEmitter from "../events/NexoEmitter.js";
-import Nexo from "../Nexo.js";
 
 /**
  * A wrapper class that manages a proxy and its associated events.
@@ -12,12 +11,12 @@ import Nexo from "../Nexo.js";
  * const proxyWrapper = new ProxyWrapper({ id: 'proxy1', nexo: someNexoInstance, traceable: true, revoke: revokeFunction });
  * proxyWrapper.revoke(); // This will revoke the proxy.
  */
-class ProxyWrapper extends NexoEmitter {
+class ProxyWrapper extends NexoEmitter implements nx.ProxyWrapper {
   /** The unique identifier for the proxy wrapper. */
   readonly id: string;
 
   /** The `Nexo` instance associated with this proxy wrapper. */
-  readonly nexo: Nexo;
+  readonly nexo: nx.Nexo;
 
   /** A flag indicating if the proxy is traceable. */
   readonly traceable: boolean;
@@ -29,7 +28,7 @@ class ProxyWrapper extends NexoEmitter {
   private _revoked: boolean = false;
 
   /** The function responsible for revoking the proxy. */
-  private _revoke: nx.VoidFunction;
+  private _revoke: nx.FunctionLike<[], void>;
 
   /**
    * Creates an instance of `ProxyWrapper`.
@@ -43,9 +42,9 @@ class ProxyWrapper extends NexoEmitter {
    */
   constructor(data: {
     id: string;
-    nexo: Nexo;
+    nexo: nx.Nexo;
     traceable: boolean;
-    revoke: nx.VoidFunction;
+    revoke: nx.FunctionLike<[], void>;
   }) {
     super();
 

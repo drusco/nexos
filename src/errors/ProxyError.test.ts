@@ -5,7 +5,7 @@ describe("ProxyError", () => {
   it("Creates a new proxy error", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const proxyError = new ProxyError("foo", proxy, nexo.id);
+    const proxyError = new ProxyError("foo", proxy);
 
     expect(proxyError.message).toBe("foo");
     expect(proxyError).toBeInstanceOf(Error);
@@ -24,7 +24,7 @@ describe("ProxyError", () => {
     wrapper.on("error", errorListener);
     wrapper.on("proxy.error", errorListener);
 
-    new ProxyError("foo", proxy, nexo.id);
+    new ProxyError("foo", proxy);
 
     const [proxyError] = errorListener.mock.lastCall;
 

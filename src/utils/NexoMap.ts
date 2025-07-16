@@ -8,10 +8,10 @@ import NexoEmitter from "../events/NexoEmitter.js";
  *
  * @template Target - The type of objects stored in the map, which must be traceable.
  */
-class NexoMap<Target extends nx.Traceable> extends Map<
-  string,
-  WeakRef<Target>
-> {
+class NexoMap<Target extends nx.Traceable>
+  extends Map<string, WeakRef<Target>>
+  implements nx.NexoMap<Target>
+{
   /**
    * Stores the key of the last released entry during a `release` operation.
    * Used internally to track which key was removed.

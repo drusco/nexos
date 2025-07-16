@@ -1,17 +1,15 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
-import resolveProxy from "../utils/resolveProxy.js";
 
-export default function deleteProperty(nexoId: symbol) {
+export default function deleteProperty(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable, property: nx.ObjectKey): boolean => {
-    const [proxy, wrapper] = resolveProxy(target, nexoId);
+    const [proxy, wrapper] = resolveProxy();
     const { sandbox } = wrapper;
 
     const event = new ProxyEvent("deleteProperty", {
       target: proxy,
       cancelable: true,
-      nexoId: nexoId,
       data: { target, property },
     });
 
@@ -30,7 +28,6 @@ export default function deleteProperty(nexoId: symbol) {
         throw new ProxyError(
           `Cannot delete property '${String(property)}' because it is non-configurable`,
           proxy,
-          nexoId,
         );
       }
 
@@ -40,7 +37,6 @@ export default function deleteProperty(nexoId: symbol) {
         throw new ProxyError(
           `Cannot delete property '${String(property)}' from proxy sandbox`,
           proxy,
-          nexoId,
         );
       }
     }
@@ -50,7 +46,6 @@ export default function deleteProperty(nexoId: symbol) {
       throw new ProxyError(
         `Cannot delete property '${String(property)}' from proxy target`,
         proxy,
-        nexoId,
       );
     }
 

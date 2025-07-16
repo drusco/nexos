@@ -39,18 +39,9 @@ describe("getProxy", () => {
 
   it("Links internal data using weak maps", () => {
     const nexo = new Nexo();
-    const listener = jest.fn();
-    const target = [];
-
-    nexo.on("proxy", listener);
-
-    const proxy = getProxy(nexo, target);
-
-    const [proxyEvent]: [nx.ProxyCreateEvent] = listener.mock.lastCall;
+    const proxy = getProxy(nexo);
 
     expect(map.proxies.has(proxy)).toBe(true);
-    expect(map.tracables.has(target)).toBe(true);
-    expect(map.tracables.has(proxyEvent.data.target)).toBe(true);
   });
 
   it("Returns an existing proxy", () => {
@@ -61,6 +52,5 @@ describe("getProxy", () => {
 
     expect(getProxy(nexo, proxy)).toBe(proxy);
     expect(getProxy(nexo, proxyWithTarget)).toBe(proxyWithTarget);
-    expect(getProxy(nexo, target)).toBe(proxyWithTarget);
   });
 });

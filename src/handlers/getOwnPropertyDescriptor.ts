@@ -1,10 +1,11 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
-import resolveProxy from "../utils/resolveProxy.js";
 
-export default function getOwnPropertyDescriptor(nexoId: symbol) {
+export default function getOwnPropertyDescriptor(
+  resolveProxy: nx.resolveProxy,
+) {
   return (target: nx.Traceable, property: nx.ObjectKey): PropertyDescriptor => {
-    const [proxy, wrapper] = resolveProxy(target, nexoId);
+    const [proxy, wrapper] = resolveProxy();
     const { sandbox } = wrapper;
 
     const targetDescriptor = Reflect.getOwnPropertyDescriptor(target, property);
@@ -16,7 +17,6 @@ export default function getOwnPropertyDescriptor(nexoId: symbol) {
     new ProxyEvent("getOwnPropertyDescriptor", {
       target: proxy,
       cancelable: false,
-      nexoId: nexoId,
       data: {
         target,
         property,

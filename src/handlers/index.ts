@@ -14,21 +14,21 @@ import set from "./set.js";
 import setPrototypeOf from "./setPrototypeOf.js";
 
 export default function createHandlers(
-  nexoId: symbol,
+  resolveProxy: nx.resolveProxy,
 ): ProxyHandler<nx.Traceable> {
   return {
-    apply: apply(nexoId),
-    construct: construct(nexoId),
-    defineProperty: defineProperty(nexoId),
-    deleteProperty: deleteProperty(nexoId),
-    get: get(nexoId),
-    getOwnPropertyDescriptor: getOwnPropertyDescriptor(nexoId),
-    getPrototypeOf: getPrototypeOf(nexoId),
-    has: has(nexoId),
-    isExtensible: isExtensible(nexoId),
-    ownKeys: ownKeys(nexoId),
-    preventExtensions: preventExtensions(nexoId),
-    set: set(nexoId),
-    setPrototypeOf: setPrototypeOf(nexoId),
+    apply: apply(resolveProxy),
+    construct: construct(resolveProxy),
+    defineProperty: defineProperty(resolveProxy),
+    deleteProperty: deleteProperty(resolveProxy),
+    get: get(resolveProxy),
+    getOwnPropertyDescriptor: getOwnPropertyDescriptor(resolveProxy),
+    getPrototypeOf: getPrototypeOf(resolveProxy),
+    has: has(resolveProxy),
+    isExtensible: isExtensible(resolveProxy),
+    ownKeys: ownKeys(resolveProxy),
+    preventExtensions: preventExtensions(resolveProxy),
+    set: set(resolveProxy),
+    setPrototypeOf: setPrototypeOf(resolveProxy),
   };
 }

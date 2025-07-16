@@ -1,16 +1,14 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
-import resolveProxy from "../utils/resolveProxy.js";
 
-export default function isExtensible(nexoId: symbol) {
+export default function isExtensible(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable): boolean => {
-    const [proxy] = resolveProxy(target, nexoId);
+    const [proxy] = resolveProxy();
     const extensible = Reflect.isExtensible(target);
 
     new ProxyEvent("isExtensible", {
       target: proxy,
       cancelable: false,
-      nexoId: nexoId,
       data: { target, result: extensible },
     });
 

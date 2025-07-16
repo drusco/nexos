@@ -1,5 +1,4 @@
 import type * as nx from "../types/Nexo.js";
-import NexoEvent from "./NexoEvent.js";
 
 /**
  * A minimal, synchronous event emitter for proxy-related instrumentation.
@@ -32,7 +31,7 @@ import NexoEvent from "./NexoEvent.js";
  * emitter.emit("proxy.set", new NexoEvent({ key: "password" }));
  * ```
  */
-class NexoEmitter {
+class NexoEmitter implements nx.NexoEmitter {
   private listeners = new Map<nx.ObjectKey, Set<nx.FunctionLike>>();
 
   /**
@@ -108,10 +107,9 @@ class NexoEmitter {
    * @param args - Additional arguments passed to each listener.
    * @returns `true` if any listeners were triggered; `false` otherwise.
    */
-  emit<Event extends NexoEvent>(
+  emit<Event extends nx.NexoEvent>(
     eventName: nx.ObjectKey,
     data: Event | Error,
-    ...args: nx.ArrayLike
   ): boolean {
     const listeners = this.listeners.get(eventName);
     const hasListeners = !!listeners?.size;
@@ -123,7 +121,7 @@ class NexoEmitter {
     // Re-emit errors if the eventName is not "error"
     if (isError && eventName !== "error") {
       if (errorListeners?.size) {
-        this.emit("error", data, ...args);
+        this.emit("error", data);
       } else {
         throw data; // crash app intentionally to surface unhandled error
       }
@@ -131,7 +129,7 @@ class NexoEmitter {
 
     try {
       for (const listener of listeners) {
-        const returnValue = listener.call(this, data, ...args);
+        const returnValue = listener.call(this, data);
 
         if (isError) continue;
 
