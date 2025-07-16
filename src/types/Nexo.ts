@@ -57,13 +57,6 @@ export interface NexoEmitter {
 
 export interface Nexo extends NexoEmitter {
   readonly entries: NexoMap<Proxy>;
-  wrap(proxy: Proxy): ProxyWrapper;
-  getOwnPropertyDescriptor(
-    proxy: Proxy,
-    property: ObjectKey,
-  ): void | PropertyDescriptor;
-  ownKeys(proxy: Proxy): ObjectKey[];
-  getPrototypeOf(proxy: Proxy): object;
   use(id: string, target?: Traceable): Proxy;
   create(target?: Traceable): Proxy;
 }
