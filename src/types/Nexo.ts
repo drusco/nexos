@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+//** Types
+
 export type ArrayLike = unknown[];
 export type Traceable = NonNullable<object | FunctionLike>;
 export type ObjectKey = string | symbol;
 export type PlainObject = Record<ObjectKey, unknown>;
-export type VoidFunction = (...args: ArrayLike) => void;
 export type FunctionLike<
   Args extends ArrayLike = ArrayLike,
   Return = unknown,
 > = (...args: Args) => Return;
-export type Constructable<T> = new (...args: ArrayLike) => T;
+export type resolveProxy = () => [Proxy, ProxyWrapper];
 export type ProxyHandler =
   | "get"
   | "has"
@@ -24,6 +25,48 @@ export type ProxyHandler =
   | "ownKeys"
   | "preventExtensions"
   | "setPrototypeOf";
+
+//** Interfaces
+
+export interface NexoMap<Target extends Traceable>
+  extends Map<string, WeakRef<Target>> {
+  readonly events: NexoEmitter;
+  set(key: string, value: WeakRef<Target>): this;
+  release(): void;
+}
+
+export interface NexoEvent<Target = unknown, Data = unknown> {
+  readonly name: string;
+  readonly data: Data;
+  readonly target: Target;
+  readonly timestamp: number;
+  readonly cancelable: boolean;
+  readonly defaultPrevented: boolean;
+  returnValue: unknown;
+  preventDefault(): void;
+}
+
+export interface NexoEmitter {
+  on(event: ObjectKey, listener: FunctionLike): this;
+  off(event: ObjectKey, listener: FunctionLike): this;
+  emit<Event extends NexoEvent>(
+    eventName: ObjectKey,
+    data: Event | Error,
+  ): boolean;
+}
+
+export interface Nexo extends NexoEmitter {
+  readonly entries: NexoMap<Proxy>;
+  wrap(proxy: Proxy): ProxyWrapper;
+  getOwnPropertyDescriptor(
+    proxy: Proxy,
+    property: ObjectKey,
+  ): void | PropertyDescriptor;
+  ownKeys(proxy: Proxy): ObjectKey[];
+  getPrototypeOf(proxy: Proxy): object;
+  use(id: string, target?: Traceable): Proxy;
+  create(target?: Traceable): Proxy;
+}
 
 export interface Proxy {
   new <Return extends Traceable = Proxy, Args extends ArrayLike = ArrayLike>(
@@ -42,18 +85,21 @@ export interface Proxy {
   [key: ObjectKey]: any;
 }
 
-export interface NexoEvent<Target, Data> {
-  readonly name: string;
-  readonly data: Data;
-  readonly target: Target;
-  readonly timestamp: number;
-  readonly cancelable: boolean;
-  readonly defaultPrevented: boolean;
-  returnValue: unknown;
-  preventDefault(): void;
+export interface ProxyWrapper extends NexoEmitter {
+  readonly id: string;
+  readonly nexo: Nexo;
+  readonly traceable: boolean;
+  readonly sandbox: void | Traceable;
+  readonly revoked: boolean;
+  revoke(): void;
+}
+
+export interface ProxyError extends Error {
+  readonly proxy: Proxy;
 }
 
 export interface ProxyEvent<Data = unknown> extends NexoEvent<Proxy, Data> {}
+
 export interface ProxyApplyEvent
   extends ProxyEvent<{
     target: FunctionLike;
