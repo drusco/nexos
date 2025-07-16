@@ -15,7 +15,7 @@ describe("ProxyError", () => {
   it("Emits proxy error events", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy);
     const errorListener = jest.fn();
 
     nexo.on("error", errorListener);

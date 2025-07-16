@@ -25,7 +25,7 @@ describe("isExtensible", () => {
   it("Emits an isExtensible event", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
     nexo.on("proxy.isExtensible", listener);

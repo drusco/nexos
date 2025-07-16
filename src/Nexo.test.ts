@@ -18,7 +18,7 @@ describe("Nexo", () => {
   it("Access the wrapper using the proxy", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     expect(wrapper).toBeInstanceOf(ProxyWrapper);
   });
@@ -27,7 +27,7 @@ describe("Nexo", () => {
     const nexo = new Nexo();
     const target = {};
     const proxy = nexo.create(target);
-    const wrapper = nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     expect(wrapper).toBeInstanceOf(ProxyWrapper);
   });
@@ -35,7 +35,7 @@ describe("Nexo", () => {
   it("Creates a new proxy object without a target", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     expect(isProxy(proxy)).toBe(true);
     expect(typeof proxy).toBe("function");
@@ -52,7 +52,7 @@ describe("Nexo", () => {
     });
 
     const proxy = nexo.create(target);
-    const wrapper = nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     expect(proxyEvent).toBeInstanceOf(NexoEvent);
     expect(proxyEvent.target).toBe(proxy);
@@ -64,7 +64,7 @@ describe("Nexo", () => {
     const nexo = new Nexo();
     const target = {};
     const proxy = nexo.use("foo", target);
-    const wrapper = nexo.wrap(proxy);
+    const wrapper = Nexo.wrap(proxy);
 
     expect(wrapper.id).toBe("foo");
     expect(nexo.entries.has("foo")).toBe(true);
@@ -79,9 +79,9 @@ describe("Nexo", () => {
     const proxyB = nexo.use("foo", targetB);
     const proxyC = nexo.use("foo");
 
-    const wrapperA = nexo.wrap(proxyA);
-    const wrapperB = nexo.wrap(proxyB);
-    const wrapperC = nexo.wrap(proxyC);
+    const wrapperA = Nexo.wrap(proxyA);
+    const wrapperB = Nexo.wrap(proxyB);
+    const wrapperC = Nexo.wrap(proxyC);
 
     expect(wrapperA.id).toBe("foo");
     expect(wrapperB.id).toBe("foo");
@@ -107,8 +107,8 @@ describe("Nexo", () => {
     const proxy = nexo.create();
     const proxyWithTarget = nexo.create({ foo: "test" });
 
-    const descriptor = nexo.getOwnPropertyDescriptor(proxy, "foo");
-    const targetDescriptor = nexo.getOwnPropertyDescriptor(
+    const descriptor = Nexo.getOwnPropertyDescriptor(proxy, "foo");
+    const targetDescriptor = Nexo.getOwnPropertyDescriptor(
       proxyWithTarget,
       "foo",
     );
@@ -127,8 +127,8 @@ describe("Nexo", () => {
     const proxy = nexo.create();
     const proxyWithTarget = nexo.create({ foo: true, bar: true, baz: true });
 
-    const emptyKeys = nexo.ownKeys(proxy);
-    const targetKeys = nexo.ownKeys(proxyWithTarget);
+    const emptyKeys = Nexo.ownKeys(proxy);
+    const targetKeys = Nexo.ownKeys(proxyWithTarget);
 
     expect(emptyKeys).toStrictEqual([]);
     expect(targetKeys).toStrictEqual(["foo", "bar", "baz"]);
@@ -139,7 +139,7 @@ describe("Nexo", () => {
     const proxy = nexo.create();
 
     proxy.foo = true;
-    const keys = nexo.ownKeys(proxy);
+    const keys = Nexo.ownKeys(proxy);
 
     expect(keys).toStrictEqual(["foo"]);
   });
@@ -149,8 +149,8 @@ describe("Nexo", () => {
     const proxy = nexo.create();
     const proxyArray = nexo.create([]);
 
-    expect(nexo.getPrototypeOf(proxy)).toBeNull();
-    expect(nexo.getPrototypeOf(proxyArray)).toBe(Array.prototype);
+    expect(Nexo.getPrototypeOf(proxy)).toBeNull();
+    expect(Nexo.getPrototypeOf(proxyArray)).toBe(Array.prototype);
   });
 
   it("Encapsulates proxies to their original Nexo instaces", () => {
@@ -183,7 +183,7 @@ describe("Nexo", () => {
     // force proxy removal from map of proxies
     maps.proxies.delete(proxy);
 
-    expect(() => nexo.wrap(proxy)).toThrow(ProxyError);
+    expect(() => Nexo.wrap(proxy)).toThrow(ProxyError);
   });
 
   it("Does not emit events across different Nexo instances", () => {
@@ -215,7 +215,7 @@ describe("Nexo", () => {
     const proxyA = nexoA.create(target);
     const proxyB = nexoB.create(target);
 
-    const wrapperA = nexoA.wrap(proxyA);
+    const wrapperA = Nexo.wrap(proxyA);
     wrapperA.revoke();
 
     expect(() => proxyA.foo).toThrow(); // should throw

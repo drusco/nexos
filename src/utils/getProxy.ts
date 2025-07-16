@@ -6,6 +6,7 @@ import NexoEvent from "../events/NexoEvent.js";
 import createHandlers from "../handlers/index.js";
 import ProxyWrapper from "./ProxyWrapper.js";
 import isProxy from "../utils/isProxy.js";
+import Nexo from "../Nexo.js";
 
 const getProxy = (
   nexo: nx.Nexo,
@@ -33,7 +34,7 @@ const getProxy = (
   const proxyTarget = target || fn;
   const revocable = Proxy.revocable<nx.Proxy>(
     proxyTarget,
-    createHandlers(() => [proxy, nexo.wrap(proxy)]),
+    createHandlers(() => [proxy, Nexo.wrap(proxy)]),
   );
   const traceable = isTraceable(target);
   proxy = revocable.proxy;
