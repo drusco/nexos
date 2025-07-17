@@ -128,9 +128,15 @@ const createDocsCategory = (
       convertItemsToMarkdown(sidebarItems),
     ].join("\n");
 
-    fs.writeFileSync(path.resolve(fullPath, "index.md"), indexContents, {
-      encoding: "utf-8",
-    });
+    const indexPath = path.resolve(fullPath, "index.md");
+
+    // Only write if content has changed
+    if (
+      !fs.existsSync(indexPath) ||
+      fs.readFileSync(indexPath, "utf-8") !== indexContents
+    ) {
+      fs.writeFileSync(indexPath, indexContents, { encoding: "utf-8" });
+    }
   }
 
   return {

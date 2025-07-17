@@ -4,6 +4,7 @@ import NexoMap from "./utils/NexoMap.js";
 import NexoEmitter from "./events/NexoEmitter.js";
 import maps from "./utils/maps.js";
 import ProxyError from "./errors/ProxyError.js";
+import ProxyWrapper from "./utils/ProxyWrapper.js";
 
 /**
  * Represents a proxy factory for creating and managing proxy objects.
@@ -34,7 +35,7 @@ class Nexo extends NexoEmitter implements nx.Nexo {
    * @remarks
    * This map allows quick access to proxies by their unique ID, ensuring that proxies are properly managed and referenced.
    */
-  readonly entries: nx.NexoMap<nx.Proxy> = new NexoMap();
+  readonly entries: NexoMap<nx.Proxy> = new NexoMap();
 
   /**
    * Determines whether the given value is a registered {@link nx.Proxy | Proxy} instance.
@@ -92,7 +93,7 @@ class Nexo extends NexoEmitter implements nx.Nexo {
    * @returns A wrapper for the proxy that allows interaction with proxy events
    * @throws Error if the wrapper cannot be found.
    */
-  static wrap(proxy: nx.Proxy): nx.ProxyWrapper {
+  static wrap(proxy: nx.Proxy): ProxyWrapper {
     const wrapper = maps.proxies.get(proxy);
 
     if (!wrapper) {
