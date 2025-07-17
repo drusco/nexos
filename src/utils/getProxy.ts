@@ -6,11 +6,7 @@ import createHandlers from "../handlers/index.js";
 import ProxyWrapper from "./ProxyWrapper.js";
 import Nexo from "../Nexo.js";
 
-const getProxy = (
-  nexo: nx.Nexo,
-  target?: nx.Traceable,
-  id?: string,
-): nx.Proxy => {
+const getProxy = (nexo: Nexo, target?: nx.Traceable, id?: string): nx.Proxy => {
   // Return existing proxy
   if (Nexo.isProxy(target)) {
     return target;
