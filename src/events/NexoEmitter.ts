@@ -104,7 +104,6 @@ class NexoEmitter implements nx.NexoEmitter {
    *
    * @param eventName - The name of the event to emit.
    * @param data - A `NexoEvent` or an `Error`.
-   * @param args - Additional arguments passed to each listener.
    * @returns `true` if any listeners were triggered; `false` otherwise.
    */
   emit<Event extends nx.NexoEvent>(
