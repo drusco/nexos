@@ -3,9 +3,9 @@ title: Creating a Proxy
 hide_table_of_contents: false
 ---
 
-## With a Target Object
+## Using an Object as Target
 
-Creating a proxy from an existing object returns the same proxy when called multiple times with the same target.
+When you pass a regular object to `nexo.create`, it will always return a new proxy, even if the same target object is reused. This ensures that each proxy instance is unique and independently observable.
 
 ```javascript
 import { Nexo } from "nexos";
@@ -13,16 +13,20 @@ import { Nexo } from "nexos";
 const nexo = new Nexo();
 const target = { foo: "example" };
 
-const proxy = nexo.create(target);
-const copy = nexo.create(target);
+// Two separate proxy instances from the same target
+const proxy1 = nexo.create(target);
+const proxy2 = nexo.create(target);
 
-console.log(proxy === copy); // prints true
-console.log(proxy.foo); // prints "example"
+console.log(proxy1 === proxy2); // false — each call creates a new proxy
+console.log(proxy1.foo); // "example" — proxies still reflect the original target
+console.log(proxy2.foo); // "example"
 ```
+
+> Even though `proxy1` and `proxy2` wrap the same object, they are distinct proxies. This design avoids unexpected side effects when tracking or emitting events per proxy instance.
 
 ---
 
-## With a Virtual Target
+## Using a Virtual Target
 
 Creating a proxy without a target generates an independent virtual object that behaves like an empty container.
 
@@ -31,13 +35,11 @@ import { Nexo } from "nexos";
 
 const nexo = new Nexo();
 const proxy = nexo.create();
-const newProxy = nexo.create();
 
 proxy.foo = "example";
 
 console.log(proxy.foo); // prints "example"
-console.log(proxy.bar); // prints new proxy
-console.log(proxy === newProxy); // prints false
+console.log(proxy.bar); // creates a new proxy
 ```
 
 ---
