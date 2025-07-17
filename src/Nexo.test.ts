@@ -239,4 +239,23 @@ describe("Nexo", () => {
     expect(Nexo.isProxy([])).toBe(false);
     expect(Nexo.isProxy(true)).toBe(false);
   });
+
+  it("Returns true when the value is a non null object or a function", () => {
+    const traceableObject = Nexo.isTraceable({});
+    const traceableArray = Nexo.isTraceable([]);
+    const traceableFunction = Nexo.isTraceable(() => {});
+
+    expect(traceableArray).toBe(true);
+    expect(traceableObject).toBe(true);
+    expect(traceableFunction).toBe(true);
+  });
+
+  it("Returns false when the parameter is not traceable", () => {
+    expect(Nexo.isTraceable(undefined)).toBe(false);
+    expect(Nexo.isTraceable(NaN)).toBe(false);
+    expect(Nexo.isTraceable(null)).toBe(false);
+    expect(Nexo.isTraceable("foo")).toBe(false);
+    expect(Nexo.isTraceable(1000)).toBe(false);
+    expect(Nexo.isTraceable(true)).toBe(false);
+  });
 });
