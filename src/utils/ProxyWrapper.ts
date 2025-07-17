@@ -1,5 +1,6 @@
 import type * as nx from "../types/Nexo.js";
 import NexoEmitter from "../events/NexoEmitter.js";
+import Nexo from "../Nexo.js";
 
 /**
  * A wrapper class that manages a proxy and its associated events.
@@ -16,7 +17,7 @@ class ProxyWrapper extends NexoEmitter implements nx.ProxyWrapper {
   readonly id: string;
 
   /** The `Nexo` instance associated with this proxy wrapper. */
-  readonly nexo: nx.Nexo;
+  readonly nexo: Nexo;
 
   /** A flag indicating if the proxy is traceable. */
   readonly traceable: boolean;
@@ -42,7 +43,7 @@ class ProxyWrapper extends NexoEmitter implements nx.ProxyWrapper {
    */
   constructor(data: {
     id: string;
-    nexo: nx.Nexo;
+    nexo: Nexo;
     traceable: boolean;
     revoke: nx.FunctionLike<[], void>;
   }) {
