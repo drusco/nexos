@@ -1,6 +1,5 @@
 import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
-import isProxy from "../utils/isProxy.js";
 import ProxyError from "../errors/ProxyError.js";
 
 describe("construct", () => {
@@ -32,7 +31,7 @@ describe("construct", () => {
 
     const result = Reflect.construct(proxy, []);
 
-    expect(isProxy(result)).toBe(true);
+    expect(Nexo.isProxy(result)).toBe(true);
   });
 
   it("Creates an instance from a constructor target and returns it", () => {

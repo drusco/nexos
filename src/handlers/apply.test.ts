@@ -2,7 +2,6 @@ import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
-import isProxy from "../utils/isProxy.js";
 
 describe("apply", () => {
   it("Emits an apply event with custom data", () => {
@@ -35,7 +34,7 @@ describe("apply", () => {
     const proxy = nexo.create();
     const result = Reflect.apply(proxy, undefined, []);
 
-    expect(isProxy(result)).toBe(true);
+    expect(Nexo.isProxy(result)).toBe(true);
   });
 
   it("Allows its return value to be defined by the event listener", () => {
