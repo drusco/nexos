@@ -2,7 +2,6 @@ import type * as nx from "./types/Nexo.js";
 import getProxy from "./utils/getProxy.js";
 import NexoMap from "./utils/NexoMap.js";
 import NexoEmitter from "./events/NexoEmitter.js";
-import isProxy from "./utils/isProxy.js";
 import isTraceable from "./utils/isTraceable.js";
 import maps from "./utils/maps.js";
 import ProxyError from "./errors/ProxyError.js";
@@ -38,7 +37,21 @@ class Nexo extends NexoEmitter implements nx.Nexo {
    */
   readonly entries: nx.NexoMap<nx.Proxy> = new NexoMap();
 
-  static isProxy = isProxy;
+  /**
+   * Determines whether the given value is a registered {@link nx.Proxy | Proxy} instance.
+   *
+   * This function checks if the value exists in the internal proxy map,
+   * meaning it was previously registered as a proxy via the system.
+   *
+   * Acts as a type guard for narrowing `unknown` to {@link nx.Proxy | Proxy}.
+   *
+   * @param value - The value to check.
+   * @returns `true` if the value is a known {@link nx.Proxy | Proxy}, otherwise `false`.
+   */
+  static isProxy(value: unknown): value is nx.Proxy {
+    return maps.proxies.has(value as nx.Proxy);
+  }
+
   static isTraceable = isTraceable;
 
   /**
