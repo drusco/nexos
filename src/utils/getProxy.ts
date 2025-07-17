@@ -1,7 +1,6 @@
 import type * as nx from "../types/Nexo.js";
 import { randomUUID } from "crypto";
 import maps from "./maps.js";
-import isTraceable from "./isTraceable.js";
 import NexoEvent from "../events/NexoEvent.js";
 import createHandlers from "../handlers/index.js";
 import ProxyWrapper from "./ProxyWrapper.js";
@@ -35,7 +34,7 @@ const getProxy = (
     proxyTarget,
     createHandlers(() => [proxy, Nexo.wrap(proxy)]),
   );
-  const traceable = isTraceable(target);
+  const traceable = Nexo.isTraceable(target);
   proxy = revocable.proxy;
 
   // set information about this proxy

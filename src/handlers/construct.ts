@@ -1,7 +1,7 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
-import isTraceable from "../utils/isTraceable.js";
+import Nexo from "../Nexo.js";
 
 export default function construct(resolveProxy: nx.resolveProxy) {
   return (target: nx.FunctionLike, args: nx.ArrayLike): object => {
@@ -22,7 +22,7 @@ export default function construct(resolveProxy: nx.resolveProxy) {
     });
 
     if (event.defaultPrevented) {
-      if (isTraceable(event.returnValue)) {
+      if (Nexo.isTraceable(event.returnValue)) {
         // return value from the prevented event
         return event.returnValue;
       }

@@ -2,7 +2,6 @@ import type * as nx from "./types/Nexo.js";
 import getProxy from "./utils/getProxy.js";
 import NexoMap from "./utils/NexoMap.js";
 import NexoEmitter from "./events/NexoEmitter.js";
-import isTraceable from "./utils/isTraceable.js";
 import maps from "./utils/maps.js";
 import ProxyError from "./errors/ProxyError.js";
 
@@ -52,7 +51,27 @@ class Nexo extends NexoEmitter implements nx.Nexo {
     return maps.proxies.has(value as nx.Proxy);
   }
 
-  static isTraceable = isTraceable;
+  /**
+   * Determines whether the given value is a {@link nx.Traceable | Traceable} entity.
+   *
+   * A value is considered traceable if it is a non-null object or function.
+   * This check is used to determine whether the value is eligible to be
+   * linked to a proxy in the system's internal tracking.
+   *
+   * Acts as a type guard to narrow the type to {@link nx.Traceable | Traceable}.
+   *
+   * @param value - The value to evaluate.
+   * @returns `true` if the value is {@link nx.Traceable | Traceable}, otherwise `false`.
+   */
+  static isTraceable(value: unknown): value is nx.Traceable {
+    const isObject = typeof value === "object";
+    const isFunction = typeof value === "function";
+
+    if (!isObject && !isFunction) return false;
+    if (value === null) return false;
+
+    return true;
+  }
 
   /**
    * Provides a wrapper for an existing proxy.
