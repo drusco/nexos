@@ -2,34 +2,44 @@ import ProxyError from "./ProxyError.js";
 import Nexo from "../Nexo.js";
 
 describe("ProxyError", () => {
-  it("Creates a new proxy error", () => {
+  it("creates a ProxyError instance with the correct message and proxy", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const proxyError = new ProxyError("foo", proxy);
+    const error = new ProxyError("Something went wrong", proxy);
 
-    expect(proxyError.message).toBe("foo");
-    expect(proxyError).toBeInstanceOf(Error);
-    expect(proxyError.proxy).toBe(proxy);
+    expect(error).toBeInstanceOf(Error);
+    expect(error).toBeInstanceOf(ProxyError);
+    expect(error.message).toBe("Something went wrong");
+    expect(error.proxy).toBe(proxy);
+    expect(error.name).toBe("ProxyError");
   });
 
-  it("Emits proxy error events", () => {
+  it("emits both generic and namespaced proxy error events", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
-    const errorListener = jest.fn();
 
-    nexo.on("error", errorListener);
-    nexo.on("proxy.error", errorListener);
+    const nexoErrorHandler = jest.fn();
+    const proxyErrorHandler = jest.fn();
 
-    wrapper.on("error", errorListener);
-    wrapper.on("proxy.error", errorListener);
+    nexo.on("error", nexoErrorHandler);
+    nexo.on("proxy.error", nexoErrorHandler);
 
-    new ProxyError("foo", proxy);
+    wrapper.on("error", proxyErrorHandler);
+    wrapper.on("proxy.error", proxyErrorHandler);
 
-    const [proxyError] = errorListener.mock.lastCall;
+    const emittedError = new ProxyError("Emitted error", proxy);
 
-    expect(errorListener).toHaveBeenCalledTimes(4);
-    expect(proxyError).toBeInstanceOf(ProxyError);
-    expect(proxyError.proxy).toBe(proxy);
+    expect(nexoErrorHandler).toHaveBeenCalledTimes(2);
+    expect(proxyErrorHandler).toHaveBeenCalledTimes(2);
+
+    for (const handler of [nexoErrorHandler, proxyErrorHandler]) {
+      const [err] = handler.mock.lastCall;
+      expect(err).toBeInstanceOf(ProxyError);
+      expect(err.message).toBe("Emitted error");
+      expect(err.proxy).toBe(proxy);
+    }
+
+    expect(emittedError.name).toBe("ProxyError");
   });
 });
