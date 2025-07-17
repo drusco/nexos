@@ -10,6 +10,8 @@ import map from "../utils/maps.js";
  * const proxyError = new ProxyError('An error occurred with the proxy', someProxyInstance);
  */
 class ProxyError extends Error implements nx.ProxyError {
+  readonly name = "ProxyError";
+
   /** The proxy instance associated with this error. */
   readonly proxy: nx.Proxy;
 
