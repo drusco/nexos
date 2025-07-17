@@ -1,6 +1,5 @@
 import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
-import isProxy from "../utils/isProxy.js";
 import ProxyError from "../errors/ProxyError.js";
 
 describe("deleteProperty", () => {
@@ -21,7 +20,7 @@ describe("deleteProperty", () => {
     const [event]: [nx.ProxyDeletePropertyEvent] = listener.mock.lastCall;
 
     expect(result).toBe(true);
-    expect(isProxy(proxy.foo)).toBe(true);
+    expect(Nexo.isProxy(proxy.foo)).toBe(true);
     expect(listener).toHaveBeenCalledTimes(2);
     expect(event.target).toBe(proxy);
     expect(event.cancelable).toBe(true);
@@ -48,7 +47,7 @@ describe("deleteProperty", () => {
     const result = Reflect.deleteProperty(proxy, "foo");
 
     expect(result).toBe(true);
-    expect(isProxy(proxy.foo)).toBe(true);
+    expect(Nexo.isProxy(proxy.foo)).toBe(true);
   });
 
   it("Prevents the property deletion", () => {

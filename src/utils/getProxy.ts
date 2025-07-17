@@ -5,7 +5,6 @@ import isTraceable from "./isTraceable.js";
 import NexoEvent from "../events/NexoEvent.js";
 import createHandlers from "../handlers/index.js";
 import ProxyWrapper from "./ProxyWrapper.js";
-import isProxy from "../utils/isProxy.js";
 import Nexo from "../Nexo.js";
 
 const getProxy = (
@@ -14,7 +13,7 @@ const getProxy = (
   id?: string,
 ): nx.Proxy => {
   // Return existing proxy
-  if (isProxy(target)) {
+  if (Nexo.isProxy(target)) {
     return target;
   }
 

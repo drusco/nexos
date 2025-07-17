@@ -1,7 +1,6 @@
 import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
-import isProxy from "../utils/isProxy.js";
 
 describe("get", () => {
   it("Emits an event with custom data", () => {
@@ -42,6 +41,6 @@ describe("get", () => {
     const result = proxy.foo;
 
     expect(result).not.toBeUndefined();
-    expect(isProxy(result)).toBe(true);
+    expect(Nexo.isProxy(result)).toBe(true);
   });
 });
