@@ -29,7 +29,7 @@ export default function setPrototypeOf(resolveProxy: nx.resolveProxy) {
         typeof event.returnValue !== "object"
       ) {
         throw new ProxyError(
-          "Cannot set the new prototype because it is not an object or null",
+          "Cannot set the new prototype because it is not an object",
           proxy,
         );
       }

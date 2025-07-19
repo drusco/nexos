@@ -12,7 +12,7 @@ These events are useful for monitoring the general health of your application’
 
 You can listen to these errors globally through the `nexo` instance.
 
-```ts
+```typescript
 import { Nexo } from "nexos";
 
 const nexo = new Nexo();
@@ -30,25 +30,25 @@ Emits a custom [ProxyError](../../api/classes/ProxyError) when an issue arises d
 
 These are special error instances thrown during lifecycle operations that Nexos manages, such as:
 
-- Trying to reuse the same target with different names
 - Performing invalid operations on a frozen or sealed proxy
 - Failing to define a property due to descriptor conflicts
 - Misusing a proxy that was already disconnected or replaced
 
-Each `ProxyError` includes rich metadata to help you trace which proxy, name, or target was involved. You can listen to these errors globally (`nexo.on`) or individually on the proxy instance (`proxy.on`), allowing fine-grained error handling for complex systems.
+Each `ProxyError` includes rich metadata to help you trace which proxy, name, or target was involved. You can listen to these errors globally (`nexo.on`) or individually on the proxy wrapper (`wrapper.on`), allowing fine-grained error handling for complex systems.
 
-```javascript
+```typescript
 import { Nexo } from "nexos";
+import type * as nx from "nexos";
 
 const nexo = new Nexo();
-const target = {};
-const proxy = nexo.use("my-proxy", target);
+const proxy = nexo.create();
+const wrapper = Nexo.wrap(proxy);
 
-proxy.on("proxy.error", (error) => {
+wrapper.on("proxy.error", (error: nx.ProxyError) => {
   console.warn("Proxy-level error:", error.message);
 });
 
-nexo.on("proxy.error", (error) => {
+nexo.on("proxy.error", (error: Error) => {
   console.warn("Global proxy error:", error.message);
 });
 ```

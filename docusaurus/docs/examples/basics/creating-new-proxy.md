@@ -7,7 +7,7 @@ hide_table_of_contents: false
 
 When you pass a regular object to `nexo.create`, it will always return a new proxy, even if the same target object is reused. This ensures that each proxy instance is unique and independently observable.
 
-```javascript
+```typescript
 import { Nexo } from "nexos";
 
 const nexo = new Nexo();
@@ -30,7 +30,7 @@ console.log(proxy2.foo); // "example"
 
 Creating a proxy without a target generates an independent virtual object that behaves like an empty container.
 
-```javascript
+```typescript
 import { Nexo } from "nexos";
 
 const nexo = new Nexo();
@@ -48,7 +48,7 @@ console.log(proxy.bar); // creates a new proxy
 
 Proxies can be referenced by a name, allowing them to be retrieved later by that identifier.
 
-```javascript
+```typescript
 import { Nexo } from "nexos";
 
 const nexo = new Nexo();
@@ -65,7 +65,7 @@ console.log(proxy === proxyByName); // true
 
 A named reference can be reassigned to a different target, making the new proxy distinct from the original.
 
-```javascript
+```typescript
 import { Nexo } from "nexos";
 
 const nexo = new Nexo();
