@@ -15,7 +15,7 @@ This quick start guide demonstrates how to create proxies with Nexos and how to 
 
 The traditional way to intercept property access on an object:
 
-```javascript
+```typescript
 const target = { message: "Hello, world!" };
 const handler = {
   get(target, property) {
@@ -36,13 +36,14 @@ In this example, you must manually define the handler. Nexos removes that burden
 
 Nexos lets you create a proxy and attach listeners to trap events like `get`, `set`, or even creation itself:
 
-```javascript
+```typescript
 import { Nexo } from "nexos";
+import type * as nx from "nexos";
 
 const nexo = new Nexo();
 const proxy = nexo.create({ message: "Hello, world!" });
 
-nexo.on("proxy.get", (event) => {
+nexo.on("proxy.get", (event: nx.ProxyGetEvent) => {
   console.log(`Property '${event.data.property}' accessed.`);
 });
 
@@ -57,8 +58,13 @@ Here, `proxy.get` is emitted whenever a property is accessed, and we react to it
 
 Track whenever a new proxy is created — useful for logging, debugging, or assigning custom metadata:
 
-```javascript
-nexo.on("proxy", (event) => {
+```typescript
+import { Nexo } from "nexos";
+import type * as nx from "nexos";
+
+const nexo = new Nexo();
+
+nexo.on("proxy", (event: ProxyCreateEvent) => {
   console.log("A new proxy has been created:", event.target);
 });
 
@@ -74,7 +80,10 @@ The event includes a unique proxy and its metadata.
 
 You can also create proxies without a real object behind them. Nexos handles operations using a sandbox:
 
-```javascript
+```typescript
+import { Nexo } from "nexos";
+
+const nexo = new Nexo();
 const virtualProxy = nexo.create();
 virtualProxy.hello = "virtual";
 
@@ -89,10 +98,14 @@ This is helpful for dynamic or placeholder objects where the structure is unknow
 
 Let’s now intercept property assignments using the `"proxy.set"` event:
 
-```javascript
+```typescript
+import { Nexo } from "nexos";
+import type * as nx from "nexos";
+
+const nexo = new Nexo();
 const proxy = nexo.create({});
 
-nexo.on("proxy.set", (event) => {
+nexo.on("proxy.set", (event: nx.ProxySetEvent) => {
   console.log(`Setting property '${event.data.property}' to`, event.data.value);
 });
 
