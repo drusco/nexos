@@ -89,6 +89,7 @@ export interface ProxyWrapper extends NexoEmitter {
 
 export interface ProxyError extends Error {
   readonly proxy: Proxy;
+  readonly name: "ProxyError";
 }
 
 export interface ProxyEvent<Data = unknown> extends NexoEvent<Proxy, Data> {}
@@ -98,15 +99,18 @@ export interface ProxyApplyEvent
     target: FunctionLike;
     thisArg: unknown;
     args: ArrayLike;
-    result?: Proxy;
-  }> {}
+    result: unknown;
+  }> {
+  readonly cancelable: true;
+}
 
 export interface ProxyConstructEvent
   extends ProxyEvent<{
     target: FunctionLike;
     args: ArrayLike;
-    result?: Proxy;
+    result: Traceable;
   }> {
+  readonly cancelable: true;
   returnValue: object;
 }
 
@@ -121,7 +125,9 @@ export interface ProxyDeletePropertyEvent
   extends ProxyEvent<{
     target: Traceable;
     property: ObjectKey;
-  }> {}
+  }> {
+  readonly cancelable: true;
+}
 
 export interface ProxyGetEvent
   extends ProxyEvent<{
@@ -173,13 +179,16 @@ export interface ProxySetEvent
     target: Traceable;
     property: ObjectKey;
     value: unknown;
-  }> {}
+  }> {
+  readonly cancelable: true;
+}
 
 export interface ProxySetPrototypeOfEvent
   extends ProxyEvent<{
     target: Traceable;
     prototype: object;
   }> {
+  readonly cancelable: true;
   returnValue: object;
 }
 
