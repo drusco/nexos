@@ -9,7 +9,7 @@ hide_table_of_contents: false
 
 You can retrieve the own property descriptor of a proxy when it wraps a target object. The descriptor should match the original object's descriptor.
 
-```javascript
+```typescript
 import { Nexo } from "nexos";
 
 const nexo = new Nexo();
@@ -25,7 +25,7 @@ console.log(descriptor === Object.getOwnPropertyDescriptor(target, "foo"));
 
 If the proxy does not wrap a target, attempting to retrieve a property descriptor will return `undefined`.
 
-```javascript
+```typescript
 import { Nexo } from "nexos";
 
 const nexo = new Nexo();
@@ -44,7 +44,7 @@ console.log(descriptor === undefined);
 
 A proxy without an underlying target has no own properties, so retrieving its keys returns an empty array.
 
-```javascript
+```typescript
 import { Nexo } from "nexos";
 
 const nexo = new Nexo();
@@ -58,7 +58,7 @@ console.log(emptyKeys); // prints []
 
 If the proxy wraps an object, it returns the keys of that object.
 
-```javascript
+```typescript
 import { Nexo } from "nexos";
 
 const nexo = new Nexo();
@@ -74,7 +74,7 @@ console.log(targetKeys); // prints ["foo", "bar", "baz"]
 
 Properties added directly to a proxy after its creation will appear when retrieving its own keys.
 
-```javascript
+```typescript
 import { Nexo } from "nexos";
 
 const nexo = new Nexo();
@@ -92,7 +92,7 @@ console.log(keys); // prints ["foo"]
 
 You can retrieve the prototype of a proxy. If the proxy is created without a target, its prototype is `null`. Otherwise, it inherits from the target's prototype.
 
-```javascript
+```typescript
 import { Nexo } from "nexos";
 
 const nexo = new Nexo();
