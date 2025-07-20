@@ -48,8 +48,12 @@ wrapper.on("proxy.error", (error: nx.ProxyError) => {
   console.warn("Proxy-level error:", error.message);
 });
 
-nexo.on("proxy.error", (error: Error) => {
+nexo.on("proxy.error", (error: nx.ProxyError) => {
   console.warn("Global proxy error:", error.message);
+});
+
+nexo.on("error", (error: Error) => {
+  console.warn("Global non-proxy error:", error.message);
 });
 ```
 
