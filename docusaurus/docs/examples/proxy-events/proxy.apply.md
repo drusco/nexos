@@ -34,7 +34,7 @@ It represents the context in which the proxy-wrapped function is invoked.
 
 #### result
 
-[`Traceable`](../../api/type-aliases/Traceable)
+`unknown`
 
 The value returned by the function. If the event is not canceled, the result is not overridden, and the proxy was created without a target, this will typically be a newly created proxy instance.
 
