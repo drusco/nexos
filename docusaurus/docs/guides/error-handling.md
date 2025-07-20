@@ -25,7 +25,7 @@ nexo.on("error", (error) => {
 
 ## Proxy-Specific Errors
 
-Emits a custom [ProxyError](../../api/classes/ProxyError) when an issue arises directly from a proxy operation.
+Emits a custom [ProxyError](../api/classes/ProxyError) when an issue arises directly from a proxy operation.
 
 These are special error instances thrown during lifecycle operations that Nexos manages, such as:
 
