@@ -3,11 +3,9 @@ title: Examples
 hide_table_of_contents: false
 ---
 
-## Basics
-
-- [Creating a Proxy](examples/basics/creating-new-proxy.md)
-- [Error Handling](examples/basics/error-handling.md)
-- [Proxy Internals](examples/basics/proxy-object-internals.md)
+- [Creating a Proxy](examples/creating-new-proxy.md)
+- [Error Handling](examples/error-handling.md)
+- [Proxy Internals](examples/proxy-object-internals.md)
 
 ## Proxy Events
 
