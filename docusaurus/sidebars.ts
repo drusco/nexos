@@ -13,7 +13,7 @@ const sidebars: SidebarsConfig = {
       label: "Quick Start",
       id: "quick-start",
     },
-    createDocsCategory("examples"),
+    createDocsCategory("guides"),
     {
       type: "category",
       label: "API",
