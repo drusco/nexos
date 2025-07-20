@@ -23,7 +23,7 @@ The name or symbol of the property being accessed on the object.
 
 #### result
 
-`unknown` | [`Proxy`](../../api/interfaces/Proxy)
+`unknown`
 
 The value that was retrieved when accessing the property.
 If the proxy was created without a target object, this defaults to a new proxy instance.
