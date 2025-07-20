@@ -5,8 +5,7 @@ hide_table_of_contents: false
 
 ## General Errors
 
-General errors are emitted under the `"error"` event and **do not originate from proxy handler traps**.  
-These are standard [Error Objects](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error) raised when something goes wrong within Nexos' internal logic — such as invalid method usage, listener failures, or other non-proxy runtime exceptions.
+General errors are emitted under the `"error"` event and **do not originate from proxy handler traps**. These are standard [Error Objects](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error) raised when something goes wrong within Nexos' internal logic — such as invalid method usage, listener failures, or other non-proxy runtime exceptions.
 
 These events are useful for monitoring the general health of your application’s interaction with Nexos, especially when integrating it into complex dynamic systems.
 
@@ -50,10 +49,6 @@ wrapper.on("proxy.error", (error: nx.ProxyError) => {
 
 nexo.on("proxy.error", (error: nx.ProxyError) => {
   console.warn("Global proxy error:", error.message);
-});
-
-nexo.on("error", (error: Error) => {
-  console.warn("Global non-proxy error:", error.message);
 });
 ```
 
