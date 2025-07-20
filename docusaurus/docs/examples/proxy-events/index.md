@@ -16,7 +16,7 @@ This page serves as a complete reference to all `proxy.*` events that can be lis
 These are general-purpose proxy events that aren't tied to specific traps:
 
 - [proxy](proxy.md) — Emitted whenever a new proxy is created.
-- [proxy.error](../basics/error-handling.md#proxy-specific-errors) — Captures exceptions thrown during proxy operations.
+- [proxy.error](../error-handling.md#proxy-specific-errors) — Captures exceptions thrown during proxy operations.
 
 ## Proxy Trap Events
 
