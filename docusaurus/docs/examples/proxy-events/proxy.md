@@ -5,7 +5,7 @@ hide_table_of_contents: false
 
 Type: [`ProxyCreateEvent`](../../api/interfaces/ProxyCreateEvent)
 
-This event is emitted whenever a new proxy is created. It can only be listened to from the `Nexo` class, not from individual proxies. It provides useful information about the created proxy instance.
+This event is emitted whenever a new proxy is created. It can only be listened to from the `Nexo` instance, not from individual proxies. It provides useful information about the created proxy instance.
 
 ### Data Properties
 
