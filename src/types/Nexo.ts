@@ -106,9 +106,9 @@ export interface ProxyApplyEvent
 
 export interface ProxyConstructEvent
   extends ProxyEvent<{
-    target: FunctionLike;
-    args: ArrayLike;
-    result: Traceable;
+    readonly target: FunctionLike;
+    readonly args: ArrayLike;
+    readonly result: Promise<FunctionLike<[], object>>;
   }> {
   readonly cancelable: true;
   returnValue: object;
