@@ -1,7 +1,21 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
+import createDeferred from "../utils/createDeferred.js";
 
+/**
+ * Trap for handling `defineProperty` operations on the proxy.
+ *
+ * Emits a cancelable `proxy.defineProperty` event allowing listeners to:
+ * - Prevent the property from being defined by calling `event.preventDefault()`
+ * - Replace the property descriptor by returning a new one from the listener
+ *
+ * If not prevented, the descriptor is applied to the internal sandbox.
+ * The trap respects standard JavaScript invariants (e.g., non-extensibility, frozen objects).
+ *
+ * The resolved result reflects the actual JS engine behavior (true/false),
+ * while the event provides a `data.result` promise representing the expected outcome.
+ */
 export default function defineProperty(resolveProxy: nx.resolveProxy) {
   return (
     target: nx.Traceable,
@@ -11,85 +25,129 @@ export default function defineProperty(resolveProxy: nx.resolveProxy) {
     const [proxy, wrapper] = resolveProxy();
     const { sandbox } = wrapper;
     const extensible = Object.isExtensible(target);
+    const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
 
-    const event = new ProxyEvent("defineProperty", {
-      target: proxy,
-      cancelable: extensible,
-      data: {
-        target,
-        property,
-        descriptor,
+    function rejectWith(error: ProxyError): never {
+      deferred.resolve(() => {
+        throw error;
+      });
+      throw error;
+    }
+
+    function resolveWith(result: boolean): boolean {
+      deferred.resolve(() => result);
+      return result;
+    }
+
+    const event = new ProxyEvent<nx.ProxyDefinePropertyEvent["data"]>(
+      "defineProperty",
+      {
+        target: proxy,
+        cancelable: true,
+        data: {
+          target,
+          property,
+          descriptor,
+          result: deferred.promise,
+        },
       },
-    });
+    ) as nx.ProxyDefinePropertyEvent;
 
-    // Property descriptor can be modified by the event listeners
-    // Property definition is cancelled whenever event.preventDefault is called
+    // If event prevented, try to define with event.returnValue or return false
     if (event.defaultPrevented) {
-      return false;
+      if (!event.returnValue) {
+        return resolveWith(false);
+      }
+      try {
+        if (
+          !Reflect.defineProperty(
+            sandbox ? sandbox : target,
+            property,
+            event.returnValue,
+          )
+        ) {
+          throw TypeError(
+            `Cannot define property '${String(property)}' on proxy target`,
+          );
+        }
+        return resolveWith(true);
+      } catch (error) {
+        return rejectWith(new ProxyError(error.message, proxy));
+      }
     }
 
-    // Traceable target objects
-    // ----
-
+    // If no sandbox, define directly on target
     if (!sandbox) {
-      if (!Reflect.defineProperty(target, property, descriptor)) {
-        throw new ProxyError(
-          `Cannot define property '${String(property)}' on proxy target"`,
-          proxy,
-        );
+      try {
+        if (!Reflect.defineProperty(target, property, descriptor)) {
+          throw TypeError(
+            `Cannot define property '${String(property)}' on proxy target`,
+          );
+        }
+        return resolveWith(true);
+      } catch (error) {
+        return rejectWith(new ProxyError(error.message, proxy));
       }
-      return true;
     }
 
-    // Untraceable target objects
-    // ----
-
-    // Target is not extensible and may be sealed or frozen as well
-    // When the target is not extensible, frozen or sealed then the sandbox should be too
+    // If target is not extensible
     if (!extensible) {
-      if (!Reflect.defineProperty(target, property, descriptor)) {
-        throw new ProxyError(
-          `Cannot define property '${String(property)}', object is not extensible"`,
-          proxy,
-        );
+      try {
+        if (!Reflect.defineProperty(target, property, descriptor)) {
+          throw TypeError(
+            `Cannot define property '${String(property)}', object is not extensible`,
+          );
+        }
+        return resolveWith(true);
+      } catch (error) {
+        return rejectWith(new ProxyError(error.message, proxy));
       }
-      return true;
     }
 
+    const configurable = descriptor.configurable ?? true;
+    const isNonConfigurable = configurable === false;
     const sandboxDescriptor = Reflect.getOwnPropertyDescriptor(
       sandbox,
       property,
     );
 
-    // If the property exists and is configurable, don't allow making it non-configurable
+    // Don't allow making configurable property non-configurable
     if (
       sandboxDescriptor &&
       sandboxDescriptor.configurable &&
-      descriptor.configurable === false
+      isNonConfigurable
     ) {
-      throw new ProxyError(
-        `Cannot define non-configurable property '${String(property)}' that is configurable on the sandbox`,
-        proxy,
+      return rejectWith(
+        new ProxyError(
+          `Cannot define non-configurable property '${String(property)}' that is configurable on the sandbox`,
+          proxy,
+        ),
       );
     }
 
-    // If the property does not exist on the target, but you're trying to define it as non-configurable
-    if (!sandboxDescriptor && descriptor.configurable === false) {
-      throw new ProxyError(
-        `Cannot define non-configurable property '${String(property)}' because it does not exist on the sandbox`,
-        proxy,
+    // validate the property descriptor
+    if (
+      !("value" in descriptor || "get" in descriptor || "set" in descriptor) &&
+      isNonConfigurable
+    ) {
+      return rejectWith(
+        new ProxyError(
+          `Cannot define non-configurable property '${String(property)}' without a value, get, or set`,
+          proxy,
+        ),
       );
     }
 
-    // Define the property on the sandbox
-    if (!Reflect.defineProperty(sandbox, property, descriptor)) {
-      throw new ProxyError(
-        `Cannot define property '${String(property)}' on proxy sandbox"`,
-        proxy,
-      );
+    // Define on sandbox
+    try {
+      if (!Reflect.defineProperty(sandbox, property, descriptor)) {
+        throw TypeError(
+          `Cannot define property '${String(property)}' on proxy sandbox`,
+        );
+      }
+      return resolveWith(configurable);
+    } catch (error) {
+      return rejectWith(new ProxyError(error.message, proxy));
     }
-
-    // Act as if the property was defined on the target
-    return true;
   };
 }
