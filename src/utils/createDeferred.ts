@@ -1,5 +1,5 @@
-export default function createDeferred<T>() {
-  let resolve!: (value: T | Promise<T>) => void;
+export default function createDeferred<T = unknown>() {
+  let resolve!: (value: T) => void;
   let reject!: (reason?: Error) => void;
 
   const promise = new Promise<T>((res, rej) => {
