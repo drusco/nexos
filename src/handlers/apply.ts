@@ -1,6 +1,7 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
+import createDeferred from "../utils/createDeferred.js";
 
 export default function apply(resolveProxy: nx.resolveProxy) {
   return (
@@ -10,41 +11,45 @@ export default function apply(resolveProxy: nx.resolveProxy) {
   ): unknown => {
     const [proxy, wrapper] = resolveProxy();
     const { traceable, nexo } = wrapper;
+    const deferred = createDeferred<nx.FunctionLike>();
 
-    const event = new ProxyEvent<{
-      target: nx.FunctionLike;
-      thisArg: unknown;
-      args: nx.ArrayLike;
-      result?: nx.Proxy;
-    }>("apply", {
+    const event = new ProxyEvent<nx.ProxyApplyEvent["data"]>("apply", {
       target: proxy,
       cancelable: true,
       data: {
         target,
         thisArg,
         args,
+        result: deferred.promise,
       },
     });
 
     if (event.defaultPrevented) {
       // return value from the prevented event
-      return event.returnValue;
+      const returnValue = event.returnValue;
+      deferred.resolve(() => returnValue);
+      return returnValue;
     }
 
     if (traceable && typeof target === "function") {
       // return result from the traceable function target
       try {
-        return Reflect.apply(target, thisArg, args);
+        const result = Reflect.apply(target, thisArg, args);
+        deferred.resolve(() => result);
+        return result;
       } catch (error) {
-        throw new ProxyError(error.message, proxy);
+        const proxyError = new ProxyError(error.message, proxy);
+        deferred.resolve(() => {
+          throw proxyError;
+        });
+        throw proxyError;
       }
     }
 
-    // create a new proxy
-    const result = nexo.create();
-    // assign the previous proxy as the function return value
-    event.data.result = result;
+    // defaults to a new proxy
+    const proxyResult = nexo.create();
+    deferred.resolve(() => proxyResult);
 
-    return result;
+    return proxyResult;
   };
 }
