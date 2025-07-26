@@ -22,7 +22,7 @@ export default function apply(resolveProxy: nx.resolveProxy) {
         args,
         result: deferred.promise,
       },
-    });
+    }) as nx.ProxyApplyEvent;
 
     if (event.defaultPrevented) {
       // return value from the prevented event
