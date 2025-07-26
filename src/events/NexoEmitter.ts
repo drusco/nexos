@@ -115,8 +115,6 @@ class NexoEmitter implements nx.NexoEmitter {
     const isError = data instanceof Error;
     const errorListeners = this.listeners.get("error");
 
-    if (!hasListeners) return false;
-
     // Re-emit errors if the eventName is not "error"
     if (isError && eventName !== "error") {
       if (errorListeners?.size) {
@@ -125,6 +123,8 @@ class NexoEmitter implements nx.NexoEmitter {
         throw data; // crash app intentionally to surface unhandled error
       }
     }
+
+    if (!hasListeners) return false;
 
     try {
       for (const listener of listeners) {
