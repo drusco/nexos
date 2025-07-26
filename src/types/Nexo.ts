@@ -116,10 +116,14 @@ export interface ProxyConstructEvent
 
 export interface ProxyDefinePropertyEvent
   extends ProxyEvent<{
-    target: Traceable;
-    property: ObjectKey;
-    descriptor: PropertyDescriptor;
-  }> {}
+    readonly target: Traceable;
+    readonly property: ObjectKey;
+    readonly descriptor: PropertyDescriptor;
+    readonly result: Promise<FunctionLike<[], boolean>>;
+  }> {
+  readonly cancelable: true;
+  returnValue: PropertyDescriptor;
+}
 
 export interface ProxyDeletePropertyEvent
   extends ProxyEvent<{
