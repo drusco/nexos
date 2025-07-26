@@ -27,18 +27,6 @@ export default function defineProperty(resolveProxy: nx.resolveProxy) {
     const extensible = Object.isExtensible(target);
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
 
-    function rejectWith(error: ProxyError): never {
-      deferred.resolve(() => {
-        throw error;
-      });
-      throw error;
-    }
-
-    function resolveWith(result: boolean): boolean {
-      deferred.resolve(() => result);
-      return result;
-    }
-
     const event = new ProxyEvent<nx.ProxyDefinePropertyEvent["data"]>(
       "defineProperty",
       {
@@ -56,7 +44,7 @@ export default function defineProperty(resolveProxy: nx.resolveProxy) {
     // If event prevented, try to define with event.returnValue or return false
     if (event.defaultPrevented) {
       if (!event.returnValue) {
-        return resolveWith(false);
+        return resolveWith(deferred.resolve, false);
       }
       try {
         if (
@@ -70,9 +58,12 @@ export default function defineProperty(resolveProxy: nx.resolveProxy) {
             `Cannot define property '${String(property)}' on proxy target`,
           );
         }
-        return resolveWith(true);
+        return resolveWith(deferred.resolve, true);
       } catch (error) {
-        return rejectWith(new ProxyError(error.message, proxy));
+        return rejectWith(
+          deferred.resolve,
+          new ProxyError(error.message, proxy),
+        );
       }
     }
 
@@ -84,9 +75,12 @@ export default function defineProperty(resolveProxy: nx.resolveProxy) {
             `Cannot define property '${String(property)}' on proxy target`,
           );
         }
-        return resolveWith(true);
+        return resolveWith(deferred.resolve, true);
       } catch (error) {
-        return rejectWith(new ProxyError(error.message, proxy));
+        return rejectWith(
+          deferred.resolve,
+          new ProxyError(error.message, proxy),
+        );
       }
     }
 
@@ -98,9 +92,12 @@ export default function defineProperty(resolveProxy: nx.resolveProxy) {
             `Cannot define property '${String(property)}', object is not extensible`,
           );
         }
-        return resolveWith(true);
+        return resolveWith(deferred.resolve, true);
       } catch (error) {
-        return rejectWith(new ProxyError(error.message, proxy));
+        return rejectWith(
+          deferred.resolve,
+          new ProxyError(error.message, proxy),
+        );
       }
     }
 
@@ -118,6 +115,7 @@ export default function defineProperty(resolveProxy: nx.resolveProxy) {
       isNonConfigurable
     ) {
       return rejectWith(
+        deferred.resolve,
         new ProxyError(
           `Cannot define non-configurable property '${String(property)}' that is configurable on the sandbox`,
           proxy,
@@ -131,6 +129,7 @@ export default function defineProperty(resolveProxy: nx.resolveProxy) {
       isNonConfigurable
     ) {
       return rejectWith(
+        deferred.resolve,
         new ProxyError(
           `Cannot define non-configurable property '${String(property)}' without a value, get, or set`,
           proxy,
@@ -145,9 +144,27 @@ export default function defineProperty(resolveProxy: nx.resolveProxy) {
           `Cannot define property '${String(property)}' on proxy sandbox`,
         );
       }
-      return resolveWith(configurable);
+      return resolveWith(deferred.resolve, configurable);
     } catch (error) {
-      return rejectWith(new ProxyError(error.message, proxy));
+      return rejectWith(deferred.resolve, new ProxyError(error.message, proxy));
     }
   };
+}
+
+function rejectWith(
+  resolve: nx.FunctionLike<[() => never], void>,
+  error: ProxyError,
+): never {
+  resolve(() => {
+    throw error;
+  });
+  throw error;
+}
+
+function resolveWith<Result = unknown>(
+  resolve: nx.FunctionLike<[() => Result]>,
+  result: Result,
+): Result {
+  resolve(() => result);
+  return result;
 }
