@@ -2,29 +2,30 @@ import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
 import Nexo from "../Nexo.js";
+import createDeferred from "../utils/createDeferred.js";
 
 export default function construct(resolveProxy: nx.resolveProxy) {
   return (target: nx.FunctionLike, args: nx.ArrayLike): object => {
     const [proxy, wrapper] = resolveProxy();
     const { traceable, nexo } = wrapper;
+    const deferred = createDeferred<nx.FunctionLike<[], object>>();
 
-    const event = new ProxyEvent<{
-      target: nx.FunctionLike;
-      args: nx.ArrayLike;
-      result?: nx.Proxy;
-    }>("construct", {
+    const event = new ProxyEvent<nx.ProxyConstructEvent["data"]>("construct", {
       target: proxy,
       cancelable: true,
       data: {
         target,
         args,
+        result: deferred.promise,
       },
     });
 
     if (event.defaultPrevented) {
       if (Nexo.isTraceable(event.returnValue)) {
         // return value from the prevented event
-        return event.returnValue;
+        const returnValue = event.returnValue;
+        deferred.resolve(() => returnValue);
+        return returnValue;
       }
       throw new ProxyError(
         'Cannot return non-object on "construct" proxy trap',
@@ -35,17 +36,23 @@ export default function construct(resolveProxy: nx.resolveProxy) {
     if (traceable && typeof target === "function") {
       // return instance from the traceable constructor target
       try {
-        return Reflect.construct(target, args);
+        const result = Reflect.construct(target, args);
+        deferred.resolve(() => result);
+        return result;
       } catch (error) {
-        throw new ProxyError(error.message, proxy);
+        const proxyError = new ProxyError(error.message, proxy);
+        deferred.resolve(() => {
+          throw proxyError;
+        });
+        throw proxyError;
       }
     }
 
     // create a new proxy
-    const result = nexo.create();
-    // assign the previous proxy as the constructed object
-    event.data.result = result;
+    const proxyResult = nexo.create();
 
-    return result;
+    deferred.resolve(() => proxyResult);
+
+    return proxyResult;
   };
 }

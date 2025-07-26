@@ -2,87 +2,87 @@ import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import ProxyError from "../errors/ProxyError.js";
 
-describe("construct", () => {
-  it("Emits a construct event with custom data", () => {
+describe("construct handler", () => {
+  it("emits a 'proxy.construct' event with correct data", async () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
-    const constructListener = jest.fn();
+    const listener = jest.fn();
 
-    nexo.on("proxy.construct", constructListener);
-    wrapper.on("proxy.construct", constructListener);
+    nexo.on("proxy.construct", listener);
+    wrapper.on("proxy.construct", listener);
 
     const args = ["foo", "bar"];
     const result = Reflect.construct(proxy, args);
 
-    const [constructEvent]: [nx.ProxyConstructEvent] =
-      constructListener.mock.lastCall;
+    const [event]: [nx.ProxyConstructEvent] = listener.mock.lastCall;
+    const getResultFn = await event.data.result;
 
-    expect(constructListener).toHaveBeenCalledTimes(2);
-    expect(constructEvent.target).toBe(proxy);
-    expect(constructEvent.cancelable).toBe(true);
-    expect(constructEvent.data.args).toStrictEqual(args);
-    expect(constructEvent.data.result).toBe(result);
+    expect(listener).toHaveBeenCalledTimes(2);
+    expect(event.target).toBe(proxy);
+    expect(event.cancelable).toBe(true);
+    expect(event.data.args).toStrictEqual(args);
+    expect(getResultFn()).toBe(result);
   });
 
-  it("Returns a new proxy by default", () => {
+  it("returns a new proxy instance by default", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
 
-    const result = Reflect.construct(proxy, []);
+    const instance = Reflect.construct(proxy, []);
 
-    expect(Nexo.isProxy(result)).toBe(true);
+    expect(Nexo.isProxy(instance)).toBe(true);
   });
 
-  it("Creates an instance from a constructor target and returns it", () => {
+  it("constructs an instance using the target constructor", () => {
     const nexo = new Nexo();
-    class MyTarget {}
-    const proxy = nexo.create(MyTarget);
+    class MyClass {}
+    const proxy = nexo.create(MyClass);
 
-    const result = Reflect.construct(proxy, []);
+    const instance = Reflect.construct(proxy, []);
 
-    expect(result).toBeInstanceOf(MyTarget);
+    expect(instance).toBeInstanceOf(MyClass);
   });
 
-  it("Allows its return value to be defined by the event listener", () => {
-    const nexo = new Nexo();
-    const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
-
-    const expectedResult = {};
-
-    wrapper.on("proxy.construct", (event: nx.ProxyConstructEvent) => {
-      event.preventDefault();
-      return expectedResult;
-    });
-
-    const result = Reflect.construct(proxy, []);
-
-    expect(result).toBe(expectedResult);
-  });
-
-  it("Throws an error when defining a non-object as the return value", () => {
+  it("allows event listeners to override the returned instance", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
 
+    const customInstance = {};
+
     wrapper.on("proxy.construct", (event: nx.ProxyConstructEvent) => {
       event.preventDefault();
-      return "non-object";
+      return customInstance;
     });
 
-    expect(Reflect.construct.bind(null, proxy, [])).toThrow(ProxyError);
+    const result = Reflect.construct(proxy, []);
+
+    expect(result).toBe(customInstance);
   });
 
-  it("Throws an error when the target constructor fails", () => {
+  it("throws ProxyError if the overridden result is not an object", () => {
     const nexo = new Nexo();
-    class target {
+    const proxy = nexo.create();
+    const wrapper = Nexo.wrap(proxy);
+
+    wrapper.on("proxy.construct", (event: nx.ProxyConstructEvent) => {
+      event.preventDefault();
+      return "invalid"; // not an object
+    });
+
+    expect(() => Reflect.construct(proxy, [])).toThrow(ProxyError);
+  });
+
+  it("throws ProxyError if the original constructor throws", () => {
+    const nexo = new Nexo();
+    class ExplodingClass {
       constructor() {
-        throw Error("boom");
+        throw new Error("boom");
       }
     }
-    const proxy = nexo.create(target);
+    const proxy = nexo.create(ExplodingClass);
 
-    expect(Reflect.construct.bind(null, proxy, [])).toThrow(ProxyError);
+    expect(() => Reflect.construct(proxy, [])).toThrow(ProxyError);
   });
 });
