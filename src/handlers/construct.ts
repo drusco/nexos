@@ -18,7 +18,7 @@ export default function construct(resolveProxy: nx.resolveProxy) {
         args,
         result: deferred.promise,
       },
-    });
+    }) as nx.ProxyConstructEvent;
 
     if (event.defaultPrevented) {
       if (Nexo.isTraceable(event.returnValue)) {
