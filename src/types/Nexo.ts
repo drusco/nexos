@@ -127,10 +127,11 @@ export interface ProxyDefinePropertyEvent
 
 export interface ProxyDeletePropertyEvent
   extends ProxyEvent<{
-    target: Traceable;
-    property: ObjectKey;
+    readonly target: Traceable;
+    readonly property: ObjectKey;
   }> {
   readonly cancelable: true;
+  readonly returnValue: never;
 }
 
 export interface ProxyGetEvent
