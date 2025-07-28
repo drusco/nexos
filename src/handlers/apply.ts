@@ -1,7 +1,7 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
-import { createDeferred } from "../utils/deferred.js";
+import { createDeferred, resolveWith, rejectWith } from "../utils/deferred.js";
 
 export default function apply(resolveProxy: nx.resolveProxy) {
   return (
@@ -27,29 +27,21 @@ export default function apply(resolveProxy: nx.resolveProxy) {
     if (event.defaultPrevented) {
       // return value from the prevented event
       const returnValue = event.returnValue;
-      deferred.resolve(() => returnValue);
-      return returnValue;
+      return resolveWith(deferred.resolve, returnValue);
     }
 
     if (traceable && typeof target === "function") {
       // return result from the traceable function target
       try {
         const result = Reflect.apply(target, thisArg, args);
-        deferred.resolve(() => result);
-        return result;
+        return resolveWith(deferred.resolve, result);
       } catch (error) {
         const proxyError = new ProxyError(error.message, proxy);
-        deferred.resolve(() => {
-          throw proxyError;
-        });
-        throw proxyError;
+        return rejectWith(deferred.resolve, proxyError);
       }
     }
 
     // defaults to a new proxy
-    const proxyResult = nexo.create();
-    deferred.resolve(() => proxyResult);
-
-    return proxyResult;
+    return resolveWith(deferred.resolve, nexo.create());
   };
 }

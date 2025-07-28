@@ -2,7 +2,7 @@ import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
 import Nexo from "../Nexo.js";
-import { createDeferred } from "../utils/deferred.js";
+import { createDeferred, resolveWith, rejectWith } from "../utils/deferred.js";
 
 export default function construct(resolveProxy: nx.resolveProxy) {
   return (target: nx.FunctionLike, args: nx.ArrayLike): object => {
@@ -24,12 +24,14 @@ export default function construct(resolveProxy: nx.resolveProxy) {
       if (Nexo.isTraceable(event.returnValue)) {
         // return value from the prevented event
         const returnValue = event.returnValue;
-        deferred.resolve(() => returnValue);
-        return returnValue;
+        return resolveWith(deferred.resolve, returnValue);
       }
-      throw new ProxyError(
-        'Cannot return non-object on "construct" proxy trap',
-        proxy,
+      return rejectWith(
+        deferred.resolve,
+        new ProxyError(
+          'Cannot return non-object on "construct" proxy trap',
+          proxy,
+        ),
       );
     }
 
@@ -37,22 +39,16 @@ export default function construct(resolveProxy: nx.resolveProxy) {
       // return instance from the traceable constructor target
       try {
         const result = Reflect.construct(target, args);
-        deferred.resolve(() => result);
-        return result;
+        return resolveWith(deferred.resolve, result);
       } catch (error) {
-        const proxyError = new ProxyError(error.message, proxy);
-        deferred.resolve(() => {
-          throw proxyError;
-        });
-        throw proxyError;
+        return rejectWith(
+          deferred.resolve,
+          new ProxyError(error.message, proxy),
+        );
       }
     }
 
     // create a new proxy
-    const proxyResult = nexo.create();
-
-    deferred.resolve(() => proxyResult);
-
-    return proxyResult;
+    return resolveWith(deferred.resolve, nexo.create());
   };
 }
