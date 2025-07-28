@@ -11,7 +11,10 @@ export default function getPrototypeOf(resolveProxy: nx.resolveProxy) {
     new ProxyEvent("getPrototypeOf", {
       target: proxy,
       cancelable: false,
-      data: { target, result: proto },
+      data: {
+        target: sandbox || target,
+        result: proto,
+      },
     });
 
     return prototype;
