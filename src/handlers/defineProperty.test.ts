@@ -161,6 +161,7 @@ describe("DefineProperty handler", () => {
 
       nexo.on("error", listener);
       nexo.on("proxy.error", listener);
+      wrapper.on("error", listener);
       wrapper.on("proxy.error", listener);
 
       Reflect.defineProperty(proxy, "foo", {
@@ -176,7 +177,7 @@ describe("DefineProperty handler", () => {
       const [proxyError] = listener.mock.lastCall;
 
       expect(proxy.foo).toBe(true);
-      expect(listener).toHaveBeenCalledTimes(2);
+      expect(listener).toHaveBeenCalledTimes(4);
       expect(proxyError).toBeInstanceOf(ProxyError);
     });
 
