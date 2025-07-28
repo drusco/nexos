@@ -2,7 +2,7 @@ import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
 import Nexo from "../Nexo.js";
-import createDeferred from "../utils/createDeferred.js";
+import { createDeferred } from "../utils/deferred.js";
 
 export default function construct(resolveProxy: nx.resolveProxy) {
   return (target: nx.FunctionLike, args: nx.ArrayLike): object => {
