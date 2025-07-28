@@ -2,7 +2,7 @@ import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import ProxyError from "../errors/ProxyError.js";
 
-describe("construct handler", () => {
+describe("Construct Handler", () => {
   it("emits a 'proxy.construct' event with correct data", async () => {
     const nexo = new Nexo();
     const proxy = nexo.create();

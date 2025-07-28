@@ -3,7 +3,7 @@ import Nexo from "../Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
 
-describe("apply handler", () => {
+describe("Apply Handler", () => {
   it("emits 'proxy.apply' event with correct data and result promise", async () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
