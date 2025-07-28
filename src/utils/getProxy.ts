@@ -24,8 +24,8 @@ const getProxy = (nexo: Nexo, target?: nx.Traceable, id?: string): nx.Proxy => {
 
   // eslint-disable-next-line prefer-const
   let proxy: nx.Proxy;
-  const fn = Object.setPrototypeOf(new Function(), null);
-  const proxyTarget = target || fn;
+  const mock = Object.setPrototypeOf(class {}, null);
+  const proxyTarget = target || mock;
   const revocable = Proxy.revocable<nx.Proxy>(
     proxyTarget,
     createHandlers(() => [proxy, Nexo.wrap(proxy)]),
@@ -47,10 +47,10 @@ const getProxy = (nexo: Nexo, target?: nx.Traceable, id?: string): nx.Proxy => {
 
   if (!traceable) {
     // Remove function related properties for proxies without traceable target
-    for (const key of Reflect.ownKeys(fn)) {
-      const descriptor = Object.getOwnPropertyDescriptor(fn, key);
+    for (const key of Reflect.ownKeys(mock)) {
+      const descriptor = Object.getOwnPropertyDescriptor(mock, key);
       if (descriptor.configurable) {
-        delete fn[key];
+        delete mock[key];
       }
     }
   }
