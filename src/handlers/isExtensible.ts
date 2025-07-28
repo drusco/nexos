@@ -3,13 +3,17 @@ import ProxyEvent from "../events/ProxyEvent.js";
 
 export default function isExtensible(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable): boolean => {
-    const [proxy] = resolveProxy();
+    const [proxy, wrapper] = resolveProxy();
+    const { sandbox } = wrapper;
     const extensible = Reflect.isExtensible(target);
 
     new ProxyEvent("isExtensible", {
       target: proxy,
       cancelable: false,
-      data: { target, result: extensible },
+      data: {
+        target: sandbox || target,
+        result: extensible,
+      },
     });
 
     return extensible;
