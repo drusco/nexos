@@ -5,6 +5,12 @@ describe("ProxyError", () => {
   it("creates a ProxyError instance with the correct message and proxy", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
+    const wrapper = Nexo.wrap(proxy);
+    const listener = jest.fn();
+
+    nexo.on("error", listener);
+    wrapper.on("error", listener);
+
     const error = new ProxyError("Something went wrong", proxy);
 
     expect(error).toBeInstanceOf(Error);
