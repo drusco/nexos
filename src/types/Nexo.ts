@@ -129,6 +129,7 @@ export interface ProxyDeletePropertyEvent
   extends ProxyEvent<{
     readonly target: Traceable;
     readonly property: ObjectKey;
+    readonly result: Promise<FunctionLike<[], boolean>>;
   }> {
   readonly cancelable: true;
 }
