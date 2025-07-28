@@ -16,7 +16,7 @@ export default function get(resolveProxy: nx.resolveProxy) {
         property,
         result: deferred.promise,
       },
-    });
+    }) as nx.ProxyGetEvent;
 
     if (event.defaultPrevented) {
       return resolveWith(deferred.resolve, event.returnValue);
