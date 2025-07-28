@@ -12,7 +12,10 @@ export default function ownKeys(resolveProxy: nx.resolveProxy) {
     new ProxyEvent("ownKeys", {
       target: proxy,
       cancelable: false,
-      data: { target, result: keys },
+      data: {
+        target: sandbox || target,
+        result: keys,
+      },
     });
 
     // Return the own keys from the current proxy target

@@ -98,7 +98,7 @@ export interface ProxyEvent<Data = unknown> extends NexoEvent<Proxy, Data> {
 
 export interface ProxyApplyEvent
   extends ProxyEvent<{
-    readonly target: FunctionLike;
+    readonly target: Traceable;
     readonly thisArg: unknown;
     readonly args: ArrayLike;
     readonly result: Promise<FunctionLike<[], unknown>>;
@@ -108,7 +108,7 @@ export interface ProxyApplyEvent
 
 export interface ProxyConstructEvent
   extends ProxyEvent<{
-    readonly target: FunctionLike;
+    readonly target: Traceable;
     readonly args: ArrayLike;
     readonly result: Promise<FunctionLike<[], object>>;
   }> {
