@@ -1,7 +1,7 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
-import createDeferred from "../utils/createDeferred.js";
+import { createDeferred, resolveWith, rejectWith } from "../utils/deferred.js";
 
 /**
  * Trap for handling `defineProperty` operations on the proxy.
@@ -149,22 +149,4 @@ export default function defineProperty(resolveProxy: nx.resolveProxy) {
       return rejectWith(deferred.resolve, new ProxyError(error.message, proxy));
     }
   };
-}
-
-function rejectWith(
-  resolve: nx.FunctionLike<[() => never], void>,
-  error: ProxyError,
-): never {
-  resolve(() => {
-    throw error;
-  });
-  throw error;
-}
-
-function resolveWith<Result = unknown>(
-  resolve: nx.FunctionLike<[() => Result]>,
-  result: Result,
-): Result {
-  resolve(() => result);
-  return result;
 }
