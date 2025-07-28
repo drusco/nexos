@@ -1,23 +1,37 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
+import { createDeferred, resolveWith } from "../utils/deferred.js";
 
 export default function get(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable, property: nx.ObjectKey): unknown => {
     const [proxy, wrapper] = resolveProxy();
     const { sandbox, nexo } = wrapper;
+    const deferred = createDeferred<nx.FunctionLike<[], unknown>>();
 
-    const result = sandbox
-      ? Reflect.has(sandbox, property)
-        ? Reflect.get(sandbox, property)
-        : nexo.create()
-      : Reflect.get(target, property);
-
-    new ProxyEvent("get", {
+    const event = new ProxyEvent<nx.ProxyGetEvent["data"]>("get", {
       target: proxy,
-      cancelable: false,
-      data: { target, property, result },
+      cancelable: true,
+      data: {
+        target,
+        property,
+        result: deferred.promise,
+      },
     });
 
-    return result;
+    if (event.defaultPrevented) {
+      return resolveWith(deferred.resolve, event.returnValue);
+    }
+
+    if (!sandbox) {
+      return resolveWith(deferred.resolve, Reflect.get(target, property));
+    }
+
+    if (Reflect.has(sandbox, property)) {
+      // return existing value on the sandbox
+      return resolveWith(deferred.resolve, Reflect.get(sandbox, property));
+    } else {
+      // returns new proxy
+      return resolveWith(deferred.resolve, nexo.create());
+    }
   };
 }
