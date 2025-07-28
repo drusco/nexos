@@ -68,12 +68,10 @@ export interface Proxy {
   <Return = Proxy, Args extends ArrayLike = ArrayLike>(...args: Args): Return;
   name: any;
   apply: any;
-  arguments: any;
   bind: any;
   call: any;
   caller: any;
   length: any;
-  prototype: any;
   toString: any;
   [key: ObjectKey]: any;
 }
