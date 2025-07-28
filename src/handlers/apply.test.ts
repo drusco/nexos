@@ -4,12 +4,8 @@ import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
 
 describe("apply handler", () => {
-  let nexo: Nexo;
-  beforeEach(() => {
-    nexo = new Nexo();
-  });
-
   it("emits 'proxy.apply' event with correct data and result promise", async () => {
+    const nexo = new Nexo();
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
     const applyListener = jest.fn();
@@ -37,6 +33,7 @@ describe("apply handler", () => {
   });
 
   it("returns an empty proxy when the original proxy has no function target", () => {
+    const nexo = new Nexo();
     const proxy = nexo.create();
     const result = Reflect.apply(proxy, undefined, []);
 
@@ -44,6 +41,7 @@ describe("apply handler", () => {
   });
 
   it("allows event listeners to override the return value by calling preventDefault", () => {
+    const nexo = new Nexo();
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
     const expectedResult = "foo";
@@ -59,6 +57,7 @@ describe("apply handler", () => {
   });
 
   it("invokes the original function target and returns its result", () => {
+    const nexo = new Nexo();
     const target = (a: number, b: number): number => a + b;
     const proxy = nexo.create(target);
 
@@ -68,6 +67,7 @@ describe("apply handler", () => {
   });
 
   it("throws a ProxyError if the function target throws and emits error events", async () => {
+    const nexo = new Nexo();
     const errorListener = jest.fn();
     const applyListener = jest.fn();
     const target = () => {
