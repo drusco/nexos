@@ -92,7 +92,9 @@ export interface ProxyError extends Error {
   readonly name: "ProxyError";
 }
 
-export interface ProxyEvent<Data = unknown> extends NexoEvent<Proxy, Data> {}
+export interface ProxyEvent<Data = unknown> extends NexoEvent<Proxy, Data> {
+  readonly returnValue: unknown;
+}
 
 export interface ProxyApplyEvent
   extends ProxyEvent<{
@@ -111,7 +113,6 @@ export interface ProxyConstructEvent
     readonly result: Promise<FunctionLike<[], object>>;
   }> {
   readonly cancelable: true;
-  returnValue: object;
 }
 
 export interface ProxyDefinePropertyEvent
@@ -122,7 +123,6 @@ export interface ProxyDefinePropertyEvent
     readonly result: Promise<FunctionLike<[], boolean>>;
   }> {
   readonly cancelable: true;
-  returnValue: PropertyDescriptor;
 }
 
 export interface ProxyDeletePropertyEvent
@@ -131,7 +131,6 @@ export interface ProxyDeletePropertyEvent
     readonly property: ObjectKey;
   }> {
   readonly cancelable: true;
-  readonly returnValue: never;
 }
 
 export interface ProxyGetEvent
@@ -194,7 +193,6 @@ export interface ProxySetPrototypeOfEvent
     prototype: object;
   }> {
   readonly cancelable: true;
-  returnValue: object;
 }
 
 export interface ProxyCreateEvent
