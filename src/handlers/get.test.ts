@@ -41,7 +41,13 @@ describe("Get Handler", () => {
 
     const listener = jest.fn((event: nx.ProxyGetEvent) => {
       event.preventDefault();
-      return newValue;
+      const { target, property } = event.data;
+      const currentValue = target[property];
+      if (currentValue === value) {
+        target[property] = newValue;
+        return newValue;
+      }
+      return currentValue;
     });
 
     wrapper.on("proxy.get", listener);
