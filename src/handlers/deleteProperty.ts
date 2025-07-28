@@ -15,7 +15,7 @@ export default function deleteProperty(resolveProxy: nx.resolveProxy) {
         target: proxy,
         cancelable: true,
         data: {
-          target,
+          target: sandbox || target,
           property,
           result: deferred.promise,
         },
