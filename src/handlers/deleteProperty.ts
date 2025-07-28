@@ -20,7 +20,7 @@ export default function deleteProperty(resolveProxy: nx.resolveProxy) {
           result: deferred.promise,
         },
       },
-    );
+    ) as nx.ProxyDeletePropertyEvent;
 
     if (event.defaultPrevented) {
       // Prevent property deletion
