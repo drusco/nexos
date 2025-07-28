@@ -73,12 +73,12 @@ describe("apply handler", () => {
     const target = () => {
       throw new Error("boom");
     };
+    const proxy = nexo.create(target);
+    const wrapper = Nexo.wrap(proxy);
 
     nexo.on("error", errorListener);
-    nexo.on("proxy.error", errorListener);
+    wrapper.on("error", errorListener);
     nexo.on("proxy.apply", applyListener);
-
-    const proxy = nexo.create(target);
 
     // Verify the proxy throws ProxyError synchronously
     expect(() => proxy()).toThrow(ProxyError);
