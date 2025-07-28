@@ -10,14 +10,14 @@ export default function apply(resolveProxy: nx.resolveProxy) {
     args: nx.ArrayLike,
   ): unknown => {
     const [proxy, wrapper] = resolveProxy();
-    const { traceable, nexo } = wrapper;
+    const { traceable, nexo, sandbox } = wrapper;
     const deferred = createDeferred<nx.FunctionLike>();
 
     const event = new ProxyEvent<nx.ProxyApplyEvent["data"]>("apply", {
       target: proxy,
       cancelable: true,
       data: {
-        target,
+        target: sandbox || target,
         thisArg,
         args,
         result: deferred.promise,

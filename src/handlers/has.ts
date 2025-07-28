@@ -12,7 +12,11 @@ export default function has(resolveProxy: nx.resolveProxy) {
     new ProxyEvent("has", {
       target: proxy,
       cancelable: false,
-      data: { target, property, result },
+      data: {
+        target: sandbox || target,
+        property,
+        result,
+      },
     });
 
     if (sandbox) {
