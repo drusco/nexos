@@ -3,6 +3,19 @@ import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
 
+/**
+ * Implements the `deleteProperty` trap for a Proxy, allowing interception of property deletions.
+ *
+ * Emits a cancelable `"deleteProperty"` event to provide hooks for external control or monitoring.
+ * If the event is prevented, deletion is skipped and returns `false`.
+ *
+ * Enforces object invariants by checking whether the target or sandbox is frozen or sealed,
+ * and throws a `ProxyError` if a non-configurable property is attempted to be deleted.
+ *
+ * Deletes the property first from the sandbox (if defined), then from the target itself.
+ * If deletion fails at any point, a `ProxyError` is returned via the deferred handler.
+ */
+
 export default function deleteProperty(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable, property: nx.ObjectKey): boolean => {
     const [proxy, wrapper] = resolveProxy();
@@ -43,8 +56,8 @@ export default function deleteProperty(resolveProxy: nx.resolveProxy) {
         );
       }
 
-      // The target is not sealed nor frozen
-      // Lets try to delete the property from the untraceable target sandbox
+      // The sandbox is not sealed nor frozen
+      // Lets try to delete the property from it
       if (!Reflect.deleteProperty(sandbox, property)) {
         return rejectWith(
           deferred.resolve,
