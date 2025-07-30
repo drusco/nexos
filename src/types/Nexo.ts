@@ -152,9 +152,11 @@ export interface ProxyGetOwnPropertyDescriptorEvent
 
 export interface ProxyGetPrototypeOfEvent
   extends ProxyEvent<{
-    target: Traceable;
-    result: object;
-  }> {}
+    readonly target: Traceable;
+    readonly result: Promise<FunctionLike<[], object>>;
+  }> {
+  readonly cancelable: true;
+}
 
 export interface ProxyHasEvent
   extends ProxyEvent<{
