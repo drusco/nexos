@@ -49,13 +49,13 @@ export default function defineProperty(resolveProxy: nx.resolveProxy) {
       try {
         if (
           !Reflect.defineProperty(
-            sandbox ? sandbox : target,
+            sandbox || target,
             property,
             event.returnValue,
           )
         ) {
           throw TypeError(
-            `Cannot define property '${String(property)}' on proxy target`,
+            `Cannot define property '${String(property)}' on proxy ${sandbox ? "sandbox" : "target"}`,
           );
         }
         return resolveWith(deferred.resolve, true);
