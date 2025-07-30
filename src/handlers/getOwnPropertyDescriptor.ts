@@ -35,17 +35,16 @@ export default function getOwnPropertyDescriptor(
     ) as nx.ProxyGetOwnPropertyDescriptorEvent;
 
     if (event.defaultPrevented) {
-      const returnValue = event.returnValue;
-      if (
-        returnValue !== undefined &&
-        (returnValue === null || typeof returnValue !== "object")
-      ) {
-        throw new ProxyError(
-          `'getOwnPropertyDescriptor' must return an object or undefined for property '${String(property)}'.`,
-          proxy,
-        );
-      }
       try {
+        const returnValue = event.returnValue;
+        if (
+          returnValue !== undefined &&
+          (returnValue === null || typeof returnValue !== "object")
+        ) {
+          throw new TypeError(
+            `'getOwnPropertyDescriptor' must return an object or undefined for property '${String(property)}'.`,
+          );
+        }
         return resolveWith(deferred.resolve, returnValue);
       } catch (error) {
         return rejectWith(
