@@ -71,8 +71,8 @@ describe("setPrototypeOf", () => {
 
     Reflect.setPrototypeOf(proxy, null);
 
-    expect(Reflect.getPrototypeOf(proxy)).toBeNull();
-    expect(Object.getPrototypeOf(proxy)).toBeNull();
+    expect(Reflect.getPrototypeOf(proxy)).toBe(Array.prototype);
+    expect(Object.getPrototypeOf(proxy)).toBe(Array.prototype);
     expect(Nexo.getPrototypeOf(proxy)).toBe(Array.prototype);
   });
 
