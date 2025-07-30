@@ -58,7 +58,7 @@ describe("GetPrototypeOf Handler", () => {
     });
 
     wrapper.on("proxy.getPrototypeOf", listener);
-    wrapper.on("error", errorListener);
+    wrapper.on("proxy.error", errorListener);
 
     expect(() => Object.getPrototypeOf(proxy)).toThrow(ProxyError);
 
