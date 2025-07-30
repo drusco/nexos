@@ -55,7 +55,7 @@ export default function defineProperty(resolveProxy: nx.resolveProxy) {
           )
         ) {
           throw TypeError(
-            `Cannot define property '${String(property)}' on proxy ${sandbox ? "sandbox" : "target"}`,
+            `Cannot define property '${String(property)}' on proxy target`,
           );
         }
         return resolveWith(deferred.resolve, true);
