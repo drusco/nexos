@@ -11,10 +11,6 @@ import ProxyError from "../errors/ProxyError.js";
  * This function checks for an active `sandbox` context; if present,
  * it will retrieve the descriptor from it instead of the target.
  *
- * @param resolveProxy - A function that returns the proxy and its associated wrapper,
- *                       including sandbox context if any.
- * @returns A Proxy trap function for `getOwnPropertyDescriptor` that emits
- *          a `ProxyEvent`, supports interception, and handles default fallbacks.
  */
 export default function getOwnPropertyDescriptor(
   resolveProxy: nx.resolveProxy,
