@@ -3,6 +3,21 @@ import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
 import { createDeferred, resolveWith, rejectWith } from "../utils/deferred.js";
 
+/**
+ * Creates an `apply` trap handler for a Proxy, enabling interception and custom handling
+ * of function calls on proxied objects. This trap emits a `ProxyEvent` of type `"apply"`,
+ * allowing listeners to override or observe function invocation behavior.
+ *
+ * If the event is prevented (`event.preventDefault()` is called), the `returnValue` from the event
+ * is used instead of invoking the target function.
+ *
+ * If the target is a traceable function, the original function is invoked via `Reflect.apply`
+ * and its result is resolved. Any errors during invocation are caught and wrapped in a `ProxyError`.
+ *
+ * If no applicable behavior is found, a fallback proxy instance is created and returned.
+ *
+ */
+
 export default function apply(resolveProxy: nx.resolveProxy) {
   return (
     target: nx.FunctionLike,
