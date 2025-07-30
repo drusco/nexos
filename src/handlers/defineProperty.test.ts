@@ -88,6 +88,30 @@ describe("DefineProperty Handler", () => {
       expect(result).toBe(true);
       expect(proxy.foo).toBe(6);
     });
+
+    it("throws when defining non-configurable or non-writable properties on the target", () => {
+      const nexo = new Nexo();
+      const proxy = nexo.create(class {});
+      const wrapper = Nexo.wrap(proxy);
+
+      wrapper.on(
+        "proxy.defineProperty",
+        (event: nx.ProxyDefinePropertyEvent) => {
+          event.preventDefault();
+          const { property, descriptor } = event.data;
+          if (property === "prototype") {
+            return { value: Array.prototype };
+          }
+          return descriptor;
+        },
+      );
+
+      expect(() =>
+        Reflect.defineProperty(proxy, "prototype", {
+          value: Array.prototype,
+        }),
+      ).toThrow();
+    });
   });
 
   describe("Inextensibility scenarios", () => {
