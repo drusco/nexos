@@ -4,6 +4,21 @@ import ProxyError from "../errors/ProxyError.js";
 import Nexo from "../Nexo.js";
 import { createDeferred, resolveWith, rejectWith } from "../utils/deferred.js";
 
+/**
+ * Creates a `construct` trap handler for a Proxy, enabling interception and custom handling
+ * of object instantiation via the `new` keyword. This trap emits a `ProxyEvent` of type `"construct"`,
+ * allowing listeners to override or observe constructor behavior.
+ *
+ * If the event is canceled using `event.preventDefault()`, the provided `returnValue` is used—
+ * but only if it is an object (traceable). Otherwise, a `ProxyError` is thrown to align with
+ * JavaScript's Proxy invariants for constructor traps.
+ *
+ * If the proxied target is a traceable constructor function, it will be invoked using `Reflect.construct`.
+ * Any errors during instantiation are caught and wrapped in a `ProxyError`.
+ *
+ * If no override is applied and the target isn't directly traceable, a new proxy instance is returned.
+ *
+ */
 export default function construct(resolveProxy: nx.resolveProxy) {
   return (target: nx.FunctionLike, args: nx.ArrayLike): object => {
     const [proxy, wrapper] = resolveProxy();
