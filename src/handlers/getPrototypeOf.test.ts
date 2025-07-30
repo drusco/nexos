@@ -57,8 +57,8 @@ describe("GetPrototypeOf Handler", () => {
       return "invalid";
     });
 
+    nexo.on("error", errorListener);
     wrapper.on("proxy.getPrototypeOf", listener);
-    wrapper.on("proxy.error", errorListener);
 
     expect(() => Object.getPrototypeOf(proxy)).toThrow(ProxyError);
 
