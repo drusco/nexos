@@ -160,10 +160,12 @@ export interface ProxyGetPrototypeOfEvent
 
 export interface ProxyHasEvent
   extends ProxyEvent<{
-    target: Traceable;
-    property: ObjectKey;
-    result: boolean;
-  }> {}
+    readonly target: Traceable;
+    readonly property: ObjectKey;
+    readonly result: Promise<FunctionLike<[], boolean>>;
+  }> {
+  readonly cancelable: true;
+}
 
 export interface ProxyIsExtensibleEvent
   extends ProxyEvent<{
