@@ -7,6 +7,10 @@ export default function preventExtensions(resolveProxy: nx.resolveProxy) {
     const { sandbox } = wrapper;
     const result = Reflect.preventExtensions(target);
 
+    if (sandbox) {
+      Reflect.preventExtensions(sandbox);
+    }
+
     new ProxyEvent("preventExtensions", {
       target: proxy,
       cancelable: false,
