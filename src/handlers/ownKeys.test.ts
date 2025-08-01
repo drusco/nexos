@@ -67,6 +67,7 @@ describe("OwnKeys Handler", () => {
     const [event]: [nx.ProxyOwnKeysEvent] = listener.mock.lastCall;
     const getResult: nx.FunctionLike = await event.data.result;
 
+    expect(event.returnValue).toStrictEqual(customResult);
     expect(result).toStrictEqual(customResult);
     expect(getResult()).toStrictEqual(customResult);
   });
@@ -87,6 +88,7 @@ describe("OwnKeys Handler", () => {
     const [event]: [nx.ProxyOwnKeysEvent] = listener.mock.lastCall;
     const getResult: nx.FunctionLike = await event.data.result;
 
+    expect(event.returnValue).toStrictEqual(customResult);
     expect(result).toStrictEqual(customResult);
     expect(getResult()).toStrictEqual(customResult);
   });
