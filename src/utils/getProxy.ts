@@ -24,7 +24,8 @@ const getProxy = (nexo: Nexo, target?: nx.Traceable, id?: string): nx.Proxy => {
 
   // eslint-disable-next-line prefer-const
   let proxy: nx.Proxy;
-  const mock = Object.setPrototypeOf(class {}, null);
+  const boundFunction = function () {}.bind(null);
+  const mock = Object.setPrototypeOf(boundFunction, null);
   const proxyTarget = target || mock;
   const revocable = Proxy.revocable<nx.Proxy>(
     proxyTarget,
