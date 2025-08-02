@@ -185,9 +185,11 @@ export interface ProxyOwnKeysEvent
 
 export interface ProxyPreventExtensionsEvent
   extends ProxyEvent<{
-    target: Traceable;
-    result: boolean;
-  }> {}
+    readonly target: Traceable;
+    readonly result: Promise<FunctionLike<[], boolean>>;
+  }> {
+  readonly cancelable: true;
+}
 
 export interface ProxySetEvent
   extends ProxyEvent<{
