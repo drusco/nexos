@@ -31,7 +31,6 @@ export default function defineProperty(resolveProxy: nx.resolveProxy) {
       "defineProperty",
       {
         target: proxy,
-        cancelable: true,
         data: {
           target: sandbox || target,
           property,

@@ -21,7 +21,6 @@ export default function get(resolveProxy: nx.resolveProxy) {
 
     const event = new ProxyEvent<nx.ProxyGetEvent["data"]>("get", {
       target: proxy,
-      cancelable: true,
       data: {
         target: sandbox || target,
         property,

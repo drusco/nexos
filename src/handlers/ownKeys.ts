@@ -31,7 +31,6 @@ export default function ownKeys(resolveProxy: nx.resolveProxy) {
 
     const event = new ProxyEvent<nx.ProxyOwnKeysEvent["data"]>("ownKeys", {
       target: proxy,
-      cancelable: true,
       data: {
         target: sandbox || target,
         result: deferred.promise,

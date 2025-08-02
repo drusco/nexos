@@ -17,6 +17,9 @@ class ProxyEvent<Data = unknown>
   extends NexoEvent<nx.Proxy, Data>
   implements nx.ProxyEvent<Data>
 {
+  /** Indicates whether the event is cancelable. */
+  declare readonly cancelable: true;
+
   /**
    * Creates an instance of the `ProxyEvent`.
    * This constructor initializes the event with the name prefixed by `proxy.` and emits the event
@@ -40,7 +43,7 @@ class ProxyEvent<Data = unknown>
       cancelable: boolean;
     }> = {},
   ) {
-    super(`proxy.${name}`, options);
+    super(`proxy.${name}`, { ...options, cancelable: true });
 
     // Retrieve the wrapper for the proxy
     const wrapper = map.proxies.get(this.target);

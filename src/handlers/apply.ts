@@ -30,7 +30,6 @@ export default function apply(resolveProxy: nx.resolveProxy) {
 
     const event = new ProxyEvent<nx.ProxyApplyEvent["data"]>("apply", {
       target: proxy,
-      cancelable: true,
       data: {
         target: sandbox || target,
         thisArg,

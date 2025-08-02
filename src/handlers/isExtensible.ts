@@ -25,7 +25,6 @@ export default function isExtensible(resolveProxy: nx.resolveProxy) {
       "isExtensible",
       {
         target: proxy,
-        cancelable: true,
         data: {
           target: sandbox || target,
           result: deferred.promise,
