@@ -24,11 +24,12 @@ export default function construct(resolveProxy: nx.resolveProxy) {
     const [proxy, wrapper] = resolveProxy();
     const { nexo, sandbox } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], object>>();
+    const finalTarget = sandbox || target;
 
     const event = new ProxyEvent<nx.ProxyConstructEvent["data"]>("construct", {
       target: proxy,
       data: {
-        target: sandbox || target,
+        target: finalTarget,
         args,
         result: deferred.promise,
       },

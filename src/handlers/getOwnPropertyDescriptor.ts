@@ -20,13 +20,14 @@ export default function getOwnPropertyDescriptor(
     const { sandbox } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], PropertyDescriptor>>();
     const prototype = Reflect.getOwnPropertyDescriptor(target, property);
+    const finalTarget = sandbox || target;
 
     const event = new ProxyEvent<nx.ProxyGetOwnPropertyDescriptorEvent["data"]>(
       "getOwnPropertyDescriptor",
       {
         target: proxy,
         data: {
-          target: sandbox || target,
+          target: finalTarget,
           property,
           result: deferred.promise,
         },
@@ -34,23 +35,20 @@ export default function getOwnPropertyDescriptor(
     ) as nx.ProxyGetOwnPropertyDescriptorEvent;
 
     if (event.defaultPrevented) {
-      try {
-        const returnValue = event.returnValue;
-        if (
-          returnValue !== undefined &&
-          (returnValue === null || typeof returnValue !== "object")
-        ) {
-          throw new TypeError(
-            `'getOwnPropertyDescriptor' must return an object or undefined for property '${String(property)}'.`,
-          );
-        }
-        return resolveWith(deferred.resolve, returnValue);
-      } catch (error) {
+      const returnValue = event.returnValue;
+      if (
+        returnValue !== undefined &&
+        (returnValue === null || typeof returnValue !== "object")
+      ) {
         return rejectWith(
           deferred.resolve,
-          new ProxyError(error.message, proxy),
+          new ProxyError(
+            `'getOwnPropertyDescriptor' must return an object or undefined for property '${String(property)}'.`,
+            proxy,
+          ),
         );
       }
+      return resolveWith(deferred.resolve, returnValue);
     }
 
     if (sandbox) {

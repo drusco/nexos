@@ -28,7 +28,6 @@ export default function set(resolveProxy: nx.resolveProxy) {
     const [proxy, wrapper] = resolveProxy();
     const { sandbox } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
-
     const finalTarget = sandbox || target;
     let finalValue = value;
 
@@ -46,15 +45,16 @@ export default function set(resolveProxy: nx.resolveProxy) {
       finalValue = event.returnValue;
     }
 
-    try {
-      if (!Reflect.set(finalTarget, property, finalValue)) {
-        throw new TypeError(
+    if (!Reflect.set(finalTarget, property, finalValue)) {
+      return rejectWith(
+        deferred.resolve,
+        new ProxyError(
           `Cannot set property '${String(property)}' on the target`,
-        );
-      }
-      return resolveWith(deferred.resolve, true);
-    } catch (error) {
-      return rejectWith(deferred.resolve, new ProxyError(error.message, proxy));
+          proxy,
+        ),
+      );
     }
+
+    return resolveWith(deferred.resolve, true);
   };
 }
