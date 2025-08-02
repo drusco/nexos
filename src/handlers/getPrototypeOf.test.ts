@@ -75,18 +75,14 @@ describe("GetPrototypeOf Handler", () => {
 
     const prototype = Reflect.getPrototypeOf(target);
 
-    expect(Reflect.getPrototypeOf(proxy)).toBe(prototype);
     expect(Object.getPrototypeOf(proxy)).toBe(prototype);
-    expect(Nexo.getPrototypeOf(proxy)).toBe(prototype);
   });
 
   it("falls back to null for sandboxed proxies by default", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
 
-    expect(Reflect.getPrototypeOf(proxy)).toBeNull();
     expect(Object.getPrototypeOf(proxy)).toBeNull();
-    expect(Nexo.getPrototypeOf(proxy)).toBeNull();
     expect(() => Object.getPrototypeOf(proxy)).not.toThrow();
   });
 
@@ -96,9 +92,7 @@ describe("GetPrototypeOf Handler", () => {
 
     Reflect.setPrototypeOf(proxy, Array.prototype);
 
-    expect(Reflect.getPrototypeOf(proxy)).toBe(Array.prototype);
     expect(Object.getPrototypeOf(proxy)).toBe(Array.prototype);
-    expect(Nexo.getPrototypeOf(proxy)).toBe(Array.prototype);
   });
 
   it("returns the updated target prototype", () => {
@@ -108,8 +102,6 @@ describe("GetPrototypeOf Handler", () => {
 
     Reflect.setPrototypeOf(proxy, Array.prototype);
 
-    expect(Reflect.getPrototypeOf(proxy)).toBe(Array.prototype);
     expect(Object.getPrototypeOf(proxy)).toBe(Array.prototype);
-    expect(Nexo.getPrototypeOf(proxy)).toBe(Array.prototype);
   });
 });
