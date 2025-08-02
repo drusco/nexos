@@ -27,11 +27,12 @@ export default function apply(resolveProxy: nx.resolveProxy) {
     const [proxy, wrapper] = resolveProxy();
     const { nexo, sandbox } = wrapper;
     const deferred = createDeferred<nx.FunctionLike>();
+    const finalTarget = sandbox || target;
 
     const event = new ProxyEvent<nx.ProxyApplyEvent["data"]>("apply", {
       target: proxy,
       data: {
-        target: sandbox || target,
+        target: finalTarget,
         thisArg,
         args,
         result: deferred.promise,

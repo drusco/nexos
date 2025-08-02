@@ -20,34 +20,33 @@ export default function preventExtensions(resolveProxy: nx.resolveProxy) {
     const [proxy, wrapper] = resolveProxy();
     const { sandbox } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
+    const finalTarget = sandbox || target;
 
     const event = new ProxyEvent<nx.ProxyPreventExtensionsEvent["data"]>(
       "preventExtensions",
       {
         target: proxy,
         data: {
-          target: sandbox || target,
+          target: finalTarget,
           result: deferred.promise,
         },
       },
     ) as nx.ProxyPreventExtensionsEvent;
 
     if (event.defaultPrevented) {
-      try {
-        const returnValue = event.returnValue || false;
-        if (returnValue !== false) {
-          throw new TypeError(
-            `'preventExtensions' trap must return false or undefined when cancelled`,
-          );
-        }
+      const returnValue = event.returnValue || false;
 
-        return resolveWith(deferred.resolve, returnValue);
-      } catch (error) {
+      if (returnValue !== false) {
         return rejectWith(
           deferred.resolve,
-          new ProxyError(error.message, proxy),
+          new ProxyError(
+            `'preventExtensions' trap must return false or undefined when cancelled`,
+            proxy,
+          ),
         );
       }
+
+      return resolveWith(deferred.resolve, returnValue);
     }
 
     if (sandbox) {

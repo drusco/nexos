@@ -24,29 +24,25 @@ export default function has(resolveProxy: nx.resolveProxy) {
     const [proxy, wrapper] = resolveProxy();
     const { sandbox } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
+    const finalTarget = sandbox || target;
 
     const event = new ProxyEvent<nx.ProxyHasEvent["data"]>("has", {
       target: proxy,
       data: {
-        target: sandbox || target,
+        target: finalTarget,
         property,
         result: deferred.promise,
       },
     }) as nx.ProxyHasEvent;
 
     if (event.defaultPrevented) {
-      try {
-        const returnValue = event.returnValue;
-        if (typeof returnValue !== "boolean") {
-          throw new TypeError(`'has' trap must return a boolean value`);
-        }
-        return resolveWith(deferred.resolve, returnValue);
-      } catch (error) {
+      if (typeof event.returnValue !== "boolean") {
         return rejectWith(
           deferred.resolve,
-          new ProxyError(error.message, proxy),
+          new ProxyError(`'has' trap must return a boolean value`, proxy),
         );
       }
+      return resolveWith(deferred.resolve, event.returnValue);
     }
 
     if (sandbox) {
