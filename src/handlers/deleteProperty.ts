@@ -21,13 +21,14 @@ export default function deleteProperty(resolveProxy: nx.resolveProxy) {
     const [proxy, wrapper] = resolveProxy();
     const { sandbox } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
+    const finalTarget = sandbox || target;
 
     const event = new ProxyEvent<nx.ProxyDeletePropertyEvent["data"]>(
       "deleteProperty",
       {
         target: proxy,
         data: {
-          target: sandbox || target,
+          target: finalTarget,
           property,
           result: deferred.promise,
         },

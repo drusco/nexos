@@ -28,35 +28,33 @@ export default function ownKeys(resolveProxy: nx.resolveProxy) {
     const [proxy, wrapper] = resolveProxy();
     const { sandbox } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], nx.ObjectKey[]>>();
+    const finalTarget = sandbox || target;
 
     const event = new ProxyEvent<nx.ProxyOwnKeysEvent["data"]>("ownKeys", {
       target: proxy,
       data: {
-        target: sandbox || target,
+        target: finalTarget,
         result: deferred.promise,
       },
     }) as nx.ProxyOwnKeysEvent;
 
     if (event.defaultPrevented) {
-      try {
-        const returnValue = event.returnValue;
-        const returnIsArray = Array.isArray(returnValue);
-        const hasInvalidKey = (key: unknown) =>
-          typeof key !== "string" && typeof key !== "symbol";
+      const returnValue = event.returnValue;
+      const returnIsArray = Array.isArray(returnValue);
+      const hasInvalidKey = (key: unknown) =>
+        typeof key !== "string" && typeof key !== "symbol";
 
-        if (!returnIsArray || returnValue.some(hasInvalidKey)) {
-          throw new TypeError(
-            `'ownKeys' on proxy returned an invalid value, it must be an array of strings or symbols.`,
-          );
-        }
-
-        return resolveWith(deferred.resolve, returnValue);
-      } catch (error) {
+      if (!returnIsArray || returnValue.some(hasInvalidKey)) {
         return rejectWith(
           deferred.resolve,
-          new ProxyError(error.message, proxy),
+          new ProxyError(
+            `'ownKeys' on proxy returned an invalid value, it must be an array of strings or symbols.`,
+            proxy,
+          ),
         );
       }
+
+      return resolveWith(deferred.resolve, returnValue);
     }
 
     if (sandbox) {
