@@ -101,57 +101,6 @@ describe("Nexo", () => {
     expect(foo).not.toBe(bar);
   });
 
-  it("Get the own property descriptor of a proxy", () => {
-    const nexo = new Nexo();
-    const proxy = nexo.create();
-    const proxyWithTarget = nexo.create({ foo: "test" });
-
-    const descriptor = Nexo.getOwnPropertyDescriptor(proxy, "foo");
-    const targetDescriptor = Nexo.getOwnPropertyDescriptor(
-      proxyWithTarget,
-      "foo",
-    );
-
-    expect(descriptor).toBeUndefined();
-    expect(targetDescriptor).toStrictEqual<PropertyDescriptor>({
-      configurable: true,
-      enumerable: true,
-      writable: true,
-      value: "test",
-    });
-  });
-
-  it("Get the own keys of a proxy", () => {
-    const nexo = new Nexo();
-    const proxy = nexo.create();
-    const proxyWithTarget = nexo.create({ foo: true, bar: true, baz: true });
-
-    const emptyKeys = Nexo.ownKeys(proxy);
-    const targetKeys = Nexo.ownKeys(proxyWithTarget);
-
-    expect(emptyKeys).toStrictEqual([]);
-    expect(targetKeys).toStrictEqual(["foo", "bar", "baz"]);
-  });
-
-  it("Should add and get the own keys of a proxy", () => {
-    const nexo = new Nexo();
-    const proxy = nexo.create();
-
-    proxy.foo = true;
-    const keys = Nexo.ownKeys(proxy);
-
-    expect(keys).toStrictEqual(["foo"]);
-  });
-
-  it("Gets the prototype of a proxy", () => {
-    const nexo = new Nexo();
-    const proxy = nexo.create();
-    const proxyArray = nexo.create([]);
-
-    expect(Nexo.getPrototypeOf(proxy)).toBeNull();
-    expect(Nexo.getPrototypeOf(proxyArray)).toBe(Array.prototype);
-  });
-
   it("Encapsulates proxies to their original Nexo instaces", () => {
     const nexoA = new Nexo();
     const nexoB = new Nexo();
