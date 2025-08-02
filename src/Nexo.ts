@@ -103,61 +103,6 @@ class Nexo extends NexoEmitter implements nx.Nexo {
   }
 
   /**
-   * Retrieves the property descriptor for a proxy, considering its sandbox target if applicable.
-   *
-   * @remarks
-   * Since proxies can have altered behavior, using `Reflect.getOwnPropertyDescriptor` directly may not return the expected results. This method ensures the correct descriptor is fetched from the sandbox target if the proxy was created without a direct target.
-   *
-   * @param proxy - An existing proxy object
-   * @param property - The property name (key) to retrieve the descriptor for
-   * @returns The property descriptor if the property exists, or `undefined` otherwise
-   */
-  static getOwnPropertyDescriptor(
-    proxy: nx.Proxy,
-    property: nx.ObjectKey,
-  ): void | PropertyDescriptor {
-    const { sandbox } = Nexo.wrap(proxy);
-    if (sandbox) {
-      return Reflect.getOwnPropertyDescriptor(sandbox, property);
-    }
-    return Reflect.getOwnPropertyDescriptor(proxy, property);
-  }
-
-  /**
-   * Retrieves the own property keys of a proxy, considering its sandbox target if applicable.
-   *
-   * @remarks
-   * Similar to the property descriptor method, this method ensures that the keys returned are from the sandbox target when the proxy was created without a direct target.
-   *
-   * @param proxy - An existing proxy object
-   * @returns An array of the proxy object's own property keys, including both strings and symbols
-   */
-  static ownKeys(proxy: nx.Proxy): nx.ObjectKey[] {
-    const { sandbox } = Nexo.wrap(proxy);
-    if (sandbox) {
-      return Reflect.ownKeys(sandbox);
-    }
-    return Reflect.ownKeys(proxy);
-  }
-
-  /**
-   * Retrieves the prototype of a proxy, considering its sandbox target if applicable.
-   *
-   * @remarks
-   * This method ensures that the prototype returned is the one from the sandbox target when the proxy was created without a direct target.
-   *
-   * @param proxy - An existing proxy object
-   * @returns The prototype of the proxy, which can be an object or `null`
-   */
-  static getPrototypeOf(proxy: nx.Proxy): object {
-    const { sandbox } = Nexo.wrap(proxy);
-    if (sandbox) {
-      return Reflect.getPrototypeOf(sandbox);
-    }
-    return Reflect.getPrototypeOf(proxy);
-  }
-
-  /**
    * Initializes the Nexo proxy system and event hooks.
    *
    * @remarks
