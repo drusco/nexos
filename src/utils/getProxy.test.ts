@@ -5,7 +5,7 @@ import getProxy from "./getProxy.js";
 import map from "./maps.js";
 
 describe("getProxy", () => {
-  it("Creates a new proxy with a custom target", () => {
+  it("creates a new proxy with a custom target", () => {
     const nexo = new Nexo();
     const listener = jest.fn();
     const target = [];
@@ -22,7 +22,7 @@ describe("getProxy", () => {
     expect(proxyEvent.target).toBe(proxy);
   });
 
-  it("Creates a new proxy with a custom id", () => {
+  it("creates a new proxy with a custom id", () => {
     const nexo = new Nexo();
     const listener = jest.fn();
 
@@ -37,14 +37,14 @@ describe("getProxy", () => {
     expect(proxyEvent.data.id).toBe("foo");
   });
 
-  it("Links internal data using weak maps", () => {
+  it("links internal data using weak maps", () => {
     const nexo = new Nexo();
     const proxy = getProxy(nexo);
 
     expect(map.proxies.has(proxy)).toBe(true);
   });
 
-  it("Returns an existing proxy", () => {
+  it("returns an existing proxy", () => {
     const nexo = new Nexo();
     const target = [];
     const proxy = getProxy(nexo);
@@ -70,5 +70,19 @@ describe("getProxy", () => {
 
     expect(Object.getPrototypeOf(proxy)).toBeNull();
     expect(proxy.prototype).toBe(3000);
+  });
+
+  it("has no enumerable or inherited keys by default", () => {
+    const nexo = new Nexo();
+    const proxy = getProxy(nexo);
+
+    const keys = [];
+
+    for (const key in proxy) {
+      keys.push(key);
+    }
+
+    expect(Object.keys(proxy)).toStrictEqual([]);
+    expect(keys.length).toBe(0);
   });
 });
