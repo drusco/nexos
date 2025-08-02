@@ -30,20 +30,16 @@ export default function getPrototypeOf(resolveProxy: nx.resolveProxy) {
     ) as nx.ProxyGetPrototypeOfEvent;
 
     if (event.defaultPrevented) {
-      try {
-        const returnValue = event.returnValue;
-        if (typeof returnValue !== "object") {
-          throw new TypeError(
-            `'getPrototypeOf' on proxy: trap returned neither object nor null`,
-          );
-        }
-        return resolveWith(deferred.resolve, returnValue);
-      } catch (error) {
+      if (typeof event.returnValue !== "object") {
         return rejectWith(
           deferred.resolve,
-          new ProxyError(error.message, proxy),
+          new ProxyError(
+            `'getPrototypeOf' on proxy: trap returned neither object nor null`,
+            proxy,
+          ),
         );
       }
+      return resolveWith(deferred.resolve, event.returnValue);
     }
 
     if (sandbox) {

@@ -20,49 +20,51 @@ export default function isExtensible(resolveProxy: nx.resolveProxy) {
     const [proxy, wrapper] = resolveProxy();
     const { sandbox } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
+    const finalTarget = sandbox || target;
 
     const event = new ProxyEvent<nx.ProxyIsExtensibleEvent["data"]>(
       "isExtensible",
       {
         target: proxy,
         data: {
-          target: sandbox || target,
+          target: finalTarget,
           result: deferred.promise,
         },
       },
     ) as nx.ProxyIsExtensibleEvent;
 
     if (event.defaultPrevented) {
-      try {
-        const returnValue = event.returnValue;
+      const returnValue = event.returnValue;
 
-        if (typeof returnValue !== "boolean") {
-          throw new TypeError(
-            `'isExtensible' trap must return a boolean value`,
-          );
-        }
-
-        if (returnValue === false) {
-          // If the proxy was created without a user-defined target (i.e. a sandboxed proxy),
-          // allow simulating 'isExtensible' returning false by mutating the internal target.
-          // Otherwise, we must throw, as ECMAScript invariants prohibit returning false
-          // when the actual target is extensible.
-
-          if (sandbox) {
-            Object.preventExtensions(target);
-          } else {
-            throw new TypeError(
-              `'isExtensible' trap result does not reflect extensibility of proxy target`,
-            );
-          }
-        }
-        return resolveWith(deferred.resolve, returnValue);
-      } catch (error) {
+      if (typeof returnValue !== "boolean") {
         return rejectWith(
           deferred.resolve,
-          new ProxyError(error.message, proxy),
+          new ProxyError(
+            `'isExtensible' trap must return a boolean value`,
+            proxy,
+          ),
         );
       }
+
+      if (returnValue === false) {
+        // If the proxy was created without a user-defined target (i.e. a sandboxed proxy),
+        // allow simulating 'isExtensible' returning false by mutating the internal target.
+        // Otherwise, we must throw, as ECMAScript invariants prohibit returning false
+        // when the actual target is extensible.
+
+        if (sandbox) {
+          Object.preventExtensions(target);
+        } else {
+          return rejectWith(
+            deferred.resolve,
+            new ProxyError(
+              `'isExtensible' trap result does not reflect extensibility of proxy target`,
+              proxy,
+            ),
+          );
+        }
+      }
+      return resolveWith(deferred.resolve, returnValue);
     }
 
     if (sandbox) {

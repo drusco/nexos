@@ -26,13 +26,14 @@ export default function defineProperty(resolveProxy: nx.resolveProxy) {
     const { sandbox } = wrapper;
     const extensible = Object.isExtensible(target);
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
+    const finalTarget = sandbox || target;
 
     const event = new ProxyEvent<nx.ProxyDefinePropertyEvent["data"]>(
       "defineProperty",
       {
         target: proxy,
         data: {
-          target: sandbox || target,
+          target: finalTarget,
           property,
           descriptor,
           result: deferred.promise,
@@ -45,25 +46,18 @@ export default function defineProperty(resolveProxy: nx.resolveProxy) {
       if (!event.returnValue) {
         return resolveWith(deferred.resolve, false);
       }
-      try {
-        if (
-          !Reflect.defineProperty(
-            sandbox || target,
-            property,
-            event.returnValue,
-          )
-        ) {
-          throw TypeError(
-            `Cannot define property '${String(property)}' on proxy target`,
-          );
-        }
-        return resolveWith(deferred.resolve, true);
-      } catch (error) {
+
+      if (!Reflect.defineProperty(finalTarget, property, event.returnValue)) {
         return rejectWith(
           deferred.resolve,
-          new ProxyError(error.message, proxy),
+          new ProxyError(
+            `Cannot define property '${String(property)}' on proxy target`,
+            proxy,
+          ),
         );
       }
+
+      return resolveWith(deferred.resolve, true);
     }
 
     // If no sandbox, define directly on target
