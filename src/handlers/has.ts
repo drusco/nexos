@@ -27,7 +27,6 @@ export default function has(resolveProxy: nx.resolveProxy) {
 
     const event = new ProxyEvent<nx.ProxyHasEvent["data"]>("has", {
       target: proxy,
-      cancelable: true,
       data: {
         target: sandbox || target,
         property,
