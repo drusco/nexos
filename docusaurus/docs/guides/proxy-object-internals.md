@@ -15,7 +15,7 @@ import { Nexo } from "nexos";
 const nexo = new Nexo();
 const target = { foo: "example" };
 const proxy = nexo.create(target);
-const descriptor = Nexo.getOwnPropertyDescriptor(proxy, "foo");
+const descriptor = Object.getOwnPropertyDescriptor(proxy, "foo");
 
 // prints true
 console.log(descriptor === Object.getOwnPropertyDescriptor(target, "foo"));
@@ -30,7 +30,7 @@ import { Nexo } from "nexos";
 
 const nexo = new Nexo();
 const proxy = nexo.create();
-const descriptor = Nexo.getOwnPropertyDescriptor(proxy, "foo");
+const descriptor = Object.getOwnPropertyDescriptor(proxy, "foo");
 
 // prints true
 console.log(descriptor === undefined);
@@ -49,7 +49,7 @@ import { Nexo } from "nexos";
 
 const nexo = new Nexo();
 const proxy = nexo.create();
-const emptyKeys = Nexo.ownKeys(proxy);
+const emptyKeys = Object.keys(proxy);
 
 console.log(emptyKeys); // prints []
 ```
@@ -63,7 +63,7 @@ import { Nexo } from "nexos";
 
 const nexo = new Nexo();
 const proxyWithTarget = nexo.create({ foo: true, bar: true, baz: true });
-const targetKeys = Nexo.ownKeys(proxyWithTarget);
+const targetKeys = Object.keys(proxyWithTarget);
 
 console.log(targetKeys); // prints ["foo", "bar", "baz"]
 ```
@@ -81,7 +81,7 @@ const nexo = new Nexo();
 const proxy = nexo.create();
 
 proxy.foo = true;
-const keys = Nexo.ownKeys(proxy);
+const keys = Object.keys(proxy);
 
 console.log(keys); // prints ["foo"]
 ```
@@ -99,6 +99,6 @@ const nexo = new Nexo();
 const proxy = nexo.create();
 const proxyArray = nexo.create([]);
 
-console.log(Nexo.getPrototypeOf(proxy)); // prints null
-console.log(Nexo.getPrototypeOf(proxyArray)); // prints Array.prototype
+console.log(Object.getPrototypeOf(proxy)); // prints null
+console.log(Object.getPrototypeOf(proxyArray)); // prints Array.prototype
 ```
