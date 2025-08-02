@@ -13,7 +13,6 @@ export default function set(resolveProxy: nx.resolveProxy) {
 
     const event = new ProxyEvent("set", {
       target: proxy,
-      cancelable: true,
       data: {
         target: sandbox || target,
         property,

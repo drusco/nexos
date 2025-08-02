@@ -25,7 +25,6 @@ export default function getOwnPropertyDescriptor(
       "getOwnPropertyDescriptor",
       {
         target: proxy,
-        cancelable: true,
         data: {
           target: sandbox || target,
           property,
