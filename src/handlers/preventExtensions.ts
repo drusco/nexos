@@ -25,7 +25,6 @@ export default function preventExtensions(resolveProxy: nx.resolveProxy) {
       "preventExtensions",
       {
         target: proxy,
-        cancelable: true,
         data: {
           target: sandbox || target,
           result: deferred.promise,

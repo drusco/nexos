@@ -15,7 +15,7 @@ describe("ProxyEvent", () => {
     expect(event.name).toBe("proxy.get");
     expect(event.target).toBeUndefined();
     expect(event.data).toBeUndefined();
-    expect(event.cancelable).toBe(false);
+    expect(event.cancelable).toBe(true);
     expect(event.defaultPrevented).toBe(false);
   });
 
