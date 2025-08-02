@@ -19,9 +19,6 @@ class ProxyWrapper extends NexoEmitter implements nx.ProxyWrapper {
   /** The `Nexo` instance associated with this proxy wrapper. */
   readonly nexo: Nexo;
 
-  /** A flag indicating if the proxy is traceable. */
-  readonly traceable: boolean;
-
   /** The sandbox for the proxy if it is not traceable, otherwise `undefined`. */
   readonly sandbox: void | nx.Traceable;
 
@@ -51,7 +48,6 @@ class ProxyWrapper extends NexoEmitter implements nx.ProxyWrapper {
 
     this.id = data.id;
     this.nexo = data.nexo;
-    this.traceable = data.traceable;
     this._revoke = data.revoke;
 
     // If the proxy is not traceable, create a sandbox

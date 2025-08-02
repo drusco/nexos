@@ -79,7 +79,6 @@ export interface Proxy {
 export interface ProxyWrapper extends NexoEmitter {
   readonly id: string;
   readonly nexo: Nexo;
-  readonly traceable: boolean;
   readonly sandbox: void | Traceable;
   readonly revoked: boolean;
   revoke(): void;

@@ -13,7 +13,6 @@ describe("ProxyWrapper", () => {
     expect(wrapper.id).toBe("foo");
     expect(wrapper.nexo).toBe(nexo);
     expect(wrapper.revoked).toBe(false);
-    expect(wrapper.traceable).toBe(false);
   });
 
   it("Can revoke a proxy", () => {
