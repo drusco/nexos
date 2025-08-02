@@ -91,6 +91,7 @@ export interface ProxyError extends Error {
 
 export interface ProxyEvent<Data = unknown> extends NexoEvent<Proxy, Data> {
   readonly returnValue: unknown;
+  readonly cancelable: true;
 }
 
 export interface ProxyApplyEvent
@@ -99,18 +100,14 @@ export interface ProxyApplyEvent
     readonly thisArg: unknown;
     readonly args: ArrayLike;
     readonly result: Promise<FunctionLike<[], unknown>>;
-  }> {
-  readonly cancelable: true;
-}
+  }> {}
 
 export interface ProxyConstructEvent
   extends ProxyEvent<{
     readonly target: Traceable;
     readonly args: ArrayLike;
     readonly result: Promise<FunctionLike<[], object>>;
-  }> {
-  readonly cancelable: true;
-}
+  }> {}
 
 export interface ProxyDefinePropertyEvent
   extends ProxyEvent<{
@@ -118,94 +115,72 @@ export interface ProxyDefinePropertyEvent
     readonly property: ObjectKey;
     readonly descriptor: PropertyDescriptor;
     readonly result: Promise<FunctionLike<[], boolean>>;
-  }> {
-  readonly cancelable: true;
-}
+  }> {}
 
 export interface ProxyDeletePropertyEvent
   extends ProxyEvent<{
     readonly target: Traceable;
     readonly property: ObjectKey;
     readonly result: Promise<FunctionLike<[], boolean>>;
-  }> {
-  readonly cancelable: true;
-}
+  }> {}
 
 export interface ProxyGetEvent
   extends ProxyEvent<{
     readonly target: Traceable;
     readonly property: ObjectKey;
     readonly result: Promise<FunctionLike<[], unknown>>;
-  }> {
-  readonly cancelable: true;
-}
+  }> {}
 
 export interface ProxyGetOwnPropertyDescriptorEvent
   extends ProxyEvent<{
     readonly target: Traceable;
     readonly property: ObjectKey;
     readonly result: Promise<FunctionLike<[], PropertyDescriptor>>;
-  }> {
-  readonly cancelable: true;
-}
+  }> {}
 
 export interface ProxyGetPrototypeOfEvent
   extends ProxyEvent<{
     readonly target: Traceable;
     readonly result: Promise<FunctionLike<[], object>>;
-  }> {
-  readonly cancelable: true;
-}
+  }> {}
 
 export interface ProxyHasEvent
   extends ProxyEvent<{
     readonly target: Traceable;
     readonly property: ObjectKey;
     readonly result: Promise<FunctionLike<[], boolean>>;
-  }> {
-  readonly cancelable: true;
-}
+  }> {}
 
 export interface ProxyIsExtensibleEvent
   extends ProxyEvent<{
     readonly target: Traceable;
     readonly result: Promise<FunctionLike<[], boolean>>;
-  }> {
-  readonly cancelable: true;
-}
+  }> {}
 
 export interface ProxyOwnKeysEvent
   extends ProxyEvent<{
     readonly target: Traceable;
     readonly result: Promise<FunctionLike<[], ObjectKey[]>>;
-  }> {
-  readonly cancelable: true;
-}
+  }> {}
 
 export interface ProxyPreventExtensionsEvent
   extends ProxyEvent<{
     readonly target: Traceable;
     readonly result: Promise<FunctionLike<[], boolean>>;
-  }> {
-  readonly cancelable: true;
-}
+  }> {}
 
 export interface ProxySetEvent
   extends ProxyEvent<{
     target: Traceable;
     property: ObjectKey;
     value: unknown;
-  }> {
-  readonly cancelable: true;
-}
+  }> {}
 
 export interface ProxySetPrototypeOfEvent
   extends ProxyEvent<{
     target: Traceable;
     prototype: object;
-  }> {
-  readonly cancelable: true;
-}
+  }> {}
 
 export interface ProxyCreateEvent
   extends ProxyEvent<{ id: string; target?: Traceable }> {}

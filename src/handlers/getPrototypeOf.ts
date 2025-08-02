@@ -22,7 +22,6 @@ export default function getPrototypeOf(resolveProxy: nx.resolveProxy) {
       "getPrototypeOf",
       {
         target: proxy,
-        cancelable: true,
         data: {
           target: sandbox || target,
           result: deferred.promise,

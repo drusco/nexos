@@ -11,7 +11,6 @@ export default function setPrototypeOf(resolveProxy: nx.resolveProxy) {
 
     const event = new ProxyEvent("setPrototypeOf", {
       target: proxy,
-      cancelable: true,
       data: {
         target: sandbox || target,
         prototype,

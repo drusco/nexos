@@ -27,7 +27,6 @@ export default function construct(resolveProxy: nx.resolveProxy) {
 
     const event = new ProxyEvent<nx.ProxyConstructEvent["data"]>("construct", {
       target: proxy,
-      cancelable: true,
       data: {
         target: sandbox || target,
         args,
