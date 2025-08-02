@@ -53,4 +53,22 @@ describe("getProxy", () => {
     expect(getProxy(nexo, proxy)).toBe(proxy);
     expect(getProxy(nexo, proxyWithTarget)).toBe(proxyWithTarget);
   });
+
+  it("resolves the prototype as null on sandboxed proxies", () => {
+    const nexo = new Nexo();
+    const proxy = getProxy(nexo);
+
+    expect(Object.getPrototypeOf(proxy)).toBeNull();
+    expect(typeof proxy.prototype).toBe("function");
+  });
+
+  it("allows setting the prototype property on sandboxed proxies", () => {
+    const nexo = new Nexo();
+    const proxy = getProxy(nexo);
+
+    proxy.prototype = 3000;
+
+    expect(Object.getPrototypeOf(proxy)).toBeNull();
+    expect(proxy.prototype).toBe(3000);
+  });
 });
