@@ -18,11 +18,12 @@ export default function get(resolveProxy: nx.resolveProxy) {
     const [proxy, wrapper] = resolveProxy();
     const { sandbox, nexo } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], unknown>>();
+    const finalTarget = sandbox || target;
 
     const event = new ProxyEvent<nx.ProxyGetEvent["data"]>("get", {
       target: proxy,
       data: {
-        target: sandbox || target,
+        target: finalTarget,
         property,
         result: deferred.promise,
       },
