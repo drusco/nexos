@@ -171,9 +171,10 @@ export interface ProxyPreventExtensionsEvent
 
 export interface ProxySetEvent
   extends ProxyEvent<{
-    target: Traceable;
-    property: ObjectKey;
-    value: unknown;
+    readonly target: Traceable;
+    readonly property: ObjectKey;
+    readonly value: unknown;
+    readonly result: Promise<FunctionLike<[], boolean>>;
   }> {}
 
 export interface ProxySetPrototypeOfEvent
