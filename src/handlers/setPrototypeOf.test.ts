@@ -34,9 +34,7 @@ describe("setPrototypeOf", () => {
 
     Reflect.setPrototypeOf(proxy, Array.prototype);
 
-    expect(Reflect.getPrototypeOf(proxy)).toBeNull();
     expect(Object.getPrototypeOf(proxy)).toBeNull();
-    expect(Nexo.getPrototypeOf(proxy)).toBeNull();
   });
 
   it("Cannot replace the prototype with a non-object", () => {
@@ -55,9 +53,7 @@ describe("setPrototypeOf", () => {
     );
 
     expect(setPrototypeOf).toThrow(ProxyError);
-    expect(Reflect.getPrototypeOf(proxy)).toBeNull();
     expect(Object.getPrototypeOf(proxy)).toBeNull();
-    expect(Nexo.getPrototypeOf(proxy)).toBeNull();
   });
 
   it("Can set a new prototype on a proxy without traceable target", () => {
@@ -71,9 +67,7 @@ describe("setPrototypeOf", () => {
 
     Reflect.setPrototypeOf(proxy, null);
 
-    expect(Reflect.getPrototypeOf(proxy)).toBe(Array.prototype);
     expect(Object.getPrototypeOf(proxy)).toBe(Array.prototype);
-    expect(Nexo.getPrototypeOf(proxy)).toBe(Array.prototype);
   });
 
   it("Can set a new prototype on a proxy with traceable target", () => {
@@ -88,11 +82,8 @@ describe("setPrototypeOf", () => {
 
     Reflect.setPrototypeOf(proxy, null);
 
-    expect(Reflect.getPrototypeOf(proxy)).toBe(Array.prototype);
-    expect(Reflect.getPrototypeOf(target)).toBe(Array.prototype);
     expect(Object.getPrototypeOf(proxy)).toBe(Array.prototype);
     expect(Object.getPrototypeOf(target)).toBe(Array.prototype);
-    expect(Nexo.getPrototypeOf(proxy)).toBe(Array.prototype);
   });
 
   it("Throws an error when the traceable target is not extensible", () => {
@@ -110,7 +101,7 @@ describe("setPrototypeOf", () => {
     const setSamePrototype = Reflect.setPrototypeOf.bind(
       null,
       proxy,
-      Nexo.getPrototypeOf(proxy),
+      Object.getPrototypeOf(proxy),
     );
 
     expect(setNewPrototype).toThrow(ProxyError);
