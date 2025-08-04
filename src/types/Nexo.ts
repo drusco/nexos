@@ -179,8 +179,9 @@ export interface ProxySetEvent
 
 export interface ProxySetPrototypeOfEvent
   extends ProxyEvent<{
-    target: Traceable;
-    prototype: object;
+    readonly target: Traceable;
+    readonly prototype: object;
+    readonly result: Promise<FunctionLike<[], boolean>>;
   }> {}
 
 export interface ProxyCreateEvent
