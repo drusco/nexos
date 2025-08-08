@@ -8,7 +8,7 @@ interface TestEvents extends nx.NexoEmitterEvents {
 }
 
 describe("NexoEmitter", () => {
-  let emitter: nx.NexoEmitter<TestEvents>;
+  let emitter: NexoEmitter<TestEvents>;
 
   beforeEach(() => {
     emitter = new NexoEmitter<TestEvents>();

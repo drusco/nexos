@@ -32,7 +32,7 @@ import type * as nx from "../types/Nexo.js";
  * ```
  */
 class NexoEmitter<Events extends nx.NexoEmitterEvents = nx.NexoEmitterEvents>
-  implements nx.NexoEmitter<Events>
+  implements nx.NexoEmitter
 {
   private listeners = new Map<string, Set<nx.FunctionLike>>();
 
