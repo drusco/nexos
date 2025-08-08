@@ -1,7 +1,6 @@
 export type ArrayLike = unknown[];
 export type Traceable = NonNullable<object | FunctionLike>;
 export type ObjectKey = string | symbol;
-export type PlainObject = Record<ObjectKey, unknown>;
 export type FunctionLike<
   Args extends ArrayLike = ArrayLike,
   Return = unknown,
@@ -42,29 +41,10 @@ export interface NexoEvent<Target = unknown, Data = unknown> {
   preventDefault(): void;
 }
 
-export interface NexoEmitter<
-  Events extends NexoEmitterEvents = NexoEmitterEvents,
-> {
-  on<K extends Extract<keyof Events, string>>(
-    event: K,
-    listener: FunctionLike<
-      [Events[K]],
-      Events[K] extends NexoEvent ? Events[K]["returnValue"] : void
-    >,
-  ): this;
-
-  off<K extends Extract<keyof Events, string>>(
-    event: K,
-    listener: FunctionLike<
-      [Events[K]],
-      Events[K] extends NexoEvent ? Events[K]["returnValue"] : void
-    >,
-  ): this;
-
-  emit<K extends Extract<keyof Events, string> | "error">(
-    eventName: K,
-    data: Events[K] extends NexoEvent ? Events[K] : Error,
-  ): boolean;
+export interface NexoEmitter {
+  on(event: string, listener: FunctionLike): this;
+  off(event: string, listener: FunctionLike): this;
+  emit(event: string, data: unknown): boolean;
 }
 
 export interface Nexo extends NexoEmitter {
@@ -74,10 +54,10 @@ export interface Nexo extends NexoEmitter {
 }
 
 export interface Proxy {
-  new <Return extends Traceable = Proxy, Args extends ArrayLike = ArrayLike>(
+  new <Args extends ArrayLike = ArrayLike, Return extends Traceable = Proxy>(
     ...args: Args
   ): Return;
-  <Return = Proxy, Args extends ArrayLike = ArrayLike>(...args: Args): Return;
+  <Args extends ArrayLike = ArrayLike, Return = Proxy>(...args: Args): Return;
   name: unknown;
   apply: unknown;
   bind: unknown;
@@ -229,7 +209,9 @@ export interface ProxyCreateEvent
       readonly id: string;
       readonly target?: Traceable;
     }
-  > {}
+  > {
+  readonly returnValue: void | Proxy;
+}
 
 export interface NexoEmitterEvents {
   error: Error;
