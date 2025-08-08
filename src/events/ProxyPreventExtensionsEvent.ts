@@ -13,7 +13,7 @@ class ProxyPreventExtensionsEvent
    * This constructor initializes the event and emits the event
    * on the proxy's associated event emitters.
    *
-   * @param options - Options to configure the event (e.g., `data`, `target`).
+   * @param options - Options to configure the event.
    * @param options.data - The data associated with the event.
    * @param options.target - The proxy of the event.
    *
