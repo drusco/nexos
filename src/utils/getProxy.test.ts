@@ -1,28 +1,30 @@
 import type * as nx from "../types/Nexo.js";
-import NexoEvent from "../events/NexoEvent.js";
 import Nexo from "../Nexo.js";
 import getProxy from "./getProxy.js";
 import map from "./maps.js";
+import ProxyCreateEvent from "../events/ProxyCreateEvent.js";
 
 describe("getProxy", () => {
-  it("creates a new proxy with a custom target", () => {
+  it("creates a sandboxed proxy", () => {
     const nexo = new Nexo();
-    const listener = jest.fn();
-    const target = [];
+    const proxy = getProxy(nexo);
+    const wrapper = Nexo.wrap(proxy);
 
-    nexo.on("proxy", listener);
-
-    const proxy = getProxy(nexo, target);
-
-    const [proxyEvent]: [nx.ProxyCreateEvent] = listener.mock.lastCall;
-
-    expect(listener).toHaveBeenCalledTimes(1);
-    expect(proxyEvent).toBeInstanceOf(NexoEvent);
-    expect(proxyEvent.data.target).toBe(target);
-    expect(proxyEvent.target).toBe(proxy);
+    expect(wrapper.nexo).toBe(nexo);
+    expect(wrapper.sandbox).not.toBeUndefined();
   });
 
-  it("creates a new proxy with a custom id", () => {
+  it("creates a proxy with a custom target", () => {
+    const nexo = new Nexo();
+    const target = [];
+    const proxy = getProxy(nexo, target);
+    const wrapper = Nexo.wrap(proxy);
+
+    expect(wrapper.sandbox).toBeUndefined();
+    expect(Object.getPrototypeOf(proxy)).toBe(Object.getPrototypeOf(target));
+  });
+
+  it("creates proxy with a custom id", () => {
     const nexo = new Nexo();
     const listener = jest.fn();
 
@@ -35,6 +37,28 @@ describe("getProxy", () => {
 
     expect(wrapper.id).toBe("foo");
     expect(proxyEvent.data.id).toBe("foo");
+  });
+
+  it("emits a `proxy` event when a proxy is created", () => {
+    const nexo = new Nexo();
+    const target = {};
+    const listener = jest.fn();
+
+    nexo.on("proxy", listener);
+
+    const proxy = nexo.create(target);
+    const wrapper = Nexo.wrap(proxy);
+    const [event]: [nx.ProxyCreateEvent] = listener.mock.lastCall;
+
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(event).toBeInstanceOf(ProxyCreateEvent);
+    expect(event.target).toBe(proxy);
+    expect(event.name).toBe("proxy");
+    expect(event.data).toStrictEqual({
+      id: wrapper.id,
+      target,
+      result: event.data.result,
+    });
   });
 
   it("links internal data using weak maps", () => {
