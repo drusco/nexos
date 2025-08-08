@@ -15,8 +15,8 @@ class ProxyEvent<Data = unknown>
    * Creates an instance of the `ProxyEvent`.
    * This constructor initializes the event with the name prefixed by `proxy.`
    *
-   * @param name - The name of the proxy handler (e.g., 'get', 'set').
-   * @param options - Options to configure the event (e.g., `data`, `target`, `cancelable`).
+   * @param name - The name of the proxy event.
+   * @param options - Options to configure the event.
    * @param options.data - The data associated with the event.
    * @param options.target - The proxy of the event.
    *
@@ -25,10 +25,10 @@ class ProxyEvent<Data = unknown>
    */
   constructor(
     name: nx.ProxyHandler,
-    options: {
+    options?: {
       data?: Data;
       target: nx.Proxy;
-    } = undefined,
+    },
   ) {
     if (!map.proxies.has(options?.target)) {
       throw TypeError("options.target is not a valid proxy.");

@@ -1,13 +1,13 @@
 import type * as nx from "../types/Nexo.js";
-import ProxyEvent from "./ProxyEvent.js";
 import map from "../utils/maps.js";
+import NexoEvent from "./NexoEvent.js";
 
-class ProxyIsExtensibleEvent
-  extends ProxyEvent<nx.ProxyIsExtensibleEvent["data"]>
-  implements nx.ProxyIsExtensibleEvent
+class ProxyCreateEvent
+  extends NexoEvent<nx.Proxy, nx.ProxyCreateEvent["data"]>
+  implements nx.ProxyCreateEvent
 {
-  declare readonly data: nx.ProxyIsExtensibleEvent["data"];
-  declare readonly returnValue: nx.ProxyIsExtensibleEvent["returnValue"];
+  declare readonly data: nx.ProxyCreateEvent["data"];
+  declare readonly returnValue: nx.ProxyCreateEvent["returnValue"];
 
   /**
    * This constructor initializes the event and emits the event
@@ -19,18 +19,16 @@ class ProxyIsExtensibleEvent
    *
    */
   constructor(options: {
-    data: nx.ProxyIsExtensibleEvent["data"];
+    data: nx.ProxyCreateEvent["data"];
     target: nx.Proxy;
   }) {
-    super("isExtensible", options);
+    super("proxy", options);
 
     // Retrieve the wrapper for the proxy
     const wrapper = map.proxies.get(options.target);
     // Emit the proxy event to its listeners on the 'nexo' emitter
-    wrapper?.nexo?.emit("proxy.isExtensible", this);
-    // Emit the proxy event to its listeners on the wrapper's event emitter
-    wrapper?.emit("proxy.isExtensible", this);
+    wrapper?.nexo?.emit("proxy", this);
   }
 }
 
-export default ProxyIsExtensibleEvent;
+export default ProxyCreateEvent;

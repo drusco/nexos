@@ -13,7 +13,7 @@ import ProxyError from "../errors/ProxyError.js";
  *
  */
 export default function getOwnPropertyDescriptor(
-  resolveProxy: nx.resolveProxy
+  resolveProxy: nx.resolveProxy,
 ) {
   return (target: nx.Traceable, property: nx.ObjectKey): PropertyDescriptor => {
     const [proxy, wrapper] = resolveProxy();
@@ -41,8 +41,8 @@ export default function getOwnPropertyDescriptor(
           deferred.resolve,
           new ProxyError(
             `'getOwnPropertyDescriptor' must return an object or undefined for property '${String(property)}'.`,
-            proxy
-          )
+            proxy,
+          ),
         );
       }
 
@@ -53,7 +53,7 @@ export default function getOwnPropertyDescriptor(
       // Attempt to get the descriptor from the sandbox.
       let propertyDescriptor = Object.getOwnPropertyDescriptor(
         sandbox,
-        property
+        property,
       );
 
       // If the property is non-configurable in the original target,
