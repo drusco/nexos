@@ -1,5 +1,5 @@
 import type * as nx from "../types/Nexo.js";
-import ProxyEvent from "../events/ProxyEvent.js";
+import ProxyApplyEvent from "../events/ProxyApplyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
 import { createDeferred, resolveWith, rejectWith } from "../utils/deferred.js";
 
@@ -29,7 +29,7 @@ export default function apply(resolveProxy: nx.resolveProxy) {
     const deferred = createDeferred<nx.FunctionLike>();
     const finalTarget = sandbox || target;
 
-    const event = new ProxyEvent<nx.ProxyApplyEvent["data"]>("apply", {
+    const event = new ProxyApplyEvent({
       target: proxy,
       data: {
         target: finalTarget,
@@ -37,7 +37,7 @@ export default function apply(resolveProxy: nx.resolveProxy) {
         args,
         result: deferred.promise,
       },
-    }) as nx.ProxyApplyEvent;
+    });
 
     if (event.defaultPrevented) {
       // return value from the prevented event

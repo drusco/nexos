@@ -54,7 +54,7 @@ describe("Has Handler", () => {
 
     wrapper.on("proxy.has", (event: nx.ProxyHasEvent) => {
       event.preventDefault();
-      return "invalid";
+      return "invalid" as unknown as boolean;
     });
 
     expect(() => Reflect.has(proxy, "foo")).toThrow(ProxyError);

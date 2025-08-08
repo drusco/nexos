@@ -56,16 +56,16 @@ const getProxy = (nexo: Nexo, target?: nx.Traceable, id?: string): nx.Proxy => {
     }
   }
 
-  const event = new NexoEvent("proxy", {
+  const event = new NexoEvent<nx.Proxy, nx.ProxyCreateEvent["data"]>("proxy", {
     target: proxy,
     data: {
       id: uid,
       target,
     },
-  });
+  }) as nx.ProxyCreateEvent;
 
   nexo.entries.set(uid, new WeakRef(proxy));
-  nexo.emit(event.name, event);
+  nexo.emit("proxy", event);
 
   return proxy;
 };

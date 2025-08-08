@@ -1,5 +1,5 @@
 import type * as nx from "../types/Nexo.js";
-import ProxyEvent from "../events/ProxyEvent.js";
+import ProxyGetOwnPropertyDescriptorEvent from "../events/ProxyGetOwnPropertyDescriptorEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
 import ProxyError from "../errors/ProxyError.js";
 
@@ -13,26 +13,23 @@ import ProxyError from "../errors/ProxyError.js";
  *
  */
 export default function getOwnPropertyDescriptor(
-  resolveProxy: nx.resolveProxy,
+  resolveProxy: nx.resolveProxy
 ) {
   return (target: nx.Traceable, property: nx.ObjectKey): PropertyDescriptor => {
     const [proxy, wrapper] = resolveProxy();
     const { sandbox } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], PropertyDescriptor>>();
-    const prototype = Reflect.getOwnPropertyDescriptor(target, property);
+    const descriptor = Reflect.getOwnPropertyDescriptor(target, property);
     const finalTarget = sandbox || target;
 
-    const event = new ProxyEvent<nx.ProxyGetOwnPropertyDescriptorEvent["data"]>(
-      "getOwnPropertyDescriptor",
-      {
-        target: proxy,
-        data: {
-          target: finalTarget,
-          property,
-          result: deferred.promise,
-        },
+    const event = new ProxyGetOwnPropertyDescriptorEvent({
+      target: proxy,
+      data: {
+        target: finalTarget,
+        property,
+        result: deferred.promise,
       },
-    ) as nx.ProxyGetOwnPropertyDescriptorEvent;
+    });
 
     if (event.defaultPrevented) {
       const returnValue = event.returnValue;
@@ -44,28 +41,32 @@ export default function getOwnPropertyDescriptor(
           deferred.resolve,
           new ProxyError(
             `'getOwnPropertyDescriptor' must return an object or undefined for property '${String(property)}'.`,
-            proxy,
-          ),
+            proxy
+          )
         );
       }
-      return resolveWith(deferred.resolve, returnValue);
+
+      return resolveWith(deferred.resolve, returnValue || descriptor);
     }
 
     if (sandbox) {
       // Attempt to get the descriptor from the sandbox.
-      let proto = Object.getOwnPropertyDescriptor(sandbox, property);
+      let propertyDescriptor = Object.getOwnPropertyDescriptor(
+        sandbox,
+        property
+      );
 
       // If the property is non-configurable in the original target,
       // the proxy trap MUST return a descriptor that exactly matches the target.
       // Returning a descriptor from the sandbox would violate this invariant.
-      if (prototype && !prototype.configurable) {
-        proto = prototype;
+      if (descriptor && !descriptor.configurable) {
+        propertyDescriptor = descriptor;
       }
 
       // Resolve with either the sandbox descriptor (if safe) or the original target’s.
-      return resolveWith(deferred.resolve, proto);
+      return resolveWith(deferred.resolve, propertyDescriptor);
     }
 
-    return resolveWith(deferred.resolve, prototype);
+    return resolveWith(deferred.resolve, descriptor);
   };
 }

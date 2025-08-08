@@ -2,9 +2,19 @@ import type * as nx from "../types/Nexo.js";
 import NexoEmitter from "../events/NexoEmitter.js";
 import NexoEvent from "./NexoEvent.js";
 
+interface TestEvents extends nx.NexoEmitterEvents {
+  customError: Error;
+  test: nx.NexoEvent;
+}
+
 describe("NexoEmitter", () => {
+  let emitter: nx.NexoEmitter<TestEvents>;
+
+  beforeEach(() => {
+    emitter = new NexoEmitter<TestEvents>();
+  });
+
   it("should emit an error when a listener throws", () => {
-    const emitter = new NexoEmitter();
     const errorMessage = "something went wrong";
     const errorListener = jest.fn();
 
@@ -15,71 +25,63 @@ describe("NexoEmitter", () => {
 
     emitter.emit("test", new NexoEvent("test"));
 
-    expect(errorListener).toHaveBeenCalledTimes(1);
+    const [error]: [Error] = errorListener.mock.lastCall;
 
-    const [error] = errorListener.mock.lastCall;
+    expect(errorListener).toHaveBeenCalledTimes(1);
     expect(error).toBeInstanceOf(Error);
     expect(error.message).toBe(errorMessage);
   });
 
   it("should unregister a listener correctly", () => {
-    const emitter = new NexoEmitter();
     const listener = jest.fn();
 
     emitter.on("test", listener);
     emitter.off("test", listener);
-
     emitter.emit("test", new NexoEvent("test"));
 
     expect(listener).not.toHaveBeenCalled();
   });
 
   it("should re-emit error-like arguments from other events", () => {
-    const emitter = new NexoEmitter();
     const error = new Error("oops");
     const listener = jest.fn();
 
     emitter.on("customError", listener);
     emitter.on("error", listener);
-
     emitter.emit("customError", error);
 
-    expect(listener).toHaveBeenCalledTimes(2);
+    const [customError]: [Error] = listener.mock.lastCall;
 
-    const [lastError] = listener.mock.lastCall;
-    expect(lastError).toBe(error);
+    expect(listener).toHaveBeenCalledTimes(2);
+    expect(customError).toBe(error);
   });
 
   it("should throw if an error occurs and no error listener is registered", () => {
-    const emitter = new NexoEmitter();
-
-    emitter.on("fail", () => {
+    emitter.on("test", () => {
       throw new Error("Unhandled failure");
     });
 
     expect(() => {
-      emitter.emit("fail", new NexoEvent("fail"));
+      emitter.emit("test", new NexoEvent("fail"));
     }).toThrow("Unhandled failure");
   });
 
   it("should emit NexoEvent with custom data", () => {
-    const emitter = new NexoEmitter();
-    const event = new NexoEvent("dataEvent", { data: "bar" });
+    const event = new NexoEvent("test", { data: "bar" });
     const listener = jest.fn();
 
-    emitter.on("dataEvent", listener);
-    emitter.emit("dataEvent", event);
+    emitter.on("test", listener);
+    emitter.emit("test", event);
+
+    const [nexoEvent]: [nx.NexoEvent] = listener.mock.lastCall;
 
     expect(listener).toHaveBeenCalledTimes(1);
-
-    const [received]: [typeof event] = listener.mock.lastCall;
-    expect(received).toBeInstanceOf(NexoEvent);
-    expect(received.name).toBe("dataEvent");
-    expect(received.data).toEqual("bar");
+    expect(nexoEvent).toBeInstanceOf(NexoEvent);
+    expect(nexoEvent.name).toBe("test");
+    expect(nexoEvent.data).toEqual("bar");
   });
 
   it("should prevent default and set return value on the event", () => {
-    const emitter = new NexoEmitter();
     const returnValue = Symbol("result");
     const event = new NexoEvent("test", { cancelable: true });
 
@@ -95,14 +97,13 @@ describe("NexoEmitter", () => {
   });
 
   it("should ignore preventDefault if event is not cancelable", () => {
-    const emitter = new NexoEmitter();
-    const event = new NexoEvent("nonCancelable");
+    const event = new NexoEvent("test");
 
-    emitter.on("nonCancelable", (e: nx.NexoEvent) => {
-      e.preventDefault();
+    emitter.on("test", (event) => {
+      event.preventDefault();
     });
 
-    emitter.emit("nonCancelable", event);
+    emitter.emit("test", event);
 
     expect(event.defaultPrevented).toBe(false);
   });

@@ -1,5 +1,5 @@
 import type * as nx from "../types/Nexo.js";
-import ProxyEvent from "../events/ProxyEvent.js";
+import ProxyIsExtensibleEvent from "../events/ProxyIsExtensibleEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
 import ProxyError from "../errors/ProxyError.js";
 
@@ -22,16 +22,13 @@ export default function isExtensible(resolveProxy: nx.resolveProxy) {
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
     const finalTarget = sandbox || target;
 
-    const event = new ProxyEvent<nx.ProxyIsExtensibleEvent["data"]>(
-      "isExtensible",
-      {
-        target: proxy,
-        data: {
-          target: finalTarget,
-          result: deferred.promise,
-        },
+    const event = new ProxyIsExtensibleEvent({
+      target: proxy,
+      data: {
+        target: finalTarget,
+        result: deferred.promise,
       },
-    ) as nx.ProxyIsExtensibleEvent;
+    });
 
     if (event.defaultPrevented) {
       const returnValue = event.returnValue;

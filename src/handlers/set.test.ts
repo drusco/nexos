@@ -35,7 +35,7 @@ describe("Set Hander", () => {
 
     const listener = jest.fn((event: nx.ProxySetEvent) => {
       event.preventDefault();
-      return replacement;
+      return replacement as unknown as boolean;
     });
 
     nexo.on("proxy.set", listener);
@@ -57,7 +57,7 @@ describe("Set Hander", () => {
 
     const listener = jest.fn((event: nx.ProxySetEvent) => {
       event.preventDefault();
-      return replacement;
+      return replacement as unknown as boolean;
     });
 
     nexo.on("proxy.set", listener);

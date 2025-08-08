@@ -1,5 +1,5 @@
 import type * as nx from "../types/Nexo.js";
-import ProxyEvent from "../events/ProxyEvent.js";
+import ProxyDeletePropertyEvent from "../events/ProxyDeletePropertyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
 
@@ -23,17 +23,14 @@ export default function deleteProperty(resolveProxy: nx.resolveProxy) {
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
     const finalTarget = sandbox || target;
 
-    const event = new ProxyEvent<nx.ProxyDeletePropertyEvent["data"]>(
-      "deleteProperty",
-      {
-        target: proxy,
-        data: {
-          target: finalTarget,
-          property,
-          result: deferred.promise,
-        },
+    const event = new ProxyDeletePropertyEvent({
+      target: proxy,
+      data: {
+        target: finalTarget,
+        property,
+        result: deferred.promise,
       },
-    ) as nx.ProxyDeletePropertyEvent;
+    });
 
     if (event.defaultPrevented) {
       // Prevent property deletion

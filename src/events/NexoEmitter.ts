@@ -31,8 +31,10 @@ import type * as nx from "../types/Nexo.js";
  * emitter.emit("proxy.set", new NexoEvent({ key: "password" }));
  * ```
  */
-class NexoEmitter implements nx.NexoEmitter {
-  private listeners = new Map<nx.ObjectKey, Set<nx.FunctionLike>>();
+class NexoEmitter<Events extends nx.NexoEmitterEvents = nx.NexoEmitterEvents>
+  implements nx.NexoEmitter<Events>
+{
+  private listeners = new Map<string, Set<nx.FunctionLike>>();
 
   /**
    * Registers a listener for the specified event.
@@ -55,13 +57,13 @@ class NexoEmitter implements nx.NexoEmitter {
    * });
    */
 
-  on<K extends keyof nx.ProxyEvents>(
+  on<K extends Extract<keyof Events, string>>(
     event: K,
-    listener: nx.FunctionLike<[nx.ProxyEvents[K]]>,
-  ): this;
-
-  on(event: nx.ObjectKey, listener: nx.FunctionLike): this;
-  on(event: nx.ObjectKey, listener: nx.FunctionLike): this {
+    listener: nx.FunctionLike<
+      [Events[K]],
+      Events[K] extends nx.NexoEvent ? Events[K]["returnValue"] : void
+    >,
+  ): this {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, new Set());
     }
@@ -87,7 +89,13 @@ class NexoEmitter implements nx.NexoEmitter {
    * emitter.on('proxy.get', handler);
    * emitter.off('proxy.get', handler);
    */
-  off(event: nx.ObjectKey, listener: nx.FunctionLike): this {
+  off<K extends Extract<keyof Events, string>>(
+    event: K,
+    listener: nx.FunctionLike<
+      [Events[K]],
+      Events[K] extends nx.NexoEvent ? Events[K]["returnValue"] : void
+    >,
+  ): this {
     this.listeners.get(event)?.delete(listener);
     return this;
   }
@@ -106,9 +114,9 @@ class NexoEmitter implements nx.NexoEmitter {
    * @param data - A `NexoEvent` or an `Error`.
    * @returns `true` if any listeners were triggered; `false` otherwise.
    */
-  emit<Event extends nx.NexoEvent>(
-    eventName: nx.ObjectKey,
-    data: Event | Error,
+  emit<K extends Extract<keyof Events, string> | "error">(
+    eventName: K,
+    data: Events[K] extends nx.NexoEvent ? Events[K] : Error,
   ): boolean {
     const listeners = this.listeners.get(eventName);
     const hasListeners = !!listeners?.size;

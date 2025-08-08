@@ -4,54 +4,36 @@ import map from "../utils/maps.js";
 
 /**
  * Represents an event triggered by a proxy.
- * This class extends `NexoEvent` and adds functionality to emit the event to listeners
- * associated with the proxy's `nexo` and wrapper event emitters.
- *
- * @template Data - The type of the event's data.
- *
- * @example
- * const proxyEvent = new ProxyEvent('get', { target: someProxyInstance, data: someData });
- * // This will emit the 'proxy.get' event to listeners.
  */
 class ProxyEvent<Data = unknown>
   extends NexoEvent<nx.Proxy, Data>
   implements nx.ProxyEvent<Data>
 {
-  /** Indicates whether the event is cancelable. */
   declare readonly cancelable: true;
 
   /**
    * Creates an instance of the `ProxyEvent`.
-   * This constructor initializes the event with the name prefixed by `proxy.` and emits the event
-   * on the proxy's associated event emitters.
+   * This constructor initializes the event with the name prefixed by `proxy.`
    *
    * @param name - The name of the proxy handler (e.g., 'get', 'set').
    * @param options - Options to configure the event (e.g., `data`, `target`, `cancelable`).
    * @param options.data - The data associated with the event.
-   * @param options.target - The target of the event.
-   * @param options.cancelable - A boolean flag indicating whether the event can be canceled (default: `false`).
+   * @param options.target - The proxy of the event.
    *
    * @example
-   * const proxyEvent = new ProxyEvent('get', { target: someProxyInstance, data: someData });
-   * // This emits the 'proxy.get' event on the proxy's `nexo` emitter and its wrapper.
+   * const proxyEvent = new ProxyEvent('get', { target: proxy, data: "example" });
    */
   constructor(
     name: nx.ProxyHandler,
-    options: Partial<{
-      data: Data;
+    options: {
+      data?: Data;
       target: nx.Proxy;
-      cancelable: boolean;
-    }> = {},
+    } = undefined,
   ) {
+    if (!map.proxies.has(options?.target)) {
+      throw TypeError("options.target is not a valid proxy.");
+    }
     super(`proxy.${name}`, { ...options, cancelable: true });
-
-    // Retrieve the wrapper for the proxy
-    const wrapper = map.proxies.get(this.target);
-
-    // Emit the proxy event to its listeners on the 'nexo' emitter
-    wrapper?.nexo?.emit(this.name, this);
-    // Emit the proxy event to its listeners on the wrapper's event emitter
-    wrapper?.emit(this.name, this);
   }
 }
 

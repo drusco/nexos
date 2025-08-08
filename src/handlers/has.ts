@@ -1,5 +1,5 @@
 import type * as nx from "../types/Nexo.js";
-import ProxyEvent from "../events/ProxyEvent.js";
+import ProxyHasEvent from "../events/ProxyHasEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
 import ProxyError from "../errors/ProxyError.js";
 
@@ -26,14 +26,14 @@ export default function has(resolveProxy: nx.resolveProxy) {
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
     const finalTarget = sandbox || target;
 
-    const event = new ProxyEvent<nx.ProxyHasEvent["data"]>("has", {
+    const event = new ProxyHasEvent({
       target: proxy,
       data: {
         target: finalTarget,
         property,
         result: deferred.promise,
       },
-    }) as nx.ProxyHasEvent;
+    });
 
     if (event.defaultPrevented) {
       if (typeof event.returnValue !== "boolean") {
