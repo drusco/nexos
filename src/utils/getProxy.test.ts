@@ -109,36 +109,36 @@ describe("getProxy", () => {
   it("accesses the final proxy from every listener of the `proxy` event", async () => {
     const nexo = new Nexo();
 
-    const listenerOne = jest.fn((event: nx.ProxyCreateEvent) => {
+    const firstListener = jest.fn((event: nx.ProxyCreateEvent) => {
       event.preventDefault();
       const name = "first-proxy";
       if (event.data.id === name) return;
       return getProxy(nexo, undefined, name);
     });
 
-    const listenerTwo = jest.fn((event: nx.ProxyCreateEvent) => {
+    const lastListener = jest.fn((event: nx.ProxyCreateEvent) => {
       event.preventDefault();
       const name = "last-proxy";
       if (event.data.id === name) return;
       return getProxy(nexo, undefined, name);
     });
 
-    nexo.on("proxy", listenerOne);
-    nexo.on("proxy", listenerTwo);
+    nexo.on("proxy", firstListener);
+    nexo.on("proxy", lastListener);
 
     const proxy = getProxy(nexo);
 
-    const [listenerOneEvent] = listenerOne.mock.lastCall;
-    const [listenerTwoEvent] = listenerTwo.mock.lastCall;
+    const [firstListenerEvent] = firstListener.mock.lastCall;
+    const [lastListenerEvent] = lastListener.mock.lastCall;
 
-    const firstResult = await listenerOneEvent.data.result;
-    const secondResult = await listenerTwoEvent.data.result;
+    const firstResult = await firstListenerEvent.data.result;
+    const lastResult = await lastListenerEvent.data.result;
 
     expect(firstResult()).toBe(proxy);
-    expect(secondResult()).toBe(proxy);
+    expect(lastResult()).toBe(proxy);
     expect(Nexo.wrap(proxy).id).toBe("last-proxy");
-    expect(listenerOne).toHaveBeenCalledTimes(3);
-    expect(listenerTwo).toHaveBeenCalledTimes(3);
+    expect(firstListener).toHaveBeenCalledTimes(3);
+    expect(lastListener).toHaveBeenCalledTimes(3);
     expect(nexo.entries.size).toBe(3);
   });
 });
