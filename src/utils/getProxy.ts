@@ -1,9 +1,9 @@
 import type * as nx from "../types/Nexo.js";
 import { randomUUID } from "crypto";
 import maps from "./maps.js";
-import NexoEvent from "../events/NexoEvent.js";
 import createHandlers from "../handlers/index.js";
 import ProxyWrapper from "./ProxyWrapper.js";
+import ProxyCreateEvent from "../events/ProxyCreateEvent.js";
 import Nexo from "../Nexo.js";
 
 const getProxy = (nexo: Nexo, target?: nx.Traceable, id?: string): nx.Proxy => {
@@ -56,16 +56,19 @@ const getProxy = (nexo: Nexo, target?: nx.Traceable, id?: string): nx.Proxy => {
     }
   }
 
-  const event = new NexoEvent<nx.Proxy, nx.ProxyCreateEvent["data"]>("proxy", {
+  const event = new ProxyCreateEvent({
     target: proxy,
     data: {
       id: uid,
       target,
     },
-  }) as nx.ProxyCreateEvent;
+  });
+
+  if (event.defaultPrevented) {
+    // ---
+  }
 
   nexo.entries.set(uid, new WeakRef(proxy));
-  nexo.emit("proxy", event);
 
   return proxy;
 };
