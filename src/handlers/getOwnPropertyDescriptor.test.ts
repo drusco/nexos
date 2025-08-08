@@ -99,10 +99,13 @@ describe("GetOwnPropertyDescriptor Handler", () => {
       writable: false,
     };
 
-    nexo.on("proxy.getOwnPropertyDescriptor", (event) => {
-      event.preventDefault();
-      return fakeDescriptor;
-    });
+    nexo.on(
+      "proxy.getOwnPropertyDescriptor",
+      (event: nx.ProxyGetOwnPropertyDescriptorEvent) => {
+        event.preventDefault();
+        return fakeDescriptor;
+      },
+    );
 
     const descriptor = Reflect.getOwnPropertyDescriptor(proxy, "foo");
 
@@ -115,10 +118,13 @@ describe("GetOwnPropertyDescriptor Handler", () => {
     const errorListener = jest.fn();
 
     nexo.on("error", errorListener);
-    nexo.on("proxy.getOwnPropertyDescriptor", (event) => {
-      event.preventDefault();
-      return null; // Not a valid descriptor
-    });
+    nexo.on(
+      "proxy.getOwnPropertyDescriptor",
+      (event: nx.ProxyGetOwnPropertyDescriptorEvent) => {
+        event.preventDefault();
+        return null; // Not a valid descriptor
+      },
+    );
 
     expect(() => {
       Reflect.getOwnPropertyDescriptor(proxy, "foo");

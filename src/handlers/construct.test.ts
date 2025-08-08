@@ -68,7 +68,7 @@ describe("Construct Handler", () => {
 
     wrapper.on("proxy.construct", (event: nx.ProxyConstructEvent) => {
       event.preventDefault();
-      return "invalid"; // not an object
+      return "invalid" as unknown as object; // not an object
     });
 
     expect(() => Reflect.construct(proxy, [])).toThrow(ProxyError);

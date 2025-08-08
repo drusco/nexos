@@ -1,5 +1,5 @@
 import type * as nx from "../types/Nexo.js";
-import ProxyEvent from "../events/ProxyEvent.js";
+import ProxyGetEvent from "../events/ProxyGetEvent.js";
 import { createDeferred, resolveWith } from "../utils/deferred.js";
 
 /**
@@ -20,14 +20,14 @@ export default function get(resolveProxy: nx.resolveProxy) {
     const deferred = createDeferred<nx.FunctionLike<[], unknown>>();
     const finalTarget = sandbox || target;
 
-    const event = new ProxyEvent<nx.ProxyGetEvent["data"]>("get", {
+    const event = new ProxyGetEvent({
       target: proxy,
       data: {
         target: finalTarget,
         property,
         result: deferred.promise,
       },
-    }) as nx.ProxyGetEvent;
+    });
 
     if (event.defaultPrevented) {
       return resolveWith(deferred.resolve, event.returnValue);

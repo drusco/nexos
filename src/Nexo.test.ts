@@ -1,3 +1,4 @@
+import type * as nx from "./types/Nexo.js";
 import NexoEmitter from "./events/NexoEmitter.js";
 import Nexo from "./Nexo.js";
 import NexoMap from "./utils/NexoMap.js";
@@ -44,15 +45,15 @@ describe("Nexo", () => {
   it("Emits an event when a proxy is created", () => {
     const nexo = new Nexo();
     const target = {};
-    let proxyEvent;
+    const listener = jest.fn();
 
-    nexo.on("proxy", (event: NexoEvent) => {
-      proxyEvent = event;
-    });
+    nexo.on("proxy", listener);
 
     const proxy = nexo.create(target);
     const wrapper = Nexo.wrap(proxy);
+    const [proxyEvent]: [nx.ProxyCreateEvent] = listener.mock.lastCall;
 
+    expect(listener).toHaveBeenCalledTimes(1);
     expect(proxyEvent).toBeInstanceOf(NexoEvent);
     expect(proxyEvent.target).toBe(proxy);
     expect(proxyEvent.name).toBe("proxy");

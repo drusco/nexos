@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-//** Types
-
 export type ArrayLike = unknown[];
 export type Traceable = NonNullable<object | FunctionLike>;
 export type ObjectKey = string | symbol;
@@ -46,12 +42,28 @@ export interface NexoEvent<Target = unknown, Data = unknown> {
   preventDefault(): void;
 }
 
-export interface NexoEmitter {
-  on(event: ObjectKey, listener: FunctionLike): this;
-  off(event: ObjectKey, listener: FunctionLike): this;
-  emit<Event extends NexoEvent>(
-    eventName: ObjectKey,
-    data: Event | Error,
+export interface NexoEmitter<
+  Events extends NexoEmitterEvents = NexoEmitterEvents,
+> {
+  on<K extends Extract<keyof Events, string>>(
+    event: K,
+    listener: FunctionLike<
+      [Events[K]],
+      Events[K] extends NexoEvent ? Events[K]["returnValue"] : void
+    >,
+  ): this;
+
+  off<K extends Extract<keyof Events, string>>(
+    event: K,
+    listener: FunctionLike<
+      [Events[K]],
+      Events[K] extends NexoEvent ? Events[K]["returnValue"] : void
+    >,
+  ): this;
+
+  emit<K extends Extract<keyof Events, string> | "error">(
+    eventName: K,
+    data: Events[K] extends NexoEvent ? Events[K] : Error,
   ): boolean;
 }
 
@@ -66,14 +78,14 @@ export interface Proxy {
     ...args: Args
   ): Return;
   <Return = Proxy, Args extends ArrayLike = ArrayLike>(...args: Args): Return;
-  name: any;
-  apply: any;
-  bind: any;
-  call: any;
-  caller: any;
-  length: any;
-  toString: any;
-  [key: ObjectKey]: any;
+  name: unknown;
+  apply: unknown;
+  bind: unknown;
+  call: unknown;
+  caller: unknown;
+  length: unknown;
+  toString: unknown;
+  [key: ObjectKey]: unknown;
 }
 
 export interface ProxyWrapper extends NexoEmitter {
@@ -90,7 +102,7 @@ export interface ProxyError extends Error {
 }
 
 export interface ProxyEvent<Data = unknown> extends NexoEvent<Proxy, Data> {
-  readonly returnValue: unknown;
+  readonly returnValue: void | unknown;
   readonly cancelable: true;
 }
 
@@ -100,14 +112,18 @@ export interface ProxyApplyEvent
     readonly thisArg: unknown;
     readonly args: ArrayLike;
     readonly result: Promise<FunctionLike<[], unknown>>;
-  }> {}
+  }> {
+  readonly returnValue: void | unknown;
+}
 
 export interface ProxyConstructEvent
   extends ProxyEvent<{
     readonly target: Traceable;
     readonly args: ArrayLike;
     readonly result: Promise<FunctionLike<[], object>>;
-  }> {}
+  }> {
+  readonly returnValue: void | object;
+}
 
 export interface ProxyDefinePropertyEvent
   extends ProxyEvent<{
@@ -115,59 +131,77 @@ export interface ProxyDefinePropertyEvent
     readonly property: ObjectKey;
     readonly descriptor: PropertyDescriptor;
     readonly result: Promise<FunctionLike<[], boolean>>;
-  }> {}
+  }> {
+  readonly returnValue: void | PropertyDescriptor;
+}
 
 export interface ProxyDeletePropertyEvent
   extends ProxyEvent<{
     readonly target: Traceable;
     readonly property: ObjectKey;
     readonly result: Promise<FunctionLike<[], boolean>>;
-  }> {}
+  }> {
+  readonly returnValue: void | boolean;
+}
 
 export interface ProxyGetEvent
   extends ProxyEvent<{
     readonly target: Traceable;
     readonly property: ObjectKey;
     readonly result: Promise<FunctionLike<[], unknown>>;
-  }> {}
+  }> {
+  readonly returnValue: void | unknown;
+}
 
 export interface ProxyGetOwnPropertyDescriptorEvent
   extends ProxyEvent<{
     readonly target: Traceable;
     readonly property: ObjectKey;
     readonly result: Promise<FunctionLike<[], PropertyDescriptor>>;
-  }> {}
+  }> {
+  readonly returnValue: void | PropertyDescriptor;
+}
 
 export interface ProxyGetPrototypeOfEvent
   extends ProxyEvent<{
     readonly target: Traceable;
     readonly result: Promise<FunctionLike<[], object>>;
-  }> {}
+  }> {
+  readonly returnValue: void | object;
+}
 
 export interface ProxyHasEvent
   extends ProxyEvent<{
     readonly target: Traceable;
     readonly property: ObjectKey;
     readonly result: Promise<FunctionLike<[], boolean>>;
-  }> {}
+  }> {
+  readonly returnValue: void | boolean;
+}
 
 export interface ProxyIsExtensibleEvent
   extends ProxyEvent<{
     readonly target: Traceable;
     readonly result: Promise<FunctionLike<[], boolean>>;
-  }> {}
+  }> {
+  readonly returnValue: void | boolean;
+}
 
 export interface ProxyOwnKeysEvent
   extends ProxyEvent<{
     readonly target: Traceable;
     readonly result: Promise<FunctionLike<[], ObjectKey[]>>;
-  }> {}
+  }> {
+  readonly returnValue: void | ObjectKey[];
+}
 
 export interface ProxyPreventExtensionsEvent
   extends ProxyEvent<{
     readonly target: Traceable;
     readonly result: Promise<FunctionLike<[], boolean>>;
-  }> {}
+  }> {
+  readonly returnValue: void | boolean;
+}
 
 export interface ProxySetEvent
   extends ProxyEvent<{
@@ -175,20 +209,44 @@ export interface ProxySetEvent
     readonly property: ObjectKey;
     readonly value: unknown;
     readonly result: Promise<FunctionLike<[], boolean>>;
-  }> {}
+  }> {
+  readonly returnValue: void | boolean;
+}
 
 export interface ProxySetPrototypeOfEvent
   extends ProxyEvent<{
     readonly target: Traceable;
     readonly prototype: object;
     readonly result: Promise<FunctionLike<[], boolean>>;
-  }> {}
+  }> {
+  readonly returnValue: void | object;
+}
 
 export interface ProxyCreateEvent
-  extends ProxyEvent<{ id: string; target?: Traceable }> {}
+  extends NexoEvent<
+    Proxy,
+    {
+      readonly id: string;
+      readonly target?: Traceable;
+    }
+  > {}
 
-export interface ProxyEvents {
+export interface NexoEmitterEvents {
+  error: Error;
+}
+
+export interface NexoMapEvents extends NexoEmitterEvents {
+  set: NexoEvent;
+  delete: NexoEvent;
+  clear: NexoEvent;
+  release: NexoEvent;
+}
+
+export interface NexoEvents extends NexoEmitterEvents {
   proxy: ProxyCreateEvent;
+}
+export interface ProxyEvents extends NexoEmitterEvents {
+  "proxy.error": ProxyError;
   "proxy.apply": ProxyApplyEvent;
   "proxy.construct": ProxyConstructEvent;
   "proxy.defineProperty": ProxyDefinePropertyEvent;

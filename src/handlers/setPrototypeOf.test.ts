@@ -55,7 +55,7 @@ describe("SetPrototypeOf Handler", () => {
 
     nexo.on("proxy.setPrototypeOf", (event: nx.ProxySetPrototypeOfEvent) => {
       event.preventDefault();
-      return "non-object";
+      return "non-object" as unknown as object;
     });
 
     expect(() => {
