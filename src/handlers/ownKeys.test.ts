@@ -100,12 +100,17 @@ describe("OwnKeys Handler", () => {
 
     const returnInvalid = jest.fn((event: nx.ProxyOwnKeysEvent) => {
       event.preventDefault();
-      return "invalid";
+      return "invalid" as unknown as nx.ObjectKey[];
     });
 
     const returnInvalidArray = jest.fn((event: nx.ProxyOwnKeysEvent) => {
       event.preventDefault();
-      return ["includes more than strings and symbols", true, null, 123];
+      return [
+        "includes more than strings and symbols",
+        true,
+        null,
+        123,
+      ] as unknown as nx.ObjectKey[];
     });
 
     Nexo.wrap(proxyA).on("proxy.ownKeys", returnInvalid);

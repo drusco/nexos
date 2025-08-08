@@ -82,7 +82,7 @@ describe("IsExtensible Handler", () => {
 
     wrapper.on("proxy.isExtensible", (event: nx.ProxyIsExtensibleEvent) => {
       event.preventDefault();
-      return "invalid";
+      return "invalid" as unknown as boolean;
     });
 
     expect(() => Reflect.isExtensible(proxy)).toThrow(ProxyError);

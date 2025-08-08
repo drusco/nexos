@@ -1,5 +1,5 @@
 import type * as nx from "../types/Nexo.js";
-import ProxyEvent from "../events/ProxyEvent.js";
+import ProxySetPrototypeOfEvent from "../events/ProxySetPrototypeOfEvent.js";
 import ProxyError from "../errors/ProxyError.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
 
@@ -33,17 +33,14 @@ export default function setPrototypeOf(resolveProxy: nx.resolveProxy) {
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
     let finalPrototype: unknown = prototype;
 
-    const event = new ProxyEvent<nx.ProxySetPrototypeOfEvent["data"]>(
-      "setPrototypeOf",
-      {
-        target: proxy,
-        data: {
-          target: finalTarget,
-          prototype,
-          result: deferred.promise,
-        },
+    const event = new ProxySetPrototypeOfEvent({
+      target: proxy,
+      data: {
+        target: finalTarget,
+        prototype,
+        result: deferred.promise,
       },
-    ) as nx.ProxySetPrototypeOfEvent;
+    });
 
     if (event.defaultPrevented) {
       finalPrototype = event.returnValue;

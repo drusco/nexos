@@ -1,5 +1,5 @@
 import type * as nx from "../types/Nexo.js";
-import ProxyEvent from "../events/ProxyEvent.js";
+import ProxySetEvent from "../events/ProxySetEvent.js";
 import ProxyError from "../errors/ProxyError.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
 
@@ -31,7 +31,7 @@ export default function set(resolveProxy: nx.resolveProxy) {
     const finalTarget = sandbox || target;
     let finalValue = value;
 
-    const event = new ProxyEvent<nx.ProxySetEvent["data"]>("set", {
+    const event = new ProxySetEvent({
       target: proxy,
       data: {
         target: finalTarget,
@@ -39,7 +39,7 @@ export default function set(resolveProxy: nx.resolveProxy) {
         value,
         result: deferred.promise,
       },
-    }) as nx.ProxySetEvent;
+    });
 
     if (event.defaultPrevented) {
       finalValue = event.returnValue;
