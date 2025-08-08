@@ -208,8 +208,10 @@ export interface ProxyCreateEvent
     {
       readonly id: string;
       readonly target?: Traceable;
+      readonly result: Promise<FunctionLike<[], Proxy>>;
     }
   > {
+  readonly cancelable: true;
   readonly returnValue: void | Proxy;
 }
 
