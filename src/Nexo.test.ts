@@ -2,10 +2,10 @@ import type * as nx from "./types/Nexo.js";
 import NexoEmitter from "./events/NexoEmitter.js";
 import Nexo from "./Nexo.js";
 import NexoMap from "./utils/NexoMap.js";
-import NexoEvent from "./events/NexoEvent.js";
 import ProxyWrapper from "./utils/ProxyWrapper.js";
 import ProxyError from "./errors/ProxyError.js";
 import maps from "./utils/maps.js";
+import ProxyCreateEvent from "./events/ProxyCreateEvent.js";
 
 describe("Nexo", () => {
   it("Creates a new nexo object", () => {
@@ -54,10 +54,14 @@ describe("Nexo", () => {
     const [proxyEvent]: [nx.ProxyCreateEvent] = listener.mock.lastCall;
 
     expect(listener).toHaveBeenCalledTimes(1);
-    expect(proxyEvent).toBeInstanceOf(NexoEvent);
+    expect(proxyEvent).toBeInstanceOf(ProxyCreateEvent);
     expect(proxyEvent.target).toBe(proxy);
     expect(proxyEvent.name).toBe("proxy");
-    expect(proxyEvent.data).toStrictEqual({ id: wrapper.id, target });
+    expect(proxyEvent.data).toStrictEqual({
+      id: wrapper.id,
+      target,
+      result: proxyEvent.data.result,
+    });
   });
 
   it("Creates a proxy by name with optional target", () => {
