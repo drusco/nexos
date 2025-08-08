@@ -1,5 +1,5 @@
 import type * as nx from "../types/Nexo.js";
-import ProxyEvent from "../events/ProxyEvent.js";
+import ProxyDefinePropertyEvent from "../events/ProxyDefinePropertyEvent.js";
 import ProxyError from "../errors/ProxyError.js";
 import { createDeferred, resolveWith, rejectWith } from "../utils/deferred.js";
 
@@ -28,18 +28,15 @@ export default function defineProperty(resolveProxy: nx.resolveProxy) {
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
     const finalTarget = sandbox || target;
 
-    const event = new ProxyEvent<nx.ProxyDefinePropertyEvent["data"]>(
-      "defineProperty",
-      {
-        target: proxy,
-        data: {
-          target: finalTarget,
-          property,
-          descriptor,
-          result: deferred.promise,
-        },
+    const event = new ProxyDefinePropertyEvent({
+      target: proxy,
+      data: {
+        target: finalTarget,
+        property,
+        descriptor,
+        result: deferred.promise,
       },
-    ) as nx.ProxyDefinePropertyEvent;
+    });
 
     // If event prevented, try to define with event.returnValue or return false
     if (event.defaultPrevented) {

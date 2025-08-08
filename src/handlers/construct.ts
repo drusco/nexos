@@ -1,5 +1,5 @@
 import type * as nx from "../types/Nexo.js";
-import ProxyEvent from "../events/ProxyEvent.js";
+import ProxyConstructEvent from "../events/ProxyConstructEvent.js";
 import ProxyError from "../errors/ProxyError.js";
 import Nexo from "../Nexo.js";
 import { createDeferred, resolveWith, rejectWith } from "../utils/deferred.js";
@@ -26,14 +26,14 @@ export default function construct(resolveProxy: nx.resolveProxy) {
     const deferred = createDeferred<nx.FunctionLike<[], object>>();
     const finalTarget = sandbox || target;
 
-    const event = new ProxyEvent<nx.ProxyConstructEvent["data"]>("construct", {
+    const event = new ProxyConstructEvent({
       target: proxy,
       data: {
         target: finalTarget,
         args,
         result: deferred.promise,
       },
-    }) as nx.ProxyConstructEvent;
+    });
 
     if (event.defaultPrevented) {
       if (Nexo.isTraceable(event.returnValue)) {

@@ -21,7 +21,7 @@ class NexoMap<Target extends nx.Traceable>
   /**
    * Event emitter instance for broadcasting changes to the map.
    */
-  readonly events: NexoEmitter;
+  readonly events: NexoEmitter<nx.NexoMapEvents>;
 
   /**
    * Creates an instance of `NexoMap`.
@@ -46,7 +46,7 @@ class NexoMap<Target extends nx.Traceable>
       data: { key, value },
     });
 
-    this.events.emit(event.name, event);
+    this.events.emit("set", event);
 
     return this;
   }
@@ -68,7 +68,7 @@ class NexoMap<Target extends nx.Traceable>
       },
     });
 
-    this.events.emit(event.name, event);
+    this.events.emit("delete", event);
 
     return existed;
   }
@@ -80,7 +80,7 @@ class NexoMap<Target extends nx.Traceable>
     super.clear();
 
     const event = new NexoEvent("clear", { target: this });
-    this.events.emit(event.name, event);
+    this.events.emit("clear", event);
   }
 
   /**
@@ -98,7 +98,7 @@ class NexoMap<Target extends nx.Traceable>
 
     const event = new NexoEvent("release", { target: this });
 
-    this.events.emit(event.name, event);
+    this.events.emit("release", event);
   }
 }
 

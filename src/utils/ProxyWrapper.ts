@@ -12,7 +12,10 @@ import Nexo from "../Nexo.js";
  * const proxyWrapper = new ProxyWrapper({ id: 'proxy1', nexo: someNexoInstance, traceable: true, revoke: revokeFunction });
  * proxyWrapper.revoke(); // This will revoke the proxy.
  */
-class ProxyWrapper extends NexoEmitter implements nx.ProxyWrapper {
+class ProxyWrapper
+  extends NexoEmitter<nx.ProxyEvents>
+  implements nx.ProxyWrapper
+{
   /** The unique identifier for the proxy wrapper. */
   readonly id: string;
 

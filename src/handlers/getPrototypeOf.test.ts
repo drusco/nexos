@@ -54,7 +54,7 @@ describe("GetPrototypeOf Handler", () => {
 
     const listener = jest.fn((event: nx.ProxyGetPrototypeOfEvent) => {
       event.preventDefault();
-      return "invalid";
+      return "invalid" as unknown as object;
     });
 
     nexo.on("error", errorListener);
