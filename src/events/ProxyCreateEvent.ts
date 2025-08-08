@@ -8,6 +8,7 @@ class ProxyCreateEvent
 {
   declare readonly data: nx.ProxyCreateEvent["data"];
   declare readonly returnValue: nx.ProxyCreateEvent["returnValue"];
+  declare readonly cancelable: true;
 
   /**
    * This constructor initializes the event and emits the event
@@ -22,7 +23,7 @@ class ProxyCreateEvent
     data: nx.ProxyCreateEvent["data"];
     target: nx.Proxy;
   }) {
-    super("proxy", options);
+    super("proxy", { ...options, cancelable: true });
 
     // Retrieve the wrapper for the proxy
     const wrapper = map.proxies.get(options.target);
