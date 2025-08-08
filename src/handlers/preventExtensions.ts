@@ -1,5 +1,5 @@
 import type * as nx from "../types/Nexo.js";
-import ProxyEvent from "../events/ProxyEvent.js";
+import ProxyPreventExtensionsEvent from "../events/ProxyPreventExtensionsEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
 import ProxyError from "../errors/ProxyError.js";
 
@@ -22,16 +22,13 @@ export default function preventExtensions(resolveProxy: nx.resolveProxy) {
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
     const finalTarget = sandbox || target;
 
-    const event = new ProxyEvent<nx.ProxyPreventExtensionsEvent["data"]>(
-      "preventExtensions",
-      {
-        target: proxy,
-        data: {
-          target: finalTarget,
-          result: deferred.promise,
-        },
+    const event = new ProxyPreventExtensionsEvent({
+      target: proxy,
+      data: {
+        target: finalTarget,
+        result: deferred.promise,
       },
-    ) as nx.ProxyPreventExtensionsEvent;
+    });
 
     if (event.defaultPrevented) {
       const returnValue = event.returnValue || false;
