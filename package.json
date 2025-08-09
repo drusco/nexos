@@ -54,7 +54,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/drusco/nexos.git"
+    "url": "git+https://github.com/drusco/nexos.git"
   },
   "keywords": [
     "proxy",
