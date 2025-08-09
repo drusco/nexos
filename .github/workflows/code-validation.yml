@@ -27,23 +27,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Cache Docusaurus node_modules
-        uses: actions/cache@v4
-        with:
-          path: docusaurus/node_modules
-          key: ${{ runner.os }}-node-docusaurus-${{ hashFiles('docusaurus/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-docusaurus-
-
-      - name: Install Docusaurus dependencies
-        run: npm ci
-        working-directory: ./docusaurus
-
-      - name: Run nexos validation
-        run: |
-          npm run type-check && npm run lint-check && npm run format-check
-
-      - name: Run docusaurus validation
-        working-directory: ./docusaurus
+      - name: Run validation
         run: |
           npm run type-check && npm run lint-check && npm run format-check
