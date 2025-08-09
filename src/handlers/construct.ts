@@ -1,6 +1,6 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyConstructEvent from "../events/ProxyConstructEvent.js";
-import ProxyError from "../errors/ProxyError.js";
+import ProxyError from "../utils/ProxyError.js";
 import Nexo from "../Nexo.js";
 import { createDeferred, resolveWith, rejectWith } from "../utils/deferred.js";
 

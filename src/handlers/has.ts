@@ -1,7 +1,7 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyHasEvent from "../events/ProxyHasEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
-import ProxyError from "../errors/ProxyError.js";
+import ProxyError from "../utils/ProxyError.js";
 
 /**
  * Proxy trap handler for the `has` operation (used by the `in` operator).

@@ -1,9 +1,9 @@
 import type * as nx from "./types/Nexo.js";
-import NexoEmitter from "./events/NexoEmitter.js";
+import NexoEmitter from "./utils/NexoEmitter.js";
 import Nexo from "./Nexo.js";
 import NexoMap from "./utils/NexoMap.js";
 import ProxyWrapper from "./utils/ProxyWrapper.js";
-import ProxyError from "./errors/ProxyError.js";
+import ProxyError from "./utils/ProxyError.js";
 import maps from "./utils/maps.js";
 import ProxyCreateEvent from "./events/ProxyCreateEvent.js";
 

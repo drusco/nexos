@@ -86,133 +86,130 @@ export interface ProxyEvent<Data = unknown> extends NexoEvent<Proxy, Data> {
   readonly cancelable: true;
 }
 
-export interface ProxyApplyEvent
-  extends ProxyEvent<{
+export interface ProxyApplyEvent extends ProxyEvent {
+  readonly returnValue: void | unknown;
+  readonly data: {
     readonly target: Traceable;
     readonly thisArg: unknown;
     readonly args: ArrayLike;
     readonly result: Promise<FunctionLike<[], unknown>>;
-  }> {
-  readonly returnValue: void | unknown;
+  };
 }
 
-export interface ProxyConstructEvent
-  extends ProxyEvent<{
+export interface ProxyConstructEvent extends ProxyEvent {
+  readonly returnValue: void | object;
+  readonly data: {
     readonly target: Traceable;
     readonly args: ArrayLike;
     readonly result: Promise<FunctionLike<[], object>>;
-  }> {
-  readonly returnValue: void | object;
+  };
 }
 
-export interface ProxyDefinePropertyEvent
-  extends ProxyEvent<{
+export interface ProxyDefinePropertyEvent extends ProxyEvent {
+  readonly returnValue: void | PropertyDescriptor;
+  readonly data: {
     readonly target: Traceable;
     readonly property: ObjectKey;
     readonly descriptor: PropertyDescriptor;
     readonly result: Promise<FunctionLike<[], boolean>>;
-  }> {
-  readonly returnValue: void | PropertyDescriptor;
+  };
 }
 
-export interface ProxyDeletePropertyEvent
-  extends ProxyEvent<{
+export interface ProxyDeletePropertyEvent extends ProxyEvent {
+  readonly returnValue: void | boolean;
+  readonly data: {
     readonly target: Traceable;
     readonly property: ObjectKey;
     readonly result: Promise<FunctionLike<[], boolean>>;
-  }> {
-  readonly returnValue: void | boolean;
+  };
 }
 
-export interface ProxyGetEvent
-  extends ProxyEvent<{
+export interface ProxyGetEvent extends ProxyEvent {
+  readonly returnValue: void | unknown;
+  readonly data: {
     readonly target: Traceable;
     readonly property: ObjectKey;
     readonly result: Promise<FunctionLike<[], unknown>>;
-  }> {
-  readonly returnValue: void | unknown;
+  };
 }
 
-export interface ProxyGetOwnPropertyDescriptorEvent
-  extends ProxyEvent<{
+export interface ProxyGetOwnPropertyDescriptorEvent extends ProxyEvent {
+  readonly returnValue: void | PropertyDescriptor;
+  readonly data: {
     readonly target: Traceable;
     readonly property: ObjectKey;
     readonly result: Promise<FunctionLike<[], PropertyDescriptor>>;
-  }> {
-  readonly returnValue: void | PropertyDescriptor;
+  };
 }
 
-export interface ProxyGetPrototypeOfEvent
-  extends ProxyEvent<{
+export interface ProxyGetPrototypeOfEvent extends ProxyEvent {
+  readonly returnValue: void | object;
+  readonly data: {
     readonly target: Traceable;
     readonly result: Promise<FunctionLike<[], object>>;
-  }> {
-  readonly returnValue: void | object;
+  };
 }
 
-export interface ProxyHasEvent
-  extends ProxyEvent<{
+export interface ProxyHasEvent extends ProxyEvent {
+  readonly returnValue: void | boolean;
+  readonly data: {
     readonly target: Traceable;
     readonly property: ObjectKey;
     readonly result: Promise<FunctionLike<[], boolean>>;
-  }> {
-  readonly returnValue: void | boolean;
+  };
 }
 
-export interface ProxyIsExtensibleEvent
-  extends ProxyEvent<{
+export interface ProxyIsExtensibleEvent extends ProxyEvent {
+  readonly returnValue: void | boolean;
+  readonly data: {
     readonly target: Traceable;
     readonly result: Promise<FunctionLike<[], boolean>>;
-  }> {
-  readonly returnValue: void | boolean;
+  };
 }
 
-export interface ProxyOwnKeysEvent
-  extends ProxyEvent<{
+export interface ProxyOwnKeysEvent extends ProxyEvent {
+  readonly returnValue: void | ObjectKey[];
+  readonly data: {
     readonly target: Traceable;
     readonly result: Promise<FunctionLike<[], ObjectKey[]>>;
-  }> {
-  readonly returnValue: void | ObjectKey[];
+  };
 }
 
-export interface ProxyPreventExtensionsEvent
-  extends ProxyEvent<{
+export interface ProxyPreventExtensionsEvent extends ProxyEvent {
+  readonly returnValue: void | boolean;
+  readonly data: {
     readonly target: Traceable;
     readonly result: Promise<FunctionLike<[], boolean>>;
-  }> {
-  readonly returnValue: void | boolean;
+  };
 }
 
-export interface ProxySetEvent
-  extends ProxyEvent<{
+export interface ProxySetEvent extends ProxyEvent {
+  readonly returnValue: void | boolean;
+  readonly data: {
     readonly target: Traceable;
     readonly property: ObjectKey;
     readonly value: unknown;
     readonly result: Promise<FunctionLike<[], boolean>>;
-  }> {
-  readonly returnValue: void | boolean;
+  };
 }
 
-export interface ProxySetPrototypeOfEvent
-  extends ProxyEvent<{
+export interface ProxySetPrototypeOfEvent extends ProxyEvent {
+  readonly returnValue: void | object;
+  readonly data: {
     readonly target: Traceable;
     readonly prototype: object;
     readonly result: Promise<FunctionLike<[], boolean>>;
-  }> {
-  readonly returnValue: void | object;
+  };
 }
 
-export interface ProxyCreateEvent
-  extends NexoEvent<
-    Proxy,
-    {
-      readonly id: string;
-      readonly target?: Traceable;
-      readonly result: Promise<FunctionLike<[], Proxy>>;
-    }
-  > {
+export interface ProxyCreateEvent extends NexoEvent<Proxy> {
   readonly cancelable: true;
   readonly returnValue: void | Proxy;
+  readonly data: {
+    readonly id: string;
+    readonly target?: Traceable;
+    readonly result: Promise<FunctionLike<[], Proxy>>;
+  };
 }
 
 export interface NexoEmitterEvents {

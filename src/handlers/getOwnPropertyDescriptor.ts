@@ -1,7 +1,7 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyGetOwnPropertyDescriptorEvent from "../events/ProxyGetOwnPropertyDescriptorEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
-import ProxyError from "../errors/ProxyError.js";
+import ProxyError from "../utils/ProxyError.js";
 
 /**
  * Creates a `getOwnPropertyDescriptor` trap handler for a Proxy,
