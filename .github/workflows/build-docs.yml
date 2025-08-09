@@ -26,15 +26,7 @@ jobs:
         with:
           repository: drusco/docusaurus
           ref: nexos
-          path: docusaurus-tmp
-
-      - name: Move Docusaurus contents into main repo folder
-        run: |
-          rm -rf docusaurus
-          mkdir docusaurus
-          shopt -s dotglob
-          mv docusaurus-tmp/* docusaurus/
-          rm -rf docusaurus-tmp
+          path: docusaurus
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
