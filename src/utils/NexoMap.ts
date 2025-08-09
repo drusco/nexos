@@ -1,6 +1,6 @@
 import type * as nx from "../types/Nexo.js";
 import NexoEvent from "../events/NexoEvent.js";
-import NexoEmitter from "../events/NexoEmitter.js";
+import NexoEmitter from "./NexoEmitter.js";
 
 /**
  * A specialized `Map` that holds weak references to traceable targets.

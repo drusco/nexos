@@ -1,5 +1,5 @@
 import Nexo from "../Nexo.js";
-import NexoEmitter from "../events/NexoEmitter.js";
+import NexoEmitter from "../utils/NexoEmitter.js";
 import ProxyWrapper from "./ProxyWrapper.js";
 
 describe("ProxyWrapper", () => {

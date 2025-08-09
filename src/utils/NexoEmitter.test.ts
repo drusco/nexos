@@ -1,6 +1,6 @@
 import type * as nx from "../types/Nexo.js";
-import NexoEmitter from "../events/NexoEmitter.js";
-import NexoEvent from "./NexoEvent.js";
+import NexoEmitter from "../utils/NexoEmitter.js";
+import NexoEvent from "../events/NexoEvent.js";
 
 interface TestEvents extends nx.NexoEmitterEvents {
   customError: Error;
