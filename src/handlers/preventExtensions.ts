@@ -1,7 +1,7 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyPreventExtensionsEvent from "../events/ProxyPreventExtensionsEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
-import ProxyError from "../errors/ProxyError.js";
+import ProxyError from "../utils/ProxyError.js";
 
 /**
  * Handles the `preventExtensions` trap for a proxy, emitting a cancelable event
