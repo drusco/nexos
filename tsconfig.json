@@ -13,5 +13,5 @@
     "noEmit": true
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "docusaurus"]
+  "exclude": ["node_modules"]
 }

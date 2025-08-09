@@ -1,6 +1,2 @@
 dist
 coverage
-docusaurus/build
-docusaurus/.docusaurus
-docusaurus/versioned_docs
-docusaurus/versioned_sidebars

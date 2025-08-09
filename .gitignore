@@ -1,6 +1,5 @@
 dist
 build
-docusaurus/docs/api/*
 coverage
 node_modules
 .vscode
