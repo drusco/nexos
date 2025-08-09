@@ -1,5 +1,6 @@
 dist
 build
+docusaurus
 coverage
 node_modules
 .vscode
