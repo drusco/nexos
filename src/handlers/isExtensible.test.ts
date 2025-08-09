@@ -1,6 +1,6 @@
 import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
-import ProxyError from "../errors/ProxyError.js";
+import ProxyError from "../utils/ProxyError.js";
 
 describe("IsExtensible Handler", () => {
   it("returns true when the sandbox object is extensible", () => {
