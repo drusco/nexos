@@ -2,6 +2,8 @@ import type * as nx from "../types/Nexo.js";
 import map from "../utils/maps.js";
 
 /**
+ * @noInheritDoc
+ *
  * Represents an error that occurs within a proxy.
  * This error class extends the built-in `Error` class and adds a `proxy` property
  * to track the proxy associated with the error. It also triggers custom events when the error is created.
@@ -10,7 +12,7 @@ import map from "../utils/maps.js";
  * const proxyError = new ProxyError('An error occurred with the proxy', someProxyInstance);
  */
 class ProxyError extends Error implements nx.ProxyError {
-  readonly name = "ProxyError";
+  readonly name: string = "ProxyError";
 
   /** The proxy instance associated with this error. */
   readonly proxy: nx.Proxy;
