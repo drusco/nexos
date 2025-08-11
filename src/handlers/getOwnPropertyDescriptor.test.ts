@@ -79,6 +79,28 @@ describe("GetOwnPropertyDescriptor Handler", () => {
     expect(result).toStrictEqual(descriptor);
   });
 
+  it("returns the original descriptor unless event provides a replacement", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.create({ foo: true });
+
+    nexo.on(
+      "proxy.getOwnPropertyDescriptor",
+      (event: nx.ProxyGetOwnPropertyDescriptorEvent) => {
+        event.preventDefault();
+        return undefined;
+      },
+    );
+
+    const descriptor = Object.getOwnPropertyDescriptor(proxy, "foo");
+
+    expect(descriptor).toStrictEqual({
+      configurable: true,
+      enumerable: true,
+      value: true,
+      writable: true,
+    });
+  });
+
   it("returns undefined for missing properties", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
