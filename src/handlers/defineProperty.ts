@@ -76,19 +76,13 @@ export default function defineProperty(resolveProxy: nx.resolveProxy) {
 
     // If target is not extensible
     if (!extensible) {
-      try {
-        if (!Reflect.defineProperty(target, property, descriptor)) {
-          throw TypeError(
-            `Cannot define property '${String(property)}', object is not extensible`,
-          );
-        }
-        return resolveWith(deferred.resolve, true);
-      } catch (error) {
-        return rejectWith(
-          deferred.resolve,
-          new ProxyError(error.message, proxy),
-        );
-      }
+      return rejectWith(
+        deferred.resolve,
+        new ProxyError(
+          `Cannot define property '${String(property)}', object is not extensible`,
+          proxy,
+        ),
+      );
     }
 
     const configurable = descriptor.configurable ?? true;
