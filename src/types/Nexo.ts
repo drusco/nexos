@@ -357,8 +357,8 @@ export interface ProxyCreateEvent extends ProxyEvent {
   readonly data: {
     /** Unique proxy ID. */
     readonly id: string;
-    /** Original target, if provided. */
-    readonly target?: Traceable;
+    /** Original proxy target. */
+    readonly target: Traceable;
     /** Newly created proxy instance. */
     readonly result: Promise<FunctionLike<[], Proxy>>;
   };
