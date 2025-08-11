@@ -22,14 +22,13 @@ import { createDeferred, resolveWith, rejectWith } from "../utils/deferred.js";
 export default function construct(resolveProxy: nx.resolveProxy) {
   return (target: nx.FunctionLike, args: nx.ArrayLike): object => {
     const [proxy, wrapper] = resolveProxy();
-    const { nexo, sandbox } = wrapper;
+    const { nexo, traceable } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], object>>();
-    const finalTarget = sandbox || target;
 
     const event = new ProxyConstructEvent({
       target: proxy,
       data: {
-        target: finalTarget,
+        target,
         args,
         result: deferred.promise,
       },
@@ -50,7 +49,7 @@ export default function construct(resolveProxy: nx.resolveProxy) {
       );
     }
 
-    if (!sandbox && typeof target === "function") {
+    if (traceable && typeof target === "function") {
       // return instance from the traceable constructor target
       try {
         const result = Reflect.construct(target, args);
