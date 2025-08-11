@@ -25,14 +25,13 @@ export default function apply(resolveProxy: nx.resolveProxy) {
     args: nx.ArrayLike,
   ): unknown => {
     const [proxy, wrapper] = resolveProxy();
-    const { nexo, sandbox } = wrapper;
+    const { nexo, traceable } = wrapper;
     const deferred = createDeferred<nx.FunctionLike>();
-    const finalTarget = sandbox || target;
 
     const event = new ProxyApplyEvent({
       target: proxy,
       data: {
-        target: finalTarget,
+        target,
         thisArg,
         args,
         result: deferred.promise,
@@ -45,7 +44,7 @@ export default function apply(resolveProxy: nx.resolveProxy) {
       return resolveWith(deferred.resolve, returnValue);
     }
 
-    if (!sandbox && typeof target === "function") {
+    if (traceable && typeof target === "function") {
       // return result from the traceable function target
       try {
         const result = Reflect.apply(target, thisArg, args);
