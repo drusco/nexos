@@ -31,6 +31,8 @@ class ProxyWrapper
   /** The function responsible for revoking the proxy. */
   private _revoke: nx.FunctionLike<[], void>;
 
+  readonly traceable: boolean;
+
   /**
    * Creates an instance of `ProxyWrapper`.
    * This constructor initializes the wrapper with the provided data and sets up
@@ -52,6 +54,7 @@ class ProxyWrapper
     this.id = data.id;
     this.nexo = data.nexo;
     this._revoke = data.revoke;
+    this.traceable = data.traceable;
 
     // If the proxy is not traceable, create a sandbox
     if (!data.traceable) {

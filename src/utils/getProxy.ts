@@ -28,8 +28,8 @@ const getProxy = (nexo: Nexo, target?: nx.Traceable, id?: string): nx.Proxy => {
   const uid = id || randomUUID();
   const traceable = Nexo.isTraceable(target);
   const boundFunction = function () {}.bind(null);
-  const mock = Object.setPrototypeOf(boundFunction, null);
-  const proxyTarget = target || mock;
+  const sandbox = Object.setPrototypeOf(boundFunction, null);
+  const proxyTarget = target || sandbox;
   const deferred = createDeferred<nx.FunctionLike<[], nx.Proxy>>();
 
   const revocable = Proxy.revocable<nx.Proxy>(
@@ -50,10 +50,10 @@ const getProxy = (nexo: Nexo, target?: nx.Traceable, id?: string): nx.Proxy => {
 
   if (!traceable) {
     // Remove function related properties for proxies without traceable target
-    for (const key of Reflect.ownKeys(mock)) {
-      const descriptor = Object.getOwnPropertyDescriptor(mock, key);
+    for (const key of Reflect.ownKeys(sandbox)) {
+      const descriptor = Object.getOwnPropertyDescriptor(sandbox, key);
       if (descriptor.configurable) {
-        delete mock[key];
+        delete sandbox[key];
       }
     }
   }
@@ -65,7 +65,7 @@ const getProxy = (nexo: Nexo, target?: nx.Traceable, id?: string): nx.Proxy => {
     target: proxy,
     data: {
       id: uid,
-      target,
+      target: proxyTarget,
       result: deferred.promise,
     },
   });
