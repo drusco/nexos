@@ -11,7 +11,7 @@ describe("getProxy", () => {
     const wrapper = Nexo.wrap(proxy);
 
     expect(wrapper.nexo).toBe(nexo);
-    expect(wrapper.sandbox).not.toBeUndefined();
+    expect(wrapper.traceable).toBe(false);
   });
 
   it("creates a proxy with a custom target", () => {
@@ -20,7 +20,7 @@ describe("getProxy", () => {
     const proxy = getProxy(nexo, target);
     const wrapper = Nexo.wrap(proxy);
 
-    expect(wrapper.sandbox).toBeUndefined();
+    expect(wrapper.traceable).toBe(true);
     expect(Object.getPrototypeOf(proxy)).toBe(Object.getPrototypeOf(target));
   });
 

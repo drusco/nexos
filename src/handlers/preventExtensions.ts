@@ -17,15 +17,13 @@ import ProxyError from "../utils/ProxyError.js";
  */
 export default function preventExtensions(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable): boolean => {
-    const [proxy, wrapper] = resolveProxy();
-    const { sandbox } = wrapper;
+    const [proxy] = resolveProxy();
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
-    const finalTarget = sandbox || target;
 
     const event = new ProxyPreventExtensionsEvent({
       target: proxy,
       data: {
-        target: finalTarget,
+        target,
         result: deferred.promise,
       },
     });
@@ -44,10 +42,6 @@ export default function preventExtensions(resolveProxy: nx.resolveProxy) {
       }
 
       return resolveWith(deferred.resolve, returnValue);
-    }
-
-    if (sandbox) {
-      Reflect.preventExtensions(sandbox);
     }
 
     return resolveWith(deferred.resolve, Reflect.preventExtensions(target));

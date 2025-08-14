@@ -14,7 +14,7 @@ import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
  * - If the target is non-extensible, the prototype must remain unchanged.
  * - If the prototype set (or returned by a listener) is not an object or null,
  *   the operation is rejected with a ProxyError.
- * - The prototype is applied to both the real target and sandbox (if present).
+ * - The prototype is applied to both the real target and sandbox.
  *
  * Events:
  * - The dispatched event contains a promise `result`, which resolves with the
@@ -25,18 +25,14 @@ import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
  */
 export default function setPrototypeOf(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable, prototype: object): boolean => {
-    const [proxy, wrapper] = resolveProxy();
-    const { sandbox } = wrapper;
-    const finalTarget = sandbox || target;
-    const targetIsExtensible = Reflect.isExtensible(target);
-    const currentPrototype = Reflect.getPrototypeOf(target);
+    const [proxy] = resolveProxy();
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
     let finalPrototype: unknown = prototype;
 
     const event = new ProxySetPrototypeOfEvent({
       target: proxy,
       data: {
-        target: finalTarget,
+        target,
         prototype,
         result: deferred.promise,
       },
@@ -55,20 +51,6 @@ export default function setPrototypeOf(resolveProxy: nx.resolveProxy) {
           proxy,
         ),
       );
-    }
-
-    if (!targetIsExtensible && currentPrototype !== finalPrototype) {
-      return rejectWith(
-        deferred.resolve,
-        new ProxyError(
-          "Prototype cannot be changed because the target object is not extensible",
-          proxy,
-        ),
-      );
-    }
-
-    if (sandbox) {
-      Reflect.setPrototypeOf(sandbox, finalPrototype);
     }
 
     return resolveWith(

@@ -18,15 +18,13 @@ import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
 
 export default function deleteProperty(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable, property: nx.ObjectKey): boolean => {
-    const [proxy, wrapper] = resolveProxy();
-    const { sandbox } = wrapper;
+    const [proxy] = resolveProxy();
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
-    const finalTarget = sandbox || target;
 
     const event = new ProxyDeletePropertyEvent({
       target: proxy,
       data: {
-        target: finalTarget,
+        target,
         property,
         result: deferred.promise,
       },
@@ -35,35 +33,6 @@ export default function deleteProperty(resolveProxy: nx.resolveProxy) {
     if (event.defaultPrevented) {
       // Prevent property deletion
       return resolveWith(deferred.resolve, false);
-    }
-
-    // Delete property from the sandbox
-    if (sandbox) {
-      // check whether the proxy is sealed or frozen
-      const frozen = Object.isFrozen(target);
-      const sealed = Object.isSealed(target);
-
-      if (sealed || frozen) {
-        return rejectWith(
-          deferred.resolve,
-          new ProxyError(
-            `Cannot delete property '${String(property)}' because it is non-configurable`,
-            proxy,
-          ),
-        );
-      }
-
-      // The sandbox is not sealed nor frozen
-      // Lets try to delete the property from it
-      if (!Reflect.deleteProperty(sandbox, property)) {
-        return rejectWith(
-          deferred.resolve,
-          new ProxyError(
-            `Cannot delete property '${String(property)}' from proxy sandbox`,
-            proxy,
-          ),
-        );
-      }
     }
 
     // Try deleting property from traceable object target

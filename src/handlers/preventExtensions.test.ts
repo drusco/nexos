@@ -6,12 +6,10 @@ describe("PreventExtensions Handler", () => {
   it("prevents extensions on the sandboxed proxies", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
     const result = Reflect.preventExtensions(proxy);
 
     expect(result).toBe(true);
     expect(Object.isExtensible(proxy)).toBe(false);
-    expect(Object.isExtensible(wrapper.sandbox)).toBe(false);
   });
 
   it("prevents extensions on the proxy target", () => {

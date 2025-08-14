@@ -66,7 +66,7 @@ describe("DefineProperty Handler", () => {
 
       const result = Reflect.defineProperty(proxy, "foo", { value: 5 });
 
-      expect(result).toBe(true);
+      expect(result).toBe(false);
       expect(proxy.foo).toBe(6);
     });
 
@@ -85,7 +85,7 @@ describe("DefineProperty Handler", () => {
 
       const result = Reflect.defineProperty(proxy, "foo", { value: 5 });
 
-      expect(result).toBe(true);
+      expect(result).toBe(false);
       expect(proxy.foo).toBe(6);
     });
 
@@ -205,17 +205,6 @@ describe("DefineProperty Handler", () => {
       expect(proxyError).toBeInstanceOf(ProxyError);
     });
 
-    it("throws error when defining a non-configurable property that does not exist", () => {
-      const nexo = new Nexo();
-      const proxy = nexo.create();
-
-      expect(() =>
-        Object.defineProperty(proxy, "foo", {
-          configurable: false,
-        }),
-      ).toThrow(ProxyError);
-    });
-
     it("throws error when redefining an existing property fails", () => {
       const nexo = new Nexo();
       const proxy = nexo.create({});
@@ -225,19 +214,6 @@ describe("DefineProperty Handler", () => {
       expect(() =>
         Object.defineProperty(proxy, "foo", {
           value: false,
-        }),
-      ).toThrow(ProxyError);
-    });
-
-    it("cannot define a non-configurable property over a configurable one", () => {
-      const nexo = new Nexo();
-      const proxy = nexo.create();
-
-      proxy.length = 2;
-
-      expect(() =>
-        Object.defineProperty(proxy, "length", {
-          configurable: false,
         }),
       ).toThrow(ProxyError);
     });

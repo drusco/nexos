@@ -7,7 +7,11 @@ import ProxyCreateEvent from "../events/ProxyCreateEvent.js";
 import Nexo from "../Nexo.js";
 import { createDeferred, resolveWith } from "./deferred.js";
 
-const getProxy = (nexo: Nexo, target?: nx.Traceable, id?: string): nx.Proxy => {
+const getProxy = (
+  nexo: nx.Nexo,
+  target?: nx.Traceable,
+  id?: string,
+): nx.Proxy => {
   // Return existing proxy
   if (Nexo.isProxy(target)) {
     return target;
@@ -27,7 +31,7 @@ const getProxy = (nexo: Nexo, target?: nx.Traceable, id?: string): nx.Proxy => {
 
   const uid = id || randomUUID();
   const traceable = Nexo.isTraceable(target);
-  const boundFunction = function () {}.bind(null);
+  const boundFunction = new Function().bind(null);
   const sandbox = Object.setPrototypeOf(boundFunction, null);
   const proxyTarget = target || sandbox;
   const deferred = createDeferred<nx.FunctionLike<[], nx.Proxy>>();

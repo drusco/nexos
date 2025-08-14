@@ -112,14 +112,16 @@ describe("Set Hander", () => {
     expect(proxy[sym]).toBe(42);
   });
 
-  it("sets the value on the sandbox when present", () => {
+  it("sets the value on the target or sandbox", () => {
     const nexo = new Nexo();
-    const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+    const sandbox = nexo.create();
+    const target = nexo.create({ target: true });
 
-    proxy.foo = 123;
+    sandbox.foo = 123;
+    target.foo = 123;
 
-    expect(wrapper.sandbox["foo"]).toBe(123);
+    expect(target.foo).toBe(123);
+    expect(sandbox.foo).toBe(123);
   });
 
   it("returns true when new property is added", () => {

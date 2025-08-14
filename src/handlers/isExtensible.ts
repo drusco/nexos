@@ -17,15 +17,14 @@ import ProxyError from "../utils/ProxyError.js";
  */
 export default function isExtensible(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable): boolean => {
-    const [proxy, wrapper] = resolveProxy();
-    const { sandbox } = wrapper;
+    const [proxy] = resolveProxy();
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
-    const finalTarget = sandbox || target;
+    const isExtensible = Reflect.isExtensible(target);
 
     const event = new ProxyIsExtensibleEvent({
       target: proxy,
       data: {
-        target: finalTarget,
+        target,
         result: deferred.promise,
       },
     });
@@ -43,31 +42,21 @@ export default function isExtensible(resolveProxy: nx.resolveProxy) {
         );
       }
 
-      if (returnValue === false) {
-        // If the proxy was created without a user-defined target (i.e. a sandboxed proxy),
-        // allow simulating 'isExtensible' returning false by mutating the internal target.
-        // Otherwise, we must throw, as ECMAScript invariants prohibit returning false
+      if (returnValue === false && isExtensible) {
+        // ECMAScript invariants prohibit returning false
         // when the actual target is extensible.
-
-        if (sandbox) {
-          Object.preventExtensions(target);
-        } else {
-          return rejectWith(
-            deferred.resolve,
-            new ProxyError(
-              `'isExtensible' trap result does not reflect extensibility of proxy target`,
-              proxy,
-            ),
-          );
-        }
+        return rejectWith(
+          deferred.resolve,
+          new ProxyError(
+            `'isExtensible' trap result does not reflect extensibility of proxy target`,
+            proxy,
+          ),
+        );
       }
+
       return resolveWith(deferred.resolve, returnValue);
     }
 
-    if (sandbox) {
-      return resolveWith(deferred.resolve, Reflect.isExtensible(sandbox));
-    }
-
-    return resolveWith(deferred.resolve, Reflect.isExtensible(target));
+    return resolveWith(deferred.resolve, isExtensible);
   };
 }
