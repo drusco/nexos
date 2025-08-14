@@ -25,16 +25,14 @@ export default function set(resolveProxy: nx.resolveProxy) {
     property: nx.ObjectKey,
     value: unknown,
   ): boolean => {
-    const [proxy, wrapper] = resolveProxy();
-    const { sandbox } = wrapper;
+    const [proxy] = resolveProxy();
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
-    const finalTarget = sandbox || target;
     let finalValue = value;
 
     const event = new ProxySetEvent({
       target: proxy,
       data: {
-        target: finalTarget,
+        target,
         property,
         value,
         result: deferred.promise,
@@ -45,7 +43,7 @@ export default function set(resolveProxy: nx.resolveProxy) {
       finalValue = event.returnValue;
     }
 
-    if (!Reflect.set(finalTarget, property, finalValue)) {
+    if (!Reflect.set(target, property, finalValue)) {
       return rejectWith(
         deferred.resolve,
         new ProxyError(

@@ -89,35 +89,6 @@ describe("SetPrototypeOf Handler", () => {
     expect(Reflect.getPrototypeOf(target)).toBe(prototype);
   });
 
-  it("throws an error when the target is not extensible", () => {
-    const nexo = new Nexo();
-    const proxy = nexo.create();
-    const target = { foo: true };
-    const targetProxy = nexo.create(target);
-    const prototype = Array.prototype;
-
-    Reflect.preventExtensions(proxy);
-    Reflect.preventExtensions(targetProxy);
-
-    expect(() => {
-      Reflect.setPrototypeOf(proxy, prototype);
-    }).toThrow(ProxyError);
-
-    expect(() => {
-      Reflect.setPrototypeOf(proxy, Reflect.getPrototypeOf(proxy));
-    }).not.toThrow();
-
-    expect(Reflect.setPrototypeOf(target, prototype)).toBe(false);
-
-    expect(() => {
-      Reflect.setPrototypeOf(targetProxy, prototype);
-    }).toThrow(ProxyError);
-
-    expect(() => {
-      Reflect.setPrototypeOf(targetProxy, Reflect.getPrototypeOf(targetProxy));
-    }).not.toThrow();
-  });
-
   it("allows setting prototype to null", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();

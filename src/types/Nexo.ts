@@ -155,8 +155,6 @@ export interface ProxyWrapper extends NexoEmitter {
   readonly id: string;
   /** The parent {@link Nexo} instance. */
   readonly nexo: Nexo;
-  /** Sandbox object for non-traceable targets; otherwise `undefined`. */
-  readonly sandbox: void | Traceable;
   /** Whether the proxy has been revoked. */
   readonly revoked: boolean;
   /** Whether the proxy was created with a {@link Traceable | traceable} object */

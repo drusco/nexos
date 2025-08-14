@@ -16,14 +16,13 @@ import { createDeferred, resolveWith } from "../utils/deferred.js";
 export default function get(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable, property: nx.ObjectKey): unknown => {
     const [proxy, wrapper] = resolveProxy();
-    const { sandbox, nexo } = wrapper;
+    const { nexo } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], unknown>>();
-    const finalTarget = sandbox || target;
 
     const event = new ProxyGetEvent({
       target: proxy,
       data: {
-        target: finalTarget,
+        target,
         property,
         result: deferred.promise,
       },
@@ -33,13 +32,9 @@ export default function get(resolveProxy: nx.resolveProxy) {
       return resolveWith(deferred.resolve, event.returnValue);
     }
 
-    if (!sandbox) {
+    if (Reflect.has(target, property)) {
+      // return existing value on the target or sandbox
       return resolveWith(deferred.resolve, Reflect.get(target, property));
-    }
-
-    if (Reflect.has(sandbox, property)) {
-      // return existing value on the sandbox
-      return resolveWith(deferred.resolve, Reflect.get(sandbox, property));
     } else {
       // returns new proxy
       return resolveWith(deferred.resolve, nexo.create());

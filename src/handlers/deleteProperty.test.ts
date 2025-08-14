@@ -20,7 +20,7 @@ describe("DeleteProperty Handler", () => {
     const [event]: [nx.ProxyDeletePropertyEvent] = listener.mock.lastCall;
 
     expect(result).toBe(true);
-    expect(Nexo.isProxy(proxy.foo)).toBe(true);
+    expect(Object.hasOwn(proxy, "foo")).toBe(false);
     expect(listener).toHaveBeenCalledTimes(2);
     expect(event.target).toBe(proxy);
     expect(event.cancelable).toBe(true);
@@ -35,7 +35,7 @@ describe("DeleteProperty Handler", () => {
     const result = Reflect.deleteProperty(proxy, "foo");
 
     expect(result).toBe(true);
-    expect(proxy.foo).toBeUndefined();
+    expect(Object.hasOwn(proxy, "foo")).toBe(false);
   });
 
   it("returns true when the property is deleted from an untraceable target", () => {

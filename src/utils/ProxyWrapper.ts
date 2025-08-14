@@ -1,6 +1,5 @@
 import type * as nx from "../types/Nexo.js";
 import NexoEmitter from "./NexoEmitter.js";
-import Nexo from "../Nexo.js";
 
 /**
  * A wrapper class that manages a proxy and its associated events.
@@ -20,10 +19,7 @@ class ProxyWrapper
   readonly id: string;
 
   /** The `Nexo` instance associated with this proxy wrapper. */
-  readonly nexo: Nexo;
-
-  /** The sandbox for the proxy if it is not traceable, otherwise `undefined`. */
-  readonly sandbox: void | nx.Traceable;
+  readonly nexo: nx.Nexo;
 
   /** A private flag indicating whether the proxy has been revoked. */
   private _revoked: boolean = false;
@@ -36,7 +32,7 @@ class ProxyWrapper
   /**
    * Creates an instance of `ProxyWrapper`.
    * This constructor initializes the wrapper with the provided data and sets up
-   * the proxy's traceability. If the proxy is not traceable, a sandbox is created.
+   * the proxy's traceability.
    *
    * @param data - The data for initializing the proxy wrapper, including `id`, `nexo`, `traceable` flag, and `revoke` function.
    * @example
@@ -45,7 +41,7 @@ class ProxyWrapper
    */
   constructor(data: {
     id: string;
-    nexo: Nexo;
+    nexo: nx.Nexo;
     traceable: boolean;
     revoke: nx.FunctionLike<[], void>;
   }) {
@@ -55,11 +51,6 @@ class ProxyWrapper
     this.nexo = data.nexo;
     this._revoke = data.revoke;
     this.traceable = data.traceable;
-
-    // If the proxy is not traceable, create a sandbox
-    if (!data.traceable) {
-      this.sandbox = Object.create(null);
-    }
   }
 
   /**

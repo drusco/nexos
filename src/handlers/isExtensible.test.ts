@@ -65,10 +65,10 @@ describe("IsExtensible Handler", () => {
 
     wrapper.on("proxy.isExtensible", (event: nx.ProxyIsExtensibleEvent) => {
       event.preventDefault();
-      return false;
+      return true;
     });
 
-    expect(Reflect.isExtensible(proxy)).toBe(false);
+    expect(Reflect.isExtensible(proxy)).toBe(true);
   });
 
   it("throws when the return value from a prevented event is not a boolean", () => {
@@ -101,7 +101,7 @@ describe("IsExtensible Handler", () => {
 
     wrapper.on("proxy.isExtensible", (event: nx.ProxyIsExtensibleEvent) => {
       event.preventDefault();
-      return false; // only works on sandboxed proxies
+      return false;
     });
 
     expect(() => Reflect.isExtensible(proxy)).toThrow(ProxyError);

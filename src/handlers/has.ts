@@ -12,7 +12,7 @@ import ProxyError from "../utils/ProxyError.js";
  * If the event is canceled (`event.preventDefault()`), the provided return value is
  * validated to ensure it's a boolean. If not, a `ProxyError` is thrown.
  *
- * If the event is not canceled, the check is forwarded to either the sandbox (if present)
+ * If the event is not canceled, the check is forwarded to either the sandbox
  * or the original target using `Reflect.has`.
  *
  * Deferred resolution is used to allow async inspection of the result via the event's
@@ -21,15 +21,13 @@ import ProxyError from "../utils/ProxyError.js";
  */
 export default function has(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable, property: nx.ObjectKey): boolean => {
-    const [proxy, wrapper] = resolveProxy();
-    const { sandbox } = wrapper;
+    const [proxy] = resolveProxy();
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
-    const finalTarget = sandbox || target;
 
     const event = new ProxyHasEvent({
       target: proxy,
       data: {
-        target: finalTarget,
+        target,
         property,
         result: deferred.promise,
       },
@@ -43,10 +41,6 @@ export default function has(resolveProxy: nx.resolveProxy) {
         );
       }
       return resolveWith(deferred.resolve, event.returnValue);
-    }
-
-    if (sandbox) {
-      return resolveWith(deferred.resolve, Reflect.has(sandbox, property));
     }
 
     return resolveWith(deferred.resolve, Reflect.has(target, property));

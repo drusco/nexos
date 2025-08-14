@@ -25,15 +25,13 @@ import ProxyError from "../utils/ProxyError.js";
  */
 export default function ownKeys(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable): nx.ObjectKey[] => {
-    const [proxy, wrapper] = resolveProxy();
-    const { sandbox } = wrapper;
+    const [proxy] = resolveProxy();
     const deferred = createDeferred<nx.FunctionLike<[], nx.ObjectKey[]>>();
-    const finalTarget = sandbox || target;
 
     const event = new ProxyOwnKeysEvent({
       target: proxy,
       data: {
-        target: finalTarget,
+        target,
         result: deferred.promise,
       },
     });
@@ -55,27 +53,6 @@ export default function ownKeys(resolveProxy: nx.resolveProxy) {
       }
 
       return resolveWith(deferred.resolve, returnValue);
-    }
-
-    if (sandbox) {
-      const targetKeys = Reflect.ownKeys(target);
-      const sandboxKeys = Reflect.ownKeys(sandbox);
-
-      if (!Object.isExtensible(target)) {
-        // Target is non-extensible, keys must match exactly
-        return resolveWith(deferred.resolve, targetKeys);
-      }
-
-      // Return the combined own keys from both target and sandbox.
-      // This ensures all keys are accounted for, even if the target has been mutated
-      // or Reflect.ownKeys(target) returns an empty array. Prevents invariant violations
-      // when consumer code expects target keys to still be present.
-      const combinedKeys = new Set<nx.ObjectKey>([
-        ...targetKeys,
-        ...sandboxKeys,
-      ]);
-
-      return resolveWith(deferred.resolve, Array.from(combinedKeys));
     }
 
     // return the proxy target own keys
