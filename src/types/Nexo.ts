@@ -40,25 +40,35 @@ export type ProxyHandler =
   | "setPrototypeOf";
 
 /**
- * A specialized map that stores weak references to traceable values.
+ * A specialized map that stores weak references to {@link Traceable} values,
+ * with built-in event emitting capabilities.
  *
- * @typeParam Target - Type of traceable values stored.
+ * Each operation on the map can emit lifecycle events through an attached
+ * {@link EventEmitter}. By default, the map provides a no-op emitter,
+ * but a custom emitter can be set or removed.
+ *
+ * @typeParam T - The type of {@link Traceable} values stored.
  */
-export interface NexoMap<Target extends Traceable>
-  extends Map<string, WeakRef<Target>> {
-  /** Event emitter for map-related events. */
-  readonly events: NexoEmitter;
+export interface TraceableMap<T extends Traceable>
+  extends Map<string, WeakRef<T>> {
   /**
-   * Adds or updates a weak reference to a traceable value.
-   *
-   * @param key - The string key.
-   * @param value - The {@link WeakRef} to store.
-   */
-  set(key: string, value: WeakRef<Target>): this;
-  /**
-   * Removes entries whose {@link WeakRef} targets have been garbage collected.
+   * Removes entries whose `WeakRef` targets have been garbage collected.
    */
   release(): void;
+
+  /**
+   * Replaces the internal event emitter used to emit map lifecycle events.
+   *
+   * @param emitter - An {@link EventEmitter} to attach.
+   * @returns The current map instance for chaining.
+   */
+  setEventEmitter(emitter: EventEmitter): this;
+
+  /**
+   * Detaches the current event emitter.
+   * Useful when events are not desired.
+   */
+  removeEventEmitter(): void;
 }
 
 /**
@@ -86,22 +96,22 @@ export interface NexoEvent<Target = unknown, Data = unknown> {
   preventDefault(): void;
 }
 
-/** Minimal event emitter for proxy instrumentation. */
-export interface NexoEmitter {
+/** Minimal event emitter interface. */
+export interface EventEmitter {
   /** Adds a listener for a specific event. */
   on(event: string, listener: FunctionLike): this;
   /** Removes a listener from a specific event. */
   off(event: string, listener: FunctionLike): this;
   /** Emits an event to all registered listeners. */
-  emit(event: string, data: unknown): boolean;
+  emit(event: string, ...data: ArrayLike): boolean;
 }
 
 /**
  * Proxy factory and manager.
  */
-export interface Nexo extends NexoEmitter {
+export interface Nexo extends EventEmitter {
   /** Weak reference map of active proxies. */
-  readonly entries: NexoMap<Proxy>;
+  readonly entries: TraceableMap<Proxy>;
   /**
    * Retrieves an existing proxy by ID or creates one if it does not exist.
    *
@@ -150,7 +160,7 @@ export interface Proxy {
 /**
  * Wraps a proxy instance, manages events, and handles lifecycle operations.
  */
-export interface ProxyWrapper extends NexoEmitter {
+export interface ProxyWrapper extends EventEmitter {
   /** Unique proxy wrapper ID. */
   readonly id: string;
   /** The parent {@link Nexo} instance. */
@@ -362,32 +372,20 @@ export interface ProxyCreateEvent extends ProxyEvent {
   };
 }
 
-/** Map of event names to data for {@link NexoEmitter} events. */
-export interface NexoEmitterEvents {
+/** Map of event names to data for {@link EventEmitter} events. */
+export interface EmitterEvents {
   /** Fired when any error occurs. */
   error: Error;
 }
 
-/** Map of event names to data for {@link NexoMap} events. */
-export interface NexoMapEvents extends NexoEmitterEvents {
-  /** Fired when a value is added to the map. */
-  set: NexoEvent;
-  /** Fired when a value is removed from the map. */
-  delete: NexoEvent;
-  /** Fired when the map is cleared. */
-  clear: NexoEvent;
-  /** Fired when {@link NexoMap.release} removes collected references. */
-  release: NexoEvent;
-}
-
 /** Map of event names to data for {@link Nexo} events. */
-export interface NexoEvents extends NexoEmitterEvents {
+export interface NexoEvents extends EmitterEvents {
   /** Fired when a proxy is created. */
   proxy: ProxyCreateEvent;
 }
 
 /** Map of event names to data for {@link Nexo} and {@link ProxyWrapper} events. */
-export interface ProxyEvents extends NexoEmitterEvents {
+export interface ProxyEvents extends EmitterEvents {
   "proxy.error": ProxyError;
   "proxy.apply": ProxyApplyEvent;
   "proxy.construct": ProxyConstructEvent;

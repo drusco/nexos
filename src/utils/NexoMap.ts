@@ -3,103 +3,137 @@ import NexoEvent from "../events/NexoEvent.js";
 import NexoEmitter from "./NexoEmitter.js";
 
 /**
- * A specialized `Map` that holds weak references to traceable targets.
- * This class emits events when modifications occur.
+ * A specialized `Map` that stores {@link Traceable} objects wrapped in `WeakRef`.
+ *
+ * This map automatically cleans up entries whose targets are garbage-collected,
+ * and emits events when modifications occur (`set`, `delete`, `clear`).
  *
  * @noInheritDoc
- * @template Target - The type of objects stored in the map, which must be traceable.
+ * @param T - The type of traceable objects stored in the map.
  */
-class NexoMap<Target extends nx.Traceable>
-  extends Map<string, WeakRef<Target>>
-  implements nx.NexoMap<Target>
+class NexoMap<T extends nx.Traceable>
+  extends Map<string, WeakRef<T>>
+  implements nx.TraceableMap<T>
 {
   /**
-   * Stores the key of the last released entry during a `release` operation.
-   * Used internally to track which key was removed.
+   * Event emitter used to broadcast map changes.
    */
-  private releaseKey: string;
+  private eventEmitter?: nx.EventEmitter = new NexoEmitter();
 
   /**
-   * Event emitter instance for broadcasting changes to the map.
+   * Removes an entry and optionally marks it as released,
+   * emitting a `delete` event if an emitter is present.
+   *
+   * @param key - The key of the entry to remove.
+   * @param released - Whether the removal was due to garbage collection.
+   * @returns `true` if the entry was removed, otherwise `false`.
    */
-  readonly events: NexoEmitter<nx.NexoMapEvents>;
+  private remove(key: string, released: boolean = false): boolean {
+    const removed = super.delete(key);
+
+    if (this.eventEmitter) {
+      const event = new NexoEvent("delete", {
+        target: this,
+        cancelable: false,
+        data: { key, released },
+      });
+      this.eventEmitter.emit("delete", event);
+    }
+
+    return removed;
+  }
 
   /**
-   * Creates an instance of `NexoMap`.
+   * Creates a new `NexoMap` instance.
+   *
+   * @param entries - Optional initial entries to populate the map.
    */
-  constructor() {
-    super();
-    this.events = new NexoEmitter();
+  constructor(entries?: Iterable<readonly [string, WeakRef<T>]>) {
+    super(entries);
+  }
+
+  /**
+   * Returns the current event emitter if present.
+   */
+  get events(): nx.EventEmitter | undefined {
+    return this.eventEmitter;
   }
 
   /**
    * Adds or updates an entry in the map and emits a `set` event.
    *
-   * @param key - The key associated with the weak reference.
-   * @param value - The `WeakRef` wrapping the target object.
-   * @returns The updated `NexoMap` instance.
+   * @param key - The key associated with the object.
+   * @param value - The `WeakRef` pointing to the object.
+   * @returns The current map instance.
    */
-  set(key: string, value: WeakRef<Target>): this {
+  set(key: string, value: WeakRef<T>): this {
     super.set(key, value);
 
-    const event = new NexoEvent("set", {
-      target: this,
-      data: { key, value },
-    });
-
-    this.events.emit("set", event);
+    if (this.eventEmitter) {
+      const event = new NexoEvent("set", {
+        target: this,
+        cancelable: false,
+        data: { key, value },
+      });
+      this.eventEmitter.emit("set", event);
+    }
 
     return this;
   }
 
   /**
-   * Removes an entry from the map and emits a `delete` event.
+   * Deletes an entry and emits a `delete` event.
    *
-   * @param key - The key of the entry to remove.
-   * @returns `true` if the entry existed and was deleted, otherwise `false`.
+   * @param key - The key of the entry to delete.
+   * @returns `true` if the entry was removed, otherwise `false`.
    */
   delete(key: string): boolean {
-    const existed = super.delete(key);
-
-    const event = new NexoEvent("delete", {
-      target: this,
-      data: {
-        key,
-        released: this.releaseKey === key,
-      },
-    });
-
-    this.events.emit("delete", event);
-
-    return existed;
+    return this.remove(key);
   }
 
   /**
-   * Clears all entries from the map and emits a `clear` event.
+   * Removes all entries from the map and emits a `clear` event.
    */
   clear(): void {
     super.clear();
 
-    const event = new NexoEvent("clear", { target: this });
-    this.events.emit("clear", event);
+    if (this.eventEmitter) {
+      const event = new NexoEvent("clear", {
+        cancelable: false,
+        target: this,
+      });
+      this.eventEmitter.emit("clear", event);
+    }
   }
 
   /**
-   * Iterates over the map and removes entries whose `WeakRef` target has been garbage collected.
-   * Emits a `release` event after processing.
+   * Cleans up entries whose `WeakRef` targets were garbage-collected.
+   * Emits `delete` events for removed entries.
    */
   release(): void {
     for (const [key, weakRef] of this) {
       if (weakRef.deref() === undefined) {
-        this.releaseKey = key;
-        this.delete(key);
-        delete this.releaseKey;
+        this.remove(key, true);
       }
     }
+  }
 
-    const event = new NexoEvent("release", { target: this });
+  /**
+   * Replaces the internal event emitter.
+   *
+   * @param emitter - The new event emitter.
+   * @returns The current map instance.
+   */
+  setEventEmitter(emitter: nx.EventEmitter): this {
+    this.eventEmitter = emitter;
+    return this;
+  }
 
-    this.events.emit("release", event);
+  /**
+   * Removes the event emitter. After this call, no events will be emitted.
+   */
+  removeEventEmitter(): void {
+    this.eventEmitter = undefined;
   }
 }
 

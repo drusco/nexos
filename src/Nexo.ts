@@ -38,7 +38,7 @@ class Nexo
    * @remarks
    * This map allows quick access to proxies by their unique ID, ensuring that proxies are properly managed and referenced.
    */
-  readonly entries: NexoMap<nx.Proxy> = new NexoMap();
+  readonly entries = new NexoMap<nx.Proxy>();
 
   /**
    * Determines whether the given value is a registered {@link nx.Proxy | Proxy} instance.

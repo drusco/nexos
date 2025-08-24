@@ -1,7 +1,7 @@
 import type * as nx from "../types/Nexo.js";
 
 /**
- * A minimal, synchronous event emitter for proxy-related instrumentation.
+ * A minimal, synchronous event emitter.
  *
  * @remarks
  * `NexoEmitter` is a purpose-built event manager designed for performance-critical
@@ -11,29 +11,8 @@ import type * as nx from "../types/Nexo.js";
  * This emitter intentionally does **not** support async listener chaining,
  * and errors thrown by listeners will crash the app unless an `'error'` handler is attached.
  *
- * ### Usage Notes
- * - Use `on(event, fn)` to attach listeners.
- * - Use `off(event, fn)` to remove them.
- * - Use `emit(event, data)` to dispatch a `NexoEvent` or `Error`.
- *
- * ### Behavior
- * - If an `Error` is passed to `emit()` (and the event is not `"error"`), it is re-emitted on `"error"`.
- * - If no `"error"` listener exists, the app will throw to ensure fail-fast behavior.
- * - If a `NexoEvent` is emitted and `defaultPrevented` is `false`, listeners' `returnValue` will be ignored.
- *
- * ### Example
- * ```ts
- * const emitter = new NexoEmitter();
- * emitter.on("proxy.set", (event) => {
- *   if (event.key === "password") event.preventDefault();
- * });
- *
- * emitter.emit("proxy.set", new NexoEvent({ key: "password" }));
- * ```
  */
-class NexoEmitter<Events extends nx.NexoEmitterEvents = nx.NexoEmitterEvents>
-  implements nx.NexoEmitter
-{
+class NexoEmitter<Events extends nx.EmitterEvents> implements nx.EventEmitter {
   private listeners = new Map<string, Set<nx.FunctionLike>>();
 
   /**
@@ -44,17 +23,10 @@ class NexoEmitter<Events extends nx.NexoEmitterEvents = nx.NexoEmitterEvents>
    * Multiple listeners can be registered for the same event, and they
    * will be executed in the order in which they were added.
    *
-   * This method does not check for duplicates — adding the same function
-   * multiple times will result in multiple calls.
-   *
    * @param eventName - The event name to listen for.
    * @param listener - The function to call when the event is emitted.
    * @returns The current instance for chaining.
    *
-   * @example
-   * emitter.on('proxy.set', (event) => {
-   *   console.log('Property set:', event.key);
-   * });
    */
 
   on<eventName extends Extract<keyof Events, string>>(
@@ -86,19 +58,10 @@ class NexoEmitter<Events extends nx.NexoEmitterEvents = nx.NexoEmitterEvents>
    * @param listener - The function to remove from the event's listener list.
    * @returns The current instance for chaining.
    *
-   * @example
-   * const handler = (event) => console.log('Accessed:', event.key);
-   * emitter.on('proxy.get', handler);
-   * emitter.off('proxy.get', handler);
    */
   off<eventName extends Extract<keyof Events, string>>(
     eventName: eventName,
-    listener: nx.FunctionLike<
-      [Events[eventName]],
-      Events[eventName] extends nx.NexoEvent
-        ? Events[eventName]["returnValue"]
-        : void
-    >,
+    listener: nx.FunctionLike,
   ): this {
     this.listeners.get(eventName)?.delete(listener);
     return this;

@@ -73,11 +73,9 @@ class NexoEvent<Target = unknown, Data = unknown>
    * event.preventDefault(); // Prevents the default behavior
    */
   preventDefault(): void {
-    if (!this.cancelable) {
-      return;
+    if (this.cancelable) {
+      this._defaultPrevented = true;
     }
-
-    this._defaultPrevented = true;
   }
 
   /**
