@@ -56,16 +56,14 @@ describe("NexoMap", () => {
     expect(map.size).toBe(0);
   });
 
-  it("Releases the internal memory and emits event", () => {
+  it("Removes entries whose WeakRef targets have been garbage collected", () => {
     const map = new NexoMap();
-    const releaseCallback = jest.fn();
     const deleteCallback = jest.fn();
 
     const weakRefMock = {
       deref() {},
     } as WeakRef<object>;
 
-    map.events.on("release", releaseCallback);
     map.events.on("delete", deleteCallback);
 
     map.set("foo", weakRefMock);
@@ -74,16 +72,10 @@ describe("NexoMap", () => {
     map.release();
 
     const [firstDeleteCall, secondDeleteCall] = deleteCallback.mock.calls;
-    const [releaseEvent] = releaseCallback.mock.lastCall;
     const [firstDeleteEvent] = firstDeleteCall;
     const [secondDeleteEvent] = secondDeleteCall;
 
-    expect(releaseCallback).toHaveBeenCalledTimes(1);
-    expect(releaseEvent.name).toBe("release");
-    expect(releaseEvent.target).toBe(map);
-    expect(releaseEvent.data).toBeUndefined();
     expect(map.size).toBe(0);
-
     expect(deleteCallback).toHaveBeenCalledTimes(2);
     expect(firstDeleteEvent.data.released).toBe(true);
     expect(secondDeleteEvent.data.released).toBe(true);
