@@ -40,7 +40,7 @@ export default function getOwnPropertyDescriptor(
         );
       }
 
-      return resolveWith(deferred.resolve, returnValue || descriptor);
+      return resolveWith(deferred.resolve, returnValue);
     }
 
     return resolveWith(deferred.resolve, descriptor);
