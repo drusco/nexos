@@ -51,19 +51,18 @@ export type ProxyHandler =
  */
 export interface TraceableMap<T extends Traceable>
   extends Map<string, WeakRef<T>> {
-  /**
-   * Removes entries whose `WeakRef` targets have been garbage collected.
-   */
+  /** Event emitter used to manage the dispatching
+   * and subscription of the `TraceableMap` events. */
+  readonly events: EventEmitter;
+  /** Removes entries whose `WeakRef` targets have been garbage collected. */
   release(): void;
-
   /**
-   * Replaces the internal event emitter used to emit map lifecycle events.
+   * Sets the internal event emitter used to emit map lifecycle events.
    *
    * @param emitter - An {@link EventEmitter} to attach.
    * @returns The current map instance for chaining.
    */
   setEventEmitter(emitter: EventEmitter): this;
-
   /**
    * Detaches the current event emitter.
    * Useful when events are not desired.
