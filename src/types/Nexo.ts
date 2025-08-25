@@ -187,14 +187,14 @@ export interface ProxyError extends Error {
  */
 export interface ProxyEvent<Data = unknown> extends NexoEvent<Proxy, Data> {
   /** Value returned by event listeners. */
-  readonly returnValue: void | unknown;
+  readonly returnValue: unknown;
   /** Always `true` — proxy events are cancelable. */
   readonly cancelable: true;
 }
 
 /** Fired when a proxy-wrapped function is invoked. */
 export interface ProxyApplyEvent extends ProxyEvent {
-  readonly returnValue: void | unknown;
+  readonly returnValue: unknown;
   readonly data: {
     /** Target function being called. */
     readonly target: Traceable;
@@ -237,7 +237,7 @@ export interface ProxyDefinePropertyEvent extends ProxyEvent {
 
 /** Fired when a property is deleted from the proxy. */
 export interface ProxyDeletePropertyEvent extends ProxyEvent {
-  readonly returnValue: void | boolean;
+  readonly returnValue: void;
   readonly data: {
     /** Target object. */
     readonly target: Traceable;
@@ -250,7 +250,7 @@ export interface ProxyDeletePropertyEvent extends ProxyEvent {
 
 /** Fired when a property is read from the proxy. */
 export interface ProxyGetEvent extends ProxyEvent {
-  readonly returnValue: void | unknown;
+  readonly returnValue: unknown;
   readonly data: {
     /** Target object. */
     readonly target: Traceable;

@@ -7,7 +7,7 @@ class ProxyGetOwnPropertyDescriptorEvent
   implements nx.ProxyGetOwnPropertyDescriptorEvent
 {
   declare readonly data: nx.ProxyGetOwnPropertyDescriptorEvent["data"];
-  declare readonly returnValue: void | PropertyDescriptor;
+  declare readonly returnValue: PropertyDescriptor;
 
   /**
    * This constructor initializes the event and emits the event
