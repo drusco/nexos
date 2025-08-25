@@ -167,7 +167,7 @@ export interface ProxyWrapper extends EventEmitter {
   readonly nexo: Nexo;
   /** Whether the proxy has been revoked. */
   readonly revoked: boolean;
-  /** Whether the proxy was created with a {@link Traceable | traceable} object */
+  /** Whether the proxy was created with a {@link Traceable} object */
   readonly traceable: boolean;
   /** Revokes the proxy, making it unusable. */
   revoke(): void;

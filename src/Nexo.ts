@@ -56,16 +56,16 @@ class Nexo
   }
 
   /**
-   * Determines whether the given value is a {@link nx.Traceable | Traceable} entity.
+   * Determines whether the given value is a {@link nx.Traceable} entity.
    *
    * A value is considered traceable if it is a non-null object or function.
    * This check is used to determine whether the value is eligible to be
    * linked to a proxy in the system's internal tracking.
    *
-   * Acts as a type guard to narrow the type to {@link nx.Traceable | Traceable}.
+   * Acts as a type guard to narrow the type to {@link nx.Traceable}.
    *
    * @param value - The value to evaluate.
-   * @returns `true` if the value is {@link nx.Traceable | Traceable}, otherwise `false`.
+   * @returns `true` if the value is {@link nx.Traceable}, otherwise `false`.
    */
   static isTraceable(value: unknown): value is nx.Traceable {
     const isObject = typeof value === "object";
