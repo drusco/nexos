@@ -50,24 +50,10 @@ export type ProxyHandler =
  * @typeParam T - The type of {@link Traceable} values stored.
  */
 export interface TraceableMap<T extends Traceable>
-  extends Map<string, WeakRef<T>> {
-  /** Event emitter used to manage the dispatching
-   * and subscription of the `TraceableMap` events. */
-  readonly events: EventEmitter;
+  extends Map<string, WeakRef<T>>,
+    EventEmittable {
   /** Removes entries whose `WeakRef` targets have been garbage collected. */
   release(): void;
-  /**
-   * Sets the internal event emitter used to emit map lifecycle events.
-   *
-   * @param emitter - An {@link EventEmitter} to attach.
-   * @returns The current map instance for chaining.
-   */
-  setEventEmitter(emitter: EventEmitter): this;
-  /**
-   * Detaches the current event emitter.
-   * Useful when events are not desired.
-   */
-  removeEventEmitter(): void;
 }
 
 /**
@@ -93,6 +79,22 @@ export interface NexoEvent<Target = unknown, Data = unknown> {
   returnValue: unknown;
   /** Prevents the default action if the event is cancelable. */
   preventDefault(): void;
+}
+
+export interface EventEmittable {
+  /** Event emitter used to manage the events. */
+  readonly events: EventEmitter;
+  /**
+   * Sets the internal event emitter used to emit lifecycle events.
+   *
+   * @param emitter - An {@link EventEmitter} to attach.
+   * @returns The current instance for chaining.
+   */
+  setEventEmitter(emitter: EventEmitter): this;
+  /**
+   * Detaches the current event emitter. Useful when events are not desired.
+   */
+  removeEventEmitter(): void;
 }
 
 /** Minimal event emitter interface. */
