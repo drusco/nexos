@@ -11,23 +11,32 @@ import NexoEmitter from "./NexoEmitter.js";
  * const proxyWrapper = new ProxyWrapper({ id: 'proxy1', nexo: someNexoInstance, traceable: true, revoke: revokeFunction });
  * proxyWrapper.revoke(); // This will revoke the proxy.
  */
-class ProxyWrapper
-  extends NexoEmitter<nx.ProxyEvents>
-  implements nx.ProxyWrapper
-{
+class ProxyWrapper extends NexoEmitter<nx.ProxyEvents> {
+  /**
+   * A getter that returns whether the proxy has been revoked.
+   * This value is `true` if the proxy was revoked, otherwise `false`.
+   *
+   * @returns `true` if the proxy is revoked, `false` otherwise.
+   * @example
+   * const isRevoked = proxyWrapper.revoked; // Checks if the proxy is revoked.
+   */
+  get revoked(): boolean {
+    return this.isRevoked;
+  }
+
   /** The unique identifier for the proxy wrapper. */
   readonly id: string;
 
   /** The `Nexo` instance associated with this proxy wrapper. */
   readonly nexo: nx.Nexo;
 
+  readonly traceable: boolean;
+
   /** A private flag indicating whether the proxy has been revoked. */
-  private _revoked: boolean = false;
+  private isRevoked: boolean = false;
 
   /** The function responsible for revoking the proxy. */
-  private _revoke: nx.FunctionLike<[], void>;
-
-  readonly traceable: boolean;
+  private revokeProxy?: nx.FunctionLike<[], void>;
 
   /**
    * Creates an instance of `ProxyWrapper`.
@@ -46,11 +55,12 @@ class ProxyWrapper
     revoke: nx.FunctionLike<[], void>;
   }) {
     super();
+    const { id, nexo, revoke, traceable } = data;
 
-    this.id = data.id;
-    this.nexo = data.nexo;
-    this._revoke = data.revoke;
-    this.traceable = data.traceable;
+    this.id = id;
+    this.nexo = nexo;
+    this.revokeProxy = revoke;
+    this.traceable = traceable;
   }
 
   /**
@@ -61,23 +71,10 @@ class ProxyWrapper
    * proxyWrapper.revoke(); // Revokes the proxy and prevents further use.
    */
   revoke(): void {
-    if (this._revoke) {
-      this._revoke();
-      delete this._revoke;
-      this._revoked = true;
-    }
-  }
-
-  /**
-   * A getter that returns whether the proxy has been revoked.
-   * This value is `true` if the proxy was revoked, otherwise `false`.
-   *
-   * @returns `true` if the proxy is revoked, `false` otherwise.
-   * @example
-   * const isRevoked = proxyWrapper.revoked; // Checks if the proxy is revoked.
-   */
-  get revoked(): boolean {
-    return this._revoked;
+    if (!this.revokeProxy) return;
+    this.revokeProxy();
+    delete this.revokeProxy;
+    this.isRevoked = true;
   }
 }
 

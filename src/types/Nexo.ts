@@ -83,7 +83,7 @@ export interface NexoEvent<Target = unknown, Data = unknown> {
 
 export interface EventEmittable {
   /** Event emitter used to manage the events. */
-  readonly events: EventEmitter;
+  readonly events?: EventEmitter;
   /**
    * Sets the internal event emitter used to emit lifecycle events.
    *
