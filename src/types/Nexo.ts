@@ -47,10 +47,10 @@ export type ProxyHandler =
  * {@link EventEmitter}. By default, the map provides a no-op emitter,
  * but a custom emitter can be set or removed.
  *
- * @typeParam T - The type of {@link Traceable} values stored.
+ * @typeParam Type - The type of {@link Traceable} values stored.
  */
-export interface TraceableMap<T extends Traceable>
-  extends Map<string, WeakRef<T>>,
+export interface TraceableMap<Type extends Traceable>
+  extends Map<string, WeakRef<Type>>,
     EventEmittable {
   /** Removes entries whose `WeakRef` targets have been garbage collected. */
   release(): void;
@@ -82,28 +82,75 @@ export interface NexoEvent<Target = unknown, Data = unknown> {
 }
 
 export interface EventEmittable {
-  /** Event emitter used to manage the events. */
-  readonly events?: EventEmitter;
   /**
-   * Sets the internal event emitter used to emit lifecycle events.
+   * The internal event emitter instance responsible for managing lifecycle events.
+   */
+  readonly events?: EventEmitter;
+
+  /**
+   * Attaches an {@link EventEmitter} to handle lifecycle events.
    *
-   * @param emitter - An {@link EventEmitter} to attach.
-   * @returns The current instance for chaining.
+   * @param emitter - The event emitter instance to attach.
+   * @returns The current instance, for method chaining.
    */
   setEventEmitter(emitter: EventEmitter): this;
+
   /**
-   * Detaches the current event emitter. Useful when events are not desired.
+   * Detaches the current event emitter.
+   *
+   * Call this method when event handling is no longer required.
    */
   removeEventEmitter(): void;
 }
 
-/** Minimal event emitter interface. */
-export interface EventEmitter {
-  /** Adds a listener for a specific event. */
+export interface EventListener {
+  /**
+   * The arguments passed to the event listener.
+   */
+  args: ArrayLike;
+
+  /**
+   * The value returned by the event listener, if any.
+   */
+  result?: unknown;
+}
+
+/**
+ * A minimal event emitter interface for registering, removing,
+ * and invoking event listeners.
+ */
+export interface EventEmitter<
+  Events extends Record<string, EventListener> = Record<string, EventListener>,
+> {
+  /**
+   * Registers a listener for a specific event.
+   *
+   * @param event - The name of the event to listen to.
+   * @param listener - The function to invoke when the event is emitted.
+   * @returns The current emitter instance, for method chaining.
+   */
+  on<Name extends keyof Events>(
+    event: Name,
+    listener: FunctionLike<Events[Name]["args"], Events[Name]["result"]>,
+  ): this;
   on(event: string, listener: FunctionLike): this;
-  /** Removes a listener from a specific event. */
+
+  /**
+   * Removes a previously registered listener for a specific event.
+   *
+   * @param event - The name of the event.
+   * @param listener - The listener function to remove.
+   * @returns The current emitter instance, for method chaining.
+   */
   off(event: string, listener: FunctionLike): this;
-  /** Emits an event to all registered listeners. */
+
+  /**
+   * Emits an event to all registered listeners.
+   *
+   * @param event - The name of the event to emit.
+   * @param data - The arguments passed to the listeners.
+   * @returns `true` if one or more listeners were invoked, `false` otherwise.
+   */
   emit(event: string, ...data: ArrayLike): boolean;
 }
 
@@ -373,32 +420,69 @@ export interface ProxyCreateEvent extends ProxyEvent {
   };
 }
 
-/** Map of event names to data for {@link EventEmitter} events. */
-export interface EmitterEvents {
-  /** Fired when any error occurs. */
-  error: Error;
-}
-
 /** Map of event names to data for {@link Nexo} events. */
-export interface NexoEvents extends EmitterEvents {
-  /** Fired when a proxy is created. */
-  proxy: ProxyCreateEvent;
-}
+export type NexoEvents = {
+  proxy: {
+    args: [ProxyCreateEvent];
+    result: ProxyCreateEvent["returnValue"];
+  };
+  error: { args: [Error] };
+};
 
 /** Map of event names to data for {@link Nexo} and {@link ProxyWrapper} events. */
-export interface ProxyEvents extends EmitterEvents {
-  "proxy.error": ProxyError;
-  "proxy.apply": ProxyApplyEvent;
-  "proxy.construct": ProxyConstructEvent;
-  "proxy.defineProperty": ProxyDefinePropertyEvent;
-  "proxy.deleteProperty": ProxyDeletePropertyEvent;
-  "proxy.get": ProxyGetEvent;
-  "proxy.getOwnPropertyDescriptor": ProxyGetOwnPropertyDescriptorEvent;
-  "proxy.getPrototypeOf": ProxyGetPrototypeOfEvent;
-  "proxy.has": ProxyHasEvent;
-  "proxy.isExtensible": ProxyIsExtensibleEvent;
-  "proxy.ownKeys": ProxyOwnKeysEvent;
-  "proxy.preventExtensions": ProxyPreventExtensionsEvent;
-  "proxy.set": ProxySetEvent;
-  "proxy.setPrototypeOf": ProxySetPrototypeOfEvent;
-}
+export type ProxyEvents = {
+  error: { args: [Error] };
+  "proxy.error": { args: [ProxyError] };
+  "proxy.apply": {
+    args: [ProxyApplyEvent];
+    result: ProxyApplyEvent["returnValue"];
+  };
+  "proxy.construct": {
+    args: [ProxyConstructEvent];
+    result: ProxyConstructEvent["returnValue"];
+  };
+  "proxy.defineProperty": {
+    args: [ProxyDefinePropertyEvent];
+    result: ProxyDefinePropertyEvent["returnValue"];
+  };
+  "proxy.deleteProperty": {
+    args: [ProxyDeletePropertyEvent];
+    result: ProxyDeletePropertyEvent["returnValue"];
+  };
+  "proxy.get": {
+    args: [ProxyGetEvent];
+    result: ProxyGetEvent["returnValue"];
+  };
+  "proxy.getOwnPropertyDescriptor": {
+    args: [ProxyGetOwnPropertyDescriptorEvent];
+    result: ProxyGetOwnPropertyDescriptorEvent["returnValue"];
+  };
+  "proxy.getPrototypeOf": {
+    args: [ProxyGetPrototypeOfEvent];
+    result: ProxyGetPrototypeOfEvent["returnValue"];
+  };
+  "proxy.has": {
+    args: [ProxyHasEvent];
+    result: ProxyHasEvent["returnValue"];
+  };
+  "proxy.isExtensible": {
+    args: [ProxyIsExtensibleEvent];
+    result: ProxyIsExtensibleEvent["returnValue"];
+  };
+  "proxy.ownKeys": {
+    args: [ProxyOwnKeysEvent];
+    result: ProxyOwnKeysEvent["returnValue"];
+  };
+  "proxy.preventExtensions": {
+    args: [ProxyPreventExtensionsEvent];
+    result: ProxyPreventExtensionsEvent["returnValue"];
+  };
+  "proxy.set": {
+    args: [ProxySetEvent];
+    result: ProxySetEvent["returnValue"];
+  };
+  "proxy.setPrototypeOf": {
+    args: [ProxySetPrototypeOfEvent];
+    result: ProxySetPrototypeOfEvent["returnValue"];
+  };
+};
