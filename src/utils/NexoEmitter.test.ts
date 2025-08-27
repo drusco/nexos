@@ -2,16 +2,17 @@ import type * as nx from "../types/Nexo.js";
 import NexoEmitter from "../utils/NexoEmitter.js";
 import NexoEvent from "../events/NexoEvent.js";
 
-interface TestEvents extends nx.EmitterEvents {
-  customError: Error;
-  test: nx.NexoEvent;
-}
+type TestEvents = {
+  customError: { args: [Error] };
+  test: { args: [nx.NexoEvent] };
+  error: { args: [Error] };
+};
 
 describe("NexoEmitter", () => {
   let emitter: NexoEmitter<TestEvents>;
 
   beforeEach(() => {
-    emitter = new NexoEmitter<TestEvents>();
+    emitter = new NexoEmitter();
   });
 
   it("should emit an error when a listener throws", () => {

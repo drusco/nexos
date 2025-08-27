@@ -12,7 +12,13 @@ import type * as nx from "../types/Nexo.js";
  * and errors thrown by listeners will crash the app unless an `'error'` handler is attached.
  *
  */
-class NexoEmitter<Events extends nx.EmitterEvents> implements nx.EventEmitter {
+class NexoEmitter<
+  Events extends Record<string, nx.EventListener> = Record<
+    string,
+    nx.EventListener
+  >,
+> implements nx.EventEmitter<Events>
+{
   private listeners = new Map<string, Set<nx.FunctionLike>>();
 
   /**
@@ -23,25 +29,20 @@ class NexoEmitter<Events extends nx.EmitterEvents> implements nx.EventEmitter {
    * Multiple listeners can be registered for the same event, and they
    * will be executed in the order in which they were added.
    *
-   * @param eventName - The event name to listen for.
+   * @param event - The event name to listen for.
    * @param listener - The function to call when the event is emitted.
    * @returns The current instance for chaining.
    *
    */
 
-  on<eventName extends Extract<keyof Events, string>>(
-    eventName: eventName,
-    listener: nx.FunctionLike<
-      [Events[eventName]],
-      Events[eventName] extends nx.NexoEvent
-        ? Events[eventName]["returnValue"]
-        : void
-    >,
+  on<Name extends Extract<keyof Events, string>>(
+    event: Name,
+    listener: nx.FunctionLike<Events[Name]["args"], Events[Name]["result"]>,
   ): this {
-    if (!this.listeners.has(eventName)) {
-      this.listeners.set(eventName, new Set());
+    if (!this.listeners.has(event)) {
+      this.listeners.set(event, new Set());
     }
-    this.listeners.get(eventName)!.add(listener);
+    this.listeners.get(event)!.add(listener);
     return this;
   }
 
@@ -54,16 +55,16 @@ class NexoEmitter<Events extends nx.EmitterEvents> implements nx.EventEmitter {
    *
    * Removing a listener helps avoid memory leaks and unnecessary processing.
    *
-   * @param eventName - The event name to stop listening to.
+   * @param event - The event name to stop listening to.
    * @param listener - The function to remove from the event's listener list.
    * @returns The current instance for chaining.
    *
    */
-  off<eventName extends Extract<keyof Events, string>>(
-    eventName: eventName,
+  off<Name extends Extract<keyof Events, string>>(
+    event: Name,
     listener: nx.FunctionLike,
   ): this {
-    this.listeners.get(eventName)?.delete(listener);
+    this.listeners.get(event)?.delete(listener);
     return this;
   }
 
@@ -77,21 +78,21 @@ class NexoEmitter<Events extends nx.EmitterEvents> implements nx.EventEmitter {
    * If `data` is an `Error` and the event name is not `'error'`,
    * it will be forwarded to the `'error'` listeners.
    *
-   * @param eventName - The name of the event to emit.
+   * @param event - The name of the event to emit.
    * @param data - A {@link NexoEvent} or an `Error`.
    * @returns `true` if any listeners were triggered; `false` otherwise.
    */
-  emit<eventName extends Extract<keyof Events, string> | "error">(
-    eventName: eventName,
-    data: Events[eventName] extends nx.NexoEvent ? Events[eventName] : Error,
+  emit<Name extends Extract<keyof Events, string>>(
+    event: Name | "error",
+    data: Events[Name]["args"][0] extends nx.NexoEvent ? nx.NexoEvent : Error,
   ): boolean {
-    const listeners = this.listeners.get(eventName);
+    const listeners = this.listeners.get(event);
     const hasListeners = !!listeners?.size;
     const isError = data instanceof Error;
     const errorListeners = this.listeners.get("error");
 
     // Re-emit errors if the eventName is not "error"
-    if (isError && eventName !== "error") {
+    if (isError && event !== "error") {
       if (errorListeners?.size) {
         this.emit("error", data);
       } else {
