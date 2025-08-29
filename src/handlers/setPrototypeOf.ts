@@ -42,6 +42,10 @@ export default function setPrototypeOf(resolveProxy: nx.resolveProxy) {
       finalPrototype = event.returnValue;
     }
 
+    if (finalPrototype === undefined) {
+      return resolveWith(deferred.resolve, false);
+    }
+
     // Throw an error when the prototype is not an object or null
     if (typeof finalPrototype !== "object") {
       return rejectWith(

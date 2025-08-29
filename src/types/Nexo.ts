@@ -86,7 +86,6 @@ export interface EventEmittable {
    * The internal event emitter instance responsible for managing lifecycle events.
    */
   readonly events?: EventEmitter;
-
   /**
    * Attaches an {@link EventEmitter} to handle lifecycle events.
    *
@@ -94,24 +93,14 @@ export interface EventEmittable {
    * @returns The current instance, for method chaining.
    */
   setEventEmitter(emitter: EventEmitter): this;
-
-  /**
-   * Detaches the current event emitter.
-   *
-   * Call this method when event handling is no longer required.
-   */
+  /** Detaches the current event emitter. */
   removeEventEmitter(): void;
 }
 
 export interface EventListener {
-  /**
-   * The arguments passed to the event listener.
-   */
+  /** The arguments passed to the event listener. */
   args: ArrayLike;
-
-  /**
-   * The value returned by the event listener, if any.
-   */
+  /** The value returned by the event listener, if any. */
   result?: unknown;
 }
 
@@ -179,22 +168,7 @@ export interface Nexo extends EventEmitter {
  * A proxy-wrapped traceable object or function.
  */
 export interface Proxy {
-  /**
-   * Constructor signature for the proxy.
-   *
-   * @typeParam Args - Constructor argument types.
-   * @typeParam Return - Instance type returned by `new`.
-   */
-  new <Args extends ArrayLike = ArrayLike, Return extends Traceable = Proxy>(
-    ...args: Args
-  ): Return;
-  /**
-   * Callable signature for the proxy.
-   *
-   * @typeParam Args - Function argument types.
-   * @typeParam Return - Return type of the call.
-   */
-  <Args extends ArrayLike = ArrayLike, Return = Proxy>(...args: Args): Return;
+  [key: ObjectKey]: unknown;
   name: unknown;
   apply: unknown;
   bind: unknown;
@@ -202,7 +176,22 @@ export interface Proxy {
   caller: unknown;
   length: unknown;
   toString: unknown;
-  [key: ObjectKey]: unknown;
+  /**
+   * Constructor signature for the proxy.
+   *
+   * @typeParam Args - Constructor argument types.
+   * @typeParam Instance - Instance type returned by `new`.
+   */
+  new <Args extends ArrayLike = ArrayLike, Instance extends Traceable = Proxy>(
+    ...args: Args
+  ): Instance;
+  /**
+   * Callable signature for the proxy.
+   *
+   * @typeParam Args - Function argument types.
+   * @typeParam Return - Return type of the call.
+   */
+  <Args extends ArrayLike = ArrayLike, Return = Proxy>(...args: Args): Return;
 }
 
 /**
@@ -257,14 +246,14 @@ export interface ProxyApplyEvent extends ProxyEvent {
 
 /** Fired when a proxy-wrapped constructor is called via `new`. */
 export interface ProxyConstructEvent extends ProxyEvent {
-  readonly returnValue: void | object;
+  readonly returnValue: Traceable;
   readonly data: {
     /** Constructor function being called. */
     readonly target: Traceable;
     /** Arguments passed to the constructor. */
     readonly args: ArrayLike;
     /** Resulting instance from the constructor. */
-    readonly result: Promise<FunctionLike<[], object>>;
+    readonly result: Promise<FunctionLike<[], Traceable>>;
   };
 }
 
@@ -324,7 +313,7 @@ export interface ProxyGetOwnPropertyDescriptorEvent extends ProxyEvent {
 
 /** Fired when a proxy's prototype is retrieved. */
 export interface ProxyGetPrototypeOfEvent extends ProxyEvent {
-  readonly returnValue: void | object;
+  readonly returnValue: object;
   readonly data: {
     /** Target object. */
     readonly target: Traceable;
@@ -335,7 +324,7 @@ export interface ProxyGetPrototypeOfEvent extends ProxyEvent {
 
 /** Fired when the `in` operator is used on the proxy. */
 export interface ProxyHasEvent extends ProxyEvent {
-  readonly returnValue: void | boolean;
+  readonly returnValue: boolean;
   readonly data: {
     /** Target object. */
     readonly target: Traceable;
@@ -348,7 +337,7 @@ export interface ProxyHasEvent extends ProxyEvent {
 
 /** Fired when checking if the proxy is extensible. */
 export interface ProxyIsExtensibleEvent extends ProxyEvent {
-  readonly returnValue: void | boolean;
+  readonly returnValue: boolean;
   readonly data: {
     /** Target object. */
     readonly target: Traceable;
@@ -359,7 +348,7 @@ export interface ProxyIsExtensibleEvent extends ProxyEvent {
 
 /** Fired when the proxy's own property keys are requested. */
 export interface ProxyOwnKeysEvent extends ProxyEvent {
-  readonly returnValue: void | ObjectKey[];
+  readonly returnValue: ObjectKey[];
   readonly data: {
     /** Target object. */
     readonly target: Traceable;
@@ -381,7 +370,7 @@ export interface ProxyPreventExtensionsEvent extends ProxyEvent {
 
 /** Fired when a property is set on the proxy. */
 export interface ProxySetEvent extends ProxyEvent {
-  readonly returnValue: void | boolean;
+  readonly returnValue: unknown;
   readonly data: {
     /** Target object. */
     readonly target: Traceable;
@@ -409,7 +398,7 @@ export interface ProxySetPrototypeOfEvent extends ProxyEvent {
 
 /** Fired when a new proxy instance is created. */
 export interface ProxyCreateEvent extends ProxyEvent {
-  readonly returnValue: void | Proxy;
+  readonly returnValue: Proxy;
   readonly data: {
     /** Unique proxy ID. */
     readonly id: string;
