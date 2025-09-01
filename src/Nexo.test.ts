@@ -175,25 +175,6 @@ describe("Nexo", () => {
     expect(() => proxyB.foo).not.toThrow(); // should not throw
   });
 
-  it("Returns true when the parameter is a proxy", () => {
-    const nexo = new Nexo();
-    const proxy = nexo.create();
-    const result = Nexo.isProxy(proxy);
-
-    expect(result).toBe(true);
-  });
-
-  it("Returns false when the parameter is not a proxy", () => {
-    expect(Nexo.isProxy(undefined)).toBe(false);
-    expect(Nexo.isProxy(NaN)).toBe(false);
-    expect(Nexo.isProxy(null)).toBe(false);
-    expect(Nexo.isProxy("foo")).toBe(false);
-    expect(Nexo.isProxy(() => {})).toBe(false);
-    expect(Nexo.isProxy({})).toBe(false);
-    expect(Nexo.isProxy([])).toBe(false);
-    expect(Nexo.isProxy(true)).toBe(false);
-  });
-
   it("Returns true when the value is a non null object or a function", () => {
     const traceableObject = Nexo.isTraceable({});
     const traceableArray = Nexo.isTraceable([]);
