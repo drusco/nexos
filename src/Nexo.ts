@@ -5,6 +5,7 @@ import NexoEmitter from "./utils/NexoEmitter.js";
 import maps from "./utils/maps.js";
 import ProxyError from "./utils/ProxyError.js";
 import ProxyWrapper from "./utils/ProxyWrapper.js";
+import isProxy from "./utils/isProxy.js";
 
 /**
  * Represents a proxy factory for creating and managing proxy objects.
@@ -40,20 +41,7 @@ class Nexo
    */
   readonly entries = new NexoMap<nx.Proxy>();
 
-  /**
-   * Determines whether the given value is a registered {@link nx.Proxy | Proxy} instance.
-   *
-   * This function checks if the value exists in the internal proxy map,
-   * meaning it was previously registered as a proxy via the system.
-   *
-   * Acts as a type guard for narrowing `unknown` to {@link nx.Proxy | Proxy}.
-   *
-   * @param value - The value to check.
-   * @returns `true` if the value is a known {@link nx.Proxy | Proxy}, otherwise `false`.
-   */
-  static isProxy(value: unknown): value is nx.Proxy {
-    return maps.proxies.has(value as nx.Proxy);
-  }
+  static isProxy = isProxy;
 
   /**
    * Determines whether the given value is a {@link nx.Traceable} entity.
