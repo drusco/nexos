@@ -77,7 +77,7 @@ const getProxy = (
   // check whether the event got prevented
   if (event.defaultPrevented) {
     const { returnValue } = event;
-    if (returnValue) {
+    if (Nexo.isProxy(returnValue)) {
       // return a different proxy object
       return resolveWith(deferred.resolve, returnValue);
     }
