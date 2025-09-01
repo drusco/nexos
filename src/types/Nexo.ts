@@ -398,7 +398,7 @@ export interface ProxySetPrototypeOfEvent extends ProxyEvent {
 
 /** Fired when a new proxy instance is created. */
 export interface ProxyCreateEvent extends ProxyEvent {
-  readonly returnValue: Proxy;
+  readonly returnValue: void | Proxy;
   readonly data: {
     /** Unique proxy ID. */
     readonly id: string;
