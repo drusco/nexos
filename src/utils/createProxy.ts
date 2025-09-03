@@ -1,5 +1,5 @@
 import type * as nx from "../types/Nexo.js";
-import { randomUUID } from "crypto";
+import { v4 as uuid } from "uuid";
 import maps from "./maps.js";
 import createHandlers from "../handlers/index.js";
 import ProxyWrapper from "./ProxyWrapper.js";
@@ -30,7 +30,7 @@ const createProxy = (
   // eslint-disable-next-line prefer-const
   let proxyRef: WeakRef<nx.Proxy>;
 
-  const uid = id || randomUUID();
+  const uid = id || uuid();
   const traceable = isTraceable(target);
   const boundFunction = new Function().bind(null);
   const sandbox = Object.setPrototypeOf(boundFunction, null);
