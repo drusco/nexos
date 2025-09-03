@@ -11,7 +11,7 @@ import isTraceable from "./isTraceable.js";
 const createProxy = (
   nexo: nx.Nexo,
   target?: nx.Traceable,
-  id?: string,
+  id?: string
 ): nx.Proxy => {
   // Return existing proxy
   if (isProxy(target)) {
@@ -39,7 +39,7 @@ const createProxy = (
 
   const { proxy, revoke } = Proxy.revocable<nx.Proxy>(
     proxyTarget,
-    createHandlers(() => proxyRef.deref()),
+    createHandlers(() => proxyRef.deref())
   );
 
   proxyRef = new WeakRef(proxy);
@@ -64,7 +64,7 @@ const createProxy = (
   }
 
   maps.proxies.set(proxy, wrapper);
-  nexo.entries.set(uid, new WeakRef(proxy));
+  nexo.entries.set(uid, proxyRef);
 
   const event = new ProxyCreateEvent({
     target: proxy,
