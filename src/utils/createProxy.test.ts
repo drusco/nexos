@@ -1,13 +1,13 @@
 import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
-import getProxy from "./getProxy.js";
+import createProxy from "./createProxy.js";
 import map from "./maps.js";
 import ProxyCreateEvent from "../events/ProxyCreateEvent.js";
 
-describe("getProxy", () => {
+describe("createProxy", () => {
   it("creates a sandboxed proxy", () => {
     const nexo = new Nexo();
-    const proxy = getProxy(nexo);
+    const proxy = createProxy(nexo);
     const wrapper = Nexo.wrap(proxy);
 
     expect(wrapper.nexo).toBe(nexo);
@@ -17,7 +17,7 @@ describe("getProxy", () => {
   it("creates a proxy with a custom target", () => {
     const nexo = new Nexo();
     const target = [];
-    const proxy = getProxy(nexo, target);
+    const proxy = createProxy(nexo, target);
     const wrapper = Nexo.wrap(proxy);
 
     expect(wrapper.traceable).toBe(true);
@@ -30,7 +30,7 @@ describe("getProxy", () => {
 
     nexo.on("proxy", listener);
 
-    const proxy = getProxy(nexo, undefined, "foo");
+    const proxy = createProxy(nexo, undefined, "foo");
     const wrapper = Nexo.wrap(proxy);
 
     const [proxyEvent]: [nx.ProxyCreateEvent] = listener.mock.lastCall;
@@ -63,7 +63,7 @@ describe("getProxy", () => {
 
   it("links internal data using weak maps", () => {
     const nexo = new Nexo();
-    const proxy = getProxy(nexo);
+    const proxy = createProxy(nexo);
 
     expect(map.proxies.has(proxy)).toBe(true);
   });
@@ -71,16 +71,16 @@ describe("getProxy", () => {
   it("returns an existing proxy", () => {
     const nexo = new Nexo();
     const target = [];
-    const proxy = getProxy(nexo);
-    const proxyWithTarget = getProxy(nexo, target);
+    const proxy = createProxy(nexo);
+    const proxyWithTarget = createProxy(nexo, target);
 
-    expect(getProxy(nexo, proxy)).toBe(proxy);
-    expect(getProxy(nexo, proxyWithTarget)).toBe(proxyWithTarget);
+    expect(createProxy(nexo, proxy)).toBe(proxy);
+    expect(createProxy(nexo, proxyWithTarget)).toBe(proxyWithTarget);
   });
 
   it("resolves the prototype as null on sandboxed proxies", () => {
     const nexo = new Nexo();
-    const proxy = getProxy(nexo);
+    const proxy = createProxy(nexo);
 
     expect(Object.getPrototypeOf(proxy)).toBeNull();
     expect(typeof proxy.prototype).toBe("function");
@@ -88,7 +88,7 @@ describe("getProxy", () => {
 
   it("allows setting the prototype property on sandboxed proxies", () => {
     const nexo = new Nexo();
-    const proxy = getProxy(nexo);
+    const proxy = createProxy(nexo);
 
     proxy.prototype = 3000;
 
@@ -98,7 +98,7 @@ describe("getProxy", () => {
 
   it("has no enumerable or inherited keys by default", () => {
     const nexo = new Nexo();
-    const proxy = getProxy(nexo);
+    const proxy = createProxy(nexo);
 
     const keys = [];
 
@@ -112,7 +112,7 @@ describe("getProxy", () => {
 
   it("prevents the `proxy` event and returns a different proxy", async () => {
     const nexo = new Nexo();
-    const expectedProxy = getProxy(nexo);
+    const expectedProxy = createProxy(nexo);
 
     const listener = jest.fn((event: nx.ProxyCreateEvent) => {
       event.preventDefault();
@@ -121,7 +121,7 @@ describe("getProxy", () => {
 
     nexo.on("proxy", listener);
 
-    const proxy = getProxy(nexo);
+    const proxy = createProxy(nexo);
     const [event] = listener.mock.lastCall;
     const getResult = await event.data.result;
 
@@ -137,20 +137,20 @@ describe("getProxy", () => {
       event.preventDefault();
       const name = "first-proxy";
       if (event.data.id === name) return;
-      return getProxy(nexo, undefined, name);
+      return createProxy(nexo, undefined, name);
     });
 
     const lastListener = jest.fn((event: nx.ProxyCreateEvent) => {
       event.preventDefault();
       const name = "last-proxy";
       if (event.data.id === name) return;
-      return getProxy(nexo, undefined, name);
+      return createProxy(nexo, undefined, name);
     });
 
     nexo.on("proxy", firstListener);
     nexo.on("proxy", lastListener);
 
-    const proxy = getProxy(nexo);
+    const proxy = createProxy(nexo);
 
     const [firstListenerEvent] = firstListener.mock.lastCall;
     const [lastListenerEvent] = lastListener.mock.lastCall;
