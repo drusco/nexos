@@ -2,11 +2,9 @@ import type * as nx from "./types/Nexo.js";
 import createProxy from "./utils/createProxy.js";
 import NexoMap from "./utils/NexoMap.js";
 import NexoEmitter from "./utils/NexoEmitter.js";
-import maps from "./utils/maps.js";
-import ProxyError from "./utils/ProxyError.js";
-import ProxyWrapper from "./utils/ProxyWrapper.js";
 import isProxy from "./utils/isProxy.js";
 import isTraceable from "./utils/isTraceable.js";
+import getProxyWrapper from "./utils/getProxyWrapper.js";
 
 /**
  * Represents a proxy factory for creating and managing proxy objects.
@@ -44,34 +42,7 @@ class Nexo
 
   static isProxy = isProxy;
   static isTraceable = isTraceable;
-
-  /**
-   * Provides a wrapper for an existing proxy.
-   *
-   * @remarks
-   * This method wraps a proxy object and allows interaction with the proxy's events and properties.
-   * Proxy-related events follow the format `proxy.handler`, where the **{@link nx.ProxyHandler | handler}** corresponds to one of the standard proxy handler functions such as `apply`, `construct`, `get`, etc.
-   *
-   * @example
-   * // Wrapping an existing proxy and listening to 'proxy.get' event
-   * const nexo = new Nexo();
-   * const proxy = nexo.create();
-   * const wrapper = Nexo.wrap(proxy);
-   *
-   * wrapper.on('proxy.get', (event: ProxyEvent) => {});
-   *
-   * @param proxy - An existing proxy object
-   * @returns A wrapper for the proxy that allows interaction with proxy events
-   * @throws Error if the wrapper cannot be found.
-   */
-  static wrap(proxy: nx.Proxy): ProxyWrapper {
-    const wrapper = maps.proxies.get(proxy);
-
-    if (!wrapper) {
-      throw new ProxyError(`No wrapper found for the proxy.`, proxy);
-    }
-    return wrapper;
-  }
+  static wrap = getProxyWrapper;
 
   /**
    * Initializes the Nexo proxy system and event hooks.
