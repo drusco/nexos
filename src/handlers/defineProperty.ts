@@ -22,7 +22,7 @@ export default function defineProperty(resolveProxy: nx.resolveProxy) {
     property: nx.ObjectKey,
     descriptor: PropertyDescriptor,
   ): boolean => {
-    const [proxy] = resolveProxy();
+    const proxy = resolveProxy();
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
 
     const event = new ProxyDefinePropertyEvent({

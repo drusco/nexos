@@ -17,7 +17,7 @@ import ProxyError from "../utils/ProxyError.js";
  */
 export default function isExtensible(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable): boolean => {
-    const [proxy] = resolveProxy();
+    const proxy = resolveProxy();
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
     const isExtensible = Reflect.isExtensible(target);
 

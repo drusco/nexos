@@ -18,8 +18,8 @@ export type FunctionLike<
   Return = unknown,
 > = (...args: Args) => Return;
 
-/** A function returning both a proxy and its wrapper. */
-export type resolveProxy = () => [Proxy, ProxyWrapper];
+/** A function returning a proxy or `undefined`. */
+export type resolveProxy = FunctionLike<[], Proxy | undefined>;
 
 /**
  * Names of the built-in {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy#handler_functions | Proxy handler traps}.

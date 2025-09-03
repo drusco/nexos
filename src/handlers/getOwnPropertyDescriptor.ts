@@ -12,7 +12,7 @@ export default function getOwnPropertyDescriptor(
   resolveProxy: nx.resolveProxy,
 ) {
   return (target: nx.Traceable, property: nx.ObjectKey): PropertyDescriptor => {
-    const [proxy] = resolveProxy();
+    const proxy = resolveProxy();
     const deferred = createDeferred<nx.FunctionLike<[], PropertyDescriptor>>();
     const descriptor = Reflect.getOwnPropertyDescriptor(target, property);
 
