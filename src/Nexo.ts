@@ -1,5 +1,5 @@
 import type * as nx from "./types/Nexo.js";
-import getProxy from "./utils/getProxy.js";
+import createProxy from "./utils/createProxy.js";
 import NexoMap from "./utils/NexoMap.js";
 import NexoEmitter from "./utils/NexoEmitter.js";
 import maps from "./utils/maps.js";
@@ -115,7 +115,7 @@ class Nexo
    */
 
   use(id: string, target?: nx.Traceable): nx.Proxy {
-    return getProxy(this, target, id);
+    return createProxy(this, target, id);
   }
 
   /**
@@ -140,7 +140,7 @@ class Nexo
    * console.log(proxy1 === proxy2); // false
    */
   create(target?: nx.Traceable): nx.Proxy {
-    return getProxy(this, target);
+    return createProxy(this, target);
   }
 }
 

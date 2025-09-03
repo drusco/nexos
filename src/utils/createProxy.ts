@@ -7,7 +7,7 @@ import ProxyCreateEvent from "../events/ProxyCreateEvent.js";
 import Nexo from "../Nexo.js";
 import { createDeferred, resolveWith } from "./deferred.js";
 
-const getProxy = (
+const createProxy = (
   nexo: nx.Nexo,
   target?: nx.Traceable,
   id?: string,
@@ -86,4 +86,4 @@ const getProxy = (
   return resolveWith(deferred.resolve, proxy);
 };
 
-export default getProxy;
+export default createProxy;
