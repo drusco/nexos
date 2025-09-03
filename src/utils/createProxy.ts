@@ -4,8 +4,10 @@ import maps from "./maps.js";
 import createHandlers from "../handlers/index.js";
 import ProxyWrapper from "./ProxyWrapper.js";
 import ProxyCreateEvent from "../events/ProxyCreateEvent.js";
-import Nexo from "../Nexo.js";
 import { createDeferred, resolveWith } from "./deferred.js";
+import isProxy from "./isProxy.js";
+import isTraceable from "./isTraceable.js";
+import Nexo from "../Nexo.js";
 
 const createProxy = (
   nexo: nx.Nexo,
@@ -13,7 +15,7 @@ const createProxy = (
   id?: string,
 ): nx.Proxy => {
   // Return existing proxy
-  if (Nexo.isProxy(target)) {
+  if (isProxy(target)) {
     return target;
   }
 
@@ -30,7 +32,7 @@ const createProxy = (
   let proxy: nx.Proxy;
 
   const uid = id || randomUUID();
-  const traceable = Nexo.isTraceable(target);
+  const traceable = isTraceable(target);
   const boundFunction = new Function().bind(null);
   const sandbox = Object.setPrototypeOf(boundFunction, null);
   const proxyTarget = target || sandbox;
@@ -77,7 +79,7 @@ const createProxy = (
   // check whether the event got prevented
   if (event.defaultPrevented) {
     const { returnValue } = event;
-    if (Nexo.isProxy(returnValue)) {
+    if (isProxy(returnValue)) {
       // return a different proxy object
       return resolveWith(deferred.resolve, returnValue);
     }
