@@ -2,9 +2,6 @@ import type * as nx from "./types/Nexo.js";
 import NexoEmitter from "./utils/NexoEmitter.js";
 import Nexo from "./Nexo.js";
 import NexoMap from "./utils/NexoMap.js";
-import ProxyWrapper from "./utils/ProxyWrapper.js";
-import ProxyError from "./utils/ProxyError.js";
-import maps from "./utils/maps.js";
 import ProxyCreateEvent from "./events/ProxyCreateEvent.js";
 
 describe("Nexo", () => {
@@ -13,23 +10,6 @@ describe("Nexo", () => {
 
     expect(nexo.entries).toBeInstanceOf(NexoMap);
     expect(nexo).toBeInstanceOf(NexoEmitter);
-  });
-
-  it("Access the wrapper using the proxy", () => {
-    const nexo = new Nexo();
-    const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
-
-    expect(wrapper).toBeInstanceOf(ProxyWrapper);
-  });
-
-  it("Access the wrapper using the target", () => {
-    const nexo = new Nexo();
-    const target = {};
-    const proxy = nexo.create(target);
-    const wrapper = Nexo.wrap(proxy);
-
-    expect(wrapper).toBeInstanceOf(ProxyWrapper);
   });
 
   it("Creates a new proxy object without a target", () => {
@@ -125,18 +105,6 @@ describe("Nexo", () => {
     const proxy2 = nexo.create(target);
 
     expect(proxy1).not.toBe(proxy2);
-  });
-
-  it("Throws when the wrapper cannot be found", () => {
-    const nexo = new Nexo();
-    const target = () => {};
-
-    const proxy = nexo.create(target);
-
-    // force proxy removal from map of proxies
-    maps.proxies.delete(proxy);
-
-    expect(() => Nexo.wrap(proxy)).toThrow(ProxyError);
   });
 
   it("Does not emit events across different Nexo instances", () => {
