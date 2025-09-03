@@ -14,7 +14,7 @@ import ProxyError from "../utils/ProxyError.js";
  */
 export default function getPrototypeOf(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable): object => {
-    const [proxy] = resolveProxy();
+    const proxy = resolveProxy();
     const deferred = createDeferred<nx.FunctionLike<[], object>>();
 
     const event = new ProxyGetPrototypeOfEvent({

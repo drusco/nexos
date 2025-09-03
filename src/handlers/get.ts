@@ -1,6 +1,7 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyGetEvent from "../events/ProxyGetEvent.js";
 import { createDeferred, resolveWith } from "../utils/deferred.js";
+import maps from "../utils/maps.js";
 
 /**
  * Implements the `get` trap for a Proxy, enabling interception of property access.
@@ -15,8 +16,8 @@ import { createDeferred, resolveWith } from "../utils/deferred.js";
  */
 export default function get(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable, property: nx.ObjectKey): unknown => {
-    const [proxy, wrapper] = resolveProxy();
-    const { nexo } = wrapper;
+    const proxy = resolveProxy();
+    const { nexo } = maps.proxies.get(proxy);
     const deferred = createDeferred<nx.FunctionLike<[], unknown>>();
 
     const event = new ProxyGetEvent({

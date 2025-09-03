@@ -25,7 +25,7 @@ import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
  */
 export default function setPrototypeOf(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable, prototype: object): boolean => {
-    const [proxy] = resolveProxy();
+    const proxy = resolveProxy();
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
     let finalPrototype: unknown = prototype;
 

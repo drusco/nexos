@@ -7,7 +7,6 @@ import ProxyCreateEvent from "../events/ProxyCreateEvent.js";
 import { createDeferred, resolveWith } from "./deferred.js";
 import isProxy from "./isProxy.js";
 import isTraceable from "./isTraceable.js";
-import Nexo from "../Nexo.js";
 
 const createProxy = (
   nexo: nx.Nexo,
@@ -29,7 +28,7 @@ const createProxy = (
 
   // create new proxy
   // eslint-disable-next-line prefer-const
-  let proxy: nx.Proxy;
+  let proxyRef: WeakRef<nx.Proxy>;
 
   const uid = id || randomUUID();
   const traceable = isTraceable(target);
@@ -38,19 +37,19 @@ const createProxy = (
   const proxyTarget = target || sandbox;
   const deferred = createDeferred<nx.FunctionLike<[], nx.Proxy>>();
 
-  const revocable = Proxy.revocable<nx.Proxy>(
+  const { proxy, revoke } = Proxy.revocable<nx.Proxy>(
     proxyTarget,
-    createHandlers(() => [proxy, Nexo.wrap(proxy)]),
+    createHandlers(() => proxyRef.deref()),
   );
 
-  proxy = revocable.proxy;
+  proxyRef = new WeakRef(proxy);
 
   // set information about the proxy
 
   const wrapper = new ProxyWrapper({
     id: uid,
     nexo,
-    revoke: revocable.revoke,
+    revoke,
     traceable,
   });
 

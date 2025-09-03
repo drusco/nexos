@@ -25,7 +25,7 @@ export default function set(resolveProxy: nx.resolveProxy) {
     property: nx.ObjectKey,
     value: unknown,
   ): boolean => {
-    const [proxy] = resolveProxy();
+    const proxy = resolveProxy();
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
     let finalValue = value;
 
