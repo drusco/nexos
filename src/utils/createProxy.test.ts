@@ -176,5 +176,6 @@ describe("createProxy", () => {
     expect(lastListener).toHaveBeenCalledTimes(1);
     expect(wrapper.id).toBe("last-proxy");
     expect(nexo.entries.size).toBe(1);
+    expect(nexo.entries.get("last-proxy").deref()).toBe(proxy);
   });
 });
