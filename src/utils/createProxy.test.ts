@@ -1,81 +1,95 @@
 import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import createProxy from "./createProxy.js";
-import map from "./maps.js";
+import maps from "./maps.js";
 import ProxyCreateEvent from "../events/ProxyCreateEvent.js";
+import ProxyWrapper from "./ProxyWrapper.js";
 
 describe("createProxy", () => {
+  it("returns an existing proxy", () => {
+    const nexo = new Nexo();
+    const proxy = createProxy(nexo);
+    const proxyWithTarget = createProxy(nexo, {});
+
+    expect(createProxy(nexo, proxy)).toBe(proxy);
+    expect(createProxy(nexo, proxyWithTarget)).toBe(proxyWithTarget);
+  });
+
+  it("returns an existing proxy by its id when the target is falsy", () => {
+    const nexo = new Nexo();
+    const proxy = createProxy(nexo, null, "foo");
+    const sameProxy = createProxy(nexo, undefined, "foo");
+
+    expect(sameProxy).toBe(proxy);
+    expect(nexo.entries.size).toBe(1);
+    expect(nexo.entries.get("foo").deref()).toBe(proxy);
+  });
+
   it("creates a sandboxed proxy", () => {
     const nexo = new Nexo();
     const proxy = createProxy(nexo);
     const wrapper = Nexo.wrap(proxy);
 
-    expect(wrapper.nexo).toBe(nexo);
     expect(wrapper.traceable).toBe(false);
+    expect(nexo.entries.get(wrapper.id).deref()).toBe(proxy);
   });
 
   it("creates a proxy with a custom target", () => {
     const nexo = new Nexo();
-    const target = [];
-    const proxy = createProxy(nexo, target);
+    const proxy = createProxy(nexo, []);
     const wrapper = Nexo.wrap(proxy);
 
     expect(wrapper.traceable).toBe(true);
-    expect(Object.getPrototypeOf(proxy)).toBe(Object.getPrototypeOf(target));
   });
 
-  it("creates proxy with a custom id", () => {
+  it("creates proxies with custom ids", () => {
     const nexo = new Nexo();
-    const listener = jest.fn();
+    const traceableProxy = createProxy(nexo, [], "foo");
+    const sandboxedProxy = createProxy(nexo, null, "bar");
 
-    nexo.on("proxy", listener);
+    expect(maps.proxies.get(traceableProxy).id).toBe("foo");
+    expect(maps.proxies.get(sandboxedProxy).id).toBe("bar");
+  });
 
-    const proxy = createProxy(nexo, undefined, "foo");
+  it("links a ProxyWrapper instance to the proxy", () => {
+    const nexo = new Nexo();
+    const proxy = createProxy(nexo);
     const wrapper = Nexo.wrap(proxy);
 
-    const [proxyEvent]: [nx.ProxyCreateEvent] = listener.mock.lastCall;
-
-    expect(wrapper.id).toBe("foo");
-    expect(proxyEvent.data.id).toBe("foo");
+    expect(maps.proxies.has(proxy)).toBe(true);
+    expect(maps.proxies.get(proxy)).toBeInstanceOf(ProxyWrapper);
+    expect(maps.proxies.get(proxy)).toBe(wrapper);
   });
 
-  it("emits a `proxy` event when a proxy is created", () => {
+  it("links the proxy id to the proxy weak reference", () => {
+    const nexo = new Nexo();
+    const proxy = createProxy(nexo);
+    const wrapper = Nexo.wrap(proxy);
+
+    expect(nexo.entries.has(wrapper.id)).toBe(true);
+    expect(nexo.entries.get(wrapper.id)).toBeInstanceOf(WeakRef);
+    expect(nexo.entries.get(wrapper.id).deref()).toBe(proxy);
+  });
+
+  it("emits a 'proxy' event when the proxy is created", async () => {
     const nexo = new Nexo();
     const target = {};
     const listener = jest.fn();
 
     nexo.on("proxy", listener);
 
-    const proxy = nexo.create(target);
-    const wrapper = Nexo.wrap(proxy);
+    const proxy = createProxy(nexo, target, "foo");
     const [event]: [nx.ProxyCreateEvent] = listener.mock.lastCall;
+    const resolveProxy = await event.data.result;
 
     expect(listener).toHaveBeenCalledTimes(1);
     expect(event).toBeInstanceOf(ProxyCreateEvent);
     expect(event.target).toBe(proxy);
     expect(event.name).toBe("proxy");
-    expect(event.data).toStrictEqual({
-      id: wrapper.id,
-      target,
-      result: event.data.result,
-    });
-  });
-
-  it("links internal data using weak maps", () => {
-    const nexo = new Nexo();
-    const proxy = createProxy(nexo);
-
-    expect(map.proxies.has(proxy)).toBe(true);
-  });
-
-  it("returns an existing proxy", () => {
-    const nexo = new Nexo();
-    const target = [];
-    const proxy = createProxy(nexo);
-    const proxyWithTarget = createProxy(nexo, target);
-
-    expect(createProxy(nexo, proxy)).toBe(proxy);
-    expect(createProxy(nexo, proxyWithTarget)).toBe(proxyWithTarget);
+    expect(event.data.id).toBe("foo");
+    expect(event.data.target).toBe(target);
+    expect(event.data.result).toBeInstanceOf(Promise);
+    expect(resolveProxy()).toBe(proxy);
   });
 
   it("resolves the prototype as null on sandboxed proxies", () => {
@@ -83,17 +97,16 @@ describe("createProxy", () => {
     const proxy = createProxy(nexo);
 
     expect(Object.getPrototypeOf(proxy)).toBeNull();
-    expect(typeof proxy.prototype).toBe("function");
   });
 
-  it("allows setting the prototype property on sandboxed proxies", () => {
+  it("uses the target prototype on traceable proxies", () => {
     const nexo = new Nexo();
-    const proxy = createProxy(nexo);
+    const target = [];
+    const proxy = createProxy(nexo, target);
+    const proxyPrototype = Object.getPrototypeOf(proxy);
+    const targetPrototype = Object.getPrototypeOf(target);
 
-    proxy.prototype = 3000;
-
-    expect(Object.getPrototypeOf(proxy)).toBeNull();
-    expect(proxy.prototype).toBe(3000);
+    expect(proxyPrototype).toBe(targetPrototype);
   });
 
   it("has no enumerable or inherited keys by default", () => {
@@ -106,45 +119,46 @@ describe("createProxy", () => {
       keys.push(key);
     }
 
-    expect(Object.keys(proxy)).toStrictEqual([]);
     expect(keys.length).toBe(0);
   });
 
-  it("prevents the `proxy` event and returns a different proxy", async () => {
+  it("prevents the 'proxy' event and returns a cached proxy", async () => {
     const nexo = new Nexo();
-    const expectedProxy = createProxy(nexo);
+    const cachedProxy = createProxy(nexo);
 
     const listener = jest.fn((event: nx.ProxyCreateEvent) => {
       event.preventDefault();
-      return expectedProxy;
+      return cachedProxy;
     });
 
     nexo.on("proxy", listener);
 
     const proxy = createProxy(nexo);
     const [event] = listener.mock.lastCall;
-    const getResult = await event.data.result;
+    const resolveProxy = await event.data.result;
 
     expect(listener).toHaveBeenCalledTimes(1);
-    expect(proxy).toBe(expectedProxy);
-    expect(getResult()).toBe(expectedProxy);
+    expect(proxy).toBe(cachedProxy);
+    expect(resolveProxy()).toBe(cachedProxy);
+    expect(maps.proxies.has(event.target)).toBe(false);
+    expect(nexo.entries.has(event.data.id)).toBe(false);
+    expect(() => (event.target.isRevoked = true)).toThrow();
   });
 
-  it("accesses the final proxy from every listener of the `proxy` event", async () => {
+  it("accesses the proxy returned by the last listener for the 'proxy' event", async () => {
     const nexo = new Nexo();
+    let proxyId: string;
 
     const firstListener = jest.fn((event: nx.ProxyCreateEvent) => {
       event.preventDefault();
-      const name = "first-proxy";
-      if (event.data.id === name) return;
-      return createProxy(nexo, undefined, name);
+      proxyId = event.data.id;
+      return createProxy(nexo, [], "first-proxy", true);
     });
 
     const lastListener = jest.fn((event: nx.ProxyCreateEvent) => {
       event.preventDefault();
-      const name = "last-proxy";
-      if (event.data.id === name) return;
-      return createProxy(nexo, undefined, name);
+      proxyId = event.data.id;
+      return createProxy(nexo, {}, event.data.id, true);
     });
 
     nexo.on("proxy", firstListener);
@@ -155,14 +169,15 @@ describe("createProxy", () => {
     const [firstListenerEvent] = firstListener.mock.lastCall;
     const [lastListenerEvent] = lastListener.mock.lastCall;
 
-    const firstResult = await firstListenerEvent.data.result;
-    const lastResult = await lastListenerEvent.data.result;
+    const getFirstProxy = await firstListenerEvent.data.result;
+    const getLastProxy = await lastListenerEvent.data.result;
+    const wrapper = maps.proxies.get(proxy);
 
-    expect(firstResult()).toBe(proxy);
-    expect(lastResult()).toBe(proxy);
-    expect(Nexo.wrap(proxy).id).toBe("last-proxy");
-    expect(firstListener).toHaveBeenCalledTimes(3);
-    expect(lastListener).toHaveBeenCalledTimes(3);
-    expect(nexo.entries.size).toBe(3);
+    expect(getFirstProxy()).toBe(proxy);
+    expect(getLastProxy()).toBe(proxy);
+    expect(firstListener).toHaveBeenCalledTimes(1);
+    expect(lastListener).toHaveBeenCalledTimes(1);
+    expect(wrapper.id).toBe(proxyId);
+    expect(nexo.entries.size).toBe(1);
   });
 });
