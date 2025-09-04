@@ -73,7 +73,7 @@ const createProxy = (
     return resolveWith(deferred.resolve, proxy);
   }
 
-  // add a reference to the proxy in the nexo instance
+  // add or update the ID to a proxy reference
 
   nexo.entries.set(uid, proxyRef);
 
@@ -98,10 +98,12 @@ const createProxy = (
       // remove the original proxy from the maps
       maps.proxies.delete(proxy);
       nexo.entries.delete(uid);
-      // reset the entry if the returned proxy has the same id
-      if (uid === maps.proxies.get(returnValue)?.id) {
-        nexo.entries.set(uid, new WeakRef(returnValue));
-      }
+      // add or update the ID to the returned proxy
+      nexo.entries.set(
+        maps.proxies.get(returnValue).id,
+        new WeakRef(returnValue),
+      );
+
       // return a different proxy object
       return resolveWith(deferred.resolve, returnValue);
     }

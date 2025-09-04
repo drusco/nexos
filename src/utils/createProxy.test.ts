@@ -147,18 +147,15 @@ describe("createProxy", () => {
 
   it("accesses the proxy returned by the last listener for the 'proxy' event", async () => {
     const nexo = new Nexo();
-    let proxyId: string;
 
     const firstListener = jest.fn((event: nx.ProxyCreateEvent) => {
       event.preventDefault();
-      proxyId = event.data.id;
-      return createProxy(nexo, [], "first-proxy", true);
+      return createProxy(nexo, [], event.data.id, true);
     });
 
     const lastListener = jest.fn((event: nx.ProxyCreateEvent) => {
       event.preventDefault();
-      proxyId = event.data.id;
-      return createProxy(nexo, {}, event.data.id, true);
+      return createProxy(nexo, {}, "last-proxy", true);
     });
 
     nexo.on("proxy", firstListener);
@@ -177,7 +174,7 @@ describe("createProxy", () => {
     expect(getLastProxy()).toBe(proxy);
     expect(firstListener).toHaveBeenCalledTimes(1);
     expect(lastListener).toHaveBeenCalledTimes(1);
-    expect(wrapper.id).toBe(proxyId);
+    expect(wrapper.id).toBe("last-proxy");
     expect(nexo.entries.size).toBe(1);
   });
 });
