@@ -12,6 +12,7 @@ const createProxy = (
   nexo: nx.Nexo,
   target?: nx.Traceable,
   id?: string,
+  anonymous: boolean = false,
 ): nx.Proxy => {
   // Return existing proxy
   if (isProxy(target)) {
@@ -19,7 +20,7 @@ const createProxy = (
   }
 
   // Return proxy used by the ID
-  if (id && !target && nexo.entries.has(id)) {
+  if (!target && nexo.entries.has(id)) {
     const proxy = nexo.entries.get(id)?.deref();
     if (proxy) return proxy;
   }
@@ -42,15 +43,6 @@ const createProxy = (
 
   proxyRef = new WeakRef(proxy);
 
-  // set information about the proxy
-
-  const wrapper = new ProxyWrapper({
-    id: uid,
-    nexo,
-    revoke,
-    traceable,
-  });
-
   if (!traceable) {
     // Remove function related properties for proxies without traceable target
     for (const key of Reflect.ownKeys(sandbox)) {
@@ -61,8 +53,31 @@ const createProxy = (
     }
   }
 
+  // create a proxy wrapper to interact with the proxy
+  const wrapper = new ProxyWrapper({
+    id: uid,
+    nexo,
+    revoke,
+    traceable,
+  });
+
+  // link the proxy to it's wrapper
   maps.proxies.set(proxy, wrapper);
+
+  if (anonymous) {
+    // Private proxies behave like regular proxies, but they:
+    //   1. Do not trigger 'proxy' events.
+    //   2. Are not exposed to the nexo instance.
+    // This ensures they remain opaque and cannot be traced back.
+
+    return resolveWith(deferred.resolve, proxy);
+  }
+
+  // add a reference to the proxy in the nexo instance
+
   nexo.entries.set(uid, proxyRef);
+
+  // create and emit a 'proxy' event to the event listeners
 
   const event = new ProxyCreateEvent({
     target: proxy,
@@ -76,7 +91,17 @@ const createProxy = (
   // check whether the event got prevented
   if (event.defaultPrevented) {
     const { returnValue } = event;
-    if (isProxy(returnValue)) {
+
+    if (isProxy(returnValue) && returnValue !== proxy) {
+      // revoke the original proxy in the event
+      revoke();
+      // remove the original proxy from the maps
+      maps.proxies.delete(proxy);
+      nexo.entries.delete(uid);
+      // reset the entry if the returned proxy has the same id
+      if (uid === maps.proxies.get(returnValue)?.id) {
+        nexo.entries.set(uid, new WeakRef(returnValue));
+      }
       // return a different proxy object
       return resolveWith(deferred.resolve, returnValue);
     }
