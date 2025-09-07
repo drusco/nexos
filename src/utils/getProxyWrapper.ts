@@ -22,7 +22,7 @@ import ProxyError from "./ProxyError.js";
  * @throws {@link nx.ProxyError} if the wrapper cannot be found.
  */
 export default function getProxyWrapper(proxy: nx.Proxy): nx.ProxyWrapper {
-  const wrapper = getProxyMap<nx.ProxyWrapper>().get(proxy);
+  const wrapper = getProxyMap().get(proxy);
 
   if (!wrapper) {
     throw new ProxyError(`No wrapper found for the proxy.`, proxy);

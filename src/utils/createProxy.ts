@@ -100,7 +100,7 @@ const createProxy = (
       nexo.entries.delete(uid);
       // add or update the ID to the returned proxy
       nexo.entries.set(
-        getProxyMap<nx.ProxyWrapper>().get(returnValue).id,
+        getProxyMap().get(returnValue).id,
         new WeakRef(returnValue),
       );
 

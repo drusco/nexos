@@ -17,7 +17,7 @@ import getProxyMap from "../utils/getProxyMap.js";
 export default function get(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable, property: nx.ObjectKey): unknown => {
     const proxy = resolveProxy();
-    const { nexo } = getProxyMap<nx.ProxyWrapper>().get(proxy);
+    const { nexo } = getProxyMap().get(proxy);
     const deferred = createDeferred<nx.FunctionLike<[], unknown>>();
 
     const event = new ProxyGetEvent({
