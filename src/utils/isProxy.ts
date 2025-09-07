@@ -1,5 +1,5 @@
 import * as nx from "../types/Nexo.js";
-import maps from "./maps.js";
+import { getProxyMap } from "./constants.js";
 
 /**
  * Determines whether the given value is a registered {@link nx.Proxy | Proxy} instance.
@@ -13,5 +13,5 @@ import maps from "./maps.js";
  * @returns `true` if the value is a known {@link nx.Proxy | Proxy}, otherwise `false`.
  */
 export default function isProxy(value: unknown): value is nx.Proxy {
-  return maps.proxies.has(value as nx.Proxy);
+  return getProxyMap().has(value as nx.Proxy);
 }

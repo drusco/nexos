@@ -1,6 +1,6 @@
 import type * as nx from "../types/Nexo.js";
 import { v4 as uuid } from "uuid";
-import maps from "./maps.js";
+import { getProxyMap } from "./constants.js";
 import createHandlers from "../handlers/index.js";
 import ProxyWrapper from "./ProxyWrapper.js";
 import ProxyCreateEvent from "../events/ProxyCreateEvent.js";
@@ -62,7 +62,7 @@ const createProxy = (
   });
 
   // link the proxy to it's wrapper
-  maps.proxies.set(proxy, wrapper);
+  getProxyMap().set(proxy, wrapper);
 
   if (anonymous) {
     // Private proxies behave like regular proxies, but they:
@@ -96,11 +96,11 @@ const createProxy = (
       // revoke the original proxy in the event
       revoke();
       // remove the original proxy from the maps
-      maps.proxies.delete(proxy);
+      getProxyMap().delete(proxy);
       nexo.entries.delete(uid);
       // add or update the ID to the returned proxy
       nexo.entries.set(
-        maps.proxies.get(returnValue).id,
+        getProxyMap<nx.ProxyWrapper>().get(returnValue).id,
         new WeakRef(returnValue),
       );
 

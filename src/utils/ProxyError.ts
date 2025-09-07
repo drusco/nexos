@@ -1,5 +1,5 @@
 import type * as nx from "../types/Nexo.js";
-import map from "../utils/maps.js";
+import { getProxyMap } from "./constants.js";
 
 /**
  * @noInheritDoc
@@ -35,7 +35,7 @@ class ProxyError extends Error implements nx.ProxyError {
     this.proxy = proxy;
 
     // Retrieve the wrapper for the proxy
-    const wrapper = map.proxies.get(proxy);
+    const wrapper = getProxyMap<nx.ProxyWrapper>().get(proxy);
 
     // Emit the error event on the 'nexo' event emitter
     wrapper?.nexo?.emit("proxy.error", this);

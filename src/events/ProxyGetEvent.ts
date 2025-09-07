@@ -1,6 +1,6 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "./ProxyEvent.js";
-import map from "../utils/maps.js";
+import { getProxyMap } from "../utils/constants.js";
 
 class ProxyGetEvent
   extends ProxyEvent<nx.ProxyGetEvent["data"]>
@@ -22,7 +22,7 @@ class ProxyGetEvent
     super("get", options);
 
     // Retrieve the wrapper for the proxy
-    const wrapper = map.proxies.get(options.target);
+    const wrapper = getProxyMap<nx.ProxyWrapper>().get(options.target);
     // Emit the proxy event to its listeners on the 'nexo' emitter
     wrapper?.nexo?.emit("proxy.get", this);
     // Emit the proxy event to its listeners on the wrapper's event emitter
