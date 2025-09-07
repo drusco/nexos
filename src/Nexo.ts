@@ -28,10 +28,7 @@ import getProxyWrapper from "./utils/getProxyWrapper.js";
  * // The listener will be called when a new proxy is created.
  * const proxy = nexo.create();
  */
-class Nexo
-  extends NexoEmitter<nx.NexoEvents & nx.ProxyEvents>
-  implements nx.Nexo
-{
+class Nexo extends NexoEmitter implements nx.Nexo {
   /**
    * A map that stores unique proxy IDs associated with their respective {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakRef | WeakRef} references to the proxy objects.
    *
