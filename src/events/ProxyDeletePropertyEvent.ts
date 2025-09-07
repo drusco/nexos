@@ -25,7 +25,7 @@ class ProxyDeletePropertyEvent
     super("deleteProperty", options);
 
     // Retrieve the wrapper for the proxy
-    const wrapper = getProxyMap<nx.ProxyWrapper>().get(options.target);
+    const wrapper = getProxyMap().get(options.target);
     // Emit the proxy event to its listeners on the 'nexo' emitter
     wrapper?.nexo?.emit("proxy.deleteProperty", this);
     // Emit the proxy event to its listeners on the wrapper's event emitter

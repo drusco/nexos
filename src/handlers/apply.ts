@@ -26,7 +26,7 @@ export default function apply(resolveProxy: nx.resolveProxy) {
     args: nx.ArrayLike,
   ): unknown => {
     const proxy = resolveProxy();
-    const { nexo, traceable } = getProxyMap<nx.ProxyWrapper>().get(proxy);
+    const { nexo, traceable } = getProxyMap().get(proxy);
     const deferred = createDeferred<nx.FunctionLike>();
 
     const event = new ProxyApplyEvent({

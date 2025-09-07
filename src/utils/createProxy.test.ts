@@ -47,8 +47,8 @@ describe("createProxy", () => {
     const traceableProxy = createProxy(nexo, [], "foo");
     const sandboxedProxy = createProxy(nexo, null, "bar");
 
-    expect(getProxyMap<nx.ProxyWrapper>().get(traceableProxy).id).toBe("foo");
-    expect(getProxyMap<nx.ProxyWrapper>().get(sandboxedProxy).id).toBe("bar");
+    expect(getProxyMap().get(traceableProxy).id).toBe("foo");
+    expect(getProxyMap().get(sandboxedProxy).id).toBe("bar");
   });
 
   it("links a ProxyWrapper instance to the proxy", () => {
@@ -168,7 +168,7 @@ describe("createProxy", () => {
 
     const getFirstProxy = await firstListenerEvent.data.result;
     const getLastProxy = await lastListenerEvent.data.result;
-    const wrapper = getProxyMap<nx.ProxyWrapper>().get(proxy);
+    const wrapper = getProxyMap().get(proxy);
 
     expect(getFirstProxy()).toBe(proxy);
     expect(getLastProxy()).toBe(proxy);
