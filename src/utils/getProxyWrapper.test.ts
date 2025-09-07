@@ -1,6 +1,6 @@
 import Nexo from "../Nexo.js";
 import getProxyWrapper from "./getProxyWrapper.js";
-import maps from "./maps.js";
+import { getProxyMap } from "./constants.js";
 import ProxyError from "./ProxyError.js";
 import ProxyWrapper from "./ProxyWrapper.js";
 
@@ -29,7 +29,7 @@ describe("getProxyWrapper", () => {
     const proxy = nexo.create();
 
     // force proxy removal from map of proxies
-    maps.proxies.delete(proxy);
+    getProxyMap().delete(proxy);
 
     expect(() => getProxyWrapper(proxy)).toThrow(ProxyError);
   });

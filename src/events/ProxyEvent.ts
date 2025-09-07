@@ -1,6 +1,6 @@
 import type * as nx from "../types/Nexo.js";
 import NexoEvent from "./NexoEvent.js";
-import map from "../utils/maps.js";
+import { getProxyMap } from "../utils/constants.js";
 
 /**
  * Represents an event triggered by a proxy.
@@ -30,7 +30,7 @@ class ProxyEvent<Data = unknown>
       target: nx.Proxy;
     },
   ) {
-    if (!map.proxies.has(options?.target)) {
+    if (!getProxyMap().has(options?.target)) {
       throw TypeError("options.target is not a valid proxy.");
     }
     super(`proxy.${name}`, { ...options, cancelable: true });

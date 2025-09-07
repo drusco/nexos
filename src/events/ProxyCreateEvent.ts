@@ -1,5 +1,5 @@
 import type * as nx from "../types/Nexo.js";
-import map from "../utils/maps.js";
+import { getProxyMap } from "../utils/constants.js";
 import NexoEvent from "./NexoEvent.js";
 
 class ProxyCreateEvent
@@ -26,7 +26,7 @@ class ProxyCreateEvent
     super("proxy", { ...options, cancelable: true });
 
     // Retrieve the wrapper for the proxy
-    const wrapper = map.proxies.get(options.target);
+    const wrapper = getProxyMap<nx.ProxyWrapper>().get(options.target);
     // Emit the proxy event to its listeners on the 'nexo' emitter
     wrapper?.nexo?.emit("proxy", this);
   }

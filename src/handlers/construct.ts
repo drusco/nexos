@@ -3,7 +3,7 @@ import ProxyConstructEvent from "../events/ProxyConstructEvent.js";
 import ProxyError from "../utils/ProxyError.js";
 import Nexo from "../Nexo.js";
 import { createDeferred, resolveWith, rejectWith } from "../utils/deferred.js";
-import maps from "../utils/maps.js";
+import { getProxyMap } from "../utils/constants.js";
 
 /**
  * Creates a `construct` trap handler for a Proxy, enabling interception and custom handling
@@ -23,7 +23,7 @@ import maps from "../utils/maps.js";
 export default function construct(resolveProxy: nx.resolveProxy) {
   return (target: nx.FunctionLike, args: nx.ArrayLike): object => {
     const proxy = resolveProxy();
-    const { nexo, traceable } = maps.proxies.get(proxy);
+    const { nexo, traceable } = getProxyMap<nx.ProxyWrapper>().get(proxy);
     const deferred = createDeferred<nx.FunctionLike<[], object>>();
 
     const event = new ProxyConstructEvent({

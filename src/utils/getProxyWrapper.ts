@@ -1,5 +1,5 @@
 import * as nx from "../types/Nexo.js";
-import maps from "./maps.js";
+import { getProxyMap } from "./constants.js";
 import ProxyError from "./ProxyError.js";
 
 /**
@@ -22,7 +22,7 @@ import ProxyError from "./ProxyError.js";
  * @throws {@link nx.ProxyError} if the wrapper cannot be found.
  */
 export default function getProxyWrapper(proxy: nx.Proxy): nx.ProxyWrapper {
-  const wrapper = maps.proxies.get(proxy);
+  const wrapper = getProxyMap<nx.ProxyWrapper>().get(proxy);
 
   if (!wrapper) {
     throw new ProxyError(`No wrapper found for the proxy.`, proxy);

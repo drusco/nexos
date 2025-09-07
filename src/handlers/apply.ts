@@ -2,7 +2,7 @@ import type * as nx from "../types/Nexo.js";
 import ProxyApplyEvent from "../events/ProxyApplyEvent.js";
 import ProxyError from "../utils/ProxyError.js";
 import { createDeferred, resolveWith, rejectWith } from "../utils/deferred.js";
-import maps from "../utils/maps.js";
+import { getProxyMap } from "../utils/constants.js";
 
 /**
  * Creates an `apply` trap handler for a Proxy, enabling interception and custom handling
@@ -26,7 +26,7 @@ export default function apply(resolveProxy: nx.resolveProxy) {
     args: nx.ArrayLike,
   ): unknown => {
     const proxy = resolveProxy();
-    const { nexo, traceable } = maps.proxies.get(proxy);
+    const { nexo, traceable } = getProxyMap<nx.ProxyWrapper>().get(proxy);
     const deferred = createDeferred<nx.FunctionLike>();
 
     const event = new ProxyApplyEvent({

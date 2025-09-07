@@ -1,7 +1,7 @@
 import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import createProxy from "./createProxy.js";
-import maps from "./maps.js";
+import { getProxyMap } from "./constants.js";
 import ProxyCreateEvent from "../events/ProxyCreateEvent.js";
 import ProxyWrapper from "./ProxyWrapper.js";
 
@@ -47,8 +47,8 @@ describe("createProxy", () => {
     const traceableProxy = createProxy(nexo, [], "foo");
     const sandboxedProxy = createProxy(nexo, null, "bar");
 
-    expect(maps.proxies.get(traceableProxy).id).toBe("foo");
-    expect(maps.proxies.get(sandboxedProxy).id).toBe("bar");
+    expect(getProxyMap<nx.ProxyWrapper>().get(traceableProxy).id).toBe("foo");
+    expect(getProxyMap<nx.ProxyWrapper>().get(sandboxedProxy).id).toBe("bar");
   });
 
   it("links a ProxyWrapper instance to the proxy", () => {
@@ -56,9 +56,9 @@ describe("createProxy", () => {
     const proxy = createProxy(nexo);
     const wrapper = Nexo.wrap(proxy);
 
-    expect(maps.proxies.has(proxy)).toBe(true);
-    expect(maps.proxies.get(proxy)).toBeInstanceOf(ProxyWrapper);
-    expect(maps.proxies.get(proxy)).toBe(wrapper);
+    expect(getProxyMap().has(proxy)).toBe(true);
+    expect(getProxyMap().get(proxy)).toBeInstanceOf(ProxyWrapper);
+    expect(getProxyMap().get(proxy)).toBe(wrapper);
   });
 
   it("links the proxy id to the proxy weak reference", () => {
@@ -140,7 +140,7 @@ describe("createProxy", () => {
     expect(listener).toHaveBeenCalledTimes(1);
     expect(proxy).toBe(cachedProxy);
     expect(resolveProxy()).toBe(cachedProxy);
-    expect(maps.proxies.has(event.target)).toBe(false);
+    expect(getProxyMap().has(event.target)).toBe(false);
     expect(nexo.entries.has(event.data.id)).toBe(false);
     expect(() => (event.target.isRevoked = true)).toThrow();
   });
@@ -168,7 +168,7 @@ describe("createProxy", () => {
 
     const getFirstProxy = await firstListenerEvent.data.result;
     const getLastProxy = await lastListenerEvent.data.result;
-    const wrapper = maps.proxies.get(proxy);
+    const wrapper = getProxyMap<nx.ProxyWrapper>().get(proxy);
 
     expect(getFirstProxy()).toBe(proxy);
     expect(getLastProxy()).toBe(proxy);
