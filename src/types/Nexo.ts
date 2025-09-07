@@ -120,8 +120,9 @@ export interface EventEmitter<
    */
   on<Name extends keyof Events>(
     event: Name,
-    listener: FunctionLike<Events[Name]["args"], Events[Name]["result"]>,
+    listener: (...args: Events[Name]["args"]) => Events[Name]["result"],
   ): this;
+
   on(event: string, listener: FunctionLike): this;
 
   /**
@@ -131,6 +132,11 @@ export interface EventEmitter<
    * @param listener - The listener function to remove.
    * @returns The current emitter instance, for method chaining.
    */
+  off<Name extends keyof Events>(
+    event: Name,
+    listener: (...args: Events[Name]["args"]) => Events[Name]["result"],
+  ): this;
+
   off(event: string, listener: FunctionLike): this;
 
   /**
@@ -140,6 +146,11 @@ export interface EventEmitter<
    * @param data - The arguments passed to the listeners.
    * @returns `true` if one or more listeners were invoked, `false` otherwise.
    */
+  emit<Name extends keyof Events>(
+    event: Name,
+    ...data: Events[Name]["args"]
+  ): boolean;
+
   emit(event: string, ...data: ArrayLike): boolean;
 }
 
@@ -197,7 +208,9 @@ export interface Proxy {
 /**
  * Wraps a proxy instance, manages events, and handles lifecycle operations.
  */
-export interface ProxyWrapper extends EventEmitter {
+export interface ProxyWrapper extends EventEmittable {
+  /** Internal event emitter */
+  readonly events: EventEmitter<ProxyEvents>;
   /** Unique proxy wrapper ID. */
   readonly id: string;
   /** The parent {@link Nexo} instance. */

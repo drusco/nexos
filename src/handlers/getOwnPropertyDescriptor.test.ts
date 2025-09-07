@@ -12,7 +12,7 @@ describe("GetOwnPropertyDescriptor Handler", () => {
     proxy.foo = true;
 
     nexo.on("proxy.getOwnPropertyDescriptor", listener);
-    wrapper.on("proxy.getOwnPropertyDescriptor", listener);
+    wrapper.events.on("proxy.getOwnPropertyDescriptor", listener);
 
     const descriptor = Reflect.getOwnPropertyDescriptor(proxy, "foo");
 

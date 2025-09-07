@@ -30,7 +30,7 @@ describe("PreventExtensions Handler", () => {
     const listener = jest.fn();
 
     nexo.on("proxy.preventExtensions", listener);
-    wrapper.on("proxy.preventExtensions", listener);
+    wrapper.events.on("proxy.preventExtensions", listener);
 
     const result = Reflect.preventExtensions(proxy);
 
@@ -55,7 +55,7 @@ describe("PreventExtensions Handler", () => {
       return false;
     });
 
-    wrapper.on("proxy.preventExtensions", listener);
+    wrapper.events.on("proxy.preventExtensions", listener);
 
     const result = Reflect.preventExtensions(proxy);
     const [event]: [nx.ProxyPreventExtensionsEvent] = listener.mock.lastCall;
@@ -77,7 +77,7 @@ describe("PreventExtensions Handler", () => {
       return true;
     });
 
-    wrapper.on("proxy.preventExtensions", listener);
+    wrapper.events.on("proxy.preventExtensions", listener);
 
     expect(() => Reflect.preventExtensions(proxy)).toThrow(ProxyError);
     expect(Reflect.isExtensible(proxy)).toBe(true);

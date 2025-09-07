@@ -29,7 +29,7 @@ class ProxyDeletePropertyEvent
     // Emit the proxy event to its listeners on the 'nexo' emitter
     wrapper?.nexo?.emit("proxy.deleteProperty", this);
     // Emit the proxy event to its listeners on the wrapper's event emitter
-    wrapper?.emit("proxy.deleteProperty", this);
+    wrapper?.events?.emit("proxy.deleteProperty", this);
   }
 }
 

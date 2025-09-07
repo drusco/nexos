@@ -13,7 +13,7 @@ describe("DeleteProperty Handler", () => {
     proxy.foo = true;
 
     nexo.on("proxy.deleteProperty", listener);
-    wrapper.on("proxy.deleteProperty", listener);
+    wrapper.events.on("proxy.deleteProperty", listener);
 
     const result = Reflect.deleteProperty(proxy, "foo");
 

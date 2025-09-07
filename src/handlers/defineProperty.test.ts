@@ -11,7 +11,7 @@ describe("DefineProperty Handler", () => {
       const listener = jest.fn();
 
       nexo.on("proxy.defineProperty", listener);
-      wrapper.on("proxy.defineProperty", listener);
+      wrapper.events.on("proxy.defineProperty", listener);
 
       const result = Reflect.defineProperty(proxy, "foo", { value: "bar" });
 
@@ -38,7 +38,7 @@ describe("DefineProperty Handler", () => {
       const proxy = nexo.create();
       const wrapper = Nexo.wrap(proxy);
 
-      wrapper.on(
+      wrapper.events.on(
         "proxy.defineProperty",
         (event: nx.ProxyDefinePropertyEvent) => {
           event.preventDefault();
@@ -56,7 +56,7 @@ describe("DefineProperty Handler", () => {
       const proxy = nexo.create();
       const wrapper = Nexo.wrap(proxy);
 
-      wrapper.on(
+      wrapper.events.on(
         "proxy.defineProperty",
         (event: nx.ProxyDefinePropertyEvent) => {
           event.preventDefault();
@@ -75,7 +75,7 @@ describe("DefineProperty Handler", () => {
       const proxy = nexo.create({ foo: 8 });
       const wrapper = Nexo.wrap(proxy);
 
-      wrapper.on(
+      wrapper.events.on(
         "proxy.defineProperty",
         (event: nx.ProxyDefinePropertyEvent) => {
           event.preventDefault();
@@ -94,7 +94,7 @@ describe("DefineProperty Handler", () => {
       const proxy = nexo.create(class {});
       const wrapper = Nexo.wrap(proxy);
 
-      wrapper.on(
+      wrapper.events.on(
         "proxy.defineProperty",
         (event: nx.ProxyDefinePropertyEvent) => {
           event.preventDefault();
@@ -185,8 +185,8 @@ describe("DefineProperty Handler", () => {
 
       nexo.on("error", listener);
       nexo.on("proxy.error", listener);
-      wrapper.on("error", listener);
-      wrapper.on("proxy.error", listener);
+      wrapper.events.on("error", listener);
+      wrapper.events.on("proxy.error", listener);
 
       Reflect.defineProperty(proxy, "foo", {
         value: true,
@@ -225,7 +225,7 @@ describe("DefineProperty Handler", () => {
       const proxy = nexo.create();
       const wrapper = Nexo.wrap(proxy);
 
-      wrapper.on("proxy.defineProperty", () => {
+      wrapper.events.on("proxy.defineProperty", () => {
         return { value: 100 };
       });
 

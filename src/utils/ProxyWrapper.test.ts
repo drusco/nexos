@@ -9,7 +9,7 @@ describe("ProxyWrapper", () => {
     const wrapper = Nexo.wrap(proxy);
 
     expect(wrapper).toBeInstanceOf(ProxyWrapper);
-    expect(wrapper).toBeInstanceOf(NexoEmitter);
+    expect(wrapper.events).toBeInstanceOf(NexoEmitter);
     expect(wrapper.id).toBe("foo");
     expect(wrapper.nexo).toBe(nexo);
     expect(wrapper.revoked).toBe(false);

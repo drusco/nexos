@@ -29,7 +29,7 @@ class ProxyPreventExtensionsEvent
     // Emit the proxy event to its listeners on the 'nexo' emitter
     wrapper?.nexo?.emit("proxy.preventExtensions", this);
     // Emit the proxy event to its listeners on the wrapper's event emitter
-    wrapper?.emit("proxy.preventExtensions", this);
+    wrapper?.events?.emit("proxy.preventExtensions", this);
   }
 }
 
