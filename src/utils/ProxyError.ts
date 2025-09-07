@@ -1,5 +1,5 @@
 import type * as nx from "../types/Nexo.js";
-import { getProxyMap } from "./constants.js";
+import getProxyMap from "./getProxyMap.js";
 
 /**
  * @noInheritDoc

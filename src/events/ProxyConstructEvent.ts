@@ -1,6 +1,6 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "./ProxyEvent.js";
-import { getProxyMap } from "../utils/constants.js";
+import getProxyMap from "../utils/getProxyMap.js";
 
 class ProxyConstructEvent
   extends ProxyEvent<nx.ProxyConstructEvent["data"]>

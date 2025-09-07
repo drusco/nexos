@@ -1,7 +1,7 @@
 import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import createProxy from "./createProxy.js";
-import { getProxyMap } from "./constants.js";
+import getProxyMap from "./getProxyMap.js";
 import ProxyCreateEvent from "../events/ProxyCreateEvent.js";
 import ProxyWrapper from "./ProxyWrapper.js";
 
