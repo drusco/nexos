@@ -12,13 +12,7 @@ import type * as nx from "../types/Nexo.js";
  * and errors thrown by listeners will crash the app unless an `'error'` handler is attached.
  *
  */
-class NexoEmitter<
-  Events extends Record<string, nx.EventListener> = Record<
-    string,
-    nx.EventListener
-  >,
-> implements nx.EventEmitter<Events>
-{
+class NexoEmitter implements nx.EventEmitter {
   private listeners = new Map<string, Set<nx.FunctionLike>>();
 
   /**
@@ -34,11 +28,7 @@ class NexoEmitter<
    * @returns The current instance for chaining.
    *
    */
-
-  on<Name extends Extract<keyof Events, string>>(
-    event: Name,
-    listener: nx.FunctionLike<Events[Name]["args"], Events[Name]["result"]>,
-  ): this {
+  on(event: string, listener: nx.FunctionLike): this {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, new Set());
     }
@@ -60,10 +50,7 @@ class NexoEmitter<
    * @returns The current instance for chaining.
    *
    */
-  off<Name extends Extract<keyof Events, string>>(
-    event: Name,
-    listener: nx.FunctionLike,
-  ): this {
+  off(event: string, listener: nx.FunctionLike): this {
     this.listeners.get(event)?.delete(listener);
     return this;
   }
@@ -82,10 +69,7 @@ class NexoEmitter<
    * @param data - A {@link NexoEvent} or an `Error`.
    * @returns `true` if any listeners were triggered; `false` otherwise.
    */
-  emit<Name extends Extract<keyof Events, string>>(
-    event: Name | "error",
-    data: Events[Name]["args"][0] extends nx.NexoEvent ? nx.NexoEvent : Error,
-  ): boolean {
+  emit(event: string, data: nx.NexoEvent | Error): boolean {
     const listeners = this.listeners.get(event);
     const hasListeners = !!listeners?.size;
     const isError = data instanceof Error;

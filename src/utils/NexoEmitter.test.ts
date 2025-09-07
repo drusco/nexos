@@ -9,7 +9,7 @@ type TestEvents = {
 };
 
 describe("NexoEmitter", () => {
-  let emitter: NexoEmitter<TestEvents>;
+  let emitter: nx.EventEmitter<TestEvents>;
 
   beforeEach(() => {
     emitter = new NexoEmitter();
