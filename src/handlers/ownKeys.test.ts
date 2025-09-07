@@ -34,7 +34,7 @@ describe("OwnKeys Handler", () => {
     const listener = jest.fn();
 
     nexo.on("proxy.ownKeys", listener);
-    wrapper.on("proxy.ownKeys", listener);
+    wrapper.events.on("proxy.ownKeys", listener);
 
     proxy.foo = true;
 
@@ -61,7 +61,7 @@ describe("OwnKeys Handler", () => {
       return customResult;
     });
 
-    Nexo.wrap(proxy).on("proxy.ownKeys", listener);
+    Nexo.wrap(proxy).events.on("proxy.ownKeys", listener);
 
     const result = Reflect.ownKeys(proxy);
     const [event]: [nx.ProxyOwnKeysEvent] = listener.mock.lastCall;
@@ -82,7 +82,7 @@ describe("OwnKeys Handler", () => {
       return customResult;
     });
 
-    Nexo.wrap(proxy).on("proxy.ownKeys", listener);
+    Nexo.wrap(proxy).events.on("proxy.ownKeys", listener);
 
     const result = Reflect.ownKeys(proxy);
     const [event]: [nx.ProxyOwnKeysEvent] = listener.mock.lastCall;
@@ -113,8 +113,8 @@ describe("OwnKeys Handler", () => {
       ] as unknown as nx.ObjectKey[];
     });
 
-    Nexo.wrap(proxyA).on("proxy.ownKeys", returnInvalid);
-    Nexo.wrap(proxyB).on("proxy.ownKeys", returnInvalidArray);
+    Nexo.wrap(proxyA).events.on("proxy.ownKeys", returnInvalid);
+    Nexo.wrap(proxyB).events.on("proxy.ownKeys", returnInvalidArray);
 
     expect(() => Reflect.ownKeys(proxyA)).toThrow(ProxyError);
     expect(() => Reflect.ownKeys(proxyB)).toThrow(ProxyError);

@@ -10,7 +10,7 @@ describe("Construct Handler", () => {
     const listener = jest.fn();
 
     nexo.on("proxy.construct", listener);
-    wrapper.on("proxy.construct", listener);
+    wrapper.events.on("proxy.construct", listener);
 
     const args = ["foo", "bar"];
     const result = Reflect.construct(proxy, args);
@@ -51,7 +51,7 @@ describe("Construct Handler", () => {
 
     const customInstance = {};
 
-    wrapper.on("proxy.construct", (event: nx.ProxyConstructEvent) => {
+    wrapper.events.on("proxy.construct", (event: nx.ProxyConstructEvent) => {
       event.preventDefault();
       return customInstance;
     });
@@ -66,7 +66,7 @@ describe("Construct Handler", () => {
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
 
-    wrapper.on("proxy.construct", (event: nx.ProxyConstructEvent) => {
+    wrapper.events.on("proxy.construct", (event: nx.ProxyConstructEvent) => {
       event.preventDefault();
       return "invalid" as unknown as object; // not an object
     });

@@ -15,7 +15,7 @@ import ProxyError from "./ProxyError.js";
  * const proxy = nexo.create();
  * const wrapper = Nexo.wrap(proxy);
  *
- * wrapper.on('proxy.get', (event: ProxyGetEvent) => {});
+ * wrapper.events.on('proxy.get', (event: ProxyGetEvent) => {});
  *
  * @param proxy - An existing {@link nx.Proxy | Proxy} object
  * @returns A {@link nx.ProxyWrapper | ProxyWrapper} for the proxy that allows interaction with proxy events

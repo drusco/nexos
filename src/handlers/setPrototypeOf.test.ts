@@ -12,7 +12,7 @@ describe("SetPrototypeOf Handler", () => {
     const prototype = Array.prototype;
 
     nexo.on("proxy.setPrototypeOf", listener);
-    wrapper.on("proxy.setPrototypeOf", listener);
+    wrapper.events.on("proxy.setPrototypeOf", listener);
 
     const result = Reflect.setPrototypeOf(proxy, prototype);
 

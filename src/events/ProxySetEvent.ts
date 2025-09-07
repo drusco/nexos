@@ -26,7 +26,7 @@ class ProxySetEvent
     // Emit the proxy event to its listeners on the 'nexo' emitter
     wrapper?.nexo?.emit("proxy.set", this);
     // Emit the proxy event to its listeners on the wrapper's event emitter
-    wrapper?.emit("proxy.set", this);
+    wrapper?.events?.emit("proxy.set", this);
   }
 }
 

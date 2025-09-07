@@ -29,7 +29,7 @@ class ProxyDefinePropertyEvent
     // Emit the proxy event to its listeners on the 'nexo' emitter
     wrapper?.nexo?.emit("proxy.defineProperty", this);
     // Emit the proxy event to its listeners on the wrapper's event emitter
-    wrapper?.emit("proxy.defineProperty", this);
+    wrapper?.events?.emit("proxy.defineProperty", this);
   }
 }
 

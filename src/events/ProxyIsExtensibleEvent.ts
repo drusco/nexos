@@ -29,7 +29,7 @@ class ProxyIsExtensibleEvent
     // Emit the proxy event to its listeners on the 'nexo' emitter
     wrapper?.nexo?.emit("proxy.isExtensible", this);
     // Emit the proxy event to its listeners on the wrapper's event emitter
-    wrapper?.emit("proxy.isExtensible", this);
+    wrapper?.events?.emit("proxy.isExtensible", this);
   }
 }
 

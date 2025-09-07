@@ -11,7 +11,7 @@ describe("Set Hander", () => {
     const listener = jest.fn();
 
     nexo.on("proxy.set", listener);
-    wrapper.on("proxy.set", listener);
+    wrapper.events.on("proxy.set", listener);
 
     proxy.foo = "bar";
 

@@ -44,7 +44,7 @@ describe("IsExtensible Handler", () => {
     const listener = jest.fn();
 
     nexo.on("proxy.isExtensible", listener);
-    wrapper.on("proxy.isExtensible", listener);
+    wrapper.events.on("proxy.isExtensible", listener);
 
     const result = Reflect.isExtensible(proxy);
     const [event]: [nx.ProxyIsExtensibleEvent] = listener.mock.lastCall;
@@ -63,11 +63,14 @@ describe("IsExtensible Handler", () => {
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
 
-    wrapper.on("proxy.isExtensible", (event: nx.ProxyIsExtensibleEvent) => {
-      event.preventDefault();
-      Object.preventExtensions(event.target);
-      return false;
-    });
+    wrapper.events.on(
+      "proxy.isExtensible",
+      (event: nx.ProxyIsExtensibleEvent) => {
+        event.preventDefault();
+        Object.preventExtensions(event.target);
+        return false;
+      },
+    );
 
     expect(Object.isExtensible(proxy)).toBe(false);
   });
@@ -81,10 +84,13 @@ describe("IsExtensible Handler", () => {
     nexo.on("error", errorListener);
     nexo.on("proxy.error", errorListener);
 
-    wrapper.on("proxy.isExtensible", (event: nx.ProxyIsExtensibleEvent) => {
-      event.preventDefault();
-      return "invalid" as unknown as boolean;
-    });
+    wrapper.events.on(
+      "proxy.isExtensible",
+      (event: nx.ProxyIsExtensibleEvent) => {
+        event.preventDefault();
+        return "invalid" as unknown as boolean;
+      },
+    );
 
     expect(() => Reflect.isExtensible(proxy)).toThrow(ProxyError);
     expect(errorListener).toHaveBeenCalledTimes(2);
@@ -100,10 +106,13 @@ describe("IsExtensible Handler", () => {
     nexo.on("error", errorListener);
     nexo.on("proxy.error", errorListener);
 
-    wrapper.on("proxy.isExtensible", (event: nx.ProxyIsExtensibleEvent) => {
-      event.preventDefault();
-      return false;
-    });
+    wrapper.events.on(
+      "proxy.isExtensible",
+      (event: nx.ProxyIsExtensibleEvent) => {
+        event.preventDefault();
+        return false;
+      },
+    );
 
     expect(() => Reflect.isExtensible(proxy)).toThrow(ProxyError);
     expect(errorListener).toHaveBeenCalledTimes(2);

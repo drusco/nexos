@@ -11,7 +11,7 @@ import NexoEmitter from "./NexoEmitter.js";
  * const proxyWrapper = new ProxyWrapper({ id: 'proxy1', nexo: someNexoInstance, traceable: true, revoke: revokeFunction });
  * proxyWrapper.revoke(); // This will revoke the proxy.
  */
-class ProxyWrapper extends NexoEmitter<nx.ProxyEvents> {
+class ProxyWrapper implements nx.ProxyWrapper {
   /**
    * A getter that returns whether the proxy has been revoked.
    * This value is `true` if the proxy was revoked, otherwise `false`.
@@ -24,6 +24,10 @@ class ProxyWrapper extends NexoEmitter<nx.ProxyEvents> {
     return this.isRevoked;
   }
 
+  get events(): nx.EventEmitter {
+    return this.eventEmitter;
+  }
+
   /** The unique identifier for the proxy wrapper. */
   readonly id: string;
 
@@ -31,6 +35,8 @@ class ProxyWrapper extends NexoEmitter<nx.ProxyEvents> {
   readonly nexo: nx.Nexo;
 
   readonly traceable: boolean;
+
+  private eventEmitter?: nx.EventEmitter = new NexoEmitter();
 
   /** A private flag indicating whether the proxy has been revoked. */
   private isRevoked: boolean = false;
@@ -54,7 +60,6 @@ class ProxyWrapper extends NexoEmitter<nx.ProxyEvents> {
     traceable: boolean;
     revoke: nx.FunctionLike<[], void>;
   }) {
-    super();
     const { id, nexo, revoke, traceable } = data;
 
     this.id = id;
@@ -75,6 +80,15 @@ class ProxyWrapper extends NexoEmitter<nx.ProxyEvents> {
     this.revokeProxy();
     delete this.revokeProxy;
     this.isRevoked = true;
+  }
+
+  setEventEmitter(emitter: nx.EventEmitter): this {
+    this.eventEmitter = emitter;
+    return this;
+  }
+
+  removeEventEmitter(): void {
+    this.eventEmitter = undefined;
   }
 }
 

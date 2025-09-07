@@ -12,7 +12,7 @@ describe("Get Handler", () => {
     const value = "foo";
 
     nexo.on("proxy.get", listener);
-    wrapper.on("proxy.get", listener);
+    wrapper.events.on("proxy.get", listener);
 
     proxy[property] = value;
 
@@ -50,7 +50,7 @@ describe("Get Handler", () => {
       return currentValue;
     });
 
-    wrapper.on("proxy.get", listener);
+    wrapper.events.on("proxy.get", listener);
 
     proxy[property] = value;
 

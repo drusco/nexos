@@ -29,7 +29,7 @@ class ProxyGetPrototypeOfEvent
     // Emit the proxy event to its listeners on the 'nexo' emitter
     wrapper?.nexo?.emit("proxy.getPrototypeOf", this);
     // Emit the proxy event to its listeners on the wrapper's event emitter
-    wrapper?.emit("proxy.getPrototypeOf", this);
+    wrapper?.events?.emit("proxy.getPrototypeOf", this);
   }
 }
 
