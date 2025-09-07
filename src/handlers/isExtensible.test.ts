@@ -58,17 +58,18 @@ describe("IsExtensible Handler", () => {
     expect(result).toBe(true);
   });
 
-  it("uses the return value from a prevented event on sandboxed proxies", () => {
+  it("uses the return value from a prevented event", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
 
     wrapper.on("proxy.isExtensible", (event: nx.ProxyIsExtensibleEvent) => {
       event.preventDefault();
-      return true;
+      Object.preventExtensions(event.target);
+      return false;
     });
 
-    expect(Reflect.isExtensible(proxy)).toBe(true);
+    expect(Object.isExtensible(proxy)).toBe(false);
   });
 
   it("throws when the return value from a prevented event is not a boolean", () => {
@@ -108,23 +109,23 @@ describe("IsExtensible Handler", () => {
     expect(errorListener).toHaveBeenCalledTimes(2);
   });
 
-  it("resolves from sandbox if available and event not prevented", () => {
+  it("resolves from sandbox when the event is not prevented", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
 
     Object.preventExtensions(proxy);
 
-    expect(Reflect.isExtensible(proxy)).toBe(false);
+    expect(Object.isExtensible(proxy)).toBe(false);
   });
 
-  it("resolves from target if no sandbox and event not prevented", () => {
+  it("resolves from target when the event is not prevented", () => {
     const nexo = new Nexo();
     const target = {};
     const proxy = nexo.create(target);
 
     Object.preventExtensions(proxy);
 
-    expect(Reflect.isExtensible(proxy)).toBe(false);
-    expect(Reflect.isExtensible(target)).toBe(false);
+    expect(Object.isExtensible(proxy)).toBe(false);
+    expect(Object.isExtensible(target)).toBe(false);
   });
 });

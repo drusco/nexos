@@ -19,7 +19,6 @@ export default function isExtensible(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable): boolean => {
     const proxy = resolveProxy();
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
-    const isExtensible = Reflect.isExtensible(target);
 
     const event = new ProxyIsExtensibleEvent({
       target: proxy,
@@ -30,7 +29,12 @@ export default function isExtensible(resolveProxy: nx.resolveProxy) {
     });
 
     if (event.defaultPrevented) {
-      const returnValue = event.returnValue;
+      const { returnValue } = event;
+      const isExtensible = Reflect.isExtensible(target);
+
+      if (returnValue === undefined) {
+        return resolveWith(deferred.resolve, isExtensible);
+      }
 
       if (typeof returnValue !== "boolean") {
         return rejectWith(
@@ -42,7 +46,7 @@ export default function isExtensible(resolveProxy: nx.resolveProxy) {
         );
       }
 
-      if (returnValue === false && isExtensible) {
+      if (returnValue !== isExtensible) {
         // ECMAScript invariants prohibit returning false
         // when the actual target is extensible.
         return rejectWith(
@@ -57,6 +61,6 @@ export default function isExtensible(resolveProxy: nx.resolveProxy) {
       return resolveWith(deferred.resolve, returnValue);
     }
 
-    return resolveWith(deferred.resolve, isExtensible);
+    return resolveWith(deferred.resolve, Reflect.isExtensible(target));
   };
 }

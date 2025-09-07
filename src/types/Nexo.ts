@@ -337,7 +337,7 @@ export interface ProxyHasEvent extends ProxyEvent {
 
 /** Fired when checking if the proxy is extensible. */
 export interface ProxyIsExtensibleEvent extends ProxyEvent {
-  readonly returnValue: boolean;
+  readonly returnValue: void | boolean;
   readonly data: {
     /** Target object. */
     readonly target: Traceable;
