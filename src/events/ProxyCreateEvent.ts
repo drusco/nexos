@@ -1,5 +1,5 @@
 import type * as nx from "../types/Nexo.js";
-import { getProxyMap } from "../utils/constants.js";
+import getProxyMap from "../utils/getProxyMap.js";
 import NexoEvent from "./NexoEvent.js";
 
 class ProxyCreateEvent

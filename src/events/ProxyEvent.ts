@@ -1,6 +1,6 @@
 import type * as nx from "../types/Nexo.js";
 import NexoEvent from "./NexoEvent.js";
-import { getProxyMap } from "../utils/constants.js";
+import getProxyMap from "../utils/getProxyMap.js";
 
 /**
  * Represents an event triggered by a proxy.
