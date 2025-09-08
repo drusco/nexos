@@ -10,7 +10,7 @@ describe("DefineProperty Handler", () => {
       const wrapper = Nexo.wrap(proxy);
       const listener = jest.fn();
 
-      nexo.on("proxy.defineProperty", listener);
+      nexo.events.on("proxy.defineProperty", listener);
       wrapper.events.on("proxy.defineProperty", listener);
 
       const result = Reflect.defineProperty(proxy, "foo", { value: "bar" });
@@ -183,8 +183,8 @@ describe("DefineProperty Handler", () => {
       const wrapper = Nexo.wrap(proxy);
       const listener = jest.fn();
 
-      nexo.on("error", listener);
-      nexo.on("proxy.error", listener);
+      nexo.events.on("error", listener);
+      nexo.events.on("proxy.error", listener);
       wrapper.events.on("error", listener);
       wrapper.events.on("proxy.error", listener);
 

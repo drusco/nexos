@@ -76,7 +76,7 @@ describe("createProxy", () => {
     const target = {};
     const listener = jest.fn();
 
-    nexo.on("proxy", listener);
+    nexo.events.on("proxy", listener);
 
     const proxy = createProxy(nexo, target, "foo");
     const [event]: [nx.ProxyCreateEvent] = listener.mock.lastCall;
@@ -131,7 +131,7 @@ describe("createProxy", () => {
       return cachedProxy;
     });
 
-    nexo.on("proxy", listener);
+    nexo.events.on("proxy", listener);
 
     const proxy = createProxy(nexo);
     const [event] = listener.mock.lastCall;
@@ -158,8 +158,8 @@ describe("createProxy", () => {
       return createProxy(nexo, {}, "last-proxy", true);
     });
 
-    nexo.on("proxy", firstListener);
-    nexo.on("proxy", lastListener);
+    nexo.events.on("proxy", firstListener);
+    nexo.events.on("proxy", lastListener);
 
     const proxy = createProxy(nexo);
 

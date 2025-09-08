@@ -43,7 +43,7 @@ describe("IsExtensible Handler", () => {
     const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
-    nexo.on("proxy.isExtensible", listener);
+    nexo.events.on("proxy.isExtensible", listener);
     wrapper.events.on("proxy.isExtensible", listener);
 
     const result = Reflect.isExtensible(proxy);
@@ -81,8 +81,8 @@ describe("IsExtensible Handler", () => {
     const wrapper = Nexo.wrap(proxy);
     const errorListener = jest.fn();
 
-    nexo.on("error", errorListener);
-    nexo.on("proxy.error", errorListener);
+    nexo.events.on("error", errorListener);
+    nexo.events.on("proxy.error", errorListener);
 
     wrapper.events.on(
       "proxy.isExtensible",
@@ -103,8 +103,8 @@ describe("IsExtensible Handler", () => {
     const wrapper = Nexo.wrap(proxy);
     const errorListener = jest.fn();
 
-    nexo.on("error", errorListener);
-    nexo.on("proxy.error", errorListener);
+    nexo.events.on("error", errorListener);
+    nexo.events.on("proxy.error", errorListener);
 
     wrapper.events.on(
       "proxy.isExtensible",

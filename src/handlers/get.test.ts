@@ -11,7 +11,7 @@ describe("Get Handler", () => {
     const property = "name";
     const value = "foo";
 
-    nexo.on("proxy.get", listener);
+    nexo.events.on("proxy.get", listener);
     wrapper.events.on("proxy.get", listener);
 
     proxy[property] = value;

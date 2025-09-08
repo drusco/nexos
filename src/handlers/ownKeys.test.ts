@@ -33,7 +33,7 @@ describe("OwnKeys Handler", () => {
     const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
-    nexo.on("proxy.ownKeys", listener);
+    nexo.events.on("proxy.ownKeys", listener);
     wrapper.events.on("proxy.ownKeys", listener);
 
     proxy.foo = true;

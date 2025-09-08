@@ -27,7 +27,7 @@ class ProxyPreventExtensionsEvent
     // Retrieve the wrapper for the proxy
     const wrapper = getProxyMap().get(options.target);
     // Emit the proxy event to its listeners on the 'nexo' emitter
-    wrapper?.nexo?.emit("proxy.preventExtensions", this);
+    wrapper?.nexo?.events?.emit("proxy.preventExtensions", this);
     // Emit the proxy event to its listeners on the wrapper's event emitter
     wrapper?.events?.emit("proxy.preventExtensions", this);
   }

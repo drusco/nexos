@@ -12,7 +12,7 @@ describe("DeleteProperty Handler", () => {
 
     proxy.foo = true;
 
-    nexo.on("proxy.deleteProperty", listener);
+    nexo.events.on("proxy.deleteProperty", listener);
     wrapper.events.on("proxy.deleteProperty", listener);
 
     const result = Reflect.deleteProperty(proxy, "foo");
@@ -58,7 +58,7 @@ describe("DeleteProperty Handler", () => {
       event.preventDefault();
     });
 
-    nexo.on("proxy.deleteProperty", listener);
+    nexo.events.on("proxy.deleteProperty", listener);
 
     const result = Reflect.deleteProperty(proxy, "foo");
     const [event]: [nx.ProxyDeletePropertyEvent] = listener.mock.lastCall;

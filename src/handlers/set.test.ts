@@ -10,7 +10,7 @@ describe("Set Hander", () => {
     const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
-    nexo.on("proxy.set", listener);
+    nexo.events.on("proxy.set", listener);
     wrapper.events.on("proxy.set", listener);
 
     proxy.foo = "bar";
@@ -38,7 +38,7 @@ describe("Set Hander", () => {
       return replacement as unknown as boolean;
     });
 
-    nexo.on("proxy.set", listener);
+    nexo.events.on("proxy.set", listener);
 
     proxy.foo = true;
 
@@ -60,7 +60,7 @@ describe("Set Hander", () => {
       return replacement as unknown as boolean;
     });
 
-    nexo.on("proxy.set", listener);
+    nexo.events.on("proxy.set", listener);
 
     proxy.foo = true;
 
@@ -78,7 +78,7 @@ describe("Set Hander", () => {
     const proxyWithTarget = nexo.create({});
     const replacement = false;
 
-    nexo.on("proxy.set", (event: nx.ProxySetEvent) => {
+    nexo.events.on("proxy.set", (event: nx.ProxySetEvent) => {
       event.preventDefault();
       return replacement;
     });

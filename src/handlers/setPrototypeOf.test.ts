@@ -11,7 +11,7 @@ describe("SetPrototypeOf Handler", () => {
     const listener = jest.fn();
     const prototype = Array.prototype;
 
-    nexo.on("proxy.setPrototypeOf", listener);
+    nexo.events.on("proxy.setPrototypeOf", listener);
     wrapper.events.on("proxy.setPrototypeOf", listener);
 
     const result = Reflect.setPrototypeOf(proxy, prototype);
@@ -38,7 +38,7 @@ describe("SetPrototypeOf Handler", () => {
       return null;
     });
 
-    nexo.on("proxy.setPrototypeOf", listener);
+    nexo.events.on("proxy.setPrototypeOf", listener);
 
     const result = Reflect.setPrototypeOf(proxy, Array.prototype);
     const [event]: [nx.ProxySetPrototypeOfEvent] = listener.mock.lastCall;
@@ -53,10 +53,13 @@ describe("SetPrototypeOf Handler", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
 
-    nexo.on("proxy.setPrototypeOf", (event: nx.ProxySetPrototypeOfEvent) => {
-      event.preventDefault();
-      return "non-object" as unknown as object;
-    });
+    nexo.events.on(
+      "proxy.setPrototypeOf",
+      (event: nx.ProxySetPrototypeOfEvent) => {
+        event.preventDefault();
+        return "non-object" as unknown as object;
+      },
+    );
 
     expect(() => {
       Reflect.setPrototypeOf(proxy, Array.prototype);
@@ -103,10 +106,13 @@ describe("SetPrototypeOf Handler", () => {
     const proxy = nexo.create();
     const proto = { x: true };
 
-    nexo.on("proxy.setPrototypeOf", (event: nx.ProxySetPrototypeOfEvent) => {
-      event.preventDefault();
-      return proto;
-    });
+    nexo.events.on(
+      "proxy.setPrototypeOf",
+      (event: nx.ProxySetPrototypeOfEvent) => {
+        event.preventDefault();
+        return proto;
+      },
+    );
 
     const result = Reflect.setPrototypeOf(proxy, []);
     expect(result).toBe(true);
@@ -118,7 +124,7 @@ describe("SetPrototypeOf Handler", () => {
     const proxy = nexo.create();
     const prototype = Array.prototype;
 
-    nexo.on("proxy.setPrototypeOf", () => {
+    nexo.events.on("proxy.setPrototypeOf", () => {
       return null; // should be ignored unless preventDefault is called
     });
 

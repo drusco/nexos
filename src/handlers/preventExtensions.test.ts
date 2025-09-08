@@ -29,7 +29,7 @@ describe("PreventExtensions Handler", () => {
     const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
-    nexo.on("proxy.preventExtensions", listener);
+    nexo.events.on("proxy.preventExtensions", listener);
     wrapper.events.on("proxy.preventExtensions", listener);
 
     const result = Reflect.preventExtensions(proxy);

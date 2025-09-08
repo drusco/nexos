@@ -8,7 +8,7 @@ describe("ProxyError", () => {
     const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
-    nexo.on("error", listener);
+    nexo.events.on("error", listener);
     wrapper.events.on("error", listener);
 
     const error = new ProxyError("Something went wrong", proxy);
@@ -28,8 +28,8 @@ describe("ProxyError", () => {
     const nexoErrorHandler = jest.fn();
     const proxyErrorHandler = jest.fn();
 
-    nexo.on("error", nexoErrorHandler);
-    nexo.on("proxy.error", nexoErrorHandler);
+    nexo.events.on("error", nexoErrorHandler);
+    nexo.events.on("proxy.error", nexoErrorHandler);
 
     wrapper.events.on("error", proxyErrorHandler);
     wrapper.events.on("proxy.error", proxyErrorHandler);
