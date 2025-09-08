@@ -81,11 +81,13 @@ export interface NexoEvent<Target = unknown, Data = unknown> {
   preventDefault(): void;
 }
 
-export interface EventEmittable {
+export interface EventEmittable<
+  Events extends Record<string, EventListener> = Record<string, EventListener>,
+> {
   /**
    * The internal event emitter instance responsible for managing lifecycle events.
    */
-  readonly events?: EventEmitter;
+  readonly events?: EventEmitter<Events>;
   /**
    * Attaches an {@link EventEmitter} to handle lifecycle events.
    *
@@ -157,7 +159,7 @@ export interface EventEmitter<
 /**
  * Proxy factory and manager.
  */
-export interface Nexo extends EventEmittable {
+export interface Nexo extends EventEmittable<NexoEvents & ProxyEvents> {
   /** Weak reference map of active proxies. */
   readonly entries: TraceableMap<Proxy>;
   /**
@@ -208,9 +210,7 @@ export interface Proxy {
 /**
  * Wraps a proxy instance, manages events, and handles lifecycle operations.
  */
-export interface ProxyWrapper extends EventEmittable {
-  /** Internal event emitter */
-  readonly events: EventEmitter<ProxyEvents>;
+export interface ProxyWrapper extends EventEmittable<ProxyEvents> {
   /** Unique proxy wrapper ID. */
   readonly id: string;
   /** The parent {@link Nexo} instance. */
