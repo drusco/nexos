@@ -28,7 +28,7 @@ class ProxyCreateEvent
     // Retrieve the wrapper for the proxy
     const wrapper = getProxyMap().get(options.target);
     // Emit the proxy event to its listeners on the 'nexo' emitter
-    wrapper?.nexo?.emit("proxy", this);
+    wrapper?.nexo?.events?.emit("proxy", this);
   }
 }
 

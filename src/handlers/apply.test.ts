@@ -10,7 +10,7 @@ describe("Apply Handler", () => {
     const wrapper = Nexo.wrap(proxy);
     const applyListener = jest.fn();
 
-    nexo.on("proxy.apply", applyListener);
+    nexo.events.on("proxy.apply", applyListener);
     wrapper.events.on("proxy.apply", applyListener);
 
     const args = ["foo", "bar"];
@@ -76,9 +76,9 @@ describe("Apply Handler", () => {
     const proxy = nexo.create(target);
     const wrapper = Nexo.wrap(proxy);
 
-    nexo.on("error", errorListener);
+    nexo.events.on("error", errorListener);
     wrapper.events.on("error", errorListener);
-    nexo.on("proxy.apply", applyListener);
+    nexo.events.on("proxy.apply", applyListener);
 
     // Verify the proxy throws ProxyError synchronously
     expect(() => proxy()).toThrow(ProxyError);

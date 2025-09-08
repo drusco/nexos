@@ -9,7 +9,7 @@ describe("Nexo", () => {
     const nexo = new Nexo();
 
     expect(nexo.entries).toBeInstanceOf(NexoMap);
-    expect(nexo).toBeInstanceOf(NexoEmitter);
+    expect(nexo.events).toBeInstanceOf(NexoEmitter);
   });
 
   it("Creates a new proxy object without a target", () => {
@@ -27,7 +27,7 @@ describe("Nexo", () => {
     const target = {};
     const listener = jest.fn();
 
-    nexo.on("proxy", listener);
+    nexo.events.on("proxy", listener);
 
     const proxy = nexo.create(target);
     const wrapper = Nexo.wrap(proxy);
@@ -118,8 +118,8 @@ describe("Nexo", () => {
     const listenerA = jest.fn();
     const listenerB = jest.fn();
 
-    nexoA.on("proxy.set", listenerA);
-    nexoB.on("proxy.set", listenerB);
+    nexoA.events.on("proxy.set", listenerA);
+    nexoB.events.on("proxy.set", listenerB);
 
     proxyA.foo = 123;
     proxyB.bar = 456;

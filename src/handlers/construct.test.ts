@@ -9,7 +9,7 @@ describe("Construct Handler", () => {
     const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
-    nexo.on("proxy.construct", listener);
+    nexo.events.on("proxy.construct", listener);
     wrapper.events.on("proxy.construct", listener);
 
     const args = ["foo", "bar"];

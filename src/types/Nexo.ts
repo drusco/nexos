@@ -157,7 +157,7 @@ export interface EventEmitter<
 /**
  * Proxy factory and manager.
  */
-export interface Nexo extends EventEmitter {
+export interface Nexo extends EventEmittable {
   /** Weak reference map of active proxies. */
   readonly entries: TraceableMap<Proxy>;
   /**

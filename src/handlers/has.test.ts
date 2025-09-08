@@ -10,7 +10,7 @@ describe("Has Handler", () => {
     const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
-    nexo.on("proxy.has", listener);
+    nexo.events.on("proxy.has", listener);
     wrapper.events.on("proxy.has", listener);
 
     Reflect.has(proxy, "foo");

@@ -23,12 +23,12 @@ import getProxyWrapper from "./utils/getProxyWrapper.js";
  * const nexo = new Nexo();
  * const listener = (event: NexoEvent) => {};
  *
- * nexo.on('proxy', listener);
+ * nexo.events.on('proxy', listener);
  *
  * // The listener will be called when a new proxy is created.
  * const proxy = nexo.create();
  */
-class Nexo extends NexoEmitter implements nx.Nexo {
+class Nexo implements nx.Nexo {
   /**
    * A map that stores unique proxy IDs associated with their respective {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakRef | WeakRef} references to the proxy objects.
    *
@@ -41,15 +41,10 @@ class Nexo extends NexoEmitter implements nx.Nexo {
   static isTraceable = isTraceable;
   static wrap = getProxyWrapper;
 
-  /**
-   * Initializes the Nexo proxy system and event hooks.
-   *
-   * @remarks
-   * Inherits all event management behavior from {@link NexoEmitter}.
-   * Use `on()` and `emit()` to subscribe and react to internal proxy lifecycle events.
-   */
-  constructor() {
-    super();
+  private eventEmitter?: nx.EventEmitter = new NexoEmitter();
+
+  get events(): nx.EventEmitter<nx.ProxyEvents & nx.NexoEvents> {
+    return this.eventEmitter;
   }
 
   /**
@@ -109,6 +104,15 @@ class Nexo extends NexoEmitter implements nx.Nexo {
    */
   create(target?: nx.Traceable): nx.Proxy {
     return createProxy(this, target);
+  }
+
+  setEventEmitter(emitter: nx.EventEmitter): this {
+    this.eventEmitter = emitter;
+    return this;
+  }
+
+  removeEventEmitter(): void {
+    this.eventEmitter = undefined;
   }
 }
 

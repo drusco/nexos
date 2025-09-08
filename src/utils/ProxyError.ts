@@ -38,7 +38,7 @@ class ProxyError extends Error implements nx.ProxyError {
     const wrapper = getProxyMap().get(proxy);
 
     // Emit the error event on the 'nexo' event emitter
-    wrapper?.nexo?.emit("proxy.error", this);
+    wrapper?.nexo?.events?.emit("proxy.error", this);
     // Emit the error event on the wrapper's event emitter
     wrapper?.events?.emit("proxy.error", this);
   }

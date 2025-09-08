@@ -10,7 +10,7 @@ describe("GetPrototypeOf Handler", () => {
     const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
-    nexo.on("proxy.getPrototypeOf", listener);
+    nexo.events.on("proxy.getPrototypeOf", listener);
     wrapper.events.on("proxy.getPrototypeOf", listener);
 
     const prototype = Reflect.getPrototypeOf(proxy);
@@ -57,7 +57,7 @@ describe("GetPrototypeOf Handler", () => {
       return "invalid" as unknown as object;
     });
 
-    nexo.on("error", errorListener);
+    nexo.events.on("error", errorListener);
     wrapper.events.on("proxy.getPrototypeOf", listener);
 
     expect(() => Object.getPrototypeOf(proxy)).toThrow(ProxyError);

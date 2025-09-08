@@ -11,7 +11,7 @@ describe("GetOwnPropertyDescriptor Handler", () => {
 
     proxy.foo = true;
 
-    nexo.on("proxy.getOwnPropertyDescriptor", listener);
+    nexo.events.on("proxy.getOwnPropertyDescriptor", listener);
     wrapper.events.on("proxy.getOwnPropertyDescriptor", listener);
 
     const descriptor = Reflect.getOwnPropertyDescriptor(proxy, "foo");
@@ -83,7 +83,7 @@ describe("GetOwnPropertyDescriptor Handler", () => {
     const nexo = new Nexo();
     const proxy = nexo.create({ foo: true });
 
-    nexo.on(
+    nexo.events.on(
       "proxy.getOwnPropertyDescriptor",
       (event: nx.ProxyGetOwnPropertyDescriptorEvent) => {
         event.preventDefault();
@@ -116,7 +116,7 @@ describe("GetOwnPropertyDescriptor Handler", () => {
       writable: false,
     };
 
-    nexo.on(
+    nexo.events.on(
       "proxy.getOwnPropertyDescriptor",
       (event: nx.ProxyGetOwnPropertyDescriptorEvent) => {
         event.preventDefault();
@@ -134,8 +134,8 @@ describe("GetOwnPropertyDescriptor Handler", () => {
     const proxy = nexo.create();
     const errorListener = jest.fn();
 
-    nexo.on("error", errorListener);
-    nexo.on(
+    nexo.events.on("error", errorListener);
+    nexo.events.on(
       "proxy.getOwnPropertyDescriptor",
       (event: nx.ProxyGetOwnPropertyDescriptorEvent) => {
         event.preventDefault();
