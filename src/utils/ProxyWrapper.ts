@@ -24,7 +24,7 @@ class ProxyWrapper implements nx.ProxyWrapper {
     return this.isRevoked;
   }
 
-  get events(): nx.EventEmitter {
+  get events(): nx.EventEmitter<nx.ProxyEvents> {
     return this.eventEmitter;
   }
 
