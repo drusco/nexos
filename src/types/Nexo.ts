@@ -229,7 +229,7 @@ export interface ProxyWrapper extends EventEmittable<ProxyEvents> {
   /** Removes the proxy manager instance  */
   removeManager(): this;
   /** Sets the underlying proxy target */
-  setTarget(target: Traceable, sandbox?: boolean): this;
+  setTarget(target: Traceable, isTraceable?: boolean): this;
   /** Sets the unique identifier for the proxy */
   setId(id: string): this;
 }
