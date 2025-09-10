@@ -54,7 +54,7 @@ const createProxy = (
   // create a proxy wrapper to interact with the proxy
   const wrapper = new ProxyWrapper(revoke);
 
-  wrapper.setManager(nexo).setTarget(proxyTarget, !traceable).setId(id);
+  wrapper.setManager(nexo).setTarget(proxyTarget, traceable).setId(id);
 
   // link the proxy to it's wrapper
   getProxyMap().set(proxy, wrapper);

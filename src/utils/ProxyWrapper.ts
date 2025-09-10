@@ -103,11 +103,11 @@ class ProxyWrapper implements nx.ProxyWrapper {
     return this;
   }
 
-  setTarget(target: nx.Traceable, sandbox: boolean = false): this {
+  setTarget(target: nx.Traceable, traceable: boolean = true): this {
     if (this.isRevoked) return this;
     if (isTraceable(target)) {
       this.proxyTarget = target;
-      this.isTraceable = sandbox === false;
+      this.isTraceable = traceable === true;
     }
     return this;
   }
