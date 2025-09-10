@@ -84,9 +84,7 @@ export interface NexoEvent<Target = unknown, Data = unknown> {
 export interface EventEmittable<
   Events extends Record<string, EventListener> = Record<string, EventListener>,
 > {
-  /**
-   * The internal event emitter instance responsible for managing lifecycle events.
-   */
+  /** The event emitter instance responsible for managing lifecycle events. */
   readonly events?: EventEmitter<Events>;
   /**
    * Attaches an {@link EventEmitter} to handle lifecycle events.
@@ -95,8 +93,11 @@ export interface EventEmittable<
    * @returns The current instance, for method chaining.
    */
   setEventEmitter(emitter: EventEmitter): this;
-  /** Detaches the current event emitter. */
-  removeEventEmitter(): void;
+  /** Detaches the current event emitter.
+   *
+   * * @returns The current instance, for method chaining.
+   */
+  removeEventEmitter(): this;
 }
 
 export interface EventListener {
@@ -211,16 +212,26 @@ export interface Proxy {
  * Wraps a proxy instance, manages events, and handles lifecycle operations.
  */
 export interface ProxyWrapper extends EventEmittable<ProxyEvents> {
-  /** Unique proxy wrapper ID. */
+  /** The underlying target object */
+  readonly target: Traceable;
+  /** The unique identifier for the proxy */
   readonly id: string;
-  /** The parent {@link Nexo} instance. */
-  readonly nexo: Nexo;
+  /** The proxy manager instance. */
+  readonly nexo?: Nexo;
   /** Whether the proxy has been revoked. */
   readonly revoked: boolean;
-  /** Whether the proxy was created with a {@link Traceable} object */
+  /** Whether the `proxy` was created with a custom target object */
   readonly traceable: boolean;
   /** Revokes the proxy, making it unusable. */
   revoke(): void;
+  /** Sets the proxy manager instance  */
+  setManager(manager: Nexo): this;
+  /** Removes the proxy manager instance  */
+  removeManager(): this;
+  /** Sets the underlying proxy target */
+  setTarget(target: Traceable, sandbox?: boolean): this;
+  /** Sets the unique identifier for the proxy */
+  setId(id: string): this;
 }
 
 /** Error specific to proxy operations. */

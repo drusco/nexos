@@ -1,5 +1,4 @@
 import type * as nx from "../types/Nexo.js";
-import { v4 as uuid } from "uuid";
 import getProxyMap from "./getProxyMap.js";
 import createHandlers from "../handlers/index.js";
 import ProxyWrapper from "./ProxyWrapper.js";
@@ -29,7 +28,6 @@ const createProxy = (
   // eslint-disable-next-line prefer-const
   let proxyRef: WeakRef<nx.Proxy>;
 
-  const uid = id || uuid();
   const traceable = isTraceable(target);
   const boundFunction = new Function().bind(null);
   const sandbox = Object.setPrototypeOf(boundFunction, null);
@@ -54,12 +52,9 @@ const createProxy = (
   }
 
   // create a proxy wrapper to interact with the proxy
-  const wrapper = new ProxyWrapper({
-    id: uid,
-    nexo,
-    revoke,
-    traceable,
-  });
+  const wrapper = new ProxyWrapper(revoke);
+
+  wrapper.setManager(nexo).setTarget(proxyTarget, !traceable).setId(id);
 
   // link the proxy to it's wrapper
   getProxyMap().set(proxy, wrapper);
@@ -75,15 +70,15 @@ const createProxy = (
 
   // add or update the ID to a proxy reference
 
-  nexo.entries.set(uid, proxyRef);
+  nexo.entries.set(wrapper.id, proxyRef);
 
   // create and emit a 'proxy' event to the event listeners
 
   const event = new ProxyCreateEvent({
     target: proxy,
     data: {
-      id: uid,
-      target: proxyTarget,
+      id: wrapper.id,
+      target: wrapper.target,
       result: deferred.promise,
     },
   });
@@ -97,7 +92,7 @@ const createProxy = (
       revoke();
       // remove the original proxy from the maps
       getProxyMap().delete(proxy);
-      nexo.entries.delete(uid);
+      nexo.entries.delete(wrapper.id);
       // add or update the ID to the returned proxy
       nexo.entries.set(
         getProxyMap().get(returnValue).id,
