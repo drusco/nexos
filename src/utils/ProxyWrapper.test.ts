@@ -59,4 +59,26 @@ describe("ProxyWrapper", () => {
 
     expect(wrapper.id).toBe("foo");
   });
+
+  it("allows setting an arbitrary traceable target object", () => {
+    const wrapper = new ProxyWrapper();
+    const target = [];
+
+    expect(wrapper.target).toBeUndefined();
+    expect(wrapper.traceable).toBe(false);
+
+    wrapper.setTarget(target);
+
+    expect(wrapper.target).toBe(target);
+    expect(wrapper.traceable).toBe(true);
+  });
+
+  it("allows indicating whether the target is traceable or not", () => {
+    const wrapper = new ProxyWrapper();
+
+    wrapper.setTarget([], false);
+
+    expect(wrapper.target).not.toBeUndefined();
+    expect(wrapper.traceable).toBe(false);
+  });
 });
