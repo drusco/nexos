@@ -1,5 +1,7 @@
 import type * as nx from "../types/Nexo.js";
+import isTraceable from "./isTraceable.js";
 import NexoEmitter from "./NexoEmitter.js";
+import { v4 as uuid } from "uuid";
 
 /**
  * A wrapper class that manages a proxy and its associated events.
@@ -7,88 +9,115 @@ import NexoEmitter from "./NexoEmitter.js";
  * that event listeners are triggered appropriately. It also provides the ability
  * to revoke the proxy and manage traceability.
  *
- * @example
- * const proxyWrapper = new ProxyWrapper({ id: 'proxy1', nexo: someNexoInstance, traceable: true, revoke: revokeFunction });
- * proxyWrapper.revoke(); // This will revoke the proxy.
  */
 class ProxyWrapper implements nx.ProxyWrapper {
-  /**
-   * A getter that returns whether the proxy has been revoked.
-   * This value is `true` if the proxy was revoked, otherwise `false`.
-   *
-   * @returns `true` if the proxy is revoked, `false` otherwise.
-   * @example
-   * const isRevoked = proxyWrapper.revoked; // Checks if the proxy is revoked.
-   */
   get revoked(): boolean {
     return this.isRevoked;
   }
 
-  get events(): nx.EventEmitter<nx.ProxyEvents> {
+  get events(): nx.EventEmitter<nx.ProxyEvents> | undefined {
     return this.eventEmitter;
   }
 
-  /** The unique identifier for the proxy wrapper. */
-  readonly id: string;
+  get id(): string {
+    return this.proxyId;
+  }
 
-  /** The `Nexo` instance associated with this proxy wrapper. */
-  readonly nexo: nx.Nexo;
+  get target(): nx.Traceable {
+    return this.proxyTarget;
+  }
 
-  readonly traceable: boolean;
+  get nexo(): nx.Nexo | undefined {
+    return this.managerInstance;
+  }
 
+  get traceable(): boolean {
+    return this.isTraceable;
+  }
+
+  /** The underlying target object */
+  private proxyTarget: nx.Traceable;
+
+  /** Whether the `proxy` was created with a custom target object */
+  private isTraceable: boolean = false;
+
+  /** The proxy manager associated with the proxy */
+  private managerInstance?: nx.Nexo;
+
+  /** Event emitter instance */
   private eventEmitter?: nx.EventEmitter = new NexoEmitter();
 
-  /** A private flag indicating whether the proxy has been revoked. */
+  /** Indicates whether the proxy has been revoked */
   private isRevoked: boolean = false;
 
-  /** The function responsible for revoking the proxy. */
-  private revokeProxy?: nx.FunctionLike<[], void>;
+  /** The function responsible for revoking the proxy */
+  private revokeProxy?: () => void;
+
+  /** A unique identifier for the proxy */
+  private proxyId: string = uuid();
 
   /**
    * Creates an instance of `ProxyWrapper`.
    * This constructor initializes the wrapper with the provided data and sets up
    * the proxy's traceability.
    *
-   * @param data - The data for initializing the proxy wrapper, including `id`, `nexo`, `traceable` flag, and `revoke` function.
+   * @param data - The data for initializing the proxy wrapper, `revoke` function.
    * @example
-   * const proxyWrapper = new ProxyWrapper({ id: 'proxy1', nexo: someNexoInstance, traceable: true, revoke: revokeFunction });
+   * const proxyWrapper = new ProxyWrapper({});
    * // Initializes the ProxyWrapper instance.
    */
-  constructor(data: {
-    id: string;
-    nexo: nx.Nexo;
-    traceable: boolean;
-    revoke: nx.FunctionLike<[], void>;
-  }) {
-    const { id, nexo, revoke, traceable } = data;
-
-    this.id = id;
-    this.nexo = nexo;
-    this.revokeProxy = revoke;
-    this.traceable = traceable;
+  constructor(revoke?: () => void) {
+    if (typeof revoke === "function") {
+      this.revokeProxy = revoke;
+    }
   }
 
-  /**
-   * Revokes the proxy, triggering the revoke function and marking the proxy as revoked.
-   * Once revoked, the proxy can no longer be used for its original operations.
-   *
-   * @example
-   * proxyWrapper.revoke(); // Revokes the proxy and prevents further use.
-   */
   revoke(): void {
-    if (!this.revokeProxy) return;
-    this.revokeProxy();
-    delete this.revokeProxy;
+    if (this.isRevoked) return;
+    if (typeof this.revokeProxy === "function") {
+      this.revokeProxy();
+      this.revokeProxy = undefined;
+    }
     this.isRevoked = true;
   }
 
   setEventEmitter(emitter: nx.EventEmitter): this {
+    if (this.isRevoked) return this;
     this.eventEmitter = emitter;
     return this;
   }
 
-  removeEventEmitter(): void {
+  removeEventEmitter(): this {
     this.eventEmitter = undefined;
+    return this;
+  }
+
+  setManager(manager: nx.Nexo): this {
+    if (this.isRevoked) return this;
+    this.managerInstance = manager;
+    return this;
+  }
+
+  removeManager(): this {
+    this.managerInstance = undefined;
+    return this;
+  }
+
+  setTarget(target: nx.Traceable, sandbox: boolean = false): this {
+    if (this.isRevoked) return this;
+    if (isTraceable(target)) {
+      this.proxyTarget = target;
+      this.isTraceable = sandbox === false;
+    }
+    return this;
+  }
+
+  setId(id: string): this {
+    if (this.isRevoked) return this;
+    if (typeof id === "string" && id.length) {
+      this.proxyId = id;
+    }
+    return this;
   }
 }
 

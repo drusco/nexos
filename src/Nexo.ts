@@ -111,8 +111,9 @@ class Nexo implements nx.Nexo {
     return this;
   }
 
-  removeEventEmitter(): void {
+  removeEventEmitter(): this {
     this.eventEmitter = undefined;
+    return this;
   }
 }
 

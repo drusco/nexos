@@ -132,8 +132,9 @@ class NexoMap<T extends nx.Traceable>
   /**
    * Removes the event emitter. After this call, no events will be emitted.
    */
-  removeEventEmitter(): void {
+  removeEventEmitter(): this {
     this.eventEmitter = undefined;
+    return this;
   }
 }
 

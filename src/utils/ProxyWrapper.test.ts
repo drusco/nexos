@@ -3,26 +3,60 @@ import NexoEmitter from "../utils/NexoEmitter.js";
 import ProxyWrapper from "./ProxyWrapper.js";
 
 describe("ProxyWrapper", () => {
-  it("Access the proxy details", () => {
-    const nexo = new Nexo();
-    const proxy = nexo.use("foo");
-    const wrapper = Nexo.wrap(proxy);
+  it("creates a wrapper that provides access to proxy metadata", () => {
+    const wrapper = new ProxyWrapper();
 
-    expect(wrapper).toBeInstanceOf(ProxyWrapper);
-    expect(wrapper.events).toBeInstanceOf(NexoEmitter);
-    expect(wrapper.id).toBe("foo");
-    expect(wrapper.nexo).toBe(nexo);
+    expect(typeof wrapper.id).toBe("string");
+
+    expect(typeof wrapper.revoke).toBe("function");
+    expect(typeof wrapper.setEventEmitter).toBe("function");
+    expect(typeof wrapper.removeEventEmitter).toBe("function");
+    expect(typeof wrapper.setManager).toBe("function");
+    expect(typeof wrapper.setTarget).toBe("function");
+    expect(typeof wrapper.setId).toBe("function");
+
     expect(wrapper.revoked).toBe(false);
+    expect(wrapper.traceable).toBe(false);
+    expect(wrapper.target).toBeUndefined();
+    expect(wrapper.nexo).toBeUndefined();
+    expect(wrapper.events).toBeInstanceOf(NexoEmitter);
   });
 
-  it("Can revoke a proxy", () => {
-    const nexo = new Nexo();
-    const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+  it("allows to revoke the proxy", () => {
+    const wrapper = new ProxyWrapper();
+    wrapper.revoke();
+
+    expect(wrapper.revoked).toBe(true);
+  });
+
+  it("allows passing a function to be called on proxy revocation", () => {
+    const revoke = jest.fn();
+    const wrapper = new ProxyWrapper(revoke);
 
     wrapper.revoke();
 
-    expect(proxy).toThrow();
+    expect(revoke).toHaveBeenCalledTimes(1);
+    expect(revoke).toHaveBeenCalledWith();
     expect(wrapper.revoked).toBe(true);
+  });
+
+  it("allows setting and removing a proxy manager instance", () => {
+    const wrapper = new ProxyWrapper();
+    const nexo = new Nexo();
+
+    wrapper.setManager(nexo);
+
+    expect(wrapper.nexo).toBe(nexo);
+
+    wrapper.removeManager();
+
+    expect(wrapper.nexo).toBeUndefined();
+  });
+
+  it("allows setting a custom identifier", () => {
+    const wrapper = new ProxyWrapper();
+    wrapper.setId("foo");
+
+    expect(wrapper.id).toBe("foo");
   });
 });
