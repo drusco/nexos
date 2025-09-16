@@ -1,10 +1,11 @@
 import type * as nx from "./types/Nexo.js";
-import createProxy from "./utils/createProxy.js";
 import NexoMap from "./utils/NexoMap.js";
 import NexoEmitter from "./utils/NexoEmitter.js";
 import isProxy from "./utils/isProxy.js";
 import isTraceable from "./utils/isTraceable.js";
 import getProxyWrapper from "./utils/getProxyWrapper.js";
+import getProxy from "./utils/getProxy.js";
+import emitProxy from "./utils/emitProxy.js";
 
 /**
  * Represents a proxy factory for creating and managing proxy objects.
@@ -84,7 +85,16 @@ class Nexo implements nx.Nexo {
       if (proxy) return proxy;
     }
 
-    return createProxy(this, target, id);
+    const proxy = getProxy(target);
+    const wrapper = getProxyWrapper(proxy);
+
+    wrapper.setManager(this).setId(id);
+
+    const finalProxy = emitProxy(proxy);
+
+    this.entries.set(wrapper.id, new WeakRef(finalProxy));
+
+    return finalProxy;
   }
 
   /**
@@ -109,7 +119,16 @@ class Nexo implements nx.Nexo {
    * console.log(proxy1 === proxy2); // false
    */
   create(target?: nx.Traceable): nx.Proxy {
-    return createProxy(this, target);
+    const proxy = getProxy(target);
+    const wrapper = getProxyWrapper(proxy);
+
+    wrapper.setManager(this);
+
+    const finalProxy = emitProxy(proxy);
+
+    this.entries.set(wrapper.id, new WeakRef(finalProxy));
+
+    return finalProxy;
   }
 
   setEventEmitter(emitter: nx.EventEmitter): this {

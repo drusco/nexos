@@ -1,7 +1,7 @@
 import type * as nx from "../types/Nexo.js";
-import getProxyMap from "./getProxyMap.js";
 import getProxy from "./getProxy.js";
 import emitProxy from "./emitProxy.js";
+import getProxyWrapper from "./getProxyWrapper.js";
 
 const createProxy = (
   nexo: nx.Nexo,
@@ -11,8 +11,7 @@ const createProxy = (
 ): nx.Proxy => {
   const proxy = getProxy(target);
   const proxyRef = new WeakRef(proxy);
-  const proxyMap = getProxyMap();
-  const wrapper = proxyMap.get(proxy);
+  const wrapper = getProxyWrapper(proxy);
 
   wrapper.setManager(nexo).setId(id);
 
