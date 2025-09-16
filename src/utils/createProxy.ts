@@ -27,7 +27,6 @@ const createProxy = (
   const proxy = getProxy(target);
   const proxyRef = new WeakRef(proxy);
   const proxyMap = getProxyMap();
-  const deferred = createDeferred<nx.FunctionLike<[], nx.Proxy>>();
   const wrapper = proxyMap.get(proxy);
 
   wrapper.setManager(nexo).setId(id);
@@ -38,7 +37,7 @@ const createProxy = (
     //   2. Are not exposed to the nexo instance.
     // This ensures they remain opaque and cannot be traced back.
 
-    return resolveWith(deferred.resolve, proxy);
+    return proxy;
   }
 
   // add or update the ID to a proxy reference
@@ -46,6 +45,8 @@ const createProxy = (
   nexo.entries.set(wrapper.id, proxyRef);
 
   // create and emit a 'proxy' event to the event listeners
+
+  const deferred = createDeferred<nx.FunctionLike<[], nx.Proxy>>();
 
   const event = new ProxyCreateEvent({
     target: proxy,
