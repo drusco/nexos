@@ -1,6 +1,6 @@
 import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "./ProxyEvent.js";
-import getProxyMap from "../utils/getProxyMap.js";
+import getProxyWrapper from "../utils/getProxyWrapper.js";
 
 class ProxyIsExtensibleEvent
   extends ProxyEvent<nx.ProxyIsExtensibleEvent["data"]>
@@ -25,7 +25,7 @@ class ProxyIsExtensibleEvent
     super("isExtensible", options);
 
     // Retrieve the wrapper for the proxy
-    const wrapper = getProxyMap().get(options.target);
+    const wrapper = getProxyWrapper(options.target);
     // Emit the proxy event to its listeners on the 'nexo' emitter
     wrapper?.nexo?.events?.emit("proxy.isExtensible", this);
     // Emit the proxy event to its listeners on the wrapper's event emitter
