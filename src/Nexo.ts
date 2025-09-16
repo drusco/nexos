@@ -131,6 +131,10 @@ class Nexo implements nx.Nexo {
     return finalProxy;
   }
 
+  createPrivate(target?: nx.Traceable): nx.Proxy {
+    return getProxy(target);
+  }
+
   setEventEmitter(emitter: nx.EventEmitter): this {
     this.eventEmitter = emitter;
     return this;
