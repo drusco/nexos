@@ -44,14 +44,17 @@ describe("Nexo", () => {
     });
   });
 
-  it("Creates a proxy by name with optional target", () => {
+  it("Creates a proxy by id with optional target", () => {
     const nexo = new Nexo();
     const target = {};
     const proxy = nexo.use("foo", target);
+    const sameProxy = nexo.use("foo");
     const wrapper = Nexo.wrap(proxy);
 
     expect(wrapper.id).toBe("foo");
     expect(nexo.entries.has("foo")).toBe(true);
+    expect(nexo.entries.get("foo").deref()).toBe(proxy);
+    expect(sameProxy).toBe(proxy);
   });
 
   it("Updates the proxy target", () => {

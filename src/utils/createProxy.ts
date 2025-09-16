@@ -11,19 +11,6 @@ const createProxy = (
   id?: string,
   anonymous: boolean = false,
 ): nx.Proxy => {
-  // Return existing proxy
-  if (isProxy(target)) {
-    return target;
-  }
-
-  // Return proxy used by the ID
-  if (!target && nexo.entries.has(id)) {
-    const proxy = nexo.entries.get(id)?.deref();
-    if (proxy) return proxy;
-  }
-
-  // create new proxy
-
   const proxy = getProxy(target);
   const proxyRef = new WeakRef(proxy);
   const proxyMap = getProxyMap();
@@ -62,13 +49,18 @@ const createProxy = (
     const { returnValue } = event;
 
     if (isProxy(returnValue) && returnValue !== proxy) {
+      // get the new proxy wrapper
+      const returnedProxyWrapper = proxyMap.get(returnValue);
       // revoke the original proxy in the event
       wrapper.revoke();
       // remove the original proxy from the maps
       proxyMap.delete(proxy);
-      nexo.entries.delete(wrapper.id);
+      returnedProxyWrapper?.nexo?.entries.delete(wrapper.id);
       // add or update the ID to the returned proxy
-      nexo.entries.set(proxyMap.get(returnValue).id, new WeakRef(returnValue));
+      returnedProxyWrapper?.nexo?.entries.set(
+        proxyMap.get(returnValue).id,
+        new WeakRef(returnValue),
+      );
 
       // return a different proxy object
       return resolveWith(deferred.resolve, returnValue);

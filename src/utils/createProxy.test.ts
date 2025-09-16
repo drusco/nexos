@@ -15,16 +15,6 @@ describe("createProxy", () => {
     expect(createProxy(nexo, proxyWithTarget)).toBe(proxyWithTarget);
   });
 
-  it("returns an existing proxy by its id when the target is falsy", () => {
-    const nexo = new Nexo();
-    const proxy = createProxy(nexo, null, "foo");
-    const sameProxy = createProxy(nexo, undefined, "foo");
-
-    expect(sameProxy).toBe(proxy);
-    expect(nexo.entries.size).toBe(1);
-    expect(nexo.entries.get("foo").deref()).toBe(proxy);
-  });
-
   it("creates a sandboxed proxy", () => {
     const nexo = new Nexo();
     const proxy = createProxy(nexo);

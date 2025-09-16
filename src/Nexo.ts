@@ -78,6 +78,12 @@ class Nexo implements nx.Nexo {
    */
 
   use(id: string, target?: nx.Traceable): nx.Proxy {
+    // Return proxy used by the ID
+    if (!target && this.entries.has(id)) {
+      const proxy = this.entries.get(id)?.deref();
+      if (proxy) return proxy;
+    }
+
     return createProxy(this, target, id);
   }
 
