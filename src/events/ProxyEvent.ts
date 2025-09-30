@@ -2,6 +2,24 @@ import NexoEvent from "./NexoEvent.js";
 import getProxyMap from "../utils/getProxyMap.js";
 
 /**
+ * Names of the built-in {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy#handler_functions | Proxy handler traps}.
+ */
+type HandlerNames =
+  | "get"
+  | "has"
+  | "deleteProperty"
+  | "getOwnPropertyDescriptor"
+  | "set"
+  | "defineProperty"
+  | "apply"
+  | "construct"
+  | "getPrototypeOf"
+  | "isExtensible"
+  | "ownKeys"
+  | "preventExtensions"
+  | "setPrototypeOf";
+
+/**
  * Represents an event triggered by a proxy.
  */
 class ProxyEvent<Data = unknown>
@@ -23,7 +41,7 @@ class ProxyEvent<Data = unknown>
    * const proxyEvent = new ProxyEvent('get', { target: proxy, data: "example" });
    */
   constructor(
-    name: nx.ProxyHandler,
+    name: HandlerNames,
     options?: {
       data?: Data;
       target: nx.Proxy;

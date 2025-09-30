@@ -23,24 +23,6 @@ declare global {
     type resolveProxy = FunctionLike<[], Proxy | undefined>;
 
     /**
-     * Names of the built-in {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy#handler_functions | Proxy handler traps}.
-     */
-    type ProxyHandler =
-      | "get"
-      | "has"
-      | "deleteProperty"
-      | "getOwnPropertyDescriptor"
-      | "set"
-      | "defineProperty"
-      | "apply"
-      | "construct"
-      | "getPrototypeOf"
-      | "isExtensible"
-      | "ownKeys"
-      | "preventExtensions"
-      | "setPrototypeOf";
-
-    /**
      * A specialized map that stores weak references to {@link Traceable} values,
      * with built-in event emitting capabilities.
      *

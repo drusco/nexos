@@ -15,7 +15,7 @@ import emitProxy from "./utils/emitProxy.js";
  * It emits the following events:
  * - `proxy`: Fired whenever a new proxy is created.
  * - `error`: Fired when an error occurs.
- * - `proxy.handler`: Fired when any proxy **{@link nx.ProxyHandler | handler}** function is invoked.
+ * - `proxy.handler`: Fired when any proxy handler function is invoked.
  * - `proxy.error`: Fired when a proxy operation fails.
  *
  * @example
