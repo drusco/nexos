@@ -6,7 +6,7 @@ import ProxyError from "./ProxyError.js";
  *
  * @remarks
  * This method wraps a proxy object and allows interaction with the proxy's events and properties.
- * Proxy-related events follow the format `proxy.handler`, where the **{@link nx.ProxyHandler | handler}** corresponds to one of the standard proxy handler functions such as `apply`, `construct`, `get`, etc.
+ * Proxy-related events follow the format `proxy.handler`, where the handler corresponds to one of the standard proxy handler functions such as `apply`, `construct`, `get`, etc.
  *
  * @example
  * // Wrapping an existing proxy and listening to 'proxy.get' event
