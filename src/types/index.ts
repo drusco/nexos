@@ -1,2 +1,2 @@
 import "./main.js";
-import "./proxy.js";
+import "./Proxy.js";
