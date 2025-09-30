@@ -17,7 +17,7 @@ declare global {
        * @param listener - The function to invoke when the event is emitted.
        * @returns The current emitter instance, for method chaining.
        */
-      on<Name extends keyof Events>(
+      on<Name extends Extract<keyof Events, string>>(
         event: Name,
         listener: (...args: Events[Name]["args"]) => Events[Name]["result"],
       ): this;
@@ -31,7 +31,7 @@ declare global {
        * @param listener - The listener function to remove.
        * @returns The current emitter instance, for method chaining.
        */
-      off<Name extends keyof Events>(
+      off<Name extends Extract<keyof Events, string>>(
         event: Name,
         listener: (...args: Events[Name]["args"]) => Events[Name]["result"],
       ): this;
@@ -45,12 +45,10 @@ declare global {
        * @param data - The arguments passed to the listeners.
        * @returns `true` if one or more listeners were invoked, `false` otherwise.
        */
-      emit<Name extends keyof Events>(
+      emit<Name extends Extract<keyof Events, string>>(
         event: Name,
         ...data: Events[Name]["args"]
       ): boolean;
-
-      emit(event: string, ...data: unknown[]): boolean;
     }
   }
 }
