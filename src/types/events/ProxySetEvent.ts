@@ -1,0 +1,20 @@
+declare global {
+  namespace nx {
+    /** Fired when a property is set on the proxy. */
+    interface ProxySetEvent extends ProxyEvent {
+      readonly returnValue: unknown;
+      readonly data: {
+        /** Target object. */
+        readonly target: Traceable;
+        /** Property key being set. */
+        readonly property: ObjectKey;
+        /** New value being assigned. */
+        readonly value: unknown;
+        /** Whether the set succeeded. */
+        readonly result: Promise<FunctionLike<[], boolean>>;
+      };
+    }
+  }
+}
+
+export {};
