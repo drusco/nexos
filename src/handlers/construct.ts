@@ -1,4 +1,3 @@
-import type * as nx from "../types/Nexo.js";
 import ProxyConstructEvent from "../events/ProxyConstructEvent.js";
 import ProxyError from "../utils/ProxyError.js";
 import Nexo from "../Nexo.js";
@@ -21,7 +20,7 @@ import getProxyMap from "../utils/getProxyMap.js";
  *
  */
 export default function construct(resolveProxy: nx.resolveProxy) {
-  return (target: nx.FunctionLike, args: nx.ArrayLike): object => {
+  return (target: nx.FunctionLike, args: unknown[]): object => {
     const proxy = resolveProxy();
     const { nexo, traceable } = getProxyMap().get(proxy);
     const deferred = createDeferred<nx.FunctionLike<[], object>>();

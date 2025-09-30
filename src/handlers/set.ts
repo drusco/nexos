@@ -1,4 +1,3 @@
-import type * as nx from "../types/Nexo.js";
 import ProxySetEvent from "../events/ProxySetEvent.js";
 import ProxyError from "../utils/ProxyError.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";

@@ -1,4 +1,3 @@
-import type * as nx from "../types/Nexo.js";
 import apply from "./apply.js";
 import construct from "./construct.js";
 import defineProperty from "./defineProperty.js";

@@ -1,5 +1,6 @@
 // types
-export type * from "./types/Nexo.js";
+import "./types/index.js";
+export type { nx };
 // main
 import Nexo from "./Nexo.js";
 // utils

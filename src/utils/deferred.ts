@@ -1,5 +1,3 @@
-import type * as nx from "../types/Nexo.js";
-
 export function createDeferred<T = unknown>() {
   let resolve!: (value: T) => void;
   let reject!: (reason?: Error) => void;

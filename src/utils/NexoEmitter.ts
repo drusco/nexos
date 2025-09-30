@@ -1,5 +1,3 @@
-import type * as nx from "../types/Nexo.js";
-
 /**
  * A minimal, synchronous event emitter.
  *

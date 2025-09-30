@@ -1,4 +1,3 @@
-import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import ProxyError from "../utils/ProxyError.js";
 

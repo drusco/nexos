@@ -1,5 +1,3 @@
-import * as nx from "../types/Nexo.js";
-
 /**
  * Determines whether the given value is a {@link nx.Traceable | Traceable} entity.
  *

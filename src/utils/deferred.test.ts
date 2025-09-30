@@ -1,4 +1,3 @@
-import type * as nx from "../types/Nexo.js";
 import { createDeferred, resolveWith, rejectWith } from "./deferred.js";
 
 describe("deferred", () => {

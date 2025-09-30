@@ -1,5 +1,3 @@
-import type * as nx from "../types/Nexo.js";
-
 /**
  * Represents an event with additional properties and methods for managing event behavior.
  * This class allows for the specification of event data and target and provides
