@@ -1,6 +1,6 @@
 import Nexo from "../Nexo.js";
 import ProxyError from "../utils/ProxyError.js";
-import ProxyApplyEvent from "../events/ProxyApplyEvent.js";
+import ProxyEvent from "../events/ProxyEvent.js";
 
 describe("Apply Handler", () => {
   it("emits 'proxy.apply' event with correct data and result promise", async () => {
@@ -21,7 +21,7 @@ describe("Apply Handler", () => {
     const getResultFn = await applyEvent.data.result;
 
     expect(applyListener).toHaveBeenCalledTimes(2);
-    expect(applyEvent).toBeInstanceOf(ProxyApplyEvent);
+    expect(applyEvent).toBeInstanceOf(ProxyEvent);
     expect(applyEvent.target).toBe(proxy);
     expect(applyEvent.cancelable).toBe(true);
     expect(applyEvent.data.thisArg).toBe(thisArg);
