@@ -1,4 +1,3 @@
-import type * as nx from "../types/Nexo.js";
 import getProxyMap from "./getProxyMap.js";
 import createHandlers from "../handlers/index.js";
 import ProxyWrapper from "./ProxyWrapper.js";

@@ -1,4 +1,3 @@
-import type * as nx from "../types/Nexo.js";
 import NexoEmitter from "../utils/NexoEmitter.js";
 import NexoEvent from "../events/NexoEvent.js";
 

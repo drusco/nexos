@@ -1,4 +1,3 @@
-import type * as nx from "../types/Nexo.js";
 import NexoEvent from "./NexoEvent.js";
 import getProxyMap from "../utils/getProxyMap.js";
 

@@ -1,4 +1,3 @@
-import type * as nx from "./types/Nexo.js";
 import NexoMap from "./utils/NexoMap.js";
 import NexoEmitter from "./utils/NexoEmitter.js";
 import isProxy from "./utils/isProxy.js";

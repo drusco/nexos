@@ -1,4 +1,3 @@
-import type * as nx from "../types/Nexo.js";
 import isProxy from "./isProxy.js";
 import getProxyMap from "./getProxyMap.js";
 import { createDeferred, resolveWith } from "./deferred.js";

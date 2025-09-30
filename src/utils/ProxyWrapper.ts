@@ -1,4 +1,3 @@
-import type * as nx from "../types/Nexo.js";
 import isTraceable from "./isTraceable.js";
 import NexoEmitter from "./NexoEmitter.js";
 import { v4 as uuid } from "uuid";
