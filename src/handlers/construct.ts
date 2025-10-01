@@ -1,8 +1,8 @@
-import ProxyConstructEvent from "../events/ProxyConstructEvent.js";
+import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../utils/ProxyError.js";
 import Nexo from "../Nexo.js";
 import { createDeferred, resolveWith, rejectWith } from "../utils/deferred.js";
-import getProxyMap from "../utils/getProxyMap.js";
+import getProxyWrapper from "../utils/getProxyWrapper.js";
 
 /**
  * Creates a `construct` trap handler for a Proxy, enabling interception and custom handling
@@ -22,17 +22,23 @@ import getProxyMap from "../utils/getProxyMap.js";
 export default function construct(resolveProxy: nx.resolveProxy) {
   return (target: nx.FunctionLike, args: unknown[]): object => {
     const proxy = resolveProxy();
-    const { nexo, traceable } = getProxyMap().get(proxy);
+    const wrapper = getProxyWrapper(proxy);
+    const { nexo, traceable } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], object>>();
 
-    const event = new ProxyConstructEvent({
+    const event = new ProxyEvent("construct", {
       target: proxy,
       data: {
         target,
         args,
         result: deferred.promise,
       },
-    });
+    }) as nx.ProxyConstructEvent;
+
+    // Emit the proxy event to its listeners on the 'nexo' emitter
+    wrapper?.nexo?.events?.emit("proxy.construct", event);
+    // Emit the proxy event to its listeners on the wrapper's event emitter
+    wrapper?.events?.emit("proxy.construct", event);
 
     if (event.defaultPrevented) {
       if (Nexo.isTraceable(event.returnValue)) {

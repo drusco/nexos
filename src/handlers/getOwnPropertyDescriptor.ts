@@ -1,5 +1,6 @@
-import ProxyGetOwnPropertyDescriptorEvent from "../events/ProxyGetOwnPropertyDescriptorEvent.js";
+import ProxyEvent from "../events/ProxyEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
+import getProxyWrapper from "../utils/getProxyWrapper.js";
 import ProxyError from "../utils/ProxyError.js";
 
 /**
@@ -12,20 +13,27 @@ export default function getOwnPropertyDescriptor(
 ) {
   return (target: nx.Traceable, property: nx.ObjectKey): PropertyDescriptor => {
     const proxy = resolveProxy();
+    const wrapper = getProxyWrapper(proxy);
     const deferred = createDeferred<nx.FunctionLike<[], PropertyDescriptor>>();
     const descriptor = Reflect.getOwnPropertyDescriptor(target, property);
 
-    const event = new ProxyGetOwnPropertyDescriptorEvent({
+    const event = new ProxyEvent("getOwnPropertyDescriptor", {
       target: proxy,
       data: {
         target,
         property,
         result: deferred.promise,
       },
-    });
+    }) as nx.ProxyGetOwnPropertyDescriptorEvent;
+
+    // Emit the proxy event to its listeners on the 'nexo' emitter
+    wrapper?.nexo?.events?.emit("proxy.getOwnPropertyDescriptor", event);
+    // Emit the proxy event to its listeners on the wrapper's event emitter
+    wrapper?.events?.emit("proxy.getOwnPropertyDescriptor", event);
 
     if (event.defaultPrevented) {
       const returnValue = event.returnValue;
+
       if (
         returnValue !== undefined &&
         (returnValue === null || typeof returnValue !== "object")
@@ -39,7 +47,7 @@ export default function getOwnPropertyDescriptor(
         );
       }
 
-      return resolveWith(deferred.resolve, returnValue);
+      return resolveWith(deferred.resolve, returnValue || undefined);
     }
 
     return resolveWith(deferred.resolve, descriptor);

@@ -1,5 +1,6 @@
-import ProxyHasEvent from "../events/ProxyHasEvent.js";
+import ProxyEvent from "../events/ProxyEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
+import getProxyWrapper from "../utils/getProxyWrapper.js";
 import ProxyError from "../utils/ProxyError.js";
 
 /**
@@ -21,16 +22,22 @@ import ProxyError from "../utils/ProxyError.js";
 export default function has(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable, property: nx.ObjectKey): boolean => {
     const proxy = resolveProxy();
+    const wrapper = getProxyWrapper(proxy);
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
 
-    const event = new ProxyHasEvent({
+    const event = new ProxyEvent("has", {
       target: proxy,
       data: {
         target,
         property,
         result: deferred.promise,
       },
-    });
+    }) as nx.ProxyHasEvent;
+
+    // Emit the proxy event to its listeners on the 'nexo' emitter
+    wrapper?.nexo?.events?.emit("proxy.has", event);
+    // Emit the proxy event to its listeners on the wrapper's event emitter
+    wrapper?.events?.emit("proxy.has", event);
 
     if (event.defaultPrevented) {
       if (typeof event.returnValue !== "boolean") {

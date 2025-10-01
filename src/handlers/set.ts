@@ -1,6 +1,7 @@
-import ProxySetEvent from "../events/ProxySetEvent.js";
+import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../utils/ProxyError.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
+import getProxyWrapper from "../utils/getProxyWrapper.js";
 
 /**
  * Trap for handling `set` operations on the proxy.
@@ -25,10 +26,11 @@ export default function set(resolveProxy: nx.resolveProxy) {
     value: unknown,
   ): boolean => {
     const proxy = resolveProxy();
+    const wrapper = getProxyWrapper(proxy);
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
     let finalValue = value;
 
-    const event = new ProxySetEvent({
+    const event = new ProxyEvent("set", {
       target: proxy,
       data: {
         target,
@@ -36,7 +38,12 @@ export default function set(resolveProxy: nx.resolveProxy) {
         value,
         result: deferred.promise,
       },
-    });
+    }) as nx.ProxySetEvent;
+
+    // Emit the proxy event to its listeners on the 'nexo' emitter
+    wrapper?.nexo?.events?.emit("proxy.set", event);
+    // Emit the proxy event to its listeners on the wrapper's event emitter
+    wrapper?.events?.emit("proxy.set", event);
 
     if (event.defaultPrevented) {
       finalValue = event.returnValue;
