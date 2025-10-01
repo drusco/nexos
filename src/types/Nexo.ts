@@ -3,7 +3,7 @@ declare global {
     /**
      * Proxy factory and manager.
      */
-    interface Nexo extends EventEmittable<NexoEvents & ProxyEvents> {
+    interface Nexo extends EventEmittable<Events & ProxyEvents> {
       /** Weak reference map of active proxies. */
       readonly entries: TraceableMap<Proxy>;
       /**

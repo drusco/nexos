@@ -1,4 +1,4 @@
-import NexoEvent from "../events/NexoEvent.js";
+import Event from "../events/Event.js";
 import NexoEmitter from "./NexoEmitter.js";
 
 /**
@@ -31,7 +31,7 @@ class NexoMap<T extends nx.Traceable>
     const removed = super.delete(key);
 
     if (this.eventEmitter) {
-      const event = new NexoEvent("delete", {
+      const event = new Event("delete", {
         target: this,
         cancelable: false,
         data: { key, released },
@@ -69,7 +69,7 @@ class NexoMap<T extends nx.Traceable>
     super.set(key, value);
 
     if (this.eventEmitter) {
-      const event = new NexoEvent("set", {
+      const event = new Event("set", {
         target: this,
         cancelable: false,
         data: { key, value },
@@ -97,7 +97,7 @@ class NexoMap<T extends nx.Traceable>
     super.clear();
 
     if (this.eventEmitter) {
-      const event = new NexoEvent("clear", {
+      const event = new Event("clear", {
         cancelable: false,
         target: this,
       });

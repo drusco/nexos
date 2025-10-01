@@ -1,7 +1,7 @@
 declare global {
   namespace nx {
     /** Map of event names to data for {@link Nexo} events. */
-    type NexoEvents = {
+    type Events = {
       proxy: {
         args: [ProxyCreateEvent];
         result: ProxyCreateEvent["returnValue"];

@@ -7,11 +7,11 @@
  * @typeParam Data - The type of data associated with the event (default: `unknown`).
  *
  * @example
- * const event = new NexoEvent('proxy', { data: { message: 'New proxy created!' }, cancelable: true });
+ * const event = new Event('proxy', { data: { message: 'New proxy created!' }, cancelable: true });
  * event.preventDefault();
  */
-class NexoEvent<Target = unknown, Data = unknown>
-  implements nx.NexoEvent<Target, Data>
+class Event<Target = unknown, Data = unknown>
+  implements nx.Event<Target, Data>
 {
   /** The name of the event. */
   readonly name: string;
@@ -35,7 +35,7 @@ class NexoEvent<Target = unknown, Data = unknown>
   private _defaultPrevented: boolean;
 
   /**
-   * Creates an instance of the `NexoEvent`.
+   * Creates an instance of the `Event`.
    *
    * @param name - The name of the event.
    * @param options - Options to configure the event (e.g., `data`, `target`, `cancelable`).
@@ -44,7 +44,7 @@ class NexoEvent<Target = unknown, Data = unknown>
    * @param options.cancelable - A boolean flag indicating whether the event can be canceled (default: `false`).
    *
    * @example
-   * const event = new NexoEvent('proxy', { data: { message: 'New proxy created!' }, cancelable: true });
+   * const event = new Event('proxy', { data: { message: 'New proxy created!' }, cancelable: true });
    */
   constructor(
     name: string,
@@ -67,7 +67,7 @@ class NexoEvent<Target = unknown, Data = unknown>
    * If the event is not cancelable, this method has no effect.
    *
    * @example
-   * const event = new NexoEvent('proxy', { cancelable: true });
+   * const event = new Event('proxy', { cancelable: true });
    * event.preventDefault(); // Prevents the default behavior
    */
   preventDefault(): void {
@@ -82,7 +82,7 @@ class NexoEvent<Target = unknown, Data = unknown>
    * @returns `true` if the default behavior has been prevented; otherwise `false`.
    *
    * @example
-   * const event = new NexoEvent('proxy', { cancelable: true });
+   * const event = new Event('proxy', { cancelable: true });
    * event.preventDefault();
    * console.log(event.defaultPrevented); // true
    */
@@ -91,4 +91,4 @@ class NexoEvent<Target = unknown, Data = unknown>
   }
 }
 
-export default NexoEvent;
+export default Event;

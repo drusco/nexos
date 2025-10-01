@@ -6,7 +6,7 @@ declare global {
      * @typeParam Target - Event target type.
      * @typeParam Data - Event data type.
      */
-    interface NexoEvent<Target = unknown, Data = unknown> {
+    interface Event<Target = unknown, Data = unknown> {
       /** Event name. */
       readonly name: string;
       /** Event payload data. */

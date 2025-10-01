@@ -21,7 +21,7 @@ import emitProxy from "./utils/emitProxy.js";
  * @example
  * // Example of listening to 'proxy' event every time a new proxy is created.
  * const nexo = new Nexo();
- * const listener = (event: NexoEvent) => {};
+ * const listener = (event: Event) => {};
  *
  * nexo.events.on('proxy', listener);
  *
@@ -43,7 +43,7 @@ class Nexo implements nx.Nexo {
 
   private eventEmitter?: nx.EventEmitter = new NexoEmitter();
 
-  get events(): nx.EventEmitter<nx.ProxyEvents & nx.NexoEvents> {
+  get events(): nx.EventEmitter<nx.ProxyEvents & nx.Events> {
     return this.eventEmitter;
   }
 

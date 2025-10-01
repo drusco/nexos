@@ -1,7 +1,7 @@
 import NexoEmitter from "./utils/NexoEmitter.js";
 import Nexo from "./Nexo.js";
 import NexoMap from "./utils/NexoMap.js";
-import NexoEvent from "./events/NexoEvent.js";
+import Event from "./events/Event.js";
 
 describe("Nexo", () => {
   it("Creates a new nexo object", () => {
@@ -33,7 +33,7 @@ describe("Nexo", () => {
     const [proxyEvent]: [nx.ProxyCreateEvent] = listener.mock.lastCall;
 
     expect(listener).toHaveBeenCalledTimes(1);
-    expect(proxyEvent).toBeInstanceOf(NexoEvent);
+    expect(proxyEvent).toBeInstanceOf(Event);
     expect(proxyEvent.target).toBe(proxy);
     expect(proxyEvent.name).toBe("proxy");
     expect(proxyEvent.data).toStrictEqual({

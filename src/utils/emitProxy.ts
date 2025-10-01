@@ -1,7 +1,7 @@
 import isProxy from "./isProxy.js";
 import getProxyMap from "./getProxyMap.js";
 import { createDeferred, resolveWith } from "./deferred.js";
-import NexoEvent from "../events/NexoEvent.js";
+import Event from "../events/Event.js";
 
 const emitProxy = (proxy: nx.Proxy): nx.Proxy => {
   if (!isProxy(proxy)) return;
@@ -10,7 +10,7 @@ const emitProxy = (proxy: nx.Proxy): nx.Proxy => {
   const proxyMap = getProxyMap();
   const wrapper = proxyMap.get(proxy);
 
-  const event = new NexoEvent("proxy", {
+  const event = new Event("proxy", {
     target: proxy,
     data: {
       id: wrapper.id,

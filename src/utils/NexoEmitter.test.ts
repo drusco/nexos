@@ -1,9 +1,9 @@
 import NexoEmitter from "../utils/NexoEmitter.js";
-import NexoEvent from "../events/NexoEvent.js";
+import Event from "../events/Event.js";
 
 type TestEvents = {
   customError: { args: [Error] };
-  test: { args: [nx.NexoEvent] };
+  test: { args: [nx.Event] };
   error: { args: [Error] };
 };
 
@@ -23,7 +23,7 @@ describe("NexoEmitter", () => {
       throw new Error(errorMessage);
     });
 
-    emitter.emit("test", new NexoEvent("test"));
+    emitter.emit("test", new Event("test"));
 
     const [error]: [Error] = errorListener.mock.lastCall;
 
@@ -37,7 +37,7 @@ describe("NexoEmitter", () => {
 
     emitter.on("test", listener);
     emitter.off("test", listener);
-    emitter.emit("test", new NexoEvent("test"));
+    emitter.emit("test", new Event("test"));
 
     expect(listener).not.toHaveBeenCalled();
   });
@@ -62,30 +62,30 @@ describe("NexoEmitter", () => {
     });
 
     expect(() => {
-      emitter.emit("test", new NexoEvent("fail"));
+      emitter.emit("test", new Event("fail"));
     }).toThrow("Unhandled failure");
   });
 
-  it("should emit NexoEvent with custom data", () => {
-    const event = new NexoEvent("test", { data: "bar" });
+  it("should emit Event with custom data", () => {
+    const testEvent = new Event("test", { data: "bar" });
     const listener = jest.fn();
 
     emitter.on("test", listener);
-    emitter.emit("test", event);
+    emitter.emit("test", testEvent);
 
-    const [nexoEvent]: [nx.NexoEvent] = listener.mock.lastCall;
+    const [event]: [nx.Event] = listener.mock.lastCall;
 
     expect(listener).toHaveBeenCalledTimes(1);
-    expect(nexoEvent).toBeInstanceOf(NexoEvent);
-    expect(nexoEvent.name).toBe("test");
-    expect(nexoEvent.data).toEqual("bar");
+    expect(event).toBeInstanceOf(Event);
+    expect(event.name).toBe("test");
+    expect(event.data).toEqual("bar");
   });
 
   it("should prevent default and set return value on the event", () => {
     const returnValue = Symbol("result");
-    const event = new NexoEvent("test", { cancelable: true });
+    const event = new Event("test", { cancelable: true });
 
-    emitter.on("test", (e: nx.NexoEvent) => {
+    emitter.on("test", (e: nx.Event) => {
       e.preventDefault();
       return returnValue;
     });
@@ -97,7 +97,7 @@ describe("NexoEmitter", () => {
   });
 
   it("should ignore preventDefault if event is not cancelable", () => {
-    const event = new NexoEvent("test");
+    const event = new Event("test");
 
     emitter.on("test", (event) => {
       event.preventDefault();

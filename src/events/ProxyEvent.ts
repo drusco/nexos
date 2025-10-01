@@ -1,4 +1,4 @@
-import NexoEvent from "./NexoEvent.js";
+import Event from "./Event.js";
 import getProxyMap from "../utils/getProxyMap.js";
 
 /**
@@ -23,7 +23,7 @@ type HandlerNames =
  * Represents an event triggered by a proxy.
  */
 class ProxyEvent<Data = unknown>
-  extends NexoEvent<nx.Proxy, Data>
+  extends Event<nx.Proxy, Data>
   implements nx.ProxyEvent<Data>
 {
   declare readonly cancelable: true;

@@ -9,14 +9,14 @@ import NexoEmitter from "./utils/NexoEmitter.js";
 import ProxyWrapper from "./utils/ProxyWrapper.js";
 import ProxyError from "./utils/ProxyError.js";
 // events
-import NexoEvent from "./events/NexoEvent.js";
+import Event from "./events/Event.js";
 import ProxyEvent from "./events/ProxyEvent.js";
 
 export {
   Nexo,
   NexoMap,
   NexoEmitter,
-  NexoEvent,
+  Event,
   ProxyEvent,
   ProxyError,
   ProxyWrapper,
