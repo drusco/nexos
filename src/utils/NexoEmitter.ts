@@ -64,10 +64,10 @@ class NexoEmitter implements nx.EventEmitter {
    * it will be forwarded to the `'error'` listeners.
    *
    * @param event - The name of the event to emit.
-   * @param data - A {@link NexoEvent} or an `Error`.
+   * @param data - A {@link Event} or an `Error`.
    * @returns `true` if any listeners were triggered; `false` otherwise.
    */
-  emit(event: string, data: nx.NexoEvent | Error): boolean {
+  emit(event: string, data: nx.Event | Error): boolean {
     const listeners = this.listeners.get(event);
     const hasListeners = !!listeners?.size;
     const isError = data instanceof Error;

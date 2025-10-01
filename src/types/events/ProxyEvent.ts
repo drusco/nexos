@@ -5,7 +5,7 @@ declare global {
      *
      * @typeParam Data - Event data type.
      */
-    interface ProxyEvent<Data = unknown> extends NexoEvent<Proxy, Data> {
+    interface ProxyEvent<Data = unknown> extends Event<Proxy, Data> {
       /** Value returned by event listeners. */
       readonly returnValue: unknown;
       /** Always `true` — proxy events are cancelable. */
