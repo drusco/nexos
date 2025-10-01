@@ -1,6 +1,7 @@
-import ProxyDeletePropertyEvent from "../events/ProxyDeletePropertyEvent.js";
+import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../utils/ProxyError.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
+import getProxyWrapper from "../utils/getProxyWrapper.js";
 
 /**
  * Implements the `deleteProperty` trap for a Proxy, allowing interception of property deletions.
@@ -18,16 +19,22 @@ import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
 export default function deleteProperty(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable, property: nx.ObjectKey): boolean => {
     const proxy = resolveProxy();
+    const wrapper = getProxyWrapper(proxy);
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
 
-    const event = new ProxyDeletePropertyEvent({
+    const event = new ProxyEvent("deleteProperty", {
       target: proxy,
       data: {
         target,
         property,
         result: deferred.promise,
       },
-    });
+    }) as nx.ProxyDeletePropertyEvent;
+
+    // Emit the proxy event to its listeners on the 'nexo' emitter
+    wrapper?.nexo?.events?.emit("proxy.deleteProperty", event);
+    // Emit the proxy event to its listeners on the wrapper's event emitter
+    wrapper?.events?.emit("proxy.deleteProperty", event);
 
     if (event.defaultPrevented) {
       // Prevent property deletion

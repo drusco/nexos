@@ -1,5 +1,6 @@
-import ProxyOwnKeysEvent from "../events/ProxyOwnKeysEvent.js";
+import ProxyEvent from "../events/ProxyEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
+import getProxyWrapper from "../utils/getProxyWrapper.js";
 import ProxyError from "../utils/ProxyError.js";
 
 /**
@@ -25,15 +26,21 @@ import ProxyError from "../utils/ProxyError.js";
 export default function ownKeys(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable): nx.ObjectKey[] => {
     const proxy = resolveProxy();
+    const wrapper = getProxyWrapper(proxy);
     const deferred = createDeferred<nx.FunctionLike<[], nx.ObjectKey[]>>();
 
-    const event = new ProxyOwnKeysEvent({
+    const event = new ProxyEvent("ownKeys", {
       target: proxy,
       data: {
         target,
         result: deferred.promise,
       },
-    });
+    }) as nx.ProxyOwnKeysEvent;
+
+    // Emit the proxy event to its listeners on the 'nexo' emitter
+    wrapper?.nexo?.events?.emit("proxy.ownKeys", event);
+    // Emit the proxy event to its listeners on the wrapper's event emitter
+    wrapper?.events?.emit("proxy.ownKeys", event);
 
     if (event.defaultPrevented) {
       const returnValue = event.returnValue;

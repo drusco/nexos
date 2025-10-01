@@ -37,7 +37,7 @@ export default function apply(resolveProxy: nx.resolveProxy) {
         args,
         result: deferred.promise,
       },
-    });
+    }) as nx.ProxyApplyEvent;
 
     // Emit the proxy event to its listeners on the 'nexo' emitter
     wrapper?.nexo?.events?.emit("proxy.apply", event);

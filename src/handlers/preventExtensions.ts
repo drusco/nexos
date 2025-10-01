@@ -1,5 +1,6 @@
-import ProxyPreventExtensionsEvent from "../events/ProxyPreventExtensionsEvent.js";
+import ProxyEvent from "../events/ProxyEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
+import getProxyWrapper from "../utils/getProxyWrapper.js";
 import ProxyError from "../utils/ProxyError.js";
 
 /**
@@ -17,15 +18,21 @@ import ProxyError from "../utils/ProxyError.js";
 export default function preventExtensions(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable): boolean => {
     const proxy = resolveProxy();
+    const wrapper = getProxyWrapper(proxy);
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
 
-    const event = new ProxyPreventExtensionsEvent({
+    const event = new ProxyEvent("preventExtensions", {
       target: proxy,
       data: {
         target,
         result: deferred.promise,
       },
-    });
+    }) as nx.ProxyPreventExtensionsEvent;
+
+    // Emit the proxy event to its listeners on the 'nexo' emitter
+    wrapper?.nexo?.events?.emit("proxy.preventExtensions", event);
+    // Emit the proxy event to its listeners on the wrapper's event emitter
+    wrapper?.events?.emit("proxy.preventExtensions", event);
 
     if (event.defaultPrevented) {
       const returnValue = event.returnValue || false;
