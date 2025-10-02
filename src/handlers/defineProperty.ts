@@ -36,8 +36,8 @@ export default function defineProperty(resolveProxy: nx.resolveProxy) {
       },
     }) as nx.ProxyDefinePropertyEvent;
 
-    // Emit the proxy event to its listeners on the 'nexo' emitter
-    wrapper?.nexo?.events?.emit("proxy.defineProperty", event);
+    // Emit the proxy event to its listeners on the proxy manager
+    wrapper?.manager?.events?.emit("proxy.defineProperty", event);
     // Emit the proxy event to its listeners on the wrapper's event emitter
     wrapper?.events?.emit("proxy.defineProperty", event);
 

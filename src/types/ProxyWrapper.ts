@@ -9,7 +9,7 @@ declare global {
       /** The unique identifier for the proxy */
       readonly id: string;
       /** The proxy manager instance. */
-      readonly nexo?: Nexo;
+      readonly manager?: ProxyManager;
       /** Whether the proxy has been revoked. */
       readonly revoked: boolean;
       /** Whether the `proxy` was created with a custom target object */
@@ -17,7 +17,7 @@ declare global {
       /** Revokes the proxy, making it unusable. */
       revoke(): void;
       /** Sets the proxy manager instance  */
-      setManager(manager: Nexo): this;
+      setManager(manager: ProxyManager): this;
       /** Removes the proxy manager instance  */
       removeManager(): this;
       /** Sets the underlying proxy target */

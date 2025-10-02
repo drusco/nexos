@@ -22,7 +22,7 @@ export function rejectWith(resolve: nx.FunctionLike, error: Error): never {
     // Retrieve the wrapper for the proxy
     const wrapper = getProxyWrapper(error.proxy);
     // Emit the error event on the 'nexo' event emitter
-    wrapper?.nexo?.events?.emit("proxy.error", error);
+    wrapper?.manager?.events?.emit("proxy.error", error);
     // Emit the error event on the wrapper's event emitter
     wrapper?.events?.emit("proxy.error", error);
   }

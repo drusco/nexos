@@ -29,8 +29,8 @@ export default function preventExtensions(resolveProxy: nx.resolveProxy) {
       },
     }) as nx.ProxyPreventExtensionsEvent;
 
-    // Emit the proxy event to its listeners on the 'nexo' emitter
-    wrapper?.nexo?.events?.emit("proxy.preventExtensions", event);
+    // Emit the proxy event to its listeners on the proxy manager
+    wrapper?.manager?.events?.emit("proxy.preventExtensions", event);
     // Emit the proxy event to its listeners on the wrapper's event emitter
     wrapper?.events?.emit("proxy.preventExtensions", event);
 

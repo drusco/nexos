@@ -23,7 +23,7 @@ export default function construct(resolveProxy: nx.resolveProxy) {
   return (target: nx.FunctionLike, args: unknown[]): object => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);
-    const { nexo, traceable } = wrapper;
+    const { manager, traceable } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], object>>();
 
     const event = new ProxyEvent("construct", {
@@ -35,8 +35,8 @@ export default function construct(resolveProxy: nx.resolveProxy) {
       },
     }) as nx.ProxyConstructEvent;
 
-    // Emit the proxy event to its listeners on the 'nexo' emitter
-    wrapper?.nexo?.events?.emit("proxy.construct", event);
+    // Emit the proxy event to its listeners on the proxy manager
+    wrapper?.manager?.events?.emit("proxy.construct", event);
     // Emit the proxy event to its listeners on the wrapper's event emitter
     wrapper?.events?.emit("proxy.construct", event);
 
@@ -69,6 +69,6 @@ export default function construct(resolveProxy: nx.resolveProxy) {
     }
 
     // create a new proxy
-    return resolveWith(deferred.resolve, nexo.create());
+    return resolveWith(deferred.resolve, manager.create());
   };
 }

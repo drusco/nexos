@@ -17,7 +17,7 @@ export default function get(resolveProxy: nx.resolveProxy) {
   return (target: nx.Traceable, property: nx.ObjectKey): unknown => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);
-    const { nexo } = wrapper;
+    const { manager } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], unknown>>();
 
     const event = new ProxyEvent("get", {
@@ -29,8 +29,8 @@ export default function get(resolveProxy: nx.resolveProxy) {
       },
     }) as nx.ProxyGetEvent;
 
-    // Emit the proxy event to its listeners on the 'nexo' emitter
-    wrapper?.nexo?.events?.emit("proxy.get", event);
+    // Emit the proxy event to its listeners on the proxy manager
+    wrapper?.manager?.events?.emit("proxy.get", event);
     // Emit the proxy event to its listeners on the wrapper's event emitter
     wrapper?.events?.emit("proxy.get", event);
 
@@ -43,7 +43,7 @@ export default function get(resolveProxy: nx.resolveProxy) {
       return resolveWith(deferred.resolve, Reflect.get(target, property));
     } else {
       // returns new proxy
-      return resolveWith(deferred.resolve, nexo.create());
+      return resolveWith(deferred.resolve, manager.create());
     }
   };
 }

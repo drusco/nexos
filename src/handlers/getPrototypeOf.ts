@@ -26,8 +26,8 @@ export default function getPrototypeOf(resolveProxy: nx.resolveProxy) {
       },
     }) as nx.ProxyGetPrototypeOfEvent;
 
-    // Emit the proxy event to its listeners on the 'nexo' emitter
-    wrapper?.nexo?.events?.emit("proxy.getPrototypeOf", event);
+    // Emit the proxy event to its listeners on the proxy manager
+    wrapper?.manager?.events?.emit("proxy.getPrototypeOf", event);
     // Emit the proxy event to its listeners on the wrapper's event emitter
     wrapper?.events?.emit("proxy.getPrototypeOf", event);
 
