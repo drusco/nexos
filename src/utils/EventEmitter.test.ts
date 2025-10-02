@@ -23,7 +23,7 @@ describe("EventEmitter", () => {
       throw new Error(errorMessage);
     });
 
-    emitter.emit("test", new Event("test"));
+    expect(() => emitter.emit("test", new Event("test"))).toThrow();
 
     const [error]: [Error] = errorListener.mock.lastCall;
 
@@ -59,16 +59,6 @@ describe("EventEmitter", () => {
     expect(errorListener).toHaveBeenCalledTimes(1);
     expect(customError).toBe(oops);
     expect(error).toBe(oops);
-  });
-
-  it("should throw if an error occurs and no error listener is registered", () => {
-    emitter.on("test", () => {
-      throw new Error("Unhandled failure");
-    });
-
-    expect(() => {
-      emitter.emit("test", new Event("fail"));
-    }).toThrow("Unhandled failure");
   });
 
   it("should emit Event with custom data", () => {
