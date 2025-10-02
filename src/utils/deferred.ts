@@ -13,10 +13,7 @@ export function createDeferred<T = unknown>() {
   return { promise, resolve, reject };
 }
 
-export function rejectWith(
-  resolve: nx.FunctionLike<[() => never], void>,
-  error: Error,
-): never {
+export function rejectWith(resolve: nx.FunctionLike, error: Error): never {
   resolve(() => {
     throw error;
   });
