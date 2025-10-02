@@ -1,8 +1,8 @@
-import NexoMap from "./NexoMap.js";
+import TraceableMap from "./TraceableMap.js";
 
-describe("NexoMap", () => {
+describe("TraceableMap", () => {
   it("Sets key-value pair and emits event", () => {
-    const map = new NexoMap();
+    const map = new TraceableMap();
     const setCallback = jest.fn();
     const value = new WeakRef({});
 
@@ -19,7 +19,7 @@ describe("NexoMap", () => {
   });
 
   it("Delete key-value pair and emits event", () => {
-    const map = new NexoMap();
+    const map = new TraceableMap();
     const deleteCallback = jest.fn();
     const value = new WeakRef({});
 
@@ -37,7 +37,7 @@ describe("NexoMap", () => {
   });
 
   it("Clears the map and emits event", () => {
-    const map = new NexoMap();
+    const map = new TraceableMap();
     const clearCalback = jest.fn();
     const value = new WeakRef({});
 
@@ -57,7 +57,7 @@ describe("NexoMap", () => {
   });
 
   it("Removes entries whose WeakRef targets have been garbage collected", () => {
-    const map = new NexoMap();
+    const map = new TraceableMap();
     const deleteCallback = jest.fn();
 
     const weakRefMock = {

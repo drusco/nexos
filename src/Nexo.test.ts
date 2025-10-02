@@ -1,13 +1,13 @@
 import EventEmitter from "./utils/EventEmitter.js";
 import Nexo from "./Nexo.js";
-import NexoMap from "./utils/NexoMap.js";
+import TraceableMap from "./utils/TraceableMap.js";
 import Event from "./events/Event.js";
 
 describe("Nexo", () => {
   it("Creates a new nexo object", () => {
     const nexo = new Nexo();
 
-    expect(nexo.entries).toBeInstanceOf(NexoMap);
+    expect(nexo.entries).toBeInstanceOf(TraceableMap);
     expect(nexo.events).toBeInstanceOf(EventEmitter);
   });
 

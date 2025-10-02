@@ -1,4 +1,4 @@
-import NexoMap from "./utils/NexoMap.js";
+import TraceableMap from "./utils/TraceableMap.js";
 import EventEmitter from "./utils/EventEmitter.js";
 import isProxy from "./utils/isProxy.js";
 import isTraceable from "./utils/isTraceable.js";
@@ -35,7 +35,7 @@ class Nexo implements nx.Nexo {
    * @remarks
    * This map allows quick access to proxies by their unique ID, ensuring that proxies are properly managed and referenced.
    */
-  readonly entries = new NexoMap<nx.Proxy>();
+  readonly entries = new TraceableMap<nx.Proxy>();
 
   static isProxy = isProxy;
   static isTraceable = isTraceable;
