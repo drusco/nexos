@@ -2,7 +2,7 @@
  * A minimal, synchronous event emitter.
  *
  * @remarks
- * `NexoEmitter` is a purpose-built event manager designed for performance-critical
+ * `EventEmitter` is a purpose-built event manager designed for performance-critical
  * environments such as JavaScript Proxy traps. It executes listeners synchronously
  * and supports event cancellation (`defaultPrevented`) and return value capture (`returnValue`).
  *
@@ -10,7 +10,7 @@
  * and errors thrown by listeners will crash the app unless an `'error'` handler is attached.
  *
  */
-class NexoEmitter implements nx.EventEmitter {
+class EventEmitter implements nx.EventEmitter {
   private listeners = new Map<string, Set<nx.FunctionLike>>();
 
   /**
@@ -108,4 +108,4 @@ class NexoEmitter implements nx.EventEmitter {
   }
 }
 
-export default NexoEmitter;
+export default EventEmitter;

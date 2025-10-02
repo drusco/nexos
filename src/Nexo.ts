@@ -1,5 +1,5 @@
 import NexoMap from "./utils/NexoMap.js";
-import NexoEmitter from "./utils/NexoEmitter.js";
+import EventEmitter from "./utils/EventEmitter.js";
 import isProxy from "./utils/isProxy.js";
 import isTraceable from "./utils/isTraceable.js";
 import getProxyWrapper from "./utils/getProxyWrapper.js";
@@ -41,7 +41,7 @@ class Nexo implements nx.Nexo {
   static isTraceable = isTraceable;
   static wrap = getProxyWrapper;
 
-  private eventEmitter?: nx.EventEmitter = new NexoEmitter();
+  private eventEmitter?: nx.EventEmitter = new EventEmitter();
 
   get events(): nx.EventEmitter<nx.ProxyEvents & nx.Events> {
     return this.eventEmitter;
