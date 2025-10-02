@@ -1,4 +1,8 @@
+import Nexo from "../Nexo.js";
 import { createDeferred, resolveWith, rejectWith } from "./deferred.js";
+import getProxy from "./getProxy.js";
+import getProxyWrapper from "./getProxyWrapper.js";
+import ProxyError from "./ProxyError.js";
 
 describe("deferred", () => {
   describe("createDeferred", () => {
@@ -44,17 +48,46 @@ describe("deferred", () => {
   });
 
   describe("rejectWith", () => {
-    it("rejects a deferred with a function that throws an error and throws that error", () => {
+    it("resolves a deferred with a function that throws an error and throws that error", () => {
       const reject = jest.fn();
       const errorMessage = "foo";
       const error = new Error(errorMessage);
 
       expect(() => rejectWith(reject, error)).toThrow(errorMessage);
-
-      const [getResult]: [nx.FunctionLike<[], never>] = reject.mock.lastCall;
-
       expect(reject).toHaveBeenCalledTimes(1);
+
+      const [getResult]: [nx.FunctionLike] = reject.mock.lastCall;
+
       expect(() => getResult()).toThrow(errorMessage);
+    });
+
+    it("emits a proxy error to the associated wrapper and manager", () => {
+      const nexo = new Nexo();
+      const proxy = getProxy();
+      const wrapper = getProxyWrapper(proxy);
+      const errorMessage = "something went wrong with the proxy";
+      const proxyError = new ProxyError(errorMessage, proxy);
+
+      const wrapperListener = jest.fn();
+      const managerListener = jest.fn();
+      const wrapperProxyError = jest.fn();
+      const managerProxyError = jest.fn();
+
+      wrapper.events.on("error", wrapperListener);
+      wrapper.events.on("proxy.error", wrapperProxyError);
+
+      nexo.events.on("error", managerListener);
+      nexo.events.on("proxy.error", managerProxyError);
+
+      wrapper.setManager(nexo);
+
+      expect(() => rejectWith(jest.fn(), proxyError)).toThrow(errorMessage);
+
+      expect(wrapperListener).toHaveBeenCalledTimes(1);
+      expect(managerListener).toHaveBeenCalledTimes(1);
+
+      expect(wrapperProxyError).toHaveBeenCalledTimes(1);
+      expect(managerProxyError).toHaveBeenCalledTimes(1);
     });
   });
 });
