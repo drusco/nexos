@@ -1,9 +1,6 @@
 import Event from "./Event.js";
-import getProxyMap from "../utils/getProxyMap.js";
+import isProxy from "../utils/isProxy.js";
 
-/**
- * Names of the built-in {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy#handler_functions | Proxy handler traps}.
- */
 type HandlerNames =
   | "get"
   | "has"
@@ -32,7 +29,7 @@ class ProxyEvent<Data = unknown>
    * Creates an instance of the `ProxyEvent`.
    * This constructor initializes the event with the name prefixed by `proxy.`
    *
-   * @param name - The name of the proxy event.
+   * @param name - Name of the built-in {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy#handler_functions | handler function}.
    * @param options - Options to configure the event.
    * @param options.data - The data associated with the event.
    * @param options.target - The proxy of the event.
@@ -47,7 +44,7 @@ class ProxyEvent<Data = unknown>
       target: nx.Proxy;
     },
   ) {
-    if (!getProxyMap().has(options?.target)) {
+    if (!isProxy(options?.target)) {
       throw TypeError("options.target is not a valid proxy.");
     }
     super(`proxy.${name}`, { ...options, cancelable: true });
