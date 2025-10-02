@@ -10,7 +10,7 @@ import EventEmitter from "./EventEmitter.js";
  * @noInheritDoc
  * @param T - The type of traceable objects stored in the map.
  */
-class NexoMap<T extends nx.Traceable>
+class TraceableMap<T extends nx.Traceable>
   extends Map<string, WeakRef<T>>
   implements nx.TraceableMap<T>
 {
@@ -43,7 +43,7 @@ class NexoMap<T extends nx.Traceable>
   }
 
   /**
-   * Creates a new `NexoMap` instance.
+   * Creates a new `TraceableMap` instance.
    *
    * @param entries - Optional initial entries to populate the map.
    */
@@ -137,4 +137,4 @@ class NexoMap<T extends nx.Traceable>
   }
 }
 
-export default NexoMap;
+export default TraceableMap;
