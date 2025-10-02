@@ -1,4 +1,4 @@
-import { isProxy } from "util/types";
+import isProxy from "./isProxy.js";
 import getProxy from "./getProxy.js";
 import getProxyWrapper from "./getProxyWrapper.js";
 import ProxyWrapper from "./ProxyWrapper.js";
@@ -6,14 +6,17 @@ import ProxyWrapper from "./ProxyWrapper.js";
 describe("getProxy", () => {
   it("creates a valid proxy", () => {
     const proxy = getProxy();
+    const nonProxy = {};
 
     expect(isProxy(proxy)).toBe(true);
+    expect(isProxy(nonProxy)).toBe(false);
   });
 
   it("return and existing proxy", () => {
     const proxy = getProxy();
+    const sameProxy = getProxy(proxy);
 
-    expect(getProxy(proxy)).toBe(proxy);
+    expect(sameProxy).toBe(proxy);
   });
 
   it("creates a wrapper for the proxy", () => {
@@ -29,7 +32,7 @@ describe("getProxy", () => {
 
     wrapper.revoke();
 
-    expect(() => (proxy.foo = true)).toThrow();
+    expect(() => (proxy.foo = true)).toThrow(TypeError);
   });
 
   it("creates a sandboxed proxy", () => {
@@ -42,8 +45,9 @@ describe("getProxy", () => {
 
   it("resolves the prototype as null on sandboxed proxies", () => {
     const proxy = getProxy();
+    const prototype = Object.getPrototypeOf(proxy);
 
-    expect(Object.getPrototypeOf(proxy)).toBeNull();
+    expect(prototype).toBeNull();
   });
 
   it("has no enumerable or inherited keys by default", () => {
