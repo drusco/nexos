@@ -26,8 +26,8 @@ class ProxyWrapper implements nx.ProxyWrapper {
     return this.proxyTarget;
   }
 
-  get nexo(): nx.Nexo | undefined {
-    return this.managerInstance;
+  get manager(): nx.ProxyManager | undefined {
+    return this.proxyManager;
   }
 
   get traceable(): boolean {
@@ -41,7 +41,7 @@ class ProxyWrapper implements nx.ProxyWrapper {
   private isTraceable: boolean = false;
 
   /** The proxy manager associated with the proxy */
-  private managerInstance?: nx.Nexo;
+  private proxyManager?: nx.ProxyManager;
 
   /** Event emitter instance */
   private eventEmitter?: nx.EventEmitter = new EventEmitter();
@@ -57,13 +57,8 @@ class ProxyWrapper implements nx.ProxyWrapper {
 
   /**
    * Creates an instance of `ProxyWrapper`.
-   * This constructor initializes the wrapper with the provided data and sets up
-   * the proxy's traceability.
    *
-   * @param data - The data for initializing the proxy wrapper, `revoke` function.
-   * @example
-   * const proxyWrapper = new ProxyWrapper({});
-   * // Initializes the ProxyWrapper instance.
+   * @param revoke - The function responsible for revoking the proxy
    */
   constructor(revoke?: () => void) {
     if (typeof revoke === "function") {
@@ -91,14 +86,14 @@ class ProxyWrapper implements nx.ProxyWrapper {
     return this;
   }
 
-  setManager(manager: nx.Nexo): this {
+  setManager(manager: nx.ProxyManager): this {
     if (this.isRevoked) return this;
-    this.managerInstance = manager;
+    this.proxyManager = manager;
     return this;
   }
 
   removeManager(): this {
-    this.managerInstance = undefined;
+    this.proxyManager = undefined;
     return this;
   }
 

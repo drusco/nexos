@@ -26,7 +26,7 @@ export default function apply(resolveProxy: nx.resolveProxy) {
   ): unknown => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);
-    const { nexo, traceable } = wrapper;
+    const { manager, traceable } = wrapper;
     const deferred = createDeferred<nx.FunctionLike>();
 
     const event = new ProxyEvent("apply", {
@@ -39,8 +39,8 @@ export default function apply(resolveProxy: nx.resolveProxy) {
       },
     }) as nx.ProxyApplyEvent;
 
-    // Emit the proxy event to its listeners on the 'nexo' emitter
-    wrapper?.nexo?.events?.emit("proxy.apply", event);
+    // Emit the proxy event to its listeners on the proxy manager
+    wrapper?.manager?.events?.emit("proxy.apply", event);
     // Emit the proxy event to its listeners on the wrapper's event emitter
     wrapper?.events?.emit("proxy.apply", event);
 
@@ -62,6 +62,6 @@ export default function apply(resolveProxy: nx.resolveProxy) {
     }
 
     // defaults to a new proxy
-    return resolveWith(deferred.resolve, nexo.create());
+    return resolveWith(deferred.resolve, manager.create());
   };
 }

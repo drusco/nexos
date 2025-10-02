@@ -28,7 +28,7 @@ import emitProxy from "./utils/emitProxy.js";
  * // The listener will be called when a new proxy is created.
  * const proxy = nexo.create();
  */
-class Nexo implements nx.Nexo {
+class Nexo implements nx.ProxyManager {
   /**
    * A map that stores unique proxy IDs associated with their respective {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakRef | WeakRef} references to the proxy objects.
    *

@@ -7,7 +7,6 @@ describe("ProxyWrapper", () => {
     const wrapper = new ProxyWrapper();
 
     expect(typeof wrapper.id).toBe("string");
-
     expect(typeof wrapper.revoke).toBe("function");
     expect(typeof wrapper.setEventEmitter).toBe("function");
     expect(typeof wrapper.removeEventEmitter).toBe("function");
@@ -18,7 +17,7 @@ describe("ProxyWrapper", () => {
     expect(wrapper.revoked).toBe(false);
     expect(wrapper.traceable).toBe(false);
     expect(wrapper.target).toBeUndefined();
-    expect(wrapper.nexo).toBeUndefined();
+    expect(wrapper.manager).toBeUndefined();
     expect(wrapper.events).toBeInstanceOf(EventEmitter);
   });
 
@@ -46,11 +45,11 @@ describe("ProxyWrapper", () => {
 
     wrapper.setManager(nexo);
 
-    expect(wrapper.nexo).toBe(nexo);
+    expect(wrapper.manager).toBe(nexo);
 
     wrapper.removeManager();
 
-    expect(wrapper.nexo).toBeUndefined();
+    expect(wrapper.manager).toBeUndefined();
   });
 
   it("allows setting a custom identifier", () => {
@@ -75,10 +74,11 @@ describe("ProxyWrapper", () => {
 
   it("allows indicating whether the target is traceable or not", () => {
     const wrapper = new ProxyWrapper();
+    const target = [];
 
-    wrapper.setTarget([], false);
+    wrapper.setTarget(target, false);
 
-    expect(wrapper.target).not.toBeUndefined();
+    expect(wrapper.target).toBe(target);
     expect(wrapper.traceable).toBe(false);
   });
 });

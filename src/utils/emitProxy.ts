@@ -19,8 +19,8 @@ const emitProxy = (proxy: nx.Proxy): nx.Proxy => {
     },
   }) as nx.ProxyCreateEvent;
 
-  // Emit the proxy event to its listeners on the 'nexo' emitter
-  wrapper?.nexo?.events?.emit("proxy", event);
+  // Emit the proxy event to its listeners on the proxy manager
+  wrapper?.manager?.events?.emit("proxy", event);
 
   // check whether the event got prevented
   if (event.defaultPrevented) {
@@ -33,9 +33,9 @@ const emitProxy = (proxy: nx.Proxy): nx.Proxy => {
       wrapper.revoke();
       // remove the original proxy from the maps
       proxyMap.delete(proxy);
-      returnedProxyWrapper?.nexo?.entries.delete(wrapper.id);
+      returnedProxyWrapper?.manager?.entries.delete(wrapper.id);
       // add or update the ID to the returned proxy
-      returnedProxyWrapper?.nexo?.entries.set(
+      returnedProxyWrapper?.manager?.entries.set(
         proxyMap.get(returnValue).id,
         new WeakRef(returnValue),
       );

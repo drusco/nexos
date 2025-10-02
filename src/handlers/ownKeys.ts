@@ -37,8 +37,8 @@ export default function ownKeys(resolveProxy: nx.resolveProxy) {
       },
     }) as nx.ProxyOwnKeysEvent;
 
-    // Emit the proxy event to its listeners on the 'nexo' emitter
-    wrapper?.nexo?.events?.emit("proxy.ownKeys", event);
+    // Emit the proxy event to its listeners on the proxy manager
+    wrapper?.manager?.events?.emit("proxy.ownKeys", event);
     // Emit the proxy event to its listeners on the wrapper's event emitter
     wrapper?.events?.emit("proxy.ownKeys", event);
 
