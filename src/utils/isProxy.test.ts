@@ -1,10 +1,9 @@
 import isProxy from "./isProxy.js";
-import Nexo from "../Nexo.js";
+import getProxy from "./getProxy.js";
 
 describe("isProxy", () => {
   it("Returns true when the parameter is a proxy", () => {
-    const nexo = new Nexo();
-    const proxy = nexo.create();
+    const proxy = getProxy();
     const result = isProxy(proxy);
 
     expect(result).toBe(true);
