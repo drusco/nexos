@@ -77,8 +77,6 @@ class EventEmitter implements nx.EventEmitter {
     if (isError && event !== "error") {
       if (errorListeners?.size) {
         this.emit("error", data);
-      } else {
-        throw data; // crash app intentionally to surface unhandled error
       }
     }
 
@@ -99,9 +97,8 @@ class EventEmitter implements nx.EventEmitter {
     } catch (error) {
       if (errorListeners?.size) {
         this.emit("error", error);
-      } else {
-        throw error;
       }
+      throw error;
     }
 
     return hasListeners;
