@@ -1,5 +1,5 @@
 import Nexo from "../Nexo.js";
-import NexoEmitter from "../utils/NexoEmitter.js";
+import EventEmitter from "../utils/EventEmitter.js";
 import ProxyWrapper from "./ProxyWrapper.js";
 
 describe("ProxyWrapper", () => {
@@ -19,7 +19,7 @@ describe("ProxyWrapper", () => {
     expect(wrapper.traceable).toBe(false);
     expect(wrapper.target).toBeUndefined();
     expect(wrapper.nexo).toBeUndefined();
-    expect(wrapper.events).toBeInstanceOf(NexoEmitter);
+    expect(wrapper.events).toBeInstanceOf(EventEmitter);
   });
 
   it("allows to revoke the proxy", () => {

@@ -1,5 +1,5 @@
 import Event from "../events/Event.js";
-import NexoEmitter from "./NexoEmitter.js";
+import EventEmitter from "./EventEmitter.js";
 
 /**
  * A specialized `Map` that stores {@link Traceable} objects wrapped in `WeakRef`.
@@ -17,7 +17,7 @@ class NexoMap<T extends nx.Traceable>
   /**
    * Event emitter used to broadcast map changes.
    */
-  private eventEmitter?: nx.EventEmitter = new NexoEmitter();
+  private eventEmitter?: nx.EventEmitter = new EventEmitter();
 
   /**
    * Removes an entry and optionally marks it as released,

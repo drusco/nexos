@@ -1,4 +1,4 @@
-import NexoEmitter from "./utils/NexoEmitter.js";
+import EventEmitter from "./utils/EventEmitter.js";
 import Nexo from "./Nexo.js";
 import NexoMap from "./utils/NexoMap.js";
 import Event from "./events/Event.js";
@@ -8,7 +8,7 @@ describe("Nexo", () => {
     const nexo = new Nexo();
 
     expect(nexo.entries).toBeInstanceOf(NexoMap);
-    expect(nexo.events).toBeInstanceOf(NexoEmitter);
+    expect(nexo.events).toBeInstanceOf(EventEmitter);
   });
 
   it("Creates a new proxy object without a target", () => {

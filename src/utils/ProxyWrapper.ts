@@ -1,5 +1,5 @@
 import isTraceable from "./isTraceable.js";
-import NexoEmitter from "./NexoEmitter.js";
+import EventEmitter from "./EventEmitter.js";
 import { v4 as uuid } from "uuid";
 
 /**
@@ -44,7 +44,7 @@ class ProxyWrapper implements nx.ProxyWrapper {
   private managerInstance?: nx.Nexo;
 
   /** Event emitter instance */
-  private eventEmitter?: nx.EventEmitter = new NexoEmitter();
+  private eventEmitter?: nx.EventEmitter = new EventEmitter();
 
   /** Indicates whether the proxy has been revoked */
   private isRevoked: boolean = false;

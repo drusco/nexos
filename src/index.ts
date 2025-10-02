@@ -5,7 +5,7 @@ export type { nx };
 import Nexo from "./Nexo.js";
 // utils
 import NexoMap from "./utils/NexoMap.js";
-import NexoEmitter from "./utils/NexoEmitter.js";
+import EventEmitter from "./utils/EventEmitter.js";
 import ProxyWrapper from "./utils/ProxyWrapper.js";
 import ProxyError from "./utils/ProxyError.js";
 // events
@@ -15,7 +15,7 @@ import ProxyEvent from "./events/ProxyEvent.js";
 export {
   Nexo,
   NexoMap,
-  NexoEmitter,
+  EventEmitter,
   Event,
   ProxyEvent,
   ProxyError,

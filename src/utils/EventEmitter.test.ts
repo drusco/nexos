@@ -1,4 +1,4 @@
-import NexoEmitter from "../utils/NexoEmitter.js";
+import EventEmitter from "./EventEmitter.js";
 import Event from "../events/Event.js";
 
 type TestEvents = {
@@ -7,11 +7,11 @@ type TestEvents = {
   error: { args: [Error] };
 };
 
-describe("NexoEmitter", () => {
+describe("EventEmitter", () => {
   let emitter: nx.EventEmitter<TestEvents>;
 
   beforeEach(() => {
-    emitter = new NexoEmitter();
+    emitter = new EventEmitter();
   });
 
   it("should emit an error when a listener throws", () => {
@@ -43,17 +43,22 @@ describe("NexoEmitter", () => {
   });
 
   it("should re-emit error-like arguments from other events", () => {
-    const error = new Error("oops");
-    const listener = jest.fn();
+    const oops = new Error("oops");
+    const customErrorListener = jest.fn();
+    const errorListener = jest.fn();
 
-    emitter.on("customError", listener);
-    emitter.on("error", listener);
-    emitter.emit("customError", error);
+    emitter.on("customError", customErrorListener);
+    emitter.on("error", errorListener);
 
-    const [customError]: [Error] = listener.mock.lastCall;
+    emitter.emit("customError", oops);
 
-    expect(listener).toHaveBeenCalledTimes(2);
-    expect(customError).toBe(error);
+    const [customError]: [Error] = customErrorListener.mock.lastCall;
+    const [error]: [Error] = errorListener.mock.lastCall;
+
+    expect(customErrorListener).toHaveBeenCalledTimes(1);
+    expect(errorListener).toHaveBeenCalledTimes(1);
+    expect(customError).toBe(oops);
+    expect(error).toBe(oops);
   });
 
   it("should throw if an error occurs and no error listener is registered", () => {
@@ -83,28 +88,30 @@ describe("NexoEmitter", () => {
 
   it("should prevent default and set return value on the event", () => {
     const returnValue = Symbol("result");
-    const event = new Event("test", { cancelable: true });
+    const testEvent = new Event("test", { cancelable: true });
 
-    emitter.on("test", (e: nx.Event) => {
-      e.preventDefault();
+    emitter.on("test", (event: nx.Event) => {
+      event.preventDefault();
       return returnValue;
     });
 
-    emitter.emit("test", event);
+    emitter.emit("test", testEvent);
 
-    expect(event.defaultPrevented).toBe(true);
-    expect(event.returnValue).toBe(returnValue);
+    expect(testEvent.defaultPrevented).toBe(true);
+    expect(testEvent.returnValue).toBe(returnValue);
   });
 
   it("should ignore preventDefault if event is not cancelable", () => {
-    const event = new Event("test");
+    const testEvent = new Event("test");
 
     emitter.on("test", (event) => {
       event.preventDefault();
+      return "ignored";
     });
 
-    emitter.emit("test", event);
+    emitter.emit("test", testEvent);
 
-    expect(event.defaultPrevented).toBe(false);
+    expect(testEvent.defaultPrevented).toBe(false);
+    expect(testEvent.returnValue).toBeUndefined();
   });
 });
