@@ -12,7 +12,7 @@ import EventEmitter from "./EventEmitter.js";
  */
 class TraceableMap<T extends nx.Traceable>
   extends Map<string, WeakRef<T>>
-  implements nx.TraceableMap<T>
+  implements nx.EventEmittable
 {
   /**
    * Event emitter used to broadcast map changes.
