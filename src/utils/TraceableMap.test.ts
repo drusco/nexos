@@ -9,7 +9,7 @@ describe("TraceableMap", () => {
     map.events.on("set", setCallback);
     map.set("foo", value);
 
-    const [setEvent] = setCallback.mock.lastCall;
+    const [setEvent]: [nx.Event] = setCallback.mock.lastCall;
 
     expect(setCallback).toHaveBeenCalledTimes(1);
     expect(setEvent.name).toBe("set");
@@ -77,7 +77,10 @@ describe("TraceableMap", () => {
 
     expect(map.size).toBe(0);
     expect(deleteCallback).toHaveBeenCalledTimes(2);
-    expect(firstDeleteEvent.data.released).toBe(true);
-    expect(secondDeleteEvent.data.released).toBe(true);
+    expect(firstDeleteEvent.data).toStrictEqual({ key: "foo", released: true });
+    expect(secondDeleteEvent.data).toStrictEqual({
+      key: "bar",
+      released: true,
+    });
   });
 });

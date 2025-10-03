@@ -5,7 +5,7 @@ declare global {
      */
     interface ProxyManager extends EventEmittable<Events & ProxyEvents> {
       /** Weak reference map of active proxies. */
-      readonly entries: TraceableMap<Proxy>;
+      readonly entries: Map<string, WeakRef<Proxy>>;
       /**
        * Retrieves an existing proxy by ID or creates one if it does not exist.
        *
