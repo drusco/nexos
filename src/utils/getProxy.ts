@@ -4,22 +4,22 @@ import ProxyWrapper from "./ProxyWrapper.js";
 import isProxy from "./isProxy.js";
 import isTraceable from "./isTraceable.js";
 
-const getProxy = (target?: nx.Traceable): nx.Proxy => {
+const getProxy = <T extends object = undefined>(target?: T): nx.Proxy<T> => {
   // Return existing proxy
   if (isProxy(target)) {
-    return target;
+    return target as nx.Proxy<T>;
   }
 
   // create new proxy
   // eslint-disable-next-line prefer-const
-  let proxyRef: WeakRef<nx.Proxy>;
+  let proxyRef: WeakRef<nx.proxy>;
 
   const traceable = isTraceable(target);
   const boundFunction = new Function().bind(null);
   const sandbox = Object.setPrototypeOf(boundFunction, null);
   const proxyTarget = target || sandbox;
 
-  const { proxy, revoke } = Proxy.revocable<nx.Proxy>(
+  const { proxy, revoke } = Proxy.revocable<nx.proxy>(
     proxyTarget,
     createHandlers(() => proxyRef.deref()),
   );
@@ -44,7 +44,7 @@ const getProxy = (target?: nx.Traceable): nx.Proxy => {
   // link the proxy to it's wrapper
   getProxyMap().set(proxy, wrapper);
 
-  return proxy;
+  return proxy as nx.Proxy<T>;
 };
 
 export default getProxy;

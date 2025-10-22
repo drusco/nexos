@@ -8,19 +8,11 @@ import ProxyError from "./ProxyError.js";
  * This method wraps a proxy object and allows interaction with the proxy's events and properties.
  * Proxy-related events follow the format `proxy.handler`, where the handler corresponds to one of the standard proxy handler functions such as `apply`, `construct`, `get`, etc.
  *
- * @example
- * // Wrapping an existing proxy and listening to 'proxy.get' event
- * const nexo = new Nexo();
- * const proxy = nexo.create();
- * const wrapper = Nexo.wrap(proxy);
- *
- * wrapper.events.on('proxy.get', (event: ProxyGetEvent) => {});
- *
  * @param proxy - An existing {@link nx.Proxy | Proxy} object
  * @returns A {@link nx.ProxyWrapper | ProxyWrapper} for the proxy that allows interaction with proxy events
  * @throws {@link nx.ProxyError} if the wrapper cannot be found.
  */
-export default function getProxyWrapper(proxy: nx.Proxy): nx.ProxyWrapper {
+export default function getProxyWrapper(proxy: object): nx.ProxyWrapper {
   const wrapper = getProxyMap().get(proxy);
 
   if (!wrapper) {

@@ -1,6 +1,7 @@
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../utils/ProxyError.js";
 import { createDeferred, resolveWith, rejectWith } from "../utils/deferred.js";
+import getProxy from "../utils/getProxy.js";
 import getProxyWrapper from "../utils/getProxyWrapper.js";
 
 /**
@@ -61,7 +62,12 @@ export default function apply(resolveProxy: nx.resolveProxy) {
       }
     }
 
-    // defaults to a new proxy
-    return resolveWith(deferred.resolve, manager.create());
+    // create a new managed proxy
+    if (manager) {
+      return resolveWith(deferred.resolve, manager.create());
+    }
+
+    // create a new unmanaged proxy
+    return resolveWith(deferred.resolve, getProxy());
   };
 }

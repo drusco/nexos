@@ -9,7 +9,7 @@ describe("ProxyError", () => {
 
     expect(proxyError).toBeInstanceOf(Error);
     expect(proxyError.message).toBe(errorMessage);
-    expect(proxyError.proxy).toBe(proxy);
+    expect(proxyError.target).toBe(proxy);
     expect(proxyError.name).toBe("ProxyError");
   });
 });

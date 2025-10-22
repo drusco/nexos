@@ -20,7 +20,7 @@ export function rejectWith(resolve: nx.FunctionLike, error: Error): never {
 
   if (error instanceof ProxyError) {
     // Retrieve the wrapper for the proxy
-    const wrapper = getProxyWrapper(error.proxy);
+    const wrapper = getProxyWrapper(error.target);
     // Emit the error event on the 'nexo' event emitter
     wrapper?.manager?.events?.emit("proxy.error", error);
     // Emit the error event on the wrapper's event emitter

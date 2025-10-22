@@ -3,7 +3,7 @@ import getProxyMap from "./getProxyMap.js";
 import { createDeferred, resolveWith } from "./deferred.js";
 import Event from "../events/Event.js";
 
-const emitProxy = (proxy: nx.Proxy): nx.Proxy => {
+const emitProxy = (proxy: object): nx.Proxy => {
   if (!isProxy(proxy)) return;
 
   const deferred = createDeferred<nx.FunctionLike<[], nx.Proxy>>();
