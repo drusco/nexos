@@ -2,8 +2,8 @@ declare global {
   namespace nx {
     /** Error specific to proxy operations. */
     interface ProxyError extends Error {
-      /** Proxy instance that caused the error. */
-      readonly proxy: Proxy;
+      /** The object that caused the error. */
+      readonly target: object;
       readonly name: string;
     }
   }

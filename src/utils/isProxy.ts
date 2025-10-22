@@ -12,5 +12,5 @@ import getProxyMap from "./getProxyMap.js";
  * @returns `true` if the value is a known {@link nx.Proxy | Proxy}, otherwise `false`.
  */
 export default function isProxy(value: unknown): value is nx.Proxy {
-  return getProxyMap().has(value as nx.Proxy);
+  return getProxyMap().has(value as object);
 }
