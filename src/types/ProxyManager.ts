@@ -3,7 +3,7 @@ declare global {
     /**
      * Proxy factory and manager.
      */
-    interface ProxyManager extends EventEmittable<Events & ProxyEvents> {
+    interface ProxyManager extends EventEmittable<ManagerEvents & ProxyEvents> {
       /** Weak reference map of active proxies. */
       readonly entries: Map<string, WeakRef<Proxy>>;
       /**
