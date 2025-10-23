@@ -59,8 +59,7 @@
   "keywords": [
     "proxy",
     "events",
-    "handler",
-    "mock"
+    "mocks"
   ],
   "dependencies": {
     "uuid": "^11.1.0"
