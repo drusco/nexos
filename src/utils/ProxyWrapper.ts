@@ -1,6 +1,5 @@
 import isTraceable from "./isTraceable.js";
 import EventEmitter from "./EventEmitter.js";
-import { v4 as uuid } from "uuid";
 
 /**
  * A wrapper class that manages a proxy and its associated events.
@@ -9,6 +8,7 @@ import { v4 as uuid } from "uuid";
  * to revoke the proxy and manage traceability.
  *
  */
+
 class ProxyWrapper implements nx.ProxyWrapper {
   get revoked(): boolean {
     return this.isRevoked;
@@ -52,8 +52,13 @@ class ProxyWrapper implements nx.ProxyWrapper {
   /** The function responsible for revoking the proxy */
   private revokeProxy?: () => void;
 
+  /** Private counter for unique id generation */
+  private static size = 0;
+
   /** A unique identifier for the proxy */
-  private proxyId: string = uuid();
+  private proxyId: string = (++ProxyWrapper.size + Date.now())
+    .toString(36)
+    .toUpperCase();
 
   /**
    * Creates an instance of `ProxyWrapper`.
