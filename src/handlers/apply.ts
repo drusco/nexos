@@ -19,7 +19,7 @@ import getProxyWrapper from "../utils/getProxyWrapper.js";
  *
  */
 
-export default function apply(resolveProxy: nx.resolveProxy) {
+export default function apply(resolveProxy: nx.ResolveProxy) {
   return (
     target: nx.FunctionLike,
     thisArg: unknown = undefined,

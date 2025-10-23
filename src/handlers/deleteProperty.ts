@@ -16,7 +16,7 @@ import getProxyWrapper from "../utils/getProxyWrapper.js";
  * If deletion fails at any point, a `ProxyError` is returned via the deferred handler.
  */
 
-export default function deleteProperty(resolveProxy: nx.resolveProxy) {
+export default function deleteProperty(resolveProxy: nx.ResolveProxy) {
   return (target: object, property: nx.ObjectKey): boolean => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);

@@ -15,7 +15,7 @@ import ProxyError from "../utils/ProxyError.js";
  * the event is not prevented. All outcomes resolve or reject the associated
  * deferred function to maintain consistency with other traps in the system.
  */
-export default function isExtensible(resolveProxy: nx.resolveProxy) {
+export default function isExtensible(resolveProxy: nx.ResolveProxy) {
   return (target: object): boolean => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);

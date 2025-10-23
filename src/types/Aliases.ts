@@ -17,7 +17,7 @@ declare global {
     > = (this: ThisArg, ...args: Args) => Return;
 
     /** A function returning a proxy or `undefined`. */
-    type resolveProxy = FunctionLike<[], Proxy | undefined>;
+    type ResolveProxy = () => proxy | undefined;
   }
 }
 

@@ -13,7 +13,7 @@ import set from "./set.js";
 import setPrototypeOf from "./setPrototypeOf.js";
 
 export default function createHandlers(
-  resolveProxy: nx.resolveProxy,
+  resolveProxy: nx.ResolveProxy,
 ): ProxyHandler<object> {
   return {
     apply: apply(resolveProxy),
