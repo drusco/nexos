@@ -16,7 +16,7 @@ import ProxyError from "../utils/ProxyError.js";
  * deferred function to maintain consistency with other traps in the system.
  */
 export default function isExtensible(resolveProxy: nx.resolveProxy) {
-  return (target: nx.Traceable): boolean => {
+  return (target: object): boolean => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();

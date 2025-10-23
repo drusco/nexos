@@ -5,7 +5,7 @@ declare global {
       readonly returnValue: ObjectKey[];
       readonly data: {
         /** Target object. */
-        readonly target: Traceable;
+        readonly target: object;
         /** List of keys. */
         readonly result: Promise<FunctionLike<[], ObjectKey[]>>;
       };

@@ -14,7 +14,7 @@ import setPrototypeOf from "./setPrototypeOf.js";
 
 export default function createHandlers(
   resolveProxy: nx.resolveProxy,
-): ProxyHandler<nx.Traceable> {
+): ProxyHandler<object> {
   return {
     apply: apply(resolveProxy),
     construct: construct(resolveProxy),

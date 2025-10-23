@@ -5,7 +5,7 @@ declare global {
       readonly returnValue: void | PropertyDescriptor;
       readonly data: {
         /** Target object. */
-        readonly target: Traceable;
+        readonly target: object;
         /** Property key being inspected. */
         readonly property: ObjectKey;
         /** Descriptor of the property. */

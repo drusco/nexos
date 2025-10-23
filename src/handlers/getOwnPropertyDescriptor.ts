@@ -11,7 +11,7 @@ import ProxyError from "../utils/ProxyError.js";
 export default function getOwnPropertyDescriptor(
   resolveProxy: nx.resolveProxy,
 ) {
-  return (target: nx.Traceable, property: nx.ObjectKey): PropertyDescriptor => {
+  return (target: object, property: nx.ObjectKey): PropertyDescriptor => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);
     const deferred = createDeferred<nx.FunctionLike<[], PropertyDescriptor>>();

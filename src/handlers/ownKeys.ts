@@ -24,7 +24,7 @@ import ProxyError from "../utils/ProxyError.js";
  *
  */
 export default function ownKeys(resolveProxy: nx.resolveProxy) {
-  return (target: nx.Traceable): nx.ObjectKey[] => {
+  return (target: object): nx.ObjectKey[] => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);
     const deferred = createDeferred<nx.FunctionLike<[], nx.ObjectKey[]>>();

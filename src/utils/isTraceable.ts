@@ -1,16 +1,14 @@
 /**
- * Determines whether the given value is a {@link nx.Traceable | Traceable} entity.
+ * Determines whether the given value is a traceable object.
  *
  * A value is considered traceable if it is a non-null object or function.
  * This check is used to determine whether the value is eligible to be
  * linked to a proxy in the system's internal tracking.
  *
- * Acts as a type guard to narrow the type to {@link nx.Traceable | Traceable}.
- *
  * @param value - The value to evaluate.
- * @returns `true` if the value is {@link nx.Traceable | Traceable}, otherwise `false`.
+ * @returns `true` if the value is a traceable object, otherwise `false`.
  */
-export default function isTraceable(value: unknown): value is nx.Traceable {
+export default function isTraceable(value: unknown): value is object {
   const isObject = typeof value === "object";
   const isFunction = typeof value === "function";
 

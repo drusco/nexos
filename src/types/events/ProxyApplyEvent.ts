@@ -5,7 +5,7 @@ declare global {
       readonly returnValue: unknown;
       readonly data: {
         /** Target function being called. */
-        readonly target: Traceable;
+        readonly target: object;
         /** `this` value for the call. */
         readonly thisArg: unknown;
         /** Arguments passed to the call. */

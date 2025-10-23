@@ -20,11 +20,7 @@ import getProxyWrapper from "../utils/getProxyWrapper.js";
  * The final resolved result reflects the behavior of `Reflect.set`.
  */
 export default function set(resolveProxy: nx.resolveProxy) {
-  return (
-    target: nx.Traceable,
-    property: nx.ObjectKey,
-    value: unknown,
-  ): boolean => {
+  return (target: object, property: nx.ObjectKey, value: unknown): boolean => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();

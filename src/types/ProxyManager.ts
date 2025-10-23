@@ -12,13 +12,13 @@ declare global {
        * @param id - Unique proxy identifier.
        * @param target - Optional target to wrap.
        */
-      use(id: string, target?: Traceable): Proxy;
+      use(id: string, target?: object): Proxy;
       /**
        * Creates a new proxy for the given target.
        *
        * @param target - Optional target to wrap.
        */
-      create(target?: Traceable): Proxy;
+      create(target?: object): Proxy;
     }
   }
 }

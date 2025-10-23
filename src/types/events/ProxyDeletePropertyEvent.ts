@@ -5,7 +5,7 @@ declare global {
       readonly returnValue: void;
       readonly data: {
         /** Target object. */
-        readonly target: Traceable;
+        readonly target: object;
         /** Property key being deleted. */
         readonly property: ObjectKey;
         /** Whether the deletion succeeded. */
