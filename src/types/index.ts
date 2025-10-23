@@ -10,7 +10,7 @@ import "./events/EventEmittable.js";
 import "./events/EventEmitter.js";
 import "./events/EventListener.js";
 // base events
-import "./events/NexoEvent.js";
+import "./events/Event.js";
 import "./events/ProxyEvent.js";
 // proxy events
 import "./events/ProxyApplyEvent.js";
@@ -28,5 +28,5 @@ import "./events/ProxyPreventExtensionsEvent.js";
 import "./events/ProxySetEvent.js";
 import "./events/ProxySetPrototypeOfEvent.js";
 // events reference
-import "./events/NexoEvents.js";
+import "./events/ManagerEvents.js";
 import "./events/ProxyEvents.js";

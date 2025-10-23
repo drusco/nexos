@@ -43,7 +43,7 @@ class Nexo implements nx.ProxyManager {
 
   private eventEmitter?: nx.EventEmitter = new EventEmitter();
 
-  get events(): nx.EventEmitter<nx.ProxyEvents & nx.Events> {
+  get events(): nx.EventEmitter<nx.ProxyEvents & nx.ManagerEvents> {
     return this.eventEmitter;
   }
 
