@@ -15,7 +15,7 @@ import ProxyError from "../utils/ProxyError.js";
  * Emits a `ProxyPreventExtensionsEvent` and resolves or rejects based on the result
  * and conformance with proxy invariants.
  */
-export default function preventExtensions(resolveProxy: nx.resolveProxy) {
+export default function preventExtensions(resolveProxy: nx.ResolveProxy) {
   return (target: object): boolean => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);

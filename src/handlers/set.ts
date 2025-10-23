@@ -19,7 +19,7 @@ import getProxyWrapper from "../utils/getProxyWrapper.js";
  *
  * The final resolved result reflects the behavior of `Reflect.set`.
  */
-export default function set(resolveProxy: nx.resolveProxy) {
+export default function set(resolveProxy: nx.ResolveProxy) {
   return (target: object, property: nx.ObjectKey, value: unknown): boolean => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);

@@ -12,7 +12,7 @@ import ProxyError from "../utils/ProxyError.js";
  * the returned value and uses it instead. Otherwise, it defaults to the prototype
  * of the sandbox or the original target object.
  */
-export default function getPrototypeOf(resolveProxy: nx.resolveProxy) {
+export default function getPrototypeOf(resolveProxy: nx.ResolveProxy) {
   return (target: object): object => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);

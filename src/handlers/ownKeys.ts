@@ -23,7 +23,7 @@ import ProxyError from "../utils/ProxyError.js";
  * for consumers performing reflective operations.
  *
  */
-export default function ownKeys(resolveProxy: nx.resolveProxy) {
+export default function ownKeys(resolveProxy: nx.ResolveProxy) {
   return (target: object): nx.ObjectKey[] => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);

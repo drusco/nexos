@@ -16,7 +16,7 @@ import getProxyWrapper from "../utils/getProxyWrapper.js";
  * The resolved result reflects the actual JS engine behavior (true/false),
  * while the event provides a `data.result` promise representing the expected outcome.
  */
-export default function defineProperty(resolveProxy: nx.resolveProxy) {
+export default function defineProperty(resolveProxy: nx.ResolveProxy) {
   return (
     target: object,
     property: nx.ObjectKey,

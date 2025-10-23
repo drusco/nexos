@@ -23,7 +23,7 @@ import getProxyWrapper from "../utils/getProxyWrapper.js";
  *
  * This supports complex metaprogramming behaviors and runtime policy enforcement.
  */
-export default function setPrototypeOf(resolveProxy: nx.resolveProxy) {
+export default function setPrototypeOf(resolveProxy: nx.ResolveProxy) {
   return (target: object, prototype: object): boolean => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);

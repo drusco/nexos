@@ -19,7 +19,7 @@ import ProxyError from "../utils/ProxyError.js";
  * `.data.result` promise.
  *
  */
-export default function has(resolveProxy: nx.resolveProxy) {
+export default function has(resolveProxy: nx.ResolveProxy) {
   return (target: object, property: nx.ObjectKey): boolean => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);

@@ -9,7 +9,7 @@ import ProxyError from "../utils/ProxyError.js";
  * the behavior of property descriptor retrieval.
  */
 export default function getOwnPropertyDescriptor(
-  resolveProxy: nx.resolveProxy,
+  resolveProxy: nx.ResolveProxy,
 ) {
   return (target: object, property: nx.ObjectKey): PropertyDescriptor => {
     const proxy = resolveProxy();

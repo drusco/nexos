@@ -20,7 +20,7 @@ import isTraceable from "../utils/isTraceable.js";
  * If no override is applied and the target isn't directly traceable, a new proxy instance is returned.
  *
  */
-export default function construct(resolveProxy: nx.resolveProxy) {
+export default function construct(resolveProxy: nx.ResolveProxy) {
   return (target: nx.FunctionLike, args: unknown[]): object => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);
