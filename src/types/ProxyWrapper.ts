@@ -5,7 +5,7 @@ declare global {
      */
     interface ProxyWrapper extends EventEmittable<ProxyEvents> {
       /** The underlying target object */
-      readonly target: Traceable;
+      readonly target: object;
       /** The unique identifier for the proxy */
       readonly id: string;
       /** The proxy manager instance. */
@@ -21,7 +21,7 @@ declare global {
       /** Removes the proxy manager instance  */
       removeManager(): this;
       /** Sets the underlying proxy target */
-      setTarget(target: Traceable, isTraceable?: boolean): this;
+      setTarget(target: object, isTraceable?: boolean): this;
       /** Sets the unique identifier for the proxy */
       setId(id: string): this;
     }

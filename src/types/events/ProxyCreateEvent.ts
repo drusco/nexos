@@ -7,7 +7,7 @@ declare global {
         /** Unique proxy ID. */
         readonly id: string;
         /** Original proxy target. */
-        readonly target: Traceable;
+        readonly target: object;
         /** Newly created proxy instance. */
         readonly result: Promise<FunctionLike<[], Proxy>>;
       };

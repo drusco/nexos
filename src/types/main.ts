@@ -1,8 +1,5 @@
 declare global {
   namespace nx {
-    /** A non-null object that can be tracked as a proxy target. */
-    type Traceable = NonNullable<object>;
-
     /** A valid object property key: a string or a symbol. */
     type ObjectKey = string | symbol;
 

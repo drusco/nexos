@@ -22,7 +22,7 @@ class ProxyWrapper implements nx.ProxyWrapper {
     return this.proxyId;
   }
 
-  get target(): nx.Traceable {
+  get target(): object {
     return this.proxyTarget;
   }
 
@@ -35,7 +35,7 @@ class ProxyWrapper implements nx.ProxyWrapper {
   }
 
   /** The underlying target object */
-  private proxyTarget: nx.Traceable;
+  private proxyTarget: object;
 
   /** Whether the `proxy` was created with a custom target object */
   private isTraceable: boolean = false;
@@ -97,7 +97,7 @@ class ProxyWrapper implements nx.ProxyWrapper {
     return this;
   }
 
-  setTarget(target: nx.Traceable, traceable: boolean = true): this {
+  setTarget(target: object, traceable: boolean = true): this {
     if (this.isRevoked) return this;
     if (isTraceable(target)) {
       this.proxyTarget = target;

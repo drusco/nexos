@@ -13,7 +13,7 @@ import ProxyError from "../utils/ProxyError.js";
  * of the sandbox or the original target object.
  */
 export default function getPrototypeOf(resolveProxy: nx.resolveProxy) {
-  return (target: nx.Traceable): object => {
+  return (target: object): object => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);
     const deferred = createDeferred<nx.FunctionLike<[], object>>();

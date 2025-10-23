@@ -10,7 +10,7 @@ import EventEmitter from "./EventEmitter.js";
  * @noInheritDoc
  * @param T - The type of traceable objects stored in the map.
  */
-class TraceableMap<T extends nx.Traceable>
+class TraceableMap<T extends object>
   extends Map<string, WeakRef<T>>
   implements nx.EventEmittable
 {

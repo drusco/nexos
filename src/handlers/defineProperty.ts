@@ -18,7 +18,7 @@ import getProxyWrapper from "../utils/getProxyWrapper.js";
  */
 export default function defineProperty(resolveProxy: nx.resolveProxy) {
   return (
-    target: nx.Traceable,
+    target: object,
     property: nx.ObjectKey,
     descriptor: PropertyDescriptor,
   ): boolean => {

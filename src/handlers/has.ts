@@ -20,7 +20,7 @@ import ProxyError from "../utils/ProxyError.js";
  *
  */
 export default function has(resolveProxy: nx.resolveProxy) {
-  return (target: nx.Traceable, property: nx.ObjectKey): boolean => {
+  return (target: object, property: nx.ObjectKey): boolean => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();

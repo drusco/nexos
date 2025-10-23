@@ -16,7 +16,7 @@ import ProxyError from "../utils/ProxyError.js";
  * and conformance with proxy invariants.
  */
 export default function preventExtensions(resolveProxy: nx.resolveProxy) {
-  return (target: nx.Traceable): boolean => {
+  return (target: object): boolean => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();

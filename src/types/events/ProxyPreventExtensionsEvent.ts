@@ -5,7 +5,7 @@ declare global {
       readonly returnValue: void | boolean;
       readonly data: {
         /** Target object. */
-        readonly target: Traceable;
+        readonly target: object;
         /** Whether preventing extensions succeeded. */
         readonly result: Promise<FunctionLike<[], boolean>>;
       };

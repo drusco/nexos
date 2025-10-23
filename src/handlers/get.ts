@@ -15,7 +15,7 @@ import getProxyWrapper from "../utils/getProxyWrapper.js";
  * Ensures all outcomes are funneled through a deferred promise resolution for consistency.
  */
 export default function get(resolveProxy: nx.resolveProxy) {
-  return (target: nx.Traceable, property: nx.ObjectKey): unknown => {
+  return (target: object, property: nx.ObjectKey): unknown => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);
     const { manager } = wrapper;

@@ -77,7 +77,7 @@ class Nexo implements nx.ProxyManager {
    * @returns A proxy associated with the ID and optional target.
    */
 
-  use(id: string, target?: nx.Traceable): nx.Proxy {
+  use(id: string, target?: object): nx.Proxy {
     // Return proxy used by the ID
     if (!target && this.entries.has(id)) {
       const proxy = this.entries.get(id)?.deref();
@@ -117,7 +117,7 @@ class Nexo implements nx.ProxyManager {
    * const proxy2 = nexo.create(console.log);
    * console.log(proxy1 === proxy2); // false
    */
-  create(target?: nx.Traceable): nx.Proxy {
+  create(target?: object): nx.Proxy {
     const proxy = getProxy(target);
     const wrapper = getProxyWrapper(proxy);
 

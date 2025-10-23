@@ -5,7 +5,7 @@ declare global {
       readonly returnValue: unknown;
       readonly data: {
         /** Target object. */
-        readonly target: Traceable;
+        readonly target: object;
         /** Property key being set. */
         readonly property: ObjectKey;
         /** New value being assigned. */
