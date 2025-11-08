@@ -3,17 +3,17 @@ declare global {
     /**
      * Describes an event with metadata and methods to control its behavior.
      *
-     * @typeParam Target - Event target type.
-     * @typeParam Data - Event data type.
+     * @typeParam T - Event target type.
+     * @typeParam D - Event data type.
      */
-    interface Event<Target = unknown, Data = unknown> {
+    interface Event<T = unknown, D = unknown> {
       /** Event name. */
       readonly name: string;
       /** Event payload data. */
-      readonly data: Data;
+      readonly data: D;
       /** Target the event was dispatched to. */
-      readonly target: Target;
-      /** Timestamp when the event was created (ms since epoch). */
+      readonly target: T;
+      /** Timestamp when the event was created. */
       readonly timestamp: number;
       /** Whether the event can be canceled. */
       readonly cancelable: boolean;
