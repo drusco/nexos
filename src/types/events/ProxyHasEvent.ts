@@ -1,7 +1,7 @@
 declare global {
   namespace nx {
     /** Fired when the `in` operator is used on the proxy. */
-    interface ProxyHasEvent extends ProxyEvent {
+    interface ProxyHasEvent extends Event<Proxy> {
       readonly returnValue: boolean;
       readonly data: {
         /** Target object. */
