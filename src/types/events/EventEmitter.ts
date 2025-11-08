@@ -5,9 +5,9 @@ declare global {
      * and invoking event listeners.
      */
     interface EventEmitter<
-      Events extends Record<string, EventListener> = Record<
+      Events extends Record<string, FunctionLike> = Record<
         string,
-        EventListener
+        FunctionLike
       >,
     > {
       /**
@@ -19,7 +19,9 @@ declare global {
        */
       on<Name extends Extract<keyof Events, string>>(
         event: Name,
-        listener: (...args: Events[Name]["args"]) => Events[Name]["result"],
+        listener: (
+          ...args: Parameters<Events[Name]>
+        ) => ReturnType<Events[Name]>,
       ): this;
 
       on(event: string, listener: FunctionLike): this;
@@ -33,7 +35,9 @@ declare global {
        */
       off<Name extends Extract<keyof Events, string>>(
         event: Name,
-        listener: (...args: Events[Name]["args"]) => Events[Name]["result"],
+        listener: (
+          ...args: Parameters<Events[Name]>
+        ) => ReturnType<Events[Name]>,
       ): this;
 
       off(event: string, listener: FunctionLike): this;
@@ -47,7 +51,7 @@ declare global {
        */
       emit<Name extends Extract<keyof Events, string>>(
         event: Name,
-        ...data: Events[Name]["args"]
+        ...data: Parameters<Events[Name]>
       ): boolean;
     }
   }

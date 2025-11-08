@@ -8,7 +8,6 @@ import "./ProxyWrapper.js";
 // event emission
 import "./events/EventEmittable.js";
 import "./events/EventEmitter.js";
-import "./events/EventListener.js";
 // base events
 import "./events/Event.js";
 import "./events/ProxyEvent.js";
