@@ -1,7 +1,7 @@
 declare global {
   namespace nx {
     /** Fired when the proxy's own property keys are requested. */
-    interface ProxyOwnKeysEvent extends ProxyEvent {
+    interface ProxyOwnKeysEvent extends Event<Proxy> {
       readonly returnValue: ObjectKey[];
       readonly data: {
         /** Target object. */

@@ -1,7 +1,7 @@
 declare global {
   namespace nx {
     /** Fired when a new proxy instance is created. */
-    interface ProxyCreateEvent extends ProxyEvent {
+    interface ProxyCreateEvent extends Event<Proxy> {
       readonly returnValue: void | Proxy;
       readonly data: {
         /** Unique proxy ID. */

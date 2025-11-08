@@ -1,7 +1,7 @@
 declare global {
   namespace nx {
     /** Fired when a property is read from the proxy. */
-    interface ProxyGetEvent extends ProxyEvent {
+    interface ProxyGetEvent extends Event<Proxy> {
       readonly returnValue: unknown;
       readonly data: {
         /** Target object. */

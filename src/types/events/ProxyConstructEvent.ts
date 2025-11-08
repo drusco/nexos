@@ -1,7 +1,7 @@
 declare global {
   namespace nx {
     /** Fired when a proxy-wrapped constructor is called via `new`. */
-    interface ProxyConstructEvent extends ProxyEvent {
+    interface ProxyConstructEvent extends Event<Proxy> {
       readonly returnValue: object;
       readonly data: {
         /** Constructor function being called. */

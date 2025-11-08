@@ -1,7 +1,7 @@
 declare global {
   namespace nx {
     /** Fired when checking if the proxy is extensible. */
-    interface ProxyIsExtensibleEvent extends ProxyEvent {
+    interface ProxyIsExtensibleEvent extends Event<Proxy> {
       readonly returnValue: void | boolean;
       readonly data: {
         /** Target object. */

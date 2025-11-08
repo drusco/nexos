@@ -1,7 +1,7 @@
 declare global {
   namespace nx {
     /** Fired when property metadata is requested. */
-    interface ProxyGetOwnPropertyDescriptorEvent extends ProxyEvent {
+    interface ProxyGetOwnPropertyDescriptorEvent extends Event<Proxy> {
       readonly returnValue: void | PropertyDescriptor;
       readonly data: {
         /** Target object. */

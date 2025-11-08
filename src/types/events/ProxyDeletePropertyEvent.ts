@@ -1,7 +1,7 @@
 declare global {
   namespace nx {
     /** Fired when a property is deleted from the proxy. */
-    interface ProxyDeletePropertyEvent extends ProxyEvent {
+    interface ProxyDeletePropertyEvent extends Event<Proxy> {
       readonly returnValue: void;
       readonly data: {
         /** Target object. */

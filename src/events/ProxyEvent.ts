@@ -1,7 +1,7 @@
 import Event from "./Event.js";
 import isProxy from "../utils/isProxy.js";
 
-type HandlerNames =
+type HandlerName =
   | "get"
   | "has"
   | "deleteProperty"
@@ -19,17 +19,15 @@ type HandlerNames =
 /**
  * Represents an event triggered by a proxy.
  */
-class ProxyEvent<Data = unknown>
-  extends Event<nx.Proxy, Data>
-  implements nx.ProxyEvent<Data>
+class ProxyEvent<D>
+  extends Event<nx.Proxy, D>
+  implements nx.Event<nx.Proxy, D>
 {
-  declare readonly cancelable: true;
-
   /**
    * Creates an instance of the `ProxyEvent`.
    * This constructor initializes the event with the name prefixed by `proxy.`
    *
-   * @param name - Name of the built-in {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy#handler_functions | handler function}.
+   * @param name - Name of the {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy#handler_functions | built-in handler}.
    * @param options - Options to configure the event.
    * @param options.data - The data associated with the event.
    * @param options.target - The proxy of the event.
@@ -38,9 +36,9 @@ class ProxyEvent<Data = unknown>
    * const proxyEvent = new ProxyEvent('get', { target: proxy, data: "example" });
    */
   constructor(
-    name: HandlerNames,
+    name: HandlerName,
     options?: {
-      data?: Data;
+      data?: D;
       target: nx.Proxy;
     },
   ) {

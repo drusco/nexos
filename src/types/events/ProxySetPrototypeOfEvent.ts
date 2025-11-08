@@ -1,7 +1,7 @@
 declare global {
   namespace nx {
     /** Fired when `Object.setPrototypeOf()` changes a proxy's prototype. */
-    interface ProxySetPrototypeOfEvent extends ProxyEvent {
+    interface ProxySetPrototypeOfEvent extends Event<Proxy> {
       readonly returnValue: void | object;
       readonly data: {
         /** Target object. */

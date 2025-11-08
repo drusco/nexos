@@ -10,17 +10,15 @@
  * const event = new Event('proxy', { data: { message: 'New proxy created!' }, cancelable: true });
  * event.preventDefault();
  */
-class Event<Target = unknown, Data = unknown>
-  implements nx.Event<Target, Data>
-{
+class Event<T, D> implements nx.Event<T, D> {
   /** The name of the event. */
   readonly name: string;
 
   /** The data associated with the event. */
-  readonly data: Data;
+  readonly data: D;
 
   /** The target to which the event is dispatched. */
-  readonly target: Target;
+  readonly target: T;
 
   /** The timestamp indicating when the event was created. */
   readonly timestamp: number;
@@ -48,7 +46,7 @@ class Event<Target = unknown, Data = unknown>
    */
   constructor(
     name: string,
-    options: Partial<{ data: Data; target: Target; cancelable: boolean }> = {},
+    options: Partial<{ data: D; target: T; cancelable: boolean }> = {},
   ) {
     const { data, target, cancelable = false } = options;
 

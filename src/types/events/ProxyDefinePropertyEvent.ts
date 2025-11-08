@@ -1,7 +1,7 @@
 declare global {
   namespace nx {
     /** Fired when `Object.defineProperty()` is used on the proxy. */
-    interface ProxyDefinePropertyEvent extends ProxyEvent {
+    interface ProxyDefinePropertyEvent extends Event<Proxy> {
       readonly returnValue: void | PropertyDescriptor;
       readonly data: {
         /** Target object. */
