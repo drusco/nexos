@@ -1,61 +1,54 @@
 declare global {
   namespace nx {
-    /** Map of available {@link nx.ProxyManager} and {@link nx.ProxyWrapper} event names. */
+    /** Map of available {@link ProxyManager} and {@link ProxyWrapper} event names. */
     type ProxyEvents = {
-      error: { args: [Error] };
-      "proxy.error": { args: [ProxyError] };
-      "proxy.apply": {
-        args: [ProxyApplyEvent];
-        result: ProxyApplyEvent["returnValue"];
-      };
-      "proxy.construct": {
-        args: [ProxyConstructEvent];
-        result: ProxyConstructEvent["returnValue"];
-      };
-      "proxy.defineProperty": {
-        args: [ProxyDefinePropertyEvent];
-        result: ProxyDefinePropertyEvent["returnValue"];
-      };
-      "proxy.deleteProperty": {
-        args: [ProxyDeletePropertyEvent];
-        result: ProxyDeletePropertyEvent["returnValue"];
-      };
-      "proxy.get": {
-        args: [ProxyGetEvent];
-        result: ProxyGetEvent["returnValue"];
-      };
-      "proxy.getOwnPropertyDescriptor": {
-        args: [ProxyGetOwnPropertyDescriptorEvent];
-        result: ProxyGetOwnPropertyDescriptorEvent["returnValue"];
-      };
-      "proxy.getPrototypeOf": {
-        args: [ProxyGetPrototypeOfEvent];
-        result: ProxyGetPrototypeOfEvent["returnValue"];
-      };
-      "proxy.has": {
-        args: [ProxyHasEvent];
-        result: ProxyHasEvent["returnValue"];
-      };
-      "proxy.isExtensible": {
-        args: [ProxyIsExtensibleEvent];
-        result: ProxyIsExtensibleEvent["returnValue"];
-      };
-      "proxy.ownKeys": {
-        args: [ProxyOwnKeysEvent];
-        result: ProxyOwnKeysEvent["returnValue"];
-      };
-      "proxy.preventExtensions": {
-        args: [ProxyPreventExtensionsEvent];
-        result: ProxyPreventExtensionsEvent["returnValue"];
-      };
-      "proxy.set": {
-        args: [ProxySetEvent];
-        result: ProxySetEvent["returnValue"];
-      };
-      "proxy.setPrototypeOf": {
-        args: [ProxySetPrototypeOfEvent];
-        result: ProxySetPrototypeOfEvent["returnValue"];
-      };
+      error: (error: Error) => void;
+
+      "proxy.error": (error: ProxyError) => void;
+
+      "proxy.apply": (event: ProxyApplyEvent) => ProxyApplyEvent["returnValue"];
+
+      "proxy.construct": (
+        event: ProxyConstructEvent,
+      ) => ProxyConstructEvent["returnValue"];
+
+      "proxy.defineProperty": (
+        event: ProxyDefinePropertyEvent,
+      ) => ProxyDefinePropertyEvent["returnValue"];
+
+      "proxy.deleteProperty": (
+        event: ProxyDeletePropertyEvent,
+      ) => ProxyDeletePropertyEvent["returnValue"];
+
+      "proxy.get": (event: ProxyGetEvent) => ProxyGetEvent["returnValue"];
+
+      "proxy.getOwnPropertyDescriptor": (
+        event: ProxyGetOwnPropertyDescriptorEvent,
+      ) => ProxyGetOwnPropertyDescriptorEvent["returnValue"];
+
+      "proxy.getPrototypeOf": (
+        event: ProxyGetPrototypeOfEvent,
+      ) => ProxyGetPrototypeOfEvent["returnValue"];
+
+      "proxy.has": (event: ProxyHasEvent) => ProxyHasEvent["returnValue"];
+
+      "proxy.isExtensible": (
+        event: ProxyIsExtensibleEvent,
+      ) => ProxyIsExtensibleEvent["returnValue"];
+
+      "proxy.ownKeys": (
+        event: ProxyOwnKeysEvent,
+      ) => ProxyOwnKeysEvent["returnValue"];
+
+      "proxy.preventExtensions": (
+        event: ProxyPreventExtensionsEvent,
+      ) => ProxyPreventExtensionsEvent["returnValue"];
+
+      "proxy.set": (event: ProxySetEvent) => ProxySetEvent["returnValue"];
+
+      "proxy.setPrototypeOf": (
+        event: ProxySetPrototypeOfEvent,
+      ) => ProxySetPrototypeOfEvent["returnValue"];
     };
   }
 }

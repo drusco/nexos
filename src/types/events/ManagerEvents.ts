@@ -1,12 +1,10 @@
 declare global {
   namespace nx {
-    /** Map of available {@link nx.ProxyManager} event names. */
+    /** Map of available {@link ProxyManager} event names. */
     type ManagerEvents = {
-      proxy: {
-        args: [ProxyCreateEvent];
-        result: ProxyCreateEvent["returnValue"];
-      };
-      error: { args: [Error] };
+      proxy: (event: ProxyCreateEvent) => ProxyCreateEvent["returnValue"];
+
+      error: (event: Error) => void;
     };
   }
 }

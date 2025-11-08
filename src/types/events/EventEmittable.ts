@@ -1,9 +1,9 @@
 declare global {
   namespace nx {
     interface EventEmittable<
-      Events extends Record<string, EventListener> = Record<
+      Events extends Record<string, FunctionLike> = Record<
         string,
-        EventListener
+        FunctionLike
       >,
     > {
       /** The event emitter instance responsible for managing lifecycle events. */

@@ -2,9 +2,9 @@ import EventEmitter from "./EventEmitter.js";
 import Event from "../events/Event.js";
 
 type TestEvents = {
-  customError: { args: [Error] };
-  test: { args: [nx.Event] };
-  error: { args: [Error] };
+  customError: (event: Error) => void;
+  test: (event: nx.Event) => void;
+  error: (event: Error) => void;
 };
 
 describe("EventEmitter", () => {
@@ -80,7 +80,7 @@ describe("EventEmitter", () => {
     const returnValue = Symbol("result");
     const testEvent = new Event("test", { cancelable: true });
 
-    emitter.on("test", (event: nx.Event) => {
+    emitter.on("test", (event) => {
       event.preventDefault();
       return returnValue;
     });
