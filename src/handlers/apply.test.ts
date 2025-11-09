@@ -1,48 +1,56 @@
 import Nexo from "../Nexo.js";
 import ProxyError from "../utils/ProxyError.js";
 import ProxyEvent from "../events/ProxyEvent.js";
+import apply from "./apply.js";
+import getProxy from "../utils/getProxy.js";
+import getProxyWrapper from "../utils/getProxyWrapper.js";
+import isProxy from "../utils/isProxy.js";
 
 describe("Apply Handler", () => {
-  it("emits 'proxy.apply' event with correct data and result promise", async () => {
+  it("creates a new `apply` handler for proxies", () => {
+    const proxy = getProxy();
+    const resolveProxy = () => proxy;
+    const handlerA = apply(resolveProxy);
+    const handlerB = apply(resolveProxy);
+
+    expect(handlerA).not.toBe(handlerB);
+  });
+
+  it("emits a `proxy.apply` event", async () => {
     const nexo = new Nexo();
-    const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+    const proxy = getProxy();
+    const wrapper = getProxyWrapper(proxy);
     const applyListener = jest.fn();
 
     nexo.events.on("proxy.apply", applyListener);
     wrapper.events.on("proxy.apply", applyListener);
+    wrapper.setManager(nexo);
 
     const args = ["foo", "bar"];
     const thisArg = {};
     const result = Reflect.apply(proxy, thisArg, args);
-
-    // Check the last call to the applyListener, should be a ProxyApplyEvent
-    const [applyEvent]: [nx.ProxyApplyEvent] = applyListener.mock.lastCall;
-    const getResultFn = await applyEvent.data.result;
+    const [event]: [nx.ProxyApplyEvent] = applyListener.mock.lastCall;
+    const getResult = await event.data.result;
 
     expect(applyListener).toHaveBeenCalledTimes(2);
-    expect(applyEvent).toBeInstanceOf(ProxyEvent);
-    expect(applyEvent.target).toBe(proxy);
-    expect(applyEvent.cancelable).toBe(true);
-    expect(applyEvent.data.thisArg).toBe(thisArg);
-    expect(applyEvent.data.args).toStrictEqual(args);
-
-    // The resolved function from event.data.result should return the same result
-    expect(getResultFn()).toBe(result);
+    expect(event).toBeInstanceOf(ProxyEvent);
+    expect(event.target).toBe(proxy);
+    expect(event.cancelable).toBe(true);
+    expect(event.data.thisArg).toBe(thisArg);
+    expect(event.data.args).toStrictEqual(args);
+    expect(getResult()).toBe(result);
   });
 
-  it("returns an empty proxy when the original proxy has no function target", () => {
-    const nexo = new Nexo();
-    const proxy = nexo.create();
+  it("returns a sandboxed proxy when the original proxy has no function target", () => {
+    const proxy = getProxy();
     const result = Reflect.apply(proxy, undefined, []);
 
-    expect(Nexo.isProxy(result)).toBe(true);
+    expect(isProxy(result)).toBe(true);
   });
 
-  it("allows event listeners to override the return value by calling preventDefault", () => {
-    const nexo = new Nexo();
-    const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+  it("allows event listeners to override the return value", () => {
+    const proxy = getProxy();
+    const wrapper = getProxyWrapper(proxy);
     const expectedResult = "foo";
 
     wrapper.events.on("proxy.apply", (event: nx.ProxyApplyEvent) => {
@@ -56,40 +64,36 @@ describe("Apply Handler", () => {
   });
 
   it("invokes the original function target and returns its result", () => {
-    const nexo = new Nexo();
     const target = (a: number, b: number): number => a + b;
-    const proxy = nexo.create(target);
-
+    const proxy = getProxy(target);
     const result = Reflect.apply(proxy, undefined, [4, 1]);
 
     expect(result).toBe(5);
   });
 
   it("throws a ProxyError if the function target throws and emits error events", async () => {
-    const nexo = new Nexo();
-    const errorListener = jest.fn();
-    const applyListener = jest.fn();
     const target = () => {
       throw new Error("boom");
     };
-    const proxy = nexo.create(target);
-    const wrapper = Nexo.wrap(proxy);
 
-    nexo.events.on("error", errorListener);
-    wrapper.events.on("error", errorListener);
+    const nexo = new Nexo();
+    const proxy = getProxy(target);
+    const wrapper = getProxyWrapper(proxy);
+
+    const errorListener = jest.fn();
+    const applyListener = jest.fn();
+
+    nexo.events.on("proxy.error", errorListener);
     nexo.events.on("proxy.apply", applyListener);
+    wrapper.events.on("proxy.error", errorListener);
+    wrapper.setManager(nexo);
 
-    // Verify the proxy throws ProxyError synchronously
     expect(() => proxy()).toThrow(ProxyError);
 
-    // Listeners should have been called twice (error & proxy.error)
+    const [event]: [nx.ProxyApplyEvent] = applyListener.mock.lastCall;
+    const getResult = await event.data.result;
+
+    expect(() => getResult()).toThrow(ProxyError);
     expect(errorListener).toHaveBeenCalledTimes(2);
-
-    // The apply event listener is called and the result promise rejects with ProxyError
-    const [applyEvent]: [nx.ProxyApplyEvent] = applyListener.mock.lastCall;
-    const getResultFn = await applyEvent.data.result;
-
-    // Invoking the function resolved from event.data.result should throw ProxyError
-    expect(() => getResultFn()).toThrow(ProxyError);
   });
 });
