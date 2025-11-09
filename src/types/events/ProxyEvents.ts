@@ -1,6 +1,6 @@
 declare global {
   namespace nx {
-    /** Map of available {@link ProxyManager} and {@link ProxyWrapper} event names. */
+    /** Map of available proxy related event names. */
     type ProxyEvents = {
       error: (error: Error) => void;
       "proxy.error": (error: ProxyError) => void;
