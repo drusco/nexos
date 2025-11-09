@@ -23,7 +23,7 @@ export default function apply(resolveProxy: nx.ResolveProxy) {
   return (
     target: nx.FunctionLike,
     thisArg: unknown = undefined,
-    args: unknown[],
+    args: unknown[] = [],
   ): unknown => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);
