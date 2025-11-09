@@ -3,10 +3,11 @@ declare global {
     /** Map of available {@link ProxyManager} and {@link ProxyWrapper} event names. */
     type ProxyEvents = {
       error: (error: Error) => void;
-
       "proxy.error": (error: ProxyError) => void;
-
       "proxy.apply": (event: ProxyApplyEvent) => ProxyApplyEvent["returnValue"];
+      "proxy.get": (event: ProxyGetEvent) => ProxyGetEvent["returnValue"];
+      "proxy.has": (event: ProxyHasEvent) => ProxyHasEvent["returnValue"];
+      "proxy.set": (event: ProxySetEvent) => ProxySetEvent["returnValue"];
 
       "proxy.construct": (
         event: ProxyConstructEvent,
@@ -20,8 +21,6 @@ declare global {
         event: ProxyDeletePropertyEvent,
       ) => ProxyDeletePropertyEvent["returnValue"];
 
-      "proxy.get": (event: ProxyGetEvent) => ProxyGetEvent["returnValue"];
-
       "proxy.getOwnPropertyDescriptor": (
         event: ProxyGetOwnPropertyDescriptorEvent,
       ) => ProxyGetOwnPropertyDescriptorEvent["returnValue"];
@@ -29,8 +28,6 @@ declare global {
       "proxy.getPrototypeOf": (
         event: ProxyGetPrototypeOfEvent,
       ) => ProxyGetPrototypeOfEvent["returnValue"];
-
-      "proxy.has": (event: ProxyHasEvent) => ProxyHasEvent["returnValue"];
 
       "proxy.isExtensible": (
         event: ProxyIsExtensibleEvent,
@@ -43,8 +40,6 @@ declare global {
       "proxy.preventExtensions": (
         event: ProxyPreventExtensionsEvent,
       ) => ProxyPreventExtensionsEvent["returnValue"];
-
-      "proxy.set": (event: ProxySetEvent) => ProxySetEvent["returnValue"];
 
       "proxy.setPrototypeOf": (
         event: ProxySetPrototypeOfEvent,

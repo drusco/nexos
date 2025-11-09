@@ -6,7 +6,7 @@
  * which references the object associated with the error.
  */
 class ProxyError extends Error implements nx.ProxyError {
-  readonly name: string = "ProxyError";
+  readonly name = "ProxyError";
 
   /** The object associated with this error. */
   readonly target: object;
