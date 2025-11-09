@@ -35,7 +35,7 @@ class Nexo implements nx.ProxyManager {
    * @remarks
    * This map allows quick access to proxies by their unique ID, ensuring that proxies are properly managed and referenced.
    */
-  readonly entries = new TraceableMap<nx.Proxy>();
+  readonly entries = new TraceableMap<string, nx.Proxy>();
 
   static isProxy = isProxy;
   static isTraceable = isTraceable;

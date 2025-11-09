@@ -2,16 +2,17 @@ import Event from "../events/Event.js";
 import EventEmitter from "./EventEmitter.js";
 
 /**
- * A specialized `Map` that stores {@link Traceable} objects wrapped in `WeakRef`.
+ * A map that stores objects wrapped in `WeakRef` for traceability.
  *
  * This map automatically cleans up entries whose targets are garbage-collected,
- * and emits events when modifications occur (`set`, `delete`, `clear`).
+ * and emits events when modifications occur.
  *
  * @noInheritDoc
- * @param T - The type of traceable objects stored in the map.
+ * @typeParam K - The type of keys used in the map.
+ * @typeParam V - The type of object values stored in the map.
  */
-class TraceableMap<T extends object>
-  extends Map<string, WeakRef<T>>
+class TraceableMap<K, V extends object>
+  extends Map<K, WeakRef<V>>
   implements nx.EventEmittable
 {
   /**
@@ -27,7 +28,7 @@ class TraceableMap<T extends object>
    * @param released - Whether the removal was due to garbage collection.
    * @returns `true` if the entry was removed, otherwise `false`.
    */
-  private remove(key: string, released: boolean = false): boolean {
+  private remove(key: K, released: boolean = false): boolean {
     const removed = super.delete(key);
 
     if (this.eventEmitter) {
@@ -47,14 +48,14 @@ class TraceableMap<T extends object>
    *
    * @param entries - Optional initial entries to populate the map.
    */
-  constructor(entries?: Iterable<readonly [string, WeakRef<T>]>) {
+  constructor(entries?: Iterable<readonly [K, WeakRef<V>]>) {
     super(entries);
   }
 
   /**
    * Returns the current event emitter if present.
    */
-  get events(): nx.EventEmitter | undefined {
+  get events(): nx.EventEmitter<nx.TraceableMapEvents<K, V>> | undefined {
     return this.eventEmitter;
   }
 
@@ -65,7 +66,7 @@ class TraceableMap<T extends object>
    * @param value - The `WeakRef` pointing to the object.
    * @returns The current map instance.
    */
-  set(key: string, value: WeakRef<T>): this {
+  set(key: K, value: WeakRef<V>): this {
     super.set(key, value);
 
     if (this.eventEmitter) {
@@ -86,7 +87,7 @@ class TraceableMap<T extends object>
    * @param key - The key of the entry to delete.
    * @returns `true` if the entry was removed, otherwise `false`.
    */
-  delete(key: string): boolean {
+  delete(key: K): boolean {
     return this.remove(key);
   }
 
