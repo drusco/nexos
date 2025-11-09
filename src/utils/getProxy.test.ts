@@ -25,7 +25,7 @@ describe("getProxy", () => {
       const customInstance = new proxy<[], number[]>();
       const customReturn = proxy<[], string>();
 
-      expect(proxy).toBe<nx.proxy>(proxy);
+      expect(proxy).toBe<nx.Proxy>(proxy);
 
       expect(proxy.name).toBe("test");
       expect(proxy.apply).toBe("test");
@@ -37,8 +37,8 @@ describe("getProxy", () => {
       expect(proxy.arguments).toBe("test");
       expect(proxy.custom).toBe("test");
 
-      expect(instance).toBe<nx.proxy>(instance);
-      expect(returnValue).toBe<nx.proxy>(returnValue);
+      expect(instance).toBe<nx.Proxy>(instance);
+      expect(returnValue).toBe<nx.Proxy>(returnValue);
       expect(customInstance).toBe<number[]>(customInstance);
       expect(customReturn).toBe<string>(customReturn);
 

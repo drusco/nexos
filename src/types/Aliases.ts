@@ -17,7 +17,32 @@ declare global {
     > = (this: T, ...args: A) => R;
 
     /** A function returning a proxy or `undefined`. */
-    type ResolveProxy = () => proxy | undefined;
+    type ResolveProxy = () => Proxy | undefined;
+
+    /** A proxy-wrapped object or function. */
+    type ProxyTarget<T extends object = undefined> = T extends undefined
+      ? Proxy
+      : T extends FunctionLike
+        ? T & {
+            /** Allow custom properties on function targets */
+            [K: ObjectKey]: unknown;
+          }
+        : T;
+
+    type ProxyHandlerName =
+      | "get"
+      | "has"
+      | "deleteProperty"
+      | "getOwnPropertyDescriptor"
+      | "set"
+      | "defineProperty"
+      | "apply"
+      | "construct"
+      | "getPrototypeOf"
+      | "isExtensible"
+      | "ownKeys"
+      | "preventExtensions"
+      | "setPrototypeOf";
   }
 }
 
