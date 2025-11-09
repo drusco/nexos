@@ -21,7 +21,7 @@ import isTraceable from "../utils/isTraceable.js";
  *
  */
 export default function construct(resolveProxy: nx.ResolveProxy) {
-  return (target: nx.FunctionLike, args: unknown[]): object => {
+  return (target: nx.FunctionLike, args: unknown[] = []): object => {
     const proxy = resolveProxy();
     const wrapper = getProxyWrapper(proxy);
     const { manager, traceable } = wrapper;
