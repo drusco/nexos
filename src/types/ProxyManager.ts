@@ -3,7 +3,7 @@ declare global {
     /** Proxy factory and manager. */
     interface ProxyManager extends EventEmittable {
       /** Reference of managed proxies. */
-      readonly entries?: Map<unknown, unknown>;
+      readonly entries?: Map<string, object>;
       /**
        * Retrieves an existing proxy by ID or creates one if it does not exist.
        *
