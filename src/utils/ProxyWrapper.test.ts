@@ -28,6 +28,43 @@ describe("ProxyWrapper", () => {
     expect(wrapper.revoked).toBe(true);
   });
 
+  it("prevents updating wrapper when the proxy is revoked", () => {
+    const wrapper = new ProxyWrapper();
+    const nexo = new Nexo();
+    const target = [];
+    const emitter = new EventEmitter();
+
+    wrapper.setId("test");
+    wrapper.setManager(nexo);
+    wrapper.setTarget(target);
+    wrapper.setEventEmitter(emitter);
+
+    wrapper.revoke();
+
+    wrapper.setId("new_id");
+    wrapper.setManager(new Nexo());
+    wrapper.setTarget({ test: true });
+    wrapper.setEventEmitter(new EventEmitter());
+
+    expect(wrapper.id).toBe("test");
+    expect(wrapper.target).toBe(target);
+    expect(wrapper.manager).toBe(nexo);
+    expect(wrapper.events).toBe(emitter);
+  });
+
+  it("allows setting and removing a custom event emitter", () => {
+    const wrapper = new ProxyWrapper();
+    const emitter = new EventEmitter();
+
+    wrapper.setEventEmitter(emitter);
+
+    expect(wrapper.events).toBe(emitter);
+
+    wrapper.removeEventEmitter();
+
+    expect(wrapper.events).toBeUndefined();
+  });
+
   it("allows passing a function to be called on proxy revocation", () => {
     const revoke = jest.fn();
     const wrapper = new ProxyWrapper(revoke);

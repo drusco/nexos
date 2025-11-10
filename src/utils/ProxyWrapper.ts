@@ -72,7 +72,6 @@ class ProxyWrapper implements nx.ProxyWrapper {
   }
 
   revoke(): void {
-    if (this.isRevoked) return;
     if (typeof this.revokeProxy === "function") {
       this.revokeProxy();
       this.revokeProxy = undefined;
