@@ -12,7 +12,9 @@ import ProxyError from "./ProxyError.js";
  * @returns A {@link nx.ProxyWrapper | ProxyWrapper} for the proxy that allows interaction with proxy events
  * @throws {@link nx.ProxyError} if the wrapper cannot be found.
  */
-export default function getProxyWrapper(proxy: object): nx.ProxyWrapper {
+export default function getProxyWrapper(
+  proxy: object,
+): nx.ProxyWrapper<nx.ProxyEvents> {
   const wrapper = getProxyMap().get(proxy);
 
   if (!wrapper) {

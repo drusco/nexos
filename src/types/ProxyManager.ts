@@ -1,7 +1,8 @@
 declare global {
   namespace nx {
     /** Proxy factory and manager. */
-    interface ProxyManager extends EventEmittable {
+    interface ProxyManager<Events extends EventMap = EventMap>
+      extends EventEmittable<Events> {
       /** Reference of managed proxies. */
       readonly entries?: Map<string, object>;
       /**

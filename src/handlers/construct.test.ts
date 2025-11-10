@@ -58,7 +58,7 @@ describe("Construct Handler", () => {
     const wrapper = getProxyWrapper(proxy);
     const expectedResult = {};
 
-    wrapper.events.on("proxy.construct", (event: nx.ProxyConstructEvent) => {
+    wrapper.events.on("proxy.construct", (event) => {
       event.preventDefault();
       return expectedResult;
     });
@@ -72,9 +72,9 @@ describe("Construct Handler", () => {
     const proxy = getProxy();
     const wrapper = getProxyWrapper(proxy);
 
-    wrapper.events.on("proxy.construct", (event: nx.ProxyConstructEvent) => {
+    wrapper.events.on("proxy.construct", (event) => {
       event.preventDefault();
-      return "invalid";
+      return "invalid" as null;
     });
 
     expect(() => Reflect.construct(proxy, [])).toThrow(ProxyError);
