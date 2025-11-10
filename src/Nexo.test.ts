@@ -2,7 +2,6 @@ import EventEmitter from "./utils/EventEmitter.js";
 import Nexo from "./Nexo.js";
 import TraceableMap from "./utils/TraceableMap.js";
 import Event from "./events/Event.js";
-import { EventEmitter as NodeEventEmitter } from "node:events";
 
 describe("Nexo", () => {
   it("Creates a new nexo object", () => {
@@ -148,11 +147,11 @@ describe("Nexo", () => {
 
   it("allows setting and removing a custom event emitter", () => {
     const nexo = new Nexo();
-    const customEmitter = new NodeEventEmitter();
+    const emitter = new EventEmitter();
 
-    nexo.setEventEmitter(customEmitter);
+    nexo.setEventEmitter(emitter);
 
-    expect(nexo.events).toBeInstanceOf(NodeEventEmitter);
+    expect(nexo.events).toBe(emitter);
 
     nexo.removeEventEmitter();
 
