@@ -2,9 +2,12 @@ import isProxy from "./isProxy.js";
 import getProxyMap from "./getProxyMap.js";
 import { createDeferred, resolveWith } from "./deferred.js";
 import Event from "../events/Event.js";
+import ProxyError from "./ProxyError.js";
 
 const emitProxy = (proxy: object): nx.Proxy => {
-  if (!isProxy(proxy)) return;
+  if (!isProxy(proxy)) {
+    throw new ProxyError("The provided object is not a valid proxy", proxy);
+  }
 
   const deferred = createDeferred<nx.FunctionLike<[], nx.Proxy>>();
   const proxyMap = getProxyMap();
