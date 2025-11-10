@@ -16,8 +16,8 @@ declare global {
       T = unknown,
     > = (this: T, ...args: A) => R;
 
-    /** A function returning a proxy or `undefined`. */
-    type ResolveProxy = () => Proxy | undefined;
+    /** A function returning a proxy object. */
+    type ResolveProxy = () => object;
 
     /** A proxy-wrapped object or function. */
     type ProxyTarget<T extends object = undefined> = T extends undefined

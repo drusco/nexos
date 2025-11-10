@@ -4,10 +4,7 @@ import isProxy from "../utils/isProxy.js";
 /**
  * Represents an event triggered by a proxy.
  */
-class ProxyEvent<D>
-  extends Event<nx.Proxy, D>
-  implements nx.Event<nx.Proxy, D>
-{
+class ProxyEvent<D> extends Event<object, D> implements nx.Event<object, D> {
   /**
    * Creates an instance of the `ProxyEvent`.
    * This constructor initializes the event with the name prefixed by `proxy.`
@@ -21,7 +18,7 @@ class ProxyEvent<D>
     name: nx.ProxyHandlerName,
     options?: {
       data?: D;
-      target: nx.Proxy;
+      target: object;
     },
   ) {
     if (!isProxy(options?.target)) {
