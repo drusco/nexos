@@ -53,7 +53,7 @@ describe("Apply Handler", () => {
     const wrapper = getProxyWrapper(proxy);
     const expectedResult = "foo";
 
-    wrapper.events.on("proxy.apply", (event: nx.ProxyApplyEvent) => {
+    wrapper.events.on("proxy.apply", (event) => {
       event.preventDefault();
       return expectedResult;
     });

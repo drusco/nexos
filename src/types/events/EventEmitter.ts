@@ -4,12 +4,7 @@ declare global {
      * A minimal event emitter interface for registering, removing,
      * and invoking event listeners.
      */
-    interface EventEmitter<
-      Events extends Record<string, FunctionLike> = Record<
-        string,
-        FunctionLike
-      >,
-    > {
+    interface EventEmitter<Events extends EventMap = EventMap> {
       /**
        * Registers a listener for a specific event.
        *
@@ -17,14 +12,12 @@ declare global {
        * @param listener - The function to invoke when the event is emitted.
        * @returns The current emitter instance, for method chaining.
        */
-      on<Name extends Extract<keyof Events, string>>(
+      on<Name extends keyof Events>(
         event: Name,
         listener: (
           ...args: Parameters<Events[Name]>
         ) => ReturnType<Events[Name]>,
       ): this;
-
-      on(event: string, listener: FunctionLike): this;
 
       /**
        * Removes a previously registered listener for a specific event.
@@ -33,14 +26,12 @@ declare global {
        * @param listener - The listener function to remove.
        * @returns The current emitter instance, for method chaining.
        */
-      off<Name extends Extract<keyof Events, string>>(
+      off<Name extends keyof Events>(
         event: Name,
         listener: (
           ...args: Parameters<Events[Name]>
         ) => ReturnType<Events[Name]>,
       ): this;
-
-      off(event: string, listener: FunctionLike): this;
 
       /**
        * Emits an event to all registered listeners.
@@ -49,7 +40,7 @@ declare global {
        * @param data - The arguments passed to the listeners.
        * @returns `true` if one or more listeners were invoked, `false` otherwise.
        */
-      emit<Name extends Extract<keyof Events, string>>(
+      emit<Name extends keyof Events>(
         event: Name,
         ...data: Parameters<Events[Name]>
       ): boolean;
