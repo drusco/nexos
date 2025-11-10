@@ -15,6 +15,7 @@ const emitProxy = (proxy: object): nx.Proxy => {
 
   const event = new Event("proxy", {
     target: proxy,
+    cancelable: true,
     data: {
       id: wrapper.id,
       target: wrapper.target,
