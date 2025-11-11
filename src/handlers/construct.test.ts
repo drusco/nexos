@@ -98,14 +98,29 @@ describe("Construct Handler", () => {
     const wrapper = getProxyWrapper(proxy);
     const construct = handler(() => proxy);
 
-    wrapper.events.on("proxy.construct", (event) => {
+    wrapper.setManager(manager);
+
+    const errorListener = jest.fn();
+    const listener = jest.fn((event) => {
       event.preventDefault();
       return "invalid" as null;
     });
 
+    wrapper.events.on("proxy.construct", listener);
+    wrapper.events.on("proxy.error", errorListener);
+
     expect(() => construct(wrapper.target as nx.FunctionLike)).toThrow(
       ProxyError,
     );
+
+    const [event]: [nx.ProxyConstructEvent] = listener.mock.lastCall;
+    const [error]: [nx.ProxyError] = errorListener.mock.lastCall;
+
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(errorListener).toHaveBeenCalledTimes(1);
+    expect(manager.events.emit).toHaveBeenCalledTimes(2);
+    expect(manager.events.emit).toHaveBeenCalledWith("proxy.construct", event);
+    expect(manager.events.emit).toHaveBeenCalledWith("proxy.error", error);
   });
 
   it("throws ProxyError if the original constructor throws", () => {

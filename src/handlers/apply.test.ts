@@ -49,16 +49,17 @@ describe("Apply Handler", () => {
     expect(getResult()).toBe(result);
   });
 
-  it("returns a sandboxed proxy when the original proxy has no target", () => {
+  it("returns a sandboxed proxy by default", () => {
     const proxy = getProxy();
     const apply = handler(() => proxy);
     const wrapper = getProxyWrapper(proxy);
     const result = apply(wrapper.target as nx.FunctionLike);
 
     expect(isProxy(result)).toBe(true);
+    expect(manager.create).not.toHaveBeenCalled();
   });
 
-  it("returns a managed proxy when the original proxy has no target", () => {
+  it("returns a managed proxy when a proxy manager is present", () => {
     const proxy = getProxy();
     const apply = handler(() => proxy);
     const wrapper = getProxyWrapper(proxy);
