@@ -70,10 +70,10 @@ describe("DeleteProperty Handler", () => {
 
   it("throws an error if deletion is not possible on proxy with traceable target", () => {
     const nexo = new Nexo();
-    const target = {};
+    const target = { foo: false };
     const proxy = nexo.create(target);
 
-    Object.defineProperty(proxy, "foo", { value: true });
+    Object.defineProperty(proxy, "foo", { value: true, configurable: false });
 
     expect(() => delete proxy.foo).toThrow(ProxyError);
     expect(proxy.foo).toBe(true);
