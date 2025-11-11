@@ -61,7 +61,6 @@ describe("emitProxy", () => {
     expect(result).toBe(customProxy);
     expect(isProxy(result)).toBe(true);
     expect(wrapper.revoked).toBe(true);
-    expect(() => getProxyWrapper(proxy)).toThrow(ProxyError);
     expect(nexo.entries.get(wrapper.id)).toBeUndefined();
     expect(nexo.entries.size).toBe(1);
     expect(nexo.entries.get(newWrapper.id).deref()).toBe(result);

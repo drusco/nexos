@@ -1,8 +1,8 @@
 import isProxy from "./isProxy.js";
-import getProxyMap from "./getProxyMap.js";
 import { createDeferred, resolveWith } from "./deferred.js";
 import Event from "../events/Event.js";
 import ProxyError from "./ProxyError.js";
+import getProxyWrapper from "./getProxyWrapper.js";
 
 const emitProxy = (proxy: object): nx.Proxy => {
   if (!isProxy(proxy)) {
@@ -10,8 +10,7 @@ const emitProxy = (proxy: object): nx.Proxy => {
   }
 
   const deferred = createDeferred<nx.FunctionLike<[], nx.Proxy>>();
-  const proxyMap = getProxyMap();
-  const wrapper = proxyMap.get(proxy);
+  const wrapper = getProxyWrapper(proxy);
 
   const event = new Event("proxy", {
     target: proxy,
@@ -32,12 +31,9 @@ const emitProxy = (proxy: object): nx.Proxy => {
 
     if (isProxy(newProxy) && newProxy !== proxy) {
       // get the new proxy wrapper
-      const proxyWrapper = proxyMap.get(newProxy);
-      // revoke the original proxy in the event
+      const proxyWrapper = getProxyWrapper(newProxy);
+      // revoke the original proxy
       wrapper.revoke();
-      // remove the original proxy from the maps
-      proxyMap.delete(proxy);
-      proxyWrapper?.manager?.entries.delete(wrapper.id);
       // add or update the ID to the returned proxy
       proxyWrapper?.manager?.entries.set(
         proxyWrapper.id,
