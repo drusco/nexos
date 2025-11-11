@@ -28,24 +28,24 @@ const emitProxy = (proxy: object): nx.Proxy => {
 
   // check whether the event got prevented
   if (event.defaultPrevented) {
-    const { returnValue } = event;
+    const { returnValue: newProxy } = event;
 
-    if (isProxy(returnValue) && returnValue !== proxy) {
+    if (isProxy(newProxy) && newProxy !== proxy) {
       // get the new proxy wrapper
-      const returnedProxyWrapper = proxyMap.get(returnValue);
+      const proxyWrapper = proxyMap.get(newProxy);
       // revoke the original proxy in the event
       wrapper.revoke();
       // remove the original proxy from the maps
       proxyMap.delete(proxy);
-      returnedProxyWrapper?.manager?.entries.delete(wrapper.id);
+      proxyWrapper?.manager?.entries.delete(wrapper.id);
       // add or update the ID to the returned proxy
-      returnedProxyWrapper?.manager?.entries.set(
-        proxyMap.get(returnValue).id,
-        new WeakRef(returnValue),
+      proxyWrapper?.manager?.entries.set(
+        proxyWrapper.id,
+        new WeakRef(newProxy),
       );
 
       // return a different proxy object
-      return resolveWith(deferred.resolve, returnValue);
+      return resolveWith(deferred.resolve, newProxy);
     }
   }
 
