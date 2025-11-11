@@ -35,7 +35,7 @@ class Nexo implements nx.ProxyManager {
    * @remarks
    * This map allows quick access to proxies by their unique ID, ensuring that proxies are properly managed and referenced.
    */
-  readonly entries = new TraceableMap<string, nx.Proxy>();
+  readonly entries = new TraceableMap<string, object>();
 
   static isProxy = isProxy;
   static isTraceable = isTraceable;
@@ -77,23 +77,25 @@ class Nexo implements nx.ProxyManager {
    * @returns A proxy associated with the ID and optional target.
    */
 
-  use(id: string, target?: object): nx.Proxy {
+  use(id: string, target?: object, emit: boolean = true): nx.Proxy {
     // Return proxy used by the ID
     if (!target && this.entries.has(id)) {
       const proxy = this.entries.get(id)?.deref();
-      if (proxy) return proxy;
+      if (proxy) return proxy as nx.Proxy;
     }
 
-    const proxy = getProxy(target);
+    let proxy = getProxy(target);
     const wrapper = getProxyWrapper(proxy);
 
     wrapper.setManager(this).setId(id);
 
-    const finalProxy = emitProxy(proxy);
+    this.entries.set(wrapper.id, new WeakRef(proxy));
 
-    this.entries.set(wrapper.id, new WeakRef(finalProxy));
+    if (emit) {
+      proxy = emitProxy(proxy);
+    }
 
-    return finalProxy;
+    return proxy as nx.Proxy;
   }
 
   /**
@@ -117,17 +119,19 @@ class Nexo implements nx.ProxyManager {
    * const proxy2 = nexo.create(console.log);
    * console.log(proxy1 === proxy2); // false
    */
-  create(target?: object): nx.Proxy {
-    const proxy = getProxy(target);
+  create(target?: object, emit: boolean = true): nx.Proxy {
+    let proxy = getProxy(target);
     const wrapper = getProxyWrapper(proxy);
 
     wrapper.setManager(this);
 
-    const finalProxy = emitProxy(proxy);
+    this.entries.set(wrapper.id, new WeakRef(proxy));
 
-    this.entries.set(wrapper.id, new WeakRef(finalProxy));
+    if (emit) {
+      proxy = emitProxy(proxy);
+    }
 
-    return finalProxy;
+    return proxy as nx.Proxy;
   }
 
   setEventEmitter(emitter: nx.EventEmitter): this {
