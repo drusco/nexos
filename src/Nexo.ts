@@ -77,14 +77,18 @@ class Nexo implements nx.ProxyManager {
    * @returns A proxy associated with the ID and optional target.
    */
 
-  use(id: string, target?: object, emit: boolean = true): nx.Proxy {
+  use<T extends object = undefined>(
+    id: string,
+    target?: T,
+    emit: boolean = true,
+  ): nx.ProxyTarget<T> {
     // Return proxy used by the ID
     if (!target && this.entries.has(id)) {
       const proxy = this.entries.get(id)?.deref();
-      if (proxy) return proxy as nx.Proxy;
+      if (proxy) return proxy as nx.ProxyTarget<T>;
     }
 
-    let proxy = getProxy(target);
+    let proxy = getProxy<T>(target);
     const wrapper = getProxyWrapper(proxy);
 
     wrapper.setManager(this).setId(id);
@@ -92,10 +96,10 @@ class Nexo implements nx.ProxyManager {
     this.entries.set(wrapper.id, new WeakRef(proxy));
 
     if (emit) {
-      proxy = emitProxy(proxy);
+      proxy = emitProxy(proxy) as nx.ProxyTarget<T>;
     }
 
-    return proxy as nx.Proxy;
+    return proxy as nx.ProxyTarget<T>;
   }
 
   /**
@@ -119,7 +123,10 @@ class Nexo implements nx.ProxyManager {
    * const proxy2 = nexo.create(console.log);
    * console.log(proxy1 === proxy2); // false
    */
-  create(target?: object, emit: boolean = true): nx.Proxy {
+  create<T extends object = undefined>(
+    target?: T,
+    emit: boolean = true,
+  ): nx.ProxyTarget<T> {
     let proxy = getProxy(target);
     const wrapper = getProxyWrapper(proxy);
 
@@ -128,10 +135,10 @@ class Nexo implements nx.ProxyManager {
     this.entries.set(wrapper.id, new WeakRef(proxy));
 
     if (emit) {
-      proxy = emitProxy(proxy);
+      proxy = emitProxy(proxy) as nx.ProxyTarget<T>;
     }
 
-    return proxy as nx.Proxy;
+    return proxy as nx.ProxyTarget<T>;
   }
 
   setEventEmitter(emitter: nx.EventEmitter): this {

@@ -63,7 +63,7 @@ describe("Nexo", () => {
 
     const proxyA = nexo.use("foo", targetA);
     const proxyB = nexo.use("foo", targetB);
-    const proxyC = nexo.use("foo");
+    const proxyC = nexo.use("foo") as unknown[];
 
     const wrapperA = Nexo.wrap(proxyA);
     const wrapperB = Nexo.wrap(proxyB);
@@ -112,7 +112,7 @@ describe("Nexo", () => {
   it("Does not emit events across different Nexo instances", () => {
     const nexoA = new Nexo();
     const nexoB = new Nexo();
-    const target = {};
+    const target = { foo: 0, bar: 0 };
 
     const proxyA = nexoA.create(target);
     const proxyB = nexoB.create(target);
@@ -133,7 +133,7 @@ describe("Nexo", () => {
   it("Only revokes proxy in its own instance", () => {
     const nexoA = new Nexo();
     const nexoB = new Nexo();
-    const target = {};
+    const target = { foo: 0 };
 
     const proxyA = nexoA.create(target);
     const proxyB = nexoB.create(target);
@@ -175,7 +175,7 @@ describe("Nexo", () => {
     const resultFromCache = nexo.create();
     const resultFromName = nexo.use("dynamic_replacement");
 
-    expect(nexo.entries.size).toBe(2);
+    expect(nexo.entries.size).toBe(4);
     expect(resultFromCache).toBe(cachedProxy);
     expect(resultFromName).toBe(nexo.use("new_proxy_object"));
   });
