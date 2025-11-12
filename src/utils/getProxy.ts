@@ -3,39 +3,14 @@ import createHandlers from "../handlers/index.js";
 import ProxyWrapper from "./ProxyWrapper.js";
 import isProxy from "./isProxy.js";
 import isTraceable from "./isTraceable.js";
-import getProxyWrapper from "./getProxyWrapper.js";
 
-function getProxy(target: null | undefined, dry: true): nx.DryProxy;
-function getProxy(target?: null, dry?: boolean): nx.Proxy;
-function getProxy<T extends object>(target: T, dry: true): nx.DryProxy;
-function getProxy<T extends object>(
-  target?: T,
-  dry?: boolean,
-): nx.ProxyTarget<T>;
-
-function getProxy<T extends object>(
-  target?: T,
-  dry: boolean = false,
-): nx.ProxyTarget<T> | nx.DryProxy {
+function getProxy(target?: null): nx.Proxy;
+function getProxy<T extends object>(target?: T): nx.ProxyTarget<T>;
+function getProxy<T extends object>(target?: T): nx.ProxyTarget<T> {
   // check if the target is already a proxy
   if (isProxy(target)) {
-    if (dry) {
-      const wrapper = getProxyWrapper(target);
-      // return dry proxy
-      return {
-        id: wrapper.id,
-        target: wrapper.target,
-      };
-    }
     // return the existing proxy
     return target as nx.ProxyTarget<T>;
-  }
-
-  if (dry) {
-    // return dry proxy
-    return {
-      target,
-    };
   }
 
   // create new proxy
