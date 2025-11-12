@@ -48,7 +48,7 @@ declare global {
     type EventMap = Record<string, FunctionLike>;
 
     type DryProxy = {
-      id: string;
+      id?: string;
       target: object;
     };
   }
