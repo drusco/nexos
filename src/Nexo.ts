@@ -77,7 +77,14 @@ class Nexo implements nx.ProxyManager {
    * @returns A proxy associated with the ID and optional target.
    */
 
-  use<T extends object = undefined>(
+  use(id: string, target?: null, emit?: boolean): nx.Proxy;
+  use<T extends object>(
+    id: string,
+    target?: T,
+    emit?: boolean,
+  ): nx.ProxyTarget<T>;
+
+  use<T extends object>(
     id: string,
     target?: T,
     emit: boolean = true,
@@ -99,7 +106,7 @@ class Nexo implements nx.ProxyManager {
       proxy = emitProxy(proxy) as nx.ProxyTarget<T>;
     }
 
-    return proxy as nx.ProxyTarget<T>;
+    return proxy;
   }
 
   /**
@@ -123,7 +130,9 @@ class Nexo implements nx.ProxyManager {
    * const proxy2 = nexo.create(console.log);
    * console.log(proxy1 === proxy2); // false
    */
-  create<T extends object = undefined>(
+  create(target?: null, emit?: boolean): nx.Proxy;
+  create<T extends object>(target?: T, emit?: boolean): nx.ProxyTarget<T>;
+  create<T extends object>(
     target?: T,
     emit: boolean = true,
   ): nx.ProxyTarget<T> {
@@ -138,7 +147,7 @@ class Nexo implements nx.ProxyManager {
       proxy = emitProxy(proxy) as nx.ProxyTarget<T>;
     }
 
-    return proxy as nx.ProxyTarget<T>;
+    return proxy;
   }
 
   setEventEmitter(emitter: nx.EventEmitter): this {
