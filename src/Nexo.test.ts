@@ -63,7 +63,7 @@ describe("Nexo", () => {
 
     const proxyA = nexo.use("foo", targetA);
     const proxyB = nexo.use("foo", targetB);
-    const proxyC = nexo.use("foo") as unknown[];
+    const proxyC = nexo.use("foo") as object as unknown[];
 
     const wrapperA = Nexo.wrap(proxyA);
     const wrapperB = Nexo.wrap(proxyB);
