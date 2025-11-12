@@ -4,9 +4,9 @@ import ProxyWrapper from "./ProxyWrapper.js";
 import isProxy from "./isProxy.js";
 import isTraceable from "./isTraceable.js";
 
-const getProxy = <T extends object = undefined>(
-  target?: T,
-): nx.ProxyTarget<T> => {
+function getProxy(target?: null): nx.Proxy;
+function getProxy<T extends object>(target?: T): nx.ProxyTarget<T>;
+function getProxy<T extends object>(target?: T): nx.ProxyTarget<T> {
   // Return existing proxy
   if (isProxy(target)) {
     return target as nx.ProxyTarget<T>;
@@ -47,6 +47,6 @@ const getProxy = <T extends object = undefined>(
   getProxyMap().set(proxy, wrapper);
 
   return proxy as nx.ProxyTarget<T>;
-};
+}
 
 export default getProxy;

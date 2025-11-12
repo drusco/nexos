@@ -20,14 +20,15 @@ declare global {
     type ResolveProxy = () => object;
 
     /** A proxy-wrapped object or function. */
-    type ProxyTarget<T extends object = undefined> = T extends undefined
-      ? Proxy
-      : T extends FunctionLike
-        ? T & {
-            /** Allow custom properties on function targets */
-            [K: ObjectKey]: unknown;
-          }
-        : T;
+    type ProxyTarget<T extends object> =
+      T extends NonNullable<T>
+        ? T extends FunctionLike
+          ? T & {
+              /** Allow custom properties on function targets */
+              [K: ObjectKey]: unknown;
+            }
+          : T
+        : Proxy;
 
     type ProxyHandlerName =
       | "get"
