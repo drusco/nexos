@@ -136,9 +136,24 @@ class ProxyWrapper implements nx.ProxyWrapper {
 
   setId(id: string): this {
     if (this.isRevoked) return this;
-    if (typeof id === "string" && id.length) {
-      this.proxyId = id;
+    if (typeof id !== "string" || !id.length) return this;
+
+    this.proxyId = id;
+
+    const proxy = this.proxy?.deref();
+
+    // find proxy manager
+    if (this.manager && isProxy(proxy)) {
+      // create the `proxy.rename` event
+      const event = new ProxyEvent("rename", {
+        target: proxy,
+        cancelable: false,
+        data: this,
+      }) as nx.ProxyRenameEvent;
+      // emit the event to the manager
+      this.manager.events?.emit(event.name, event);
     }
+
     return this;
   }
 }

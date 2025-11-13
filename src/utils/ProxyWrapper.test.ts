@@ -122,7 +122,7 @@ describe("ProxyWrapper", () => {
     expect(wrapper.traceable).toBe(false);
   });
 
-  it("emits a `proxy.revoke` event to the proxy manager on revoke", () => {
+  it("emits a `revoke` event to the proxy manager on revoke", () => {
     const proxy = getProxy();
     const wrapper = getProxyWrapper(proxy);
     const manager = ProxyManager();
@@ -138,5 +138,24 @@ describe("ProxyWrapper", () => {
     expect(event.target).toBe(proxy);
     expect(event.cancelable).toBe(false);
     expect(event.data).toBe(wrapper);
+  });
+
+  it("emits a `rename` event to the proxy manager on id change", () => {
+    const proxy = getProxy();
+    const wrapper = getProxyWrapper(proxy);
+    const manager = ProxyManager();
+    const emitter = manager.events.emit as jest.Mock;
+
+    wrapper.setManager(manager);
+    wrapper.setId("test");
+
+    const [, event]: [string, nx.ProxyRenameEvent] = emitter.mock.lastCall;
+
+    expect(emitter).toHaveBeenCalledWith("proxy.rename", event);
+    expect(event).toBeInstanceOf(ProxyEvent);
+    expect(event.target).toBe(proxy);
+    expect(event.cancelable).toBe(false);
+    expect(event.data).toBe(wrapper);
+    expect(event.data.id).toBe("test");
   });
 });
