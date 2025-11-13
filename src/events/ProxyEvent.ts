@@ -15,16 +15,17 @@ class ProxyEvent<D> extends Event<object, D> implements nx.Event<object, D> {
    * @param options.target - The proxy of the event.
    */
   constructor(
-    name: nx.ProxyHandlerName,
+    name: nx.ProxyEventSuffix,
     options?: {
       data?: D;
       target: object;
+      cancelable?: boolean;
     },
   ) {
     if (!isProxy(options?.target)) {
       throw TypeError("options.target is not a valid proxy.");
     }
-    super(`proxy.${name}`, { ...options, cancelable: true });
+    super(`proxy.${name}`, { cancelable: true, ...options });
   }
 }
 
