@@ -1,4 +1,5 @@
-import Nexo from "../Nexo.js";
+import Event from "../events/Event.js";
+import ProxyManager from "../handlers/__mocks__/ProxyManager.js";
 import EventEmitter from "../utils/EventEmitter.js";
 import ProxyWrapper from "./ProxyWrapper.js";
 
@@ -30,25 +31,25 @@ describe("ProxyWrapper", () => {
 
   it("prevents updating wrapper when the proxy is revoked", () => {
     const wrapper = new ProxyWrapper();
-    const nexo = new Nexo();
+    const manager = ProxyManager();
     const target = [];
     const emitter = new EventEmitter();
 
     wrapper.setId("test");
-    wrapper.setManager(nexo);
+    wrapper.setManager(manager);
     wrapper.setTarget(target);
     wrapper.setEventEmitter(emitter);
 
     wrapper.revoke();
 
     wrapper.setId("new_id");
-    wrapper.setManager(new Nexo());
+    wrapper.setManager(ProxyManager());
     wrapper.setTarget({ test: true });
     wrapper.setEventEmitter(new EventEmitter());
 
     expect(wrapper.id).toBe("test");
     expect(wrapper.target).toBe(target);
-    expect(wrapper.manager).toBe(nexo);
+    expect(wrapper.manager).toBe(manager);
     expect(wrapper.events).toBe(emitter);
   });
 
@@ -78,11 +79,11 @@ describe("ProxyWrapper", () => {
 
   it("allows setting and removing a proxy manager instance", () => {
     const wrapper = new ProxyWrapper();
-    const nexo = new Nexo();
+    const manager = ProxyManager();
 
-    wrapper.setManager(nexo);
+    wrapper.setManager(manager);
 
-    expect(wrapper.manager).toBe(nexo);
+    expect(wrapper.manager).toBe(manager);
 
     wrapper.removeManager();
 
@@ -117,5 +118,25 @@ describe("ProxyWrapper", () => {
 
     expect(wrapper.target).toBe(target);
     expect(wrapper.traceable).toBe(false);
+  });
+
+  it("emits a `proxy.revoke` event to the proxy manager on revoke", () => {
+    const wrapper = new ProxyWrapper();
+    const manager = ProxyManager();
+    const emitter = manager.events.emit as jest.Mock;
+
+    wrapper.setManager(manager);
+    wrapper.revoke();
+
+    const [, event]: [string, nx.ProxyRevokeEvent] = emitter.mock.lastCall;
+
+    expect(emitter).toHaveBeenCalledWith("proxy.revoke", event);
+    expect(event).toBeInstanceOf(Event);
+    expect(event.target).toBeNull();
+    expect(event.cancelable).toBe(false);
+    expect(event.data).toStrictEqual({
+      id: wrapper.id,
+      target: wrapper.target,
+    });
   });
 });
