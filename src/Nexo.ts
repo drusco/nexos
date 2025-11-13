@@ -99,6 +99,11 @@ class Nexo implements nx.ProxyManager {
     }
 
     const proxy = getProxy(target);
+    const wrapper = getProxyWrapper(proxy);
+
+    wrapper.setManager(this);
+    wrapper.setId(id);
+    this.entries.set(id, new WeakRef(proxy));
 
     if (emit) {
       const event = new Event("proxy", {
@@ -112,13 +117,6 @@ class Nexo implements nx.ProxyManager {
       // Emit the proxy event to its listeners
       this.events?.emit("proxy", event);
     }
-
-    const wrapper = getProxyWrapper(proxy);
-
-    wrapper.setManager(this);
-    wrapper.setId(id);
-
-    this.entries.set(id, new WeakRef(proxy));
 
     return proxy as nx.ProxyTarget<T>;
   }
@@ -153,6 +151,9 @@ class Nexo implements nx.ProxyManager {
     const proxy = getProxy(target);
     const wrapper = getProxyWrapper(proxy);
 
+    wrapper.setManager(this);
+    this.entries.set(wrapper.id, new WeakRef(proxy));
+
     if (emit) {
       const event = new Event("proxy", {
         target: proxy,
@@ -165,10 +166,6 @@ class Nexo implements nx.ProxyManager {
       // Emit the proxy event to its listeners
       this.events?.emit("proxy", event);
     }
-
-    wrapper.setManager(this);
-
-    this.entries.set(wrapper.id, new WeakRef(proxy));
 
     return proxy;
   }
