@@ -4,7 +4,7 @@ import isProxy from "./utils/isProxy.js";
 import isTraceable from "./utils/isTraceable.js";
 import getProxyWrapper from "./utils/getProxyWrapper.js";
 import getProxy from "./utils/getProxy.js";
-import emitProxy from "./utils/emitProxy.js";
+import Event from "./events/Event.js";
 
 /**
  * Represents a proxy factory for creating and managing proxy objects.
@@ -98,18 +98,29 @@ class Nexo implements nx.ProxyManager {
       }
     }
 
-    let proxy = getProxy(target);
-    const wrapper = getProxyWrapper(proxy);
-
-    wrapper.setManager(this).setId(id);
-
-    this.entries.set(wrapper.id, new WeakRef(proxy));
+    const proxy = getProxy(target);
 
     if (emit) {
-      proxy = emitProxy(proxy) as nx.ProxyTarget<T>;
+      const event = new Event("proxy", {
+        target: proxy,
+        data: {
+          id,
+          target,
+        },
+      }) as nx.ProxyCreateEvent;
+
+      // Emit the proxy event to its listeners
+      this.events?.emit("proxy", event);
     }
 
-    return proxy;
+    const wrapper = getProxyWrapper(proxy);
+
+    wrapper.setManager(this);
+    wrapper.setId(id);
+
+    this.entries.set(id, new WeakRef(proxy));
+
+    return proxy as nx.ProxyTarget<T>;
   }
 
   /**
@@ -139,16 +150,25 @@ class Nexo implements nx.ProxyManager {
     target?: T,
     emit: boolean = true,
   ): nx.ProxyTarget<T> {
-    let proxy = getProxy(target);
+    const proxy = getProxy(target);
     const wrapper = getProxyWrapper(proxy);
+
+    if (emit) {
+      const event = new Event("proxy", {
+        target: proxy,
+        data: {
+          id: wrapper.id,
+          target,
+        },
+      }) as nx.ProxyCreateEvent;
+
+      // Emit the proxy event to its listeners
+      this.events?.emit("proxy", event);
+    }
 
     wrapper.setManager(this);
 
     this.entries.set(wrapper.id, new WeakRef(proxy));
-
-    if (emit) {
-      proxy = emitProxy(proxy) as nx.ProxyTarget<T>;
-    }
 
     return proxy;
   }

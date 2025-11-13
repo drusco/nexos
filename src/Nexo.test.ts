@@ -39,7 +39,6 @@ describe("Nexo", () => {
     expect(proxyEvent.data).toStrictEqual({
       id: wrapper.id,
       target,
-      result: proxyEvent.data.result,
     });
   });
 
@@ -156,27 +155,5 @@ describe("Nexo", () => {
     nexo.removeEventEmitter();
 
     expect(nexo.events).toBeUndefined();
-  });
-
-  it("allows replacing a proxy using an event listener", () => {
-    const nexo = new Nexo();
-    const cachedProxy = nexo.use("cached_proxy_test");
-
-    nexo.events.on("proxy", (event) => {
-      event.preventDefault();
-
-      if (event.data.id === "dynamic_replacement") {
-        return nexo.use("new_proxy_object", null, false);
-      }
-
-      return cachedProxy;
-    });
-
-    const resultFromCache = nexo.create();
-    const resultFromName = nexo.use("dynamic_replacement");
-
-    expect(nexo.entries.size).toBe(4);
-    expect(resultFromCache).toBe(cachedProxy);
-    expect(resultFromName).toBe(nexo.use("new_proxy_object"));
   });
 });
