@@ -4,7 +4,7 @@ import Event from "../events/Event.js";
 import ProxyError from "./ProxyError.js";
 import getProxyWrapper from "./getProxyWrapper.js";
 
-const emitProxy = (proxy: object): nx.Proxy => {
+const emitProxy = (proxy: object): object => {
   if (!isProxy(proxy)) {
     throw new ProxyError("The provided object is not a valid proxy", proxy);
   }
