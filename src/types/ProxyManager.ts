@@ -4,7 +4,7 @@ declare global {
     interface ProxyManager<Events extends EventMap = EventMap>
       extends EventEmittable<Events> {
       /** Reference of managed proxies. */
-      readonly entries?: Map<string, object>;
+      readonly entries?: Map<string, WeakRef<object>>;
       /**
        * Retrieves an existing proxy by ID or creates one if it does not exist.
        *
