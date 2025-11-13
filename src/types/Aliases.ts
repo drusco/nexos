@@ -46,11 +46,6 @@ declare global {
       | "setPrototypeOf";
 
     type EventMap = Record<string, FunctionLike>;
-
-    type DryProxy = {
-      id?: string;
-      target: object;
-    };
   }
 }
 
