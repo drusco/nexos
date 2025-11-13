@@ -44,7 +44,8 @@ declare global {
       | "ownKeys"
       | "preventExtensions"
       | "setPrototypeOf"
-      | "revoke";
+      | "revoke"
+      | "rename";
 
     type EventMap = Record<string, FunctionLike>;
   }
