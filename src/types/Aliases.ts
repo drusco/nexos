@@ -30,7 +30,7 @@ declare global {
           : T
         : Proxy;
 
-    type ProxyHandlerName =
+    type ProxyEventSuffix =
       | "get"
       | "has"
       | "deleteProperty"
