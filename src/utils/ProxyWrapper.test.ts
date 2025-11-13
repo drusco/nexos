@@ -1,6 +1,8 @@
-import Event from "../events/Event.js";
+import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyManager from "../handlers/__mocks__/ProxyManager.js";
 import EventEmitter from "../utils/EventEmitter.js";
+import getProxy from "./getProxy.js";
+import getProxyWrapper from "./getProxyWrapper.js";
 import ProxyWrapper from "./ProxyWrapper.js";
 
 describe("ProxyWrapper", () => {
@@ -121,7 +123,8 @@ describe("ProxyWrapper", () => {
   });
 
   it("emits a `proxy.revoke` event to the proxy manager on revoke", () => {
-    const wrapper = new ProxyWrapper();
+    const proxy = getProxy();
+    const wrapper = getProxyWrapper(proxy);
     const manager = ProxyManager();
     const emitter = manager.events.emit as jest.Mock;
 
@@ -131,12 +134,9 @@ describe("ProxyWrapper", () => {
     const [, event]: [string, nx.ProxyRevokeEvent] = emitter.mock.lastCall;
 
     expect(emitter).toHaveBeenCalledWith("proxy.revoke", event);
-    expect(event).toBeInstanceOf(Event);
-    expect(event.target).toBeNull();
+    expect(event).toBeInstanceOf(ProxyEvent);
+    expect(event.target).toBe(proxy);
     expect(event.cancelable).toBe(false);
-    expect(event.data).toStrictEqual({
-      id: wrapper.id,
-      target: wrapper.target,
-    });
+    expect(event.data).toBe(wrapper);
   });
 });

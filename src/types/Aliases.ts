@@ -43,7 +43,8 @@ declare global {
       | "isExtensible"
       | "ownKeys"
       | "preventExtensions"
-      | "setPrototypeOf";
+      | "setPrototypeOf"
+      | "revoke";
 
     type EventMap = Record<string, FunctionLike>;
   }
