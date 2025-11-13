@@ -89,13 +89,16 @@ class Nexo implements nx.ProxyManager {
     target?: T,
     emit: boolean = true,
   ): nx.ProxyTarget<T> {
-    // Return proxy used by the ID
+    // Find an existing proxy using the same id
     if (!target && this.entries.has(id)) {
       const proxy = this.entries.get(id)?.deref();
-      if (proxy) return proxy as nx.ProxyTarget<T>;
+      if (proxy) {
+        // return the existing proxy
+        return proxy as nx.ProxyTarget<T>;
+      }
     }
 
-    let proxy = getProxy<T>(target);
+    let proxy = getProxy(target);
     const wrapper = getProxyWrapper(proxy);
 
     wrapper.setManager(this).setId(id);
