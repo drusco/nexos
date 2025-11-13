@@ -44,6 +44,10 @@ declare global {
       "proxy.setPrototypeOf": (
         event: ProxySetPrototypeOfEvent,
       ) => ProxySetPrototypeOfEvent["returnValue"];
+
+      "proxy.revoke": (
+        event: ProxyRevokeEvent,
+      ) => ProxyRevokeEvent["returnValue"];
     };
   }
 }
