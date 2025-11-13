@@ -68,7 +68,7 @@ describe("ProxyWrapper", () => {
 
   it("allows passing a function to be called on proxy revocation", () => {
     const revoke = jest.fn();
-    const wrapper = new ProxyWrapper(revoke);
+    const wrapper = new ProxyWrapper(null, revoke);
 
     wrapper.revoke();
 

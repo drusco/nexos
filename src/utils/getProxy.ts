@@ -43,7 +43,7 @@ function getProxy<T extends object>(target?: T): nx.ProxyTarget<T> {
   proxyRef = new WeakRef(proxy);
 
   // create a proxy wrapper to interact with the proxy
-  const wrapper = new ProxyWrapper(revoke);
+  const wrapper = new ProxyWrapper(proxy, revoke);
 
   wrapper.setTarget(proxyTarget, traceable);
 

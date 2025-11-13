@@ -56,6 +56,9 @@ class ProxyWrapper implements nx.ProxyWrapper {
   /** Private counter for unique id generation */
   private static size = 0;
 
+  /** A weak reference to the proxy being wrapped */
+  private proxy?: WeakRef<object>;
+
   /** A unique identifier for the proxy */
   private proxyId: string = (++ProxyWrapper.size + Date.now())
     .toString(36)
@@ -64,12 +67,14 @@ class ProxyWrapper implements nx.ProxyWrapper {
   /**
    * Creates an instance of `ProxyWrapper`.
    *
+   * @param proxy - The proxy that is being wrapped
    * @param revoke - The function responsible for revoking the proxy
    */
-  constructor(revoke?: () => void) {
-    if (typeof revoke === "function") {
-      this.revokeProxy = revoke;
+  constructor(proxy: object = null, revoke?: () => void) {
+    if (proxy) {
+      this.proxy = new WeakRef(proxy);
     }
+    this.revokeProxy = revoke;
   }
 
   revoke(): void {
@@ -77,10 +82,10 @@ class ProxyWrapper implements nx.ProxyWrapper {
 
     if (typeof this.revokeProxy === "function") {
       this.revokeProxy();
-      this.revokeProxy = undefined;
     }
 
     this.isRevoked = true;
+    this.revokeProxy = undefined;
 
     // find proxy manager
     if (this.manager) {
