@@ -131,9 +131,10 @@ describe("ProxyWrapper", () => {
     wrapper.setManager(manager);
     wrapper.revoke();
 
-    const [, event]: [string, nx.ProxyRevokeEvent] = emitter.mock.lastCall;
+    const [eventName, event]: [string, nx.ProxyRevokeEvent] =
+      emitter.mock.lastCall;
 
-    expect(emitter).toHaveBeenCalledWith("proxy.revoke", event);
+    expect(eventName).toBe("proxy.revoke");
     expect(event).toBeInstanceOf(ProxyEvent);
     expect(event.target).toBe(proxy);
     expect(event.cancelable).toBe(false);
@@ -157,5 +158,23 @@ describe("ProxyWrapper", () => {
     expect(event.cancelable).toBe(false);
     expect(event.data).toBe(wrapper);
     expect(event.data.id).toBe("test");
+  });
+
+  it("emits a `manager change` event to the proxy manager", () => {
+    const proxy = getProxy();
+    const wrapper = getProxyWrapper(proxy);
+    const manager = ProxyManager();
+    const emitter = manager.events.emit as jest.Mock;
+
+    wrapper.setManager(manager);
+
+    const [, event]: [string, nx.ProxyManagerEvent] = emitter.mock.lastCall;
+
+    expect(emitter).toHaveBeenCalledWith("proxy.manager", event);
+    expect(event).toBeInstanceOf(ProxyEvent);
+    expect(event.target).toBe(proxy);
+    expect(event.cancelable).toBe(false);
+    expect(event.data).toBe(wrapper);
+    expect(event.data.manager).toBe(manager);
   });
 });

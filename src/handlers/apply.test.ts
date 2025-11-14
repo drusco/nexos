@@ -124,7 +124,6 @@ describe("Apply Handler", () => {
     expect(() => getResult()).toThrow(ProxyError);
     expect(applyListener).toHaveBeenCalledTimes(1);
     expect(errorListener).toHaveBeenCalledTimes(1);
-    expect(manager.events.emit).toHaveBeenCalledTimes(2);
     expect(manager.events.emit).toHaveBeenCalledWith("proxy.apply", event);
     expect(manager.events.emit).toHaveBeenCalledWith("proxy.error", error);
   });

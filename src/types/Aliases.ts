@@ -45,7 +45,8 @@ declare global {
       | "preventExtensions"
       | "setPrototypeOf"
       | "revoke"
-      | "rename";
+      | "rename"
+      | "manager";
 
     type EventMap = Record<string, FunctionLike>;
   }

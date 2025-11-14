@@ -118,7 +118,6 @@ describe("Construct Handler", () => {
 
     expect(listener).toHaveBeenCalledTimes(1);
     expect(errorListener).toHaveBeenCalledTimes(1);
-    expect(manager.events.emit).toHaveBeenCalledTimes(2);
     expect(manager.events.emit).toHaveBeenCalledWith("proxy.construct", event);
     expect(manager.events.emit).toHaveBeenCalledWith("proxy.error", error);
   });
