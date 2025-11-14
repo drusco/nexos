@@ -1,7 +1,7 @@
 import isTraceable from "./isTraceable.js";
 import EventEmitter from "./EventEmitter.js";
 import ProxyEvent from "../events/ProxyEvent.js";
-import { isProxy } from "util/types";
+import isProxy from "./isProxy.js";
 
 /**
  * A wrapper class that manages a proxy and its associated events.
@@ -116,7 +116,24 @@ class ProxyWrapper implements nx.ProxyWrapper {
 
   setManager(manager: nx.ProxyManager): this {
     if (this.isRevoked) return this;
+
+    const previousManager = this.proxyManager;
+    const proxy = this.proxy?.deref();
+
     this.proxyManager = manager;
+
+    // find proxy manager
+    if (manager && previousManager !== manager && isProxy(proxy)) {
+      // create the `proxy.manager` event
+      const event = new ProxyEvent("manager", {
+        target: proxy,
+        cancelable: false,
+        data: this,
+      }) as nx.ProxyManagerEvent;
+      // emit the event to the manager
+      manager.events?.emit(event.name, event);
+    }
+
     return this;
   }
 
