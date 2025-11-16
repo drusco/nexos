@@ -60,6 +60,20 @@ class ProxyWrapper implements nx.ProxyWrapper {
   /** A weak reference to the proxy being wrapped */
   private proxy?: WeakRef<object>;
 
+  /** Create new sandbox object */
+  protected createSandbox(): nx.FunctionLike {
+    const boundFunction = new Function().bind(null);
+    const sandbox = Object.setPrototypeOf(boundFunction, null);
+    // Remove function related properties for proxies without traceable target
+    for (const key of Reflect.ownKeys(sandbox)) {
+      const descriptor = Object.getOwnPropertyDescriptor(sandbox, key);
+      if (descriptor.configurable) {
+        delete sandbox[key];
+      }
+    }
+    return sandbox;
+  }
+
   /** A unique identifier for the proxy */
   private proxyId: string = (++ProxyWrapper.size + Date.now())
     .toString(36)
