@@ -46,8 +46,12 @@ declare global {
       ) => ProxySetPrototypeOfEvent["returnValue"];
 
       "proxy.revoke": (
-        event: ProxyRevokeEvent,
-      ) => ProxyRevokeEvent["returnValue"];
+        event: ProxyWrapperEvent,
+      ) => ProxyWrapperEvent["returnValue"];
+
+      "proxy.rename": (
+        event: ProxyWrapperEvent,
+      ) => ProxyWrapperEvent["returnValue"];
     };
   }
 }

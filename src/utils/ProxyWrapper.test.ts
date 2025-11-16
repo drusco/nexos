@@ -131,7 +131,7 @@ describe("ProxyWrapper", () => {
     wrapper.setManager(manager);
     wrapper.revoke();
 
-    const [eventName, event]: [string, nx.ProxyRevokeEvent] =
+    const [eventName, event]: [string, nx.ProxyWrapperEvent] =
       emitter.mock.lastCall;
 
     expect(eventName).toBe("proxy.revoke");
@@ -150,7 +150,7 @@ describe("ProxyWrapper", () => {
     wrapper.setManager(manager);
     wrapper.setId("test");
 
-    const [, event]: [string, nx.ProxyRenameEvent] = emitter.mock.lastCall;
+    const [, event]: [string, nx.ProxyWrapperEvent] = emitter.mock.lastCall;
 
     expect(emitter).toHaveBeenCalledWith("proxy.rename", event);
     expect(event).toBeInstanceOf(ProxyEvent);

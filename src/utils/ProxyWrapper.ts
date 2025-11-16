@@ -97,7 +97,7 @@ class ProxyWrapper implements nx.ProxyWrapper {
         target: proxy,
         cancelable: false,
         data: this,
-      }) as nx.ProxyRevokeEvent;
+      }) as nx.ProxyWrapperEvent;
       // emit the event to the manager
       this.manager.events?.emit(event.name, event);
     }
@@ -166,7 +166,7 @@ class ProxyWrapper implements nx.ProxyWrapper {
         target: proxy,
         cancelable: false,
         data: this,
-      }) as nx.ProxyRenameEvent;
+      }) as nx.ProxyWrapperEvent;
       // emit the event to the manager
       this.manager.events?.emit(event.name, event);
     }
