@@ -24,7 +24,7 @@ declare global {
       /** Removes the proxy manager instance  */
       removeManager(): this;
       /** Sets the underlying proxy target */
-      setTarget(target: object, isTraceable?: boolean): this;
+      setTarget(target: object): this;
       /** Sets the unique identifier for the proxy */
       setId(id: string): this;
     }

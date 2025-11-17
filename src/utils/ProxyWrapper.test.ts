@@ -100,16 +100,6 @@ describe("ProxyWrapper", () => {
     expect(wrapper.traceable).toBe(true);
   });
 
-  it("allows indicating whether the target is traceable or not", () => {
-    const wrapper = new ProxyWrapper();
-    const target = [];
-
-    wrapper.setTarget(target, false);
-
-    expect(wrapper.target).toBe(target);
-    expect(wrapper.traceable).toBe(false);
-  });
-
   it("emits a `revoke` event to the proxy manager on revoke", () => {
     const { proxy } = new ProxyWrapper();
     const wrapper = getProxyWrapper(proxy);

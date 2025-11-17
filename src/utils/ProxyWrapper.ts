@@ -157,12 +157,15 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<T> {
     return this;
   }
 
-  setTarget(target: object, traceable: boolean = true): this {
+  setTarget(target: object): this {
     if (this.isRevoked) return this;
-    if (isTraceable(target)) {
-      this.proxyTarget = target as T;
-      this.isTraceable = traceable === true;
-    }
+
+    const traceable = isTraceable(target);
+    const newTarget = traceable ? target : getSandbox();
+
+    this.isTraceable = traceable;
+    this.proxyTarget = newTarget as T;
+
     return this;
   }
 
