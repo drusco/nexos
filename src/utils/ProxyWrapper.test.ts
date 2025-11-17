@@ -100,7 +100,7 @@ describe("ProxyWrapper", () => {
     expect(wrapper.traceable).toBe(true);
   });
 
-  it("emits a `revoke` event to the proxy manager on revoke", () => {
+  it("emits a `proxy.revoke` event when the proxy is revoked", () => {
     const { proxy } = new ProxyWrapper();
     const wrapper = getProxyWrapper(proxy);
     const manager = ProxyManager();
@@ -119,7 +119,7 @@ describe("ProxyWrapper", () => {
     expect(event.data).toBe(wrapper);
   });
 
-  it("emits a `rename` event to the proxy manager on id change", () => {
+  it("emits a `proxy.rename` event when the proxy id is updated", () => {
     const { proxy } = new ProxyWrapper();
     const wrapper = getProxyWrapper(proxy);
     const manager = ProxyManager();
@@ -138,7 +138,7 @@ describe("ProxyWrapper", () => {
     expect(event.data.id).toBe("test");
   });
 
-  it("emits a `manager change` event to the proxy manager", () => {
+  it("emits a `proxy.manager` event when the manager is updated", () => {
     const { proxy } = new ProxyWrapper();
     const wrapper = getProxyWrapper(proxy);
     const manager = ProxyManager();
@@ -154,5 +154,26 @@ describe("ProxyWrapper", () => {
     expect(event.cancelable).toBe(false);
     expect(event.data).toBe(wrapper);
     expect(event.data.manager).toBe(manager);
+  });
+
+  it("emits a `proxy.target` event when the target is updated", () => {
+    const wrapper = new ProxyWrapper();
+    const proxy = wrapper.proxy;
+    const manager = ProxyManager();
+    const emitter = manager.events.emit as jest.Mock;
+    const newTarget = { foo: true };
+
+    wrapper.setManager(manager);
+    wrapper.setTarget(newTarget);
+
+    const [, event]: [string, nx.ProxyWrapperEvent] = emitter.mock.lastCall;
+
+    expect(emitter).toHaveBeenCalledWith("proxy.target", event);
+    expect(event).toBeInstanceOf(ProxyEvent);
+    expect(event.target).toBe(wrapper.proxy);
+    expect(event.cancelable).toBe(false);
+    expect(event.data).toBe(wrapper);
+    expect(wrapper.target).toBe(newTarget);
+    expect(wrapper.proxy).not.toBe(proxy);
   });
 });

@@ -68,6 +68,34 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<T> {
   /** A unique identifier for the proxy */
   private proxyId: string = generateId();
 
+  /** Method to create or update an existing proxy */
+  private upsertProxy(target?: object): void {
+    const traceable = isTraceable(target);
+    const targetObject = traceable ? target : getSandbox();
+    const prevProxy = this.proxyRef?.deref();
+    const prevRevoker = this.revoker;
+
+    const { proxy, revoke } = Proxy.revocable<nx.ProxyTarget<T>>(
+      targetObject as nx.ProxyTarget<T>,
+      createHandlers(() => this.proxyRef.deref()),
+    );
+
+    this.proxyTarget = targetObject as T;
+    this.isTraceable = traceable;
+    this.proxyRef = new WeakRef(proxy);
+    this.revoker = prevRevoker
+      ? () => {
+          prevRevoker();
+          revoke();
+        }
+      : revoke;
+
+    const map = getProxyMap();
+
+    map.delete(prevProxy);
+    map.set(proxy, this);
+  }
+
   /**
    * Creates an instance of `ProxyWrapper`.
    *
@@ -77,20 +105,7 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<T> {
   constructor(target?: T);
 
   constructor(target?: T) {
-    const proxyTarget = isTraceable(target) ? target : getSandbox();
-
-    this.proxyTarget = proxyTarget as T;
-
-    const { proxy, revoke } = Proxy.revocable<nx.ProxyTarget<T>>(
-      proxyTarget as nx.ProxyTarget<T>,
-      createHandlers(() => this.proxyRef.deref()),
-    );
-
-    this.isTraceable = isTraceable(target);
-    this.proxyRef = new WeakRef(proxy);
-    this.revoker = revoke;
-
-    getProxyMap().set(proxy, this);
+    this.upsertProxy(target);
   }
 
   revoke(): void {
@@ -158,13 +173,23 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<T> {
   }
 
   setTarget(target: object): this {
+    if (this.target === target) return this;
     if (this.isRevoked) return this;
 
-    const traceable = isTraceable(target);
-    const newTarget = traceable ? target : getSandbox();
+    this.upsertProxy(target);
 
-    this.isTraceable = traceable;
-    this.proxyTarget = newTarget as T;
+    const proxy = this.proxyRef?.deref();
+
+    if (this.manager && isProxy(proxy)) {
+      // create the event
+      const event = new ProxyEvent("target", {
+        target: proxy,
+        cancelable: false,
+        data: this,
+      }) as nx.ProxyWrapperEvent;
+      // emit the event to the manager
+      this.manager.events?.emit(event.name, event);
+    }
 
     return this;
   }
