@@ -1,8 +1,8 @@
 import Nexo from "../Nexo.js";
 import { createDeferred, resolveWith, rejectWith } from "./deferred.js";
-import getProxy from "./getProxy.js";
 import getProxyWrapper from "./getProxyWrapper.js";
 import ProxyError from "./ProxyError.js";
+import ProxyWrapper from "./ProxyWrapper.js";
 
 describe("deferred", () => {
   describe("createDeferred", () => {
@@ -63,7 +63,7 @@ describe("deferred", () => {
 
     it("emits a proxy error to the associated wrapper and manager", () => {
       const nexo = new Nexo();
-      const proxy = getProxy();
+      const { proxy } = new ProxyWrapper();
       const wrapper = getProxyWrapper(proxy);
       const errorMessage = "something went wrong with the proxy";
       const proxyError = new ProxyError(errorMessage, proxy);

@@ -1,10 +1,9 @@
 import ProxyError from "../utils/ProxyError.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import handler from "./apply.js";
-import getProxy from "../utils/getProxy.js";
-import getProxyWrapper from "../utils/getProxyWrapper.js";
 import isProxy from "../utils/isProxy.js";
 import ProxyManager from "./__mocks__/ProxyManager.js";
+import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 describe("Apply Handler", () => {
   let manager: nx.ProxyManager;
@@ -14,7 +13,7 @@ describe("Apply Handler", () => {
   });
 
   it("creates a new `apply` handler for proxies", () => {
-    const proxy = getProxy();
+    const { proxy } = new ProxyWrapper();
     const resolveProxy = () => proxy;
 
     const apply_1 = handler(resolveProxy);
@@ -24,9 +23,8 @@ describe("Apply Handler", () => {
   });
 
   it("emits a `proxy.apply` event", async () => {
-    const proxy = getProxy();
-    const apply = handler(() => proxy);
-    const wrapper = getProxyWrapper(proxy);
+    const wrapper = new ProxyWrapper();
+    const apply = handler(() => wrapper.proxy);
     const listener = jest.fn();
 
     wrapper.setManager(manager);
@@ -42,7 +40,7 @@ describe("Apply Handler", () => {
     expect(listener).toHaveBeenCalledTimes(1);
     expect(manager.events.emit).toHaveBeenCalledWith("proxy.apply", event);
     expect(event).toBeInstanceOf(ProxyEvent);
-    expect(event.target).toBe(proxy);
+    expect(event.target).toBe(wrapper.proxy);
     expect(event.cancelable).toBe(true);
     expect(event.data.thisArg).toBe(thisArg);
     expect(event.data.args).toStrictEqual(args);
@@ -50,9 +48,8 @@ describe("Apply Handler", () => {
   });
 
   it("returns a sandboxed proxy by default", () => {
-    const proxy = getProxy();
-    const apply = handler(() => proxy);
-    const wrapper = getProxyWrapper(proxy);
+    const wrapper = new ProxyWrapper();
+    const apply = handler(() => wrapper.proxy);
     const result = apply(wrapper.target as nx.FunctionLike);
 
     expect(isProxy(result)).toBe(true);
@@ -60,10 +57,8 @@ describe("Apply Handler", () => {
   });
 
   it("returns a managed proxy when a proxy manager is present", () => {
-    const proxy = getProxy();
-    const apply = handler(() => proxy);
-    const wrapper = getProxyWrapper(proxy);
-
+    const wrapper = new ProxyWrapper();
+    const apply = handler(() => wrapper.proxy);
     wrapper.setManager(manager);
 
     const result = apply(wrapper.target as nx.FunctionLike);
@@ -73,9 +68,8 @@ describe("Apply Handler", () => {
   });
 
   it("allows event listeners to override the return value", () => {
-    const proxy = getProxy();
-    const apply = handler(() => proxy);
-    const wrapper = getProxyWrapper(proxy);
+    const wrapper = new ProxyWrapper();
+    const apply = handler(() => wrapper.proxy);
     const expectedResult = "foo";
 
     wrapper.events.on("proxy.apply", (event) => {
@@ -90,9 +84,8 @@ describe("Apply Handler", () => {
 
   it("invokes the original function target and returns its result", () => {
     const target = (a: number, b: number): number => a + b;
-    const proxy = getProxy(target);
-    const wrapper = getProxyWrapper(proxy);
-    const apply = handler(() => proxy);
+    const wrapper = new ProxyWrapper(target);
+    const apply = handler(() => wrapper.proxy);
 
     const result = apply(wrapper.target as nx.FunctionLike, undefined, [4, 1]);
 
@@ -104,8 +97,7 @@ describe("Apply Handler", () => {
       throw new Error("boom");
     };
 
-    const proxy = getProxy(target);
-    const wrapper = getProxyWrapper(proxy);
+    const wrapper = new ProxyWrapper(target);
     wrapper.setManager(manager);
 
     const errorListener = jest.fn();
@@ -114,7 +106,7 @@ describe("Apply Handler", () => {
     wrapper.events.on("proxy.apply", applyListener);
     wrapper.events.on("proxy.error", errorListener);
 
-    expect(() => proxy()).toThrow(ProxyError);
+    expect(() => wrapper.proxy()).toThrow(ProxyError);
 
     const [event]: [nx.ProxyApplyEvent] = applyListener.mock.lastCall;
     const [error]: [nx.ProxyError] = errorListener.mock.lastCall;

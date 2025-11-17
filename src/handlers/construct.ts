@@ -1,8 +1,8 @@
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../utils/ProxyError.js";
+import ProxyWrapper from "../utils/ProxyWrapper.js";
 import { createDeferred, resolveWith, rejectWith } from "../utils/deferred.js";
 import getProxyWrapper from "../utils/getProxyWrapper.js";
-import getProxy from "../utils/getProxy.js";
 import isTraceable from "../utils/isTraceable.js";
 
 /**
@@ -75,6 +75,6 @@ export default function construct(resolveProxy: nx.ResolveProxy) {
     }
 
     // create a new unmanaged proxy
-    return resolveWith(deferred.resolve, getProxy());
+    return resolveWith(deferred.resolve, new ProxyWrapper().proxy);
   };
 }
