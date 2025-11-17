@@ -1,3 +1,4 @@
+import isProxy from "./isProxy.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyManager from "../handlers/__mocks__/ProxyManager.js";
 import EventEmitter from "../utils/EventEmitter.js";
@@ -175,5 +176,22 @@ describe("ProxyWrapper", () => {
     expect(event.data).toBe(wrapper);
     expect(wrapper.target).toBe(newTarget);
     expect(wrapper.proxy).not.toBe(proxy);
+    expect(isProxy(wrapper.proxy)).toBe(true);
+  });
+
+  it("revokes and invalidates previous proxies", () => {
+    const wrapper = new ProxyWrapper();
+    const { proxy } = wrapper;
+
+    wrapper.setTarget({ foo: true });
+
+    expect(isProxy(proxy)).toBe(false);
+    expect(isProxy(wrapper.proxy)).toBe(true);
+    expect(proxy).not.toBe(wrapper.proxy);
+
+    wrapper.revoke();
+
+    expect(() => proxy()).toThrow(TypeError);
+    expect(() => wrapper.proxy()).toThrow(TypeError);
   });
 });
