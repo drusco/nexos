@@ -1,9 +1,9 @@
 import ProxyError from "./ProxyError.js";
-import getProxy from "./getProxy.js";
+import ProxyWrapper from "./ProxyWrapper.js";
 
 describe("ProxyError", () => {
   it("creates a ProxyError instance with the correct message and proxy", () => {
-    const proxy = getProxy();
+    const { proxy } = new ProxyWrapper();
     const errorMessage = "Something went wrong";
     const proxyError = new ProxyError(errorMessage, proxy);
 

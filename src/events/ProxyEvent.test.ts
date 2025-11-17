@@ -1,9 +1,9 @@
 import ProxyEvent from "./ProxyEvent.js";
-import getProxy from "../utils/getProxy.js";
+import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 describe("ProxyEvent", () => {
   it("initializes with default options and prepends `proxy.` to the event name", () => {
-    const proxy = getProxy();
+    const { proxy } = new ProxyWrapper();
     const event = new ProxyEvent("get", { target: proxy });
 
     expect(event).toBeInstanceOf(ProxyEvent);
@@ -15,7 +15,7 @@ describe("ProxyEvent", () => {
   });
 
   it("accepts custom event data", () => {
-    const proxy = getProxy();
+    const { proxy } = new ProxyWrapper();
     const data = { foo: "bar" };
 
     const event = new ProxyEvent("set", {

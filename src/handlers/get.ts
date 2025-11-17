@@ -1,7 +1,7 @@
 import ProxyEvent from "../events/ProxyEvent.js";
 import { createDeferred, resolveWith } from "../utils/deferred.js";
-import getProxy from "../utils/getProxy.js";
 import getProxyWrapper from "../utils/getProxyWrapper.js";
+import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 /**
  * Implements the `get` trap for a Proxy, enabling interception of property access.
@@ -50,6 +50,6 @@ export default function get(resolveProxy: nx.ResolveProxy) {
     }
 
     // create a new unmanaged proxy
-    return resolveWith(deferred.resolve, getProxy());
+    return resolveWith(deferred.resolve, new ProxyWrapper().proxy);
   };
 }

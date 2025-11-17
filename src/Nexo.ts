@@ -3,8 +3,8 @@ import EventEmitter from "./utils/EventEmitter.js";
 import isProxy from "./utils/isProxy.js";
 import isTraceable from "./utils/isTraceable.js";
 import getProxyWrapper from "./utils/getProxyWrapper.js";
-import getProxy from "./utils/getProxy.js";
 import Event from "./events/Event.js";
+import ProxyWrapper from "./utils/ProxyWrapper.js";
 
 /**
  * Represents a proxy factory for creating and managing proxy objects.
@@ -98,8 +98,8 @@ class Nexo implements nx.ProxyManager {
       }
     }
 
-    const proxy = getProxy(target);
-    const wrapper = getProxyWrapper(proxy);
+    const wrapper = new ProxyWrapper(target);
+    const { proxy } = wrapper;
 
     wrapper.setManager(this);
     wrapper.setId(id);
@@ -118,7 +118,7 @@ class Nexo implements nx.ProxyManager {
       this.events?.emit("proxy", event);
     }
 
-    return proxy as nx.ProxyTarget<T>;
+    return proxy;
   }
 
   /**
@@ -148,8 +148,8 @@ class Nexo implements nx.ProxyManager {
     target?: T,
     emit: boolean = true,
   ): nx.ProxyTarget<T> {
-    const proxy = getProxy(target);
-    const wrapper = getProxyWrapper(proxy);
+    const wrapper = new ProxyWrapper(target);
+    const { proxy } = wrapper;
 
     wrapper.setManager(this);
     this.entries.set(wrapper.id, new WeakRef(proxy));

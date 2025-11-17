@@ -1,7 +1,6 @@
-import getProxy from "../utils/getProxy.js";
-import getProxyWrapper from "../utils/getProxyWrapper.js";
 import isProxy from "../utils/isProxy.js";
 import ProxyError from "../utils/ProxyError.js";
+import ProxyWrapper from "../utils/ProxyWrapper.js";
 import ProxyManager from "./__mocks__/ProxyManager.js";
 import handler from "./construct.js";
 
@@ -13,8 +12,8 @@ describe("Construct Handler", () => {
   });
 
   it("creates a new `construct` handler for proxies", () => {
-    const proxy = getProxy();
-    const resolveProxy = () => proxy;
+    const wrapper = new ProxyWrapper();
+    const resolveProxy = () => wrapper.proxy;
 
     const construct_1 = handler(resolveProxy);
     const construct_2 = handler(resolveProxy);
@@ -23,32 +22,30 @@ describe("Construct Handler", () => {
   });
 
   it("emits a 'proxy.construct' event", async () => {
-    const proxy = getProxy();
-    const wrapper = getProxyWrapper(proxy);
-    const construct = handler(() => proxy);
+    const wrapper = new ProxyWrapper();
+    const construct = handler(() => wrapper.proxy);
     const listener = jest.fn();
 
     wrapper.events.on("proxy.construct", listener);
     wrapper.setManager(manager);
 
     const args = ["foo", "bar"];
-    const result = construct(proxy, args);
+    const result = construct(wrapper.proxy as nx.FunctionLike, args);
 
     const [event]: [nx.ProxyConstructEvent] = listener.mock.lastCall;
     const getResult = await event.data.result;
 
     expect(listener).toHaveBeenCalledTimes(1);
     expect(manager.events.emit).toHaveBeenCalledWith("proxy.construct", event);
-    expect(event.target).toBe(proxy);
+    expect(event.target).toBe(wrapper.proxy);
     expect(event.cancelable).toBe(true);
     expect(event.data.args).toStrictEqual(args);
     expect(getResult()).toBe(result);
   });
 
   it("returns a sandboxed proxy by default", () => {
-    const proxy = getProxy();
-    const wrapper = getProxyWrapper(proxy);
-    const construct = handler(() => proxy);
+    const wrapper = new ProxyWrapper();
+    const construct = handler(() => wrapper.proxy);
     const result = construct(wrapper.target as nx.FunctionLike);
 
     expect(isProxy(result)).toBe(true);
@@ -56,9 +53,8 @@ describe("Construct Handler", () => {
   });
 
   it("returns a managed proxy when a proxy manager is present", () => {
-    const proxy = getProxy();
-    const wrapper = getProxyWrapper(proxy);
-    const construct = handler(() => proxy);
+    const wrapper = new ProxyWrapper();
+    const construct = handler(() => wrapper.proxy);
 
     wrapper.setManager(manager);
     const result = construct(wrapper.target as nx.FunctionLike);
@@ -69,18 +65,16 @@ describe("Construct Handler", () => {
 
   it("constructs an instance using the target constructor", () => {
     class MyClass {}
-    const proxy = getProxy(MyClass);
-    const wrapper = getProxyWrapper(proxy);
-    const construct = handler(() => proxy);
-    const result = construct(wrapper.target as nx.FunctionLike);
+    const wrapper = new ProxyWrapper(MyClass);
+    const construct = handler(() => wrapper.proxy);
+    const result = construct(wrapper.target as object as nx.FunctionLike);
 
     expect(result).toBeInstanceOf(MyClass);
   });
 
   it("allows event listeners to override the returned instance", () => {
-    const proxy = getProxy();
-    const wrapper = getProxyWrapper(proxy);
-    const construct = handler(() => proxy);
+    const wrapper = new ProxyWrapper();
+    const construct = handler(() => wrapper.proxy);
     const expectedResult = {};
 
     wrapper.events.on("proxy.construct", (event) => {
@@ -94,9 +88,8 @@ describe("Construct Handler", () => {
   });
 
   it("throws ProxyError if the overridden result is not an object", () => {
-    const proxy = getProxy();
-    const wrapper = getProxyWrapper(proxy);
-    const construct = handler(() => proxy);
+    const wrapper = new ProxyWrapper();
+    const construct = handler(() => wrapper.proxy);
 
     wrapper.setManager(manager);
 
@@ -128,12 +121,11 @@ describe("Construct Handler", () => {
         throw new Error("boom");
       }
     }
-    const proxy = getProxy(ExplodingClass);
-    const wrapper = getProxyWrapper(proxy);
-    const construct = handler(() => proxy);
+    const wrapper = new ProxyWrapper(ExplodingClass);
+    const construct = handler(() => wrapper.proxy);
 
-    expect(() => construct(wrapper.target as nx.FunctionLike)).toThrow(
-      ProxyError,
-    );
+    expect(() =>
+      construct(wrapper.target as unknown as nx.FunctionLike),
+    ).toThrow(ProxyError);
   });
 });

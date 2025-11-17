@@ -1,9 +1,9 @@
 import isProxy from "./isProxy.js";
-import getProxy from "./getProxy.js";
+import ProxyWrapper from "./ProxyWrapper.js";
 
 describe("isProxy", () => {
   it("Returns true when the parameter is a proxy", () => {
-    const proxy = getProxy();
+    const { proxy } = new ProxyWrapper();
     const result = isProxy(proxy);
 
     expect(result).toBe(true);

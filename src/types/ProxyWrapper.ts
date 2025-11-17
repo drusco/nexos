@@ -3,10 +3,12 @@ declare global {
     /**
      * Wraps a proxy instance, manages events, and handles lifecycle operations.
      */
-    interface ProxyWrapper<Events extends EventMap = EventMap>
-      extends EventEmittable<Events> {
+    interface ProxyWrapper<
+      T extends object = object,
+      Events extends EventMap = EventMap,
+    > extends EventEmittable<Events> {
       /** The underlying target object */
-      readonly target: object;
+      readonly target: T;
       /** The unique identifier for the proxy */
       readonly id: string;
       /** The proxy manager instance. */

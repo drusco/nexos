@@ -1,7 +1,6 @@
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyManager from "../handlers/__mocks__/ProxyManager.js";
 import EventEmitter from "../utils/EventEmitter.js";
-import getProxy from "./getProxy.js";
 import getProxyWrapper from "./getProxyWrapper.js";
 import ProxyWrapper from "./ProxyWrapper.js";
 
@@ -19,7 +18,7 @@ describe("ProxyWrapper", () => {
 
     expect(wrapper.revoked).toBe(false);
     expect(wrapper.traceable).toBe(false);
-    expect(wrapper.target).toBeUndefined();
+    expect(wrapper.target).not.toBeUndefined();
     expect(wrapper.manager).toBeUndefined();
     expect(wrapper.events).toBeInstanceOf(EventEmitter);
   });
@@ -68,17 +67,6 @@ describe("ProxyWrapper", () => {
     expect(wrapper.events).toBeUndefined();
   });
 
-  it("allows passing a function to be called on proxy revocation", () => {
-    const revoke = jest.fn();
-    const wrapper = new ProxyWrapper(null, revoke);
-
-    wrapper.revoke();
-
-    expect(revoke).toHaveBeenCalledTimes(1);
-    expect(revoke).toHaveBeenCalledWith();
-    expect(wrapper.revoked).toBe(true);
-  });
-
   it("allows setting and removing a proxy manager instance", () => {
     const wrapper = new ProxyWrapper();
     const manager = ProxyManager();
@@ -103,7 +91,7 @@ describe("ProxyWrapper", () => {
     const wrapper = new ProxyWrapper();
     const target = [];
 
-    expect(wrapper.target).toBeUndefined();
+    expect(wrapper.target).not.toBeUndefined();
     expect(wrapper.traceable).toBe(false);
 
     wrapper.setTarget(target);
@@ -123,7 +111,7 @@ describe("ProxyWrapper", () => {
   });
 
   it("emits a `revoke` event to the proxy manager on revoke", () => {
-    const proxy = getProxy();
+    const { proxy } = new ProxyWrapper();
     const wrapper = getProxyWrapper(proxy);
     const manager = ProxyManager();
     const emitter = manager.events.emit as jest.Mock;
@@ -142,7 +130,7 @@ describe("ProxyWrapper", () => {
   });
 
   it("emits a `rename` event to the proxy manager on id change", () => {
-    const proxy = getProxy();
+    const { proxy } = new ProxyWrapper();
     const wrapper = getProxyWrapper(proxy);
     const manager = ProxyManager();
     const emitter = manager.events.emit as jest.Mock;
@@ -161,14 +149,14 @@ describe("ProxyWrapper", () => {
   });
 
   it("emits a `manager change` event to the proxy manager", () => {
-    const proxy = getProxy();
+    const { proxy } = new ProxyWrapper();
     const wrapper = getProxyWrapper(proxy);
     const manager = ProxyManager();
     const emitter = manager.events.emit as jest.Mock;
 
     wrapper.setManager(manager);
 
-    const [, event]: [string, nx.ProxyManagerEvent] = emitter.mock.lastCall;
+    const [, event]: [string, nx.ProxyWrapperEvent] = emitter.mock.lastCall;
 
     expect(emitter).toHaveBeenCalledWith("proxy.manager", event);
     expect(event).toBeInstanceOf(ProxyEvent);

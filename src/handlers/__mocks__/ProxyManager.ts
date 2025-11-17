@@ -1,8 +1,8 @@
-import getProxy from "../../utils/getProxy.js";
+import ProxyWrapper from "../../utils/ProxyWrapper.js";
 
 export default function ProxyManager(): nx.ProxyManager {
   return {
-    create: jest.fn(getProxy),
+    create: jest.fn((target?: object) => new ProxyWrapper(target).proxy),
     events: {
       emit: jest.fn(),
     },

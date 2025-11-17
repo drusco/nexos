@@ -14,7 +14,7 @@ import ProxyError from "./ProxyError.js";
  */
 export default function getProxyWrapper(
   proxy: object,
-): nx.ProxyWrapper<nx.ProxyEvents> {
+): nx.ProxyWrapper<object, nx.ProxyEvents> {
   const wrapper = getProxyMap().get(proxy);
 
   if (!wrapper) {
