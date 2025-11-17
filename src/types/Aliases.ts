@@ -46,7 +46,8 @@ declare global {
       | "setPrototypeOf"
       | "revoke"
       | "rename"
-      | "manager";
+      | "manager"
+      | "target";
 
     type EventMap = Record<string, FunctionLike>;
   }
