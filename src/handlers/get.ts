@@ -1,6 +1,5 @@
 import ProxyEvent from "../events/ProxyEvent.js";
 import { createDeferred, resolveWith } from "../utils/deferred.js";
-import getProxyWrapper from "../utils/getProxyWrapper.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 /**
@@ -14,11 +13,9 @@ import ProxyWrapper from "../utils/ProxyWrapper.js";
  *
  * Ensures all outcomes are funneled through a deferred promise resolution for consistency.
  */
-export default function get(resolveProxy: nx.ResolveProxy) {
+export default function get(wrapper: nx.ProxyWrapper) {
   return (target: object, property: nx.ObjectKey): unknown => {
-    const proxy = resolveProxy();
-    const wrapper = getProxyWrapper(proxy);
-    const { manager } = wrapper;
+    const { proxy, manager } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], unknown>>();
 
     const event = new ProxyEvent("get", {

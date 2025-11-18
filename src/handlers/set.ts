@@ -1,7 +1,6 @@
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../utils/ProxyError.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
-import getProxyWrapper from "../utils/getProxyWrapper.js";
 
 /**
  * Trap for handling `set` operations on the proxy.
@@ -19,10 +18,9 @@ import getProxyWrapper from "../utils/getProxyWrapper.js";
  *
  * The final resolved result reflects the behavior of `Reflect.set`.
  */
-export default function set(resolveProxy: nx.ResolveProxy) {
+export default function set(wrapper: nx.ProxyWrapper) {
   return (target: object, property: nx.ObjectKey, value: unknown): boolean => {
-    const proxy = resolveProxy();
-    const wrapper = getProxyWrapper(proxy);
+    const { proxy } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
     let finalValue = value;
 

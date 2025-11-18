@@ -1,6 +1,5 @@
 import ProxyEvent from "../events/ProxyEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
-import getProxyWrapper from "../utils/getProxyWrapper.js";
 import ProxyError from "../utils/ProxyError.js";
 
 /**
@@ -12,10 +11,9 @@ import ProxyError from "../utils/ProxyError.js";
  * the returned value and uses it instead. Otherwise, it defaults to the prototype
  * of the sandbox or the original target object.
  */
-export default function getPrototypeOf(resolveProxy: nx.ResolveProxy) {
+export default function getPrototypeOf(wrapper: nx.ProxyWrapper) {
   return (target: object): object => {
-    const proxy = resolveProxy();
-    const wrapper = getProxyWrapper(proxy);
+    const { proxy } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], object>>();
 
     const event = new ProxyEvent("getPrototypeOf", {

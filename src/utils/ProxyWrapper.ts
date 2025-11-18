@@ -74,7 +74,7 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<T> {
 
     const proxy = new Proxy<nx.ProxyTarget<T>>(
       targetObject as nx.ProxyTarget<T>,
-      createHandlers(() => this.proxyRef?.deref()),
+      createHandlers(this),
     );
 
     this.proxyTarget = targetObject as T;
