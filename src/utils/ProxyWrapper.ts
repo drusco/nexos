@@ -11,13 +11,13 @@ import createHandlers from "../handlers/index.js";
  * A wrapper class that manages a proxy and its associated events.
  * The `ProxyWrapper` encapsulates the functionality of proxy operations and ensures
  * that event listeners are triggered appropriately. It also provides the ability
- * to revoke the proxy and manage traceability.
+ * to lock the proxy and manage sandboxed targets.
  *
  */
 
 class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<T> {
-  get revoked(): boolean {
-    return this.isRevoked;
+  get locked(): boolean {
+    return this.isLocked;
   }
 
   get events(): nx.EventEmitter<nx.ProxyEvents> | undefined {
@@ -56,11 +56,8 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<T> {
   /** Event emitter instance */
   private eventEmitter?: nx.EventEmitter = new EventEmitter();
 
-  /** Indicates whether the proxy has been revoked */
-  private isRevoked: boolean = false;
-
-  /** The function responsible for revoking the proxy */
-  private revoker?: () => void;
+  /** Indicates whether the proxy has been locked */
+  private isLocked: boolean = false;
 
   /** A weak reference to the proxy being wrapped */
   private proxyRef: WeakRef<nx.ProxyTarget<T>>;
@@ -73,24 +70,16 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<T> {
     const traceable = isTraceable(target);
     const targetObject = traceable ? target : getSandbox();
     const prevProxy = this.proxyRef?.deref();
-    const prevRevoker = this.revoker;
+    const map = getProxyMap();
 
-    const { proxy, revoke } = Proxy.revocable<nx.ProxyTarget<T>>(
+    const proxy = new Proxy<nx.ProxyTarget<T>>(
       targetObject as nx.ProxyTarget<T>,
-      createHandlers(() => this.proxyRef.deref()),
+      createHandlers(() => this.proxyRef?.deref()),
     );
 
     this.proxyTarget = targetObject as T;
     this.isTraceable = traceable;
     this.proxyRef = new WeakRef(proxy);
-    this.revoker = prevRevoker
-      ? () => {
-          prevRevoker();
-          revoke();
-        }
-      : revoke;
-
-    const map = getProxyMap();
 
     map.delete(prevProxy);
     map.set(proxy, this);
@@ -108,22 +97,17 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<T> {
     this.upsertProxy(target);
   }
 
-  revoke(): void {
-    if (this.isRevoked) return;
+  lock(): this {
+    if (this.isLocked) return this;
 
-    if (typeof this.revoker === "function") {
-      this.revoker();
-    }
-
-    this.isRevoked = true;
-    this.revoker = undefined;
+    this.isLocked = true;
 
     const proxy = this.proxyRef.deref();
 
     // find proxy manager
     if (this.manager && isProxy(proxy)) {
-      // create the `proxy.revoke` event
-      const event = new ProxyEvent("revoke", {
+      // create the `proxy.lock` event
+      const event = new ProxyEvent("lock", {
         target: proxy,
         cancelable: false,
         data: this,
@@ -131,10 +115,31 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<T> {
       // emit the event to the manager
       this.manager.events?.emit(event.name, event);
     }
+
+    return this;
+  }
+
+  unlock(): this {
+    this.isLocked = false;
+
+    const proxy = this.proxyRef.deref();
+
+    if (this.manager && isProxy(proxy)) {
+      // create the `proxy.unlock` event
+      const event = new ProxyEvent("unlock", {
+        target: proxy,
+        cancelable: false,
+        data: this,
+      }) as nx.ProxyWrapperEvent;
+      // emit the event to the manager
+      this.manager.events?.emit(event.name, event);
+    }
+
+    return this;
   }
 
   setEventEmitter(emitter: nx.EventEmitter): this {
-    if (this.isRevoked) return this;
+    if (this.isLocked) return this;
     this.eventEmitter = emitter;
     return this;
   }
@@ -145,7 +150,7 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<T> {
   }
 
   setManager(manager: nx.ProxyManager): this {
-    if (this.isRevoked) return this;
+    if (this.isLocked) return this;
 
     const previousManager = this.proxyManager;
     const proxy = this.proxyRef.deref();
@@ -174,7 +179,7 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<T> {
 
   setTarget(target: object): this {
     if (this.target === target) return this;
-    if (this.isRevoked) return this;
+    if (this.isLocked) return this;
 
     this.upsertProxy(target);
 
@@ -195,7 +200,7 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<T> {
   }
 
   setId(id: string): this {
-    if (this.isRevoked) return this;
+    if (this.isLocked) return this;
     if (typeof id !== "string" || !id.length) return this;
 
     this.proxyId = id;
