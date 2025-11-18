@@ -1,9 +1,15 @@
 import getProxyWrapper from "./getProxyWrapper.js";
 import ProxyError from "./ProxyError.js";
 
-export function createDeferred<T = unknown>() {
-  let resolve!: (value: T) => void;
-  let reject!: (reason?: Error) => void;
+type Deferred<T> = {
+  promise: Promise<T>;
+  resolve: (value: T | PromiseLike<T>) => void;
+  reject: (reason?: unknown) => void;
+};
+
+export function createDeferred<T>(): Deferred<T> {
+  let resolve: Deferred<T>["resolve"];
+  let reject: Deferred<T>["reject"];
 
   const promise = new Promise<T>((res, rej) => {
     resolve = res;
@@ -13,8 +19,11 @@ export function createDeferred<T = unknown>() {
   return { promise, resolve, reject };
 }
 
-export function rejectWith(resolve: nx.FunctionLike, error: Error): never {
-  resolve(() => {
+export function rejectWith(
+  reject: nx.FunctionLike<[() => never]>,
+  error: Error,
+): never {
+  reject(() => {
     throw error;
   });
 
@@ -30,10 +39,10 @@ export function rejectWith(resolve: nx.FunctionLike, error: Error): never {
   throw error;
 }
 
-export function resolveWith<Result = unknown>(
-  resolve: nx.FunctionLike<[() => Result]>,
-  result: Result,
-): Result {
+export function resolveWith<R>(
+  resolve: nx.FunctionLike<[() => R]>,
+  result: R,
+): R {
   resolve(() => result);
   return result;
 }
