@@ -1,6 +1,5 @@
 import ProxyError from "../utils/ProxyError.js";
 import ProxyEvent from "../events/ProxyEvent.js";
-import handler from "./apply.js";
 import isProxy from "../utils/isProxy.js";
 import ProxyManager from "./__mocks__/ProxyManager.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
@@ -12,18 +11,8 @@ describe("Apply Handler", () => {
     manager = ProxyManager();
   });
 
-  it("creates a new `apply` handler for proxies", () => {
-    const wrapper = new ProxyWrapper();
-
-    const apply_1 = handler(wrapper);
-    const apply_2 = handler(wrapper);
-
-    expect(apply_1).not.toBe(apply_2);
-  });
-
   it("emits a `proxy.apply` event", async () => {
     const wrapper = new ProxyWrapper();
-    const apply = handler(wrapper);
     const listener = jest.fn();
 
     wrapper.setManager(manager);
@@ -32,7 +21,7 @@ describe("Apply Handler", () => {
     const args = ["foo", "bar"];
     const thisArg = {};
 
-    const result = apply(wrapper.target as nx.FunctionLike, thisArg, args);
+    const result = Reflect.apply(wrapper.proxy, thisArg, args);
     const [event]: [nx.ProxyApplyEvent] = listener.mock.lastCall;
     const getResult = await event.data.result;
 
@@ -48,8 +37,7 @@ describe("Apply Handler", () => {
 
   it("returns a sandboxed proxy by default", () => {
     const wrapper = new ProxyWrapper();
-    const apply = handler(wrapper);
-    const result = apply(wrapper.target as nx.FunctionLike);
+    const result = Reflect.apply(wrapper.proxy, null, []);
 
     expect(isProxy(result)).toBe(true);
     expect(manager.create).not.toHaveBeenCalled();
@@ -57,10 +45,9 @@ describe("Apply Handler", () => {
 
   it("returns a managed proxy when a proxy manager is present", () => {
     const wrapper = new ProxyWrapper();
-    const apply = handler(wrapper);
     wrapper.setManager(manager);
 
-    const result = apply(wrapper.target as nx.FunctionLike);
+    const result = Reflect.apply(wrapper.proxy, null, []);
 
     expect(isProxy(result)).toBe(true);
     expect(manager.create).toHaveBeenCalledTimes(1);
@@ -68,7 +55,6 @@ describe("Apply Handler", () => {
 
   it("allows event listeners to override the return value", () => {
     const wrapper = new ProxyWrapper();
-    const apply = handler(wrapper);
     const expectedResult = "foo";
 
     wrapper.events.on("proxy.apply", (event) => {
@@ -76,7 +62,7 @@ describe("Apply Handler", () => {
       return expectedResult;
     });
 
-    const result = apply(wrapper.target as nx.FunctionLike);
+    const result = Reflect.apply(wrapper.proxy, null, []);
 
     expect(result).toBe(expectedResult);
   });
@@ -84,9 +70,8 @@ describe("Apply Handler", () => {
   it("invokes the original function target and returns its result", () => {
     const target = (a: number, b: number): number => a + b;
     const wrapper = new ProxyWrapper(target);
-    const apply = handler(wrapper);
 
-    const result = apply(wrapper.target as nx.FunctionLike, undefined, [4, 1]);
+    const result = Reflect.apply(wrapper.proxy, null, [4, 1]);
 
     expect(result).toBe(5);
   });
@@ -117,5 +102,14 @@ describe("Apply Handler", () => {
     expect(errorListener).toHaveBeenCalledTimes(1);
     expect(manager.events.emit).toHaveBeenCalledWith("proxy.apply", event);
     expect(manager.events.emit).toHaveBeenCalledWith("proxy.error", error);
+  });
+
+  it("throws an error while the proxy is locked", () => {
+    const wrapper = new ProxyWrapper();
+    wrapper.lock();
+
+    expect(() => wrapper.proxy()).toThrow(ProxyError);
+    wrapper.unlock();
+    expect(() => wrapper.proxy()).not.toThrow();
   });
 });
