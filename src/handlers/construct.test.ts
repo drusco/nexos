@@ -2,7 +2,6 @@ import isProxy from "../utils/isProxy.js";
 import ProxyError from "../utils/ProxyError.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
 import ProxyManager from "./__mocks__/ProxyManager.js";
-import handler from "./construct.js";
 
 describe("Construct Handler", () => {
   let manager: nx.ProxyManager;
@@ -11,25 +10,15 @@ describe("Construct Handler", () => {
     manager = ProxyManager();
   });
 
-  it("creates a new `construct` handler for proxies", () => {
-    const wrapper = new ProxyWrapper();
-
-    const construct_1 = handler(wrapper);
-    const construct_2 = handler(wrapper);
-
-    expect(construct_1).not.toBe(construct_2);
-  });
-
   it("emits a 'proxy.construct' event", async () => {
     const wrapper = new ProxyWrapper();
-    const construct = handler(wrapper);
     const listener = jest.fn();
 
     wrapper.events.on("proxy.construct", listener);
     wrapper.setManager(manager);
 
     const args = ["foo", "bar"];
-    const result = construct(wrapper.proxy as nx.FunctionLike, args);
+    const result = Reflect.construct(wrapper.proxy, args);
 
     const [event]: [nx.ProxyConstructEvent] = listener.mock.lastCall;
     const getResult = await event.data.result;
@@ -44,8 +33,7 @@ describe("Construct Handler", () => {
 
   it("returns a sandboxed proxy by default", () => {
     const wrapper = new ProxyWrapper();
-    const construct = handler(wrapper);
-    const result = construct(wrapper.target as nx.FunctionLike);
+    const result = Reflect.construct(wrapper.proxy, []);
 
     expect(isProxy(result)).toBe(true);
     expect(manager.create).not.toHaveBeenCalled();
@@ -53,10 +41,9 @@ describe("Construct Handler", () => {
 
   it("returns a managed proxy when a proxy manager is present", () => {
     const wrapper = new ProxyWrapper();
-    const construct = handler(wrapper);
 
     wrapper.setManager(manager);
-    const result = construct(wrapper.target as nx.FunctionLike);
+    const result = Reflect.construct(wrapper.proxy, []);
 
     expect(isProxy(result)).toBe(true);
     expect(manager.create).toHaveBeenCalledTimes(1);
@@ -65,15 +52,13 @@ describe("Construct Handler", () => {
   it("constructs an instance using the target constructor", () => {
     class MyClass {}
     const wrapper = new ProxyWrapper(MyClass);
-    const construct = handler(wrapper);
-    const result = construct(wrapper.target as object as nx.FunctionLike);
+    const result = Reflect.construct(wrapper.proxy, []);
 
     expect(result).toBeInstanceOf(MyClass);
   });
 
   it("allows event listeners to override the returned instance", () => {
     const wrapper = new ProxyWrapper();
-    const construct = handler(wrapper);
     const expectedResult = {};
 
     wrapper.events.on("proxy.construct", (event) => {
@@ -81,14 +66,13 @@ describe("Construct Handler", () => {
       return expectedResult;
     });
 
-    const result = construct(wrapper.target as nx.FunctionLike);
+    const result = Reflect.construct(wrapper.proxy, []);
 
     expect(result).toBe(expectedResult);
   });
 
   it("throws ProxyError if the overridden result is not an object", () => {
     const wrapper = new ProxyWrapper();
-    const construct = handler(wrapper);
 
     wrapper.setManager(manager);
 
@@ -101,9 +85,7 @@ describe("Construct Handler", () => {
     wrapper.events.on("proxy.construct", listener);
     wrapper.events.on("proxy.error", errorListener);
 
-    expect(() => construct(wrapper.target as nx.FunctionLike)).toThrow(
-      ProxyError,
-    );
+    expect(() => Reflect.construct(wrapper.proxy, [])).toThrow(ProxyError);
 
     const [event]: [nx.ProxyConstructEvent] = listener.mock.lastCall;
     const [error]: [nx.ProxyError] = errorListener.mock.lastCall;
@@ -121,10 +103,16 @@ describe("Construct Handler", () => {
       }
     }
     const wrapper = new ProxyWrapper(ExplodingClass);
-    const construct = handler(wrapper);
 
-    expect(() =>
-      construct(wrapper.target as unknown as nx.FunctionLike),
-    ).toThrow(ProxyError);
+    expect(() => Reflect.construct(wrapper.proxy, [])).toThrow(ProxyError);
+  });
+
+  it("throws an error while the proxy is locked", () => {
+    const wrapper = new ProxyWrapper();
+    wrapper.lock();
+
+    expect(() => new wrapper.proxy()).toThrow(ProxyError);
+    wrapper.unlock();
+    expect(() => new wrapper.proxy()).not.toThrow();
   });
 });
