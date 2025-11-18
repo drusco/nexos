@@ -2,7 +2,6 @@ import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../utils/ProxyError.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
 import { createDeferred, resolveWith, rejectWith } from "../utils/deferred.js";
-import getProxyWrapper from "../utils/getProxyWrapper.js";
 
 /**
  * Creates an `apply` trap handler for a Proxy, enabling interception and custom handling
@@ -19,15 +18,13 @@ import getProxyWrapper from "../utils/getProxyWrapper.js";
  *
  */
 
-export default function apply(resolveProxy: nx.ResolveProxy) {
+export default function apply(wrapper: nx.ProxyWrapper) {
   return (
     target: nx.FunctionLike,
     thisArg: unknown = undefined,
     args: unknown[] = [],
   ): unknown => {
-    const proxy = resolveProxy();
-    const wrapper = getProxyWrapper(proxy);
-    const { manager, traceable } = wrapper;
+    const { proxy, manager, traceable } = wrapper;
     const deferred = createDeferred<nx.FunctionLike>();
 
     const event = new ProxyEvent("apply", {

@@ -9,6 +9,8 @@ declare global {
     > extends EventEmittable<Events> {
       /** The underlying target object */
       readonly target: T;
+      /** The proxy reference */
+      readonly proxy: object;
       /** The unique identifier for the proxy */
       readonly id: string;
       /** The proxy manager instance. */

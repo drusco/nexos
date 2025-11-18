@@ -1,6 +1,5 @@
 import ProxyEvent from "../events/ProxyEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
-import getProxyWrapper from "../utils/getProxyWrapper.js";
 import ProxyError from "../utils/ProxyError.js";
 
 /**
@@ -8,12 +7,9 @@ import ProxyError from "../utils/ProxyError.js";
  * emitting a `ProxyEvent` that allows consumers to intercept or override
  * the behavior of property descriptor retrieval.
  */
-export default function getOwnPropertyDescriptor(
-  resolveProxy: nx.ResolveProxy,
-) {
+export default function getOwnPropertyDescriptor(wrapper: nx.ProxyWrapper) {
   return (target: object, property: nx.ObjectKey): PropertyDescriptor => {
-    const proxy = resolveProxy();
-    const wrapper = getProxyWrapper(proxy);
+    const { proxy } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], PropertyDescriptor>>();
     const descriptor = Reflect.getOwnPropertyDescriptor(target, property);
 

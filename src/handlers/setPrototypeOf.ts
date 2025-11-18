@@ -1,7 +1,6 @@
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../utils/ProxyError.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
-import getProxyWrapper from "../utils/getProxyWrapper.js";
 
 /**
  * setPrototypeOf handler for proxies.
@@ -23,10 +22,9 @@ import getProxyWrapper from "../utils/getProxyWrapper.js";
  *
  * This supports complex metaprogramming behaviors and runtime policy enforcement.
  */
-export default function setPrototypeOf(resolveProxy: nx.ResolveProxy) {
+export default function setPrototypeOf(wrapper: nx.ProxyWrapper) {
   return (target: object, prototype: object): boolean => {
-    const proxy = resolveProxy();
-    const wrapper = getProxyWrapper(proxy);
+    const { proxy } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
     let finalPrototype: unknown = prototype;
 

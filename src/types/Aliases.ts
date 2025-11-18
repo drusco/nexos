@@ -16,9 +16,6 @@ declare global {
       T = unknown,
     > = (this: T, ...args: A) => R;
 
-    /** A function returning a proxy object. */
-    type ResolveProxy = () => object;
-
     /** A proxy-wrapped object or function. */
     type ProxyTarget<T extends object> =
       T extends NonNullable<T>

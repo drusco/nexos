@@ -1,6 +1,5 @@
 import ProxyEvent from "../events/ProxyEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
-import getProxyWrapper from "../utils/getProxyWrapper.js";
 import ProxyError from "../utils/ProxyError.js";
 
 /**
@@ -19,10 +18,9 @@ import ProxyError from "../utils/ProxyError.js";
  * `.data.result` promise.
  *
  */
-export default function has(resolveProxy: nx.ResolveProxy) {
+export default function has(wrapper: nx.ProxyWrapper) {
   return (target: object, property: nx.ObjectKey): boolean => {
-    const proxy = resolveProxy();
-    const wrapper = getProxyWrapper(proxy);
+    const { proxy } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
 
     const event = new ProxyEvent("has", {

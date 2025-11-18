@@ -1,6 +1,5 @@
 import ProxyEvent from "../events/ProxyEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
-import getProxyWrapper from "../utils/getProxyWrapper.js";
 import ProxyError from "../utils/ProxyError.js";
 
 /**
@@ -23,10 +22,9 @@ import ProxyError from "../utils/ProxyError.js";
  * for consumers performing reflective operations.
  *
  */
-export default function ownKeys(resolveProxy: nx.ResolveProxy) {
+export default function ownKeys(wrapper: nx.ProxyWrapper) {
   return (target: object): nx.ObjectKey[] => {
-    const proxy = resolveProxy();
-    const wrapper = getProxyWrapper(proxy);
+    const { proxy } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], nx.ObjectKey[]>>();
 
     const event = new ProxyEvent("ownKeys", {

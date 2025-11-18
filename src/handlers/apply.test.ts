@@ -13,18 +13,17 @@ describe("Apply Handler", () => {
   });
 
   it("creates a new `apply` handler for proxies", () => {
-    const { proxy } = new ProxyWrapper();
-    const resolveProxy = () => proxy;
+    const wrapper = new ProxyWrapper();
 
-    const apply_1 = handler(resolveProxy);
-    const apply_2 = handler(resolveProxy);
+    const apply_1 = handler(wrapper);
+    const apply_2 = handler(wrapper);
 
     expect(apply_1).not.toBe(apply_2);
   });
 
   it("emits a `proxy.apply` event", async () => {
     const wrapper = new ProxyWrapper();
-    const apply = handler(() => wrapper.proxy);
+    const apply = handler(wrapper);
     const listener = jest.fn();
 
     wrapper.setManager(manager);
@@ -49,7 +48,7 @@ describe("Apply Handler", () => {
 
   it("returns a sandboxed proxy by default", () => {
     const wrapper = new ProxyWrapper();
-    const apply = handler(() => wrapper.proxy);
+    const apply = handler(wrapper);
     const result = apply(wrapper.target as nx.FunctionLike);
 
     expect(isProxy(result)).toBe(true);
@@ -58,7 +57,7 @@ describe("Apply Handler", () => {
 
   it("returns a managed proxy when a proxy manager is present", () => {
     const wrapper = new ProxyWrapper();
-    const apply = handler(() => wrapper.proxy);
+    const apply = handler(wrapper);
     wrapper.setManager(manager);
 
     const result = apply(wrapper.target as nx.FunctionLike);
@@ -69,7 +68,7 @@ describe("Apply Handler", () => {
 
   it("allows event listeners to override the return value", () => {
     const wrapper = new ProxyWrapper();
-    const apply = handler(() => wrapper.proxy);
+    const apply = handler(wrapper);
     const expectedResult = "foo";
 
     wrapper.events.on("proxy.apply", (event) => {
@@ -85,7 +84,7 @@ describe("Apply Handler", () => {
   it("invokes the original function target and returns its result", () => {
     const target = (a: number, b: number): number => a + b;
     const wrapper = new ProxyWrapper(target);
-    const apply = handler(() => wrapper.proxy);
+    const apply = handler(wrapper);
 
     const result = apply(wrapper.target as nx.FunctionLike, undefined, [4, 1]);
 

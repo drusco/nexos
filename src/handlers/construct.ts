@@ -2,7 +2,6 @@ import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../utils/ProxyError.js";
 import ProxyWrapper from "../utils/ProxyWrapper.js";
 import { createDeferred, resolveWith, rejectWith } from "../utils/deferred.js";
-import getProxyWrapper from "../utils/getProxyWrapper.js";
 import isTraceable from "../utils/isTraceable.js";
 
 /**
@@ -20,11 +19,9 @@ import isTraceable from "../utils/isTraceable.js";
  * If no override is applied and the target isn't directly traceable, a new proxy instance is returned.
  *
  */
-export default function construct(resolveProxy: nx.ResolveProxy) {
+export default function construct(wrapper: nx.ProxyWrapper) {
   return (target: nx.FunctionLike, args: unknown[] = []): object => {
-    const proxy = resolveProxy();
-    const wrapper = getProxyWrapper(proxy);
-    const { manager, traceable } = wrapper;
+    const { proxy, manager, traceable } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], object>>();
 
     const event = new ProxyEvent("construct", {

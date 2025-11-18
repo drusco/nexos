@@ -1,6 +1,5 @@
 import ProxyEvent from "../events/ProxyEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
-import getProxyWrapper from "../utils/getProxyWrapper.js";
 import ProxyError from "../utils/ProxyError.js";
 
 /**
@@ -15,10 +14,9 @@ import ProxyError from "../utils/ProxyError.js";
  * the event is not prevented. All outcomes resolve or reject the associated
  * deferred function to maintain consistency with other traps in the system.
  */
-export default function isExtensible(resolveProxy: nx.ResolveProxy) {
+export default function isExtensible(wrapper: nx.ProxyWrapper) {
   return (target: object): boolean => {
-    const proxy = resolveProxy();
-    const wrapper = getProxyWrapper(proxy);
+    const { proxy } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
 
     const event = new ProxyEvent("isExtensible", {

@@ -1,6 +1,5 @@
 import ProxyEvent from "../events/ProxyEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
-import getProxyWrapper from "../utils/getProxyWrapper.js";
 import ProxyError from "../utils/ProxyError.js";
 
 /**
@@ -15,10 +14,9 @@ import ProxyError from "../utils/ProxyError.js";
  * Emits a `ProxyPreventExtensionsEvent` and resolves or rejects based on the result
  * and conformance with proxy invariants.
  */
-export default function preventExtensions(resolveProxy: nx.ResolveProxy) {
+export default function preventExtensions(wrapper: nx.ProxyWrapper) {
   return (target: object): boolean => {
-    const proxy = resolveProxy();
-    const wrapper = getProxyWrapper(proxy);
+    const { proxy } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
 
     const event = new ProxyEvent("preventExtensions", {
