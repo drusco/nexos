@@ -129,7 +129,7 @@ describe("Nexo", () => {
     expect(listenerB).toHaveBeenCalledTimes(1);
   });
 
-  it("Only revokes proxy in its own instance", () => {
+  it("Only locks a proxy in its own instance", () => {
     const nexoA = new Nexo();
     const nexoB = new Nexo();
     const target = { foo: 0 };
@@ -138,7 +138,7 @@ describe("Nexo", () => {
     const proxyB = nexoB.create(target);
 
     const wrapperA = Nexo.wrap(proxyA);
-    wrapperA.revoke();
+    wrapperA.lock();
 
     expect(() => proxyA.foo).toThrow(); // should throw
     expect(() => proxyB.foo).not.toThrow(); // should not throw

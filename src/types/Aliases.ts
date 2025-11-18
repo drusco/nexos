@@ -44,7 +44,8 @@ declare global {
       | "ownKeys"
       | "preventExtensions"
       | "setPrototypeOf"
-      | "revoke"
+      | "lock"
+      | "unlock"
       | "rename"
       | "manager"
       | "target";

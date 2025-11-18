@@ -45,10 +45,11 @@ declare global {
         event: ProxySetPrototypeOfEvent,
       ) => ProxySetPrototypeOfEvent["returnValue"];
 
-      "proxy.revoke": (event: ProxyWrapperEvent) => void;
       "proxy.rename": (event: ProxyWrapperEvent) => void;
       "proxy.manager": (event: ProxyWrapperEvent) => void;
       "proxy.target": (event: ProxyWrapperEvent) => void;
+      "proxy.lock": (event: ProxyWrapperEvent) => void;
+      "proxy.unlock": (event: ProxyWrapperEvent) => void;
     };
   }
 }

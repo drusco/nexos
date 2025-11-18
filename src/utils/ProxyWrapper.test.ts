@@ -10,28 +10,33 @@ describe("ProxyWrapper", () => {
     const wrapper = new ProxyWrapper();
 
     expect(typeof wrapper.id).toBe("string");
-    expect(typeof wrapper.revoke).toBe("function");
+    expect(typeof wrapper.lock).toBe("function");
+    expect(typeof wrapper.unlock).toBe("function");
     expect(typeof wrapper.setEventEmitter).toBe("function");
     expect(typeof wrapper.removeEventEmitter).toBe("function");
     expect(typeof wrapper.setManager).toBe("function");
     expect(typeof wrapper.setTarget).toBe("function");
     expect(typeof wrapper.setId).toBe("function");
 
-    expect(wrapper.revoked).toBe(false);
+    expect(wrapper.locked).toBe(false);
     expect(wrapper.traceable).toBe(false);
     expect(wrapper.target).not.toBeUndefined();
     expect(wrapper.manager).toBeUndefined();
     expect(wrapper.events).toBeInstanceOf(EventEmitter);
   });
 
-  it("allows to revoke the proxy", () => {
+  it("allows to temporarily lock the proxy", () => {
     const wrapper = new ProxyWrapper();
-    wrapper.revoke();
+    wrapper.lock();
 
-    expect(wrapper.revoked).toBe(true);
+    expect(wrapper.locked).toBe(true);
+
+    wrapper.unlock();
+
+    expect(wrapper.locked).toBe(false);
   });
 
-  it("prevents updating wrapper when the proxy is revoked", () => {
+  it("prevents updating wrapper when the proxy is locked", () => {
     const wrapper = new ProxyWrapper();
     const manager = ProxyManager();
     const target = [];
@@ -42,7 +47,7 @@ describe("ProxyWrapper", () => {
     wrapper.setTarget(target);
     wrapper.setEventEmitter(emitter);
 
-    wrapper.revoke();
+    wrapper.lock();
 
     wrapper.setId("new_id");
     wrapper.setManager(ProxyManager());
@@ -101,19 +106,19 @@ describe("ProxyWrapper", () => {
     expect(wrapper.traceable).toBe(true);
   });
 
-  it("emits a `proxy.revoke` event when the proxy is revoked", () => {
+  it("emits a `proxy.lock` event when the proxy is locked", () => {
     const { proxy } = new ProxyWrapper();
     const wrapper = getProxyWrapper(proxy);
     const manager = ProxyManager();
     const emitter = manager.events.emit as jest.Mock;
 
     wrapper.setManager(manager);
-    wrapper.revoke();
+    wrapper.lock();
 
     const [eventName, event]: [string, nx.ProxyWrapperEvent] =
       emitter.mock.lastCall;
 
-    expect(eventName).toBe("proxy.revoke");
+    expect(eventName).toBe("proxy.lock");
     expect(event).toBeInstanceOf(ProxyEvent);
     expect(event.target).toBe(proxy);
     expect(event.cancelable).toBe(false);
@@ -177,21 +182,5 @@ describe("ProxyWrapper", () => {
     expect(wrapper.target).toBe(newTarget);
     expect(wrapper.proxy).not.toBe(proxy);
     expect(isProxy(wrapper.proxy)).toBe(true);
-  });
-
-  it("revokes and invalidates previous proxies", () => {
-    const wrapper = new ProxyWrapper();
-    const { proxy } = wrapper;
-
-    wrapper.setTarget({ foo: true });
-
-    expect(isProxy(proxy)).toBe(false);
-    expect(isProxy(wrapper.proxy)).toBe(true);
-    expect(proxy).not.toBe(wrapper.proxy);
-
-    wrapper.revoke();
-
-    expect(() => proxy()).toThrow(TypeError);
-    expect(() => wrapper.proxy()).toThrow(TypeError);
   });
 });
