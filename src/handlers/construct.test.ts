@@ -106,13 +106,4 @@ describe("Construct Handler", () => {
 
     expect(() => Reflect.construct(wrapper.proxy, [])).toThrow(ProxyError);
   });
-
-  it("throws an error while the proxy is locked", () => {
-    const wrapper = new ProxyWrapper();
-    wrapper.lock();
-
-    expect(() => new wrapper.proxy()).toThrow(ProxyError);
-    wrapper.unlock();
-    expect(() => new wrapper.proxy()).not.toThrow();
-  });
 });

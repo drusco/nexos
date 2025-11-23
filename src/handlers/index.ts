@@ -1,4 +1,3 @@
-import ProxyError from "../utils/ProxyError.js";
 import apply from "./apply.js";
 import construct from "./construct.js";
 import defineProperty from "./defineProperty.js";
@@ -12,44 +11,44 @@ import ownKeys from "./ownKeys.js";
 import preventExtensions from "./preventExtensions.js";
 import set from "./set.js";
 import setPrototypeOf from "./setPrototypeOf.js";
+import ProxyPipeline from "../utils/ProxyPipeline.js";
+import ProxyError from "../utils/ProxyError.js";
 
-const useProxy = (wrapper: nx.ProxyWrapper) => {
-  return <T extends nx.FunctionLike<unknown[], ReturnType<T>>>(
-    createHandler: nx.FunctionLike<[nx.ProxyWrapper], T>,
-  ): T => {
-    const handler = createHandler(wrapper);
-    const next = (...args: Parameters<T>): ReturnType<T> => {
-      const { proxy } = wrapper;
+const pipe = new ProxyPipeline<nx.ProxyWrapper<object, nx.ProxyEvents>>();
 
-      if (wrapper.locked) {
-        throw new ProxyError("The proxy is locked and cannot be used.", proxy);
-      }
-
-      return handler(...args);
-    };
-
-    return next as T;
-  };
-};
+pipe.use(({ context }, next) => {
+  if (!context.locked) {
+    return next();
+  }
+  const error = new ProxyError(
+    "The proxy is locked and cannot be used.",
+    context.proxy,
+  );
+  context.events?.emit("proxy.error", error);
+  throw error;
+});
 
 export default function createHandlers(
   wrapper: nx.ProxyWrapper,
 ): ProxyHandler<object> {
-  const useHandler = useProxy(wrapper);
+  const handle = pipe.wrap(wrapper);
 
   return {
-    apply: useHandler(apply),
-    construct: useHandler(construct),
-    defineProperty: useHandler(defineProperty),
-    deleteProperty: useHandler(deleteProperty),
-    get: useHandler(get),
-    getOwnPropertyDescriptor: useHandler(getOwnPropertyDescriptor),
-    getPrototypeOf: useHandler(getPrototypeOf),
-    has: useHandler(has),
-    isExtensible: useHandler(isExtensible),
-    ownKeys: useHandler(ownKeys),
-    preventExtensions: useHandler(preventExtensions),
-    set: useHandler(set),
-    setPrototypeOf: useHandler(setPrototypeOf),
+    apply: handle("apply", apply),
+    construct: handle("construct", construct),
+    defineProperty: handle("defineProperty", defineProperty),
+    deleteProperty: handle("deleteProperty", deleteProperty),
+    get: handle("get", get),
+    getOwnPropertyDescriptor: handle(
+      "getOwnPropertyDescriptor",
+      getOwnPropertyDescriptor,
+    ),
+    getPrototypeOf: handle("getPrototypeOf", getPrototypeOf),
+    has: handle("has", has),
+    isExtensible: handle("isExtensible", isExtensible),
+    ownKeys: handle("ownKeys", ownKeys),
+    preventExtensions: handle("preventExtensions", preventExtensions),
+    set: handle("set", set),
+    setPrototypeOf: handle("setPrototypeOf", setPrototypeOf),
   };
 }
