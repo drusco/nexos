@@ -1,6 +1,14 @@
 import Event from "./Event.js";
 import isProxy from "../utils/isProxy.js";
 
+type ProxyEventSuffix =
+  | keyof ProxyHandler<object>
+  | "lock"
+  | "unlock"
+  | "rename"
+  | "manager"
+  | "target";
+
 /**
  * Represents an event triggered by a proxy.
  */
@@ -15,7 +23,7 @@ class ProxyEvent<D> extends Event<object, D> implements nx.Event<object, D> {
    * @param options.target - The proxy of the event.
    */
   constructor(
-    name: nx.ProxyEventSuffix,
+    name: ProxyEventSuffix,
     options?: {
       data?: D;
       target: object;

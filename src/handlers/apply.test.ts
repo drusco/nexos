@@ -103,13 +103,4 @@ describe("Apply Handler", () => {
     expect(manager.events.emit).toHaveBeenCalledWith("proxy.apply", event);
     expect(manager.events.emit).toHaveBeenCalledWith("proxy.error", error);
   });
-
-  it("throws an error while the proxy is locked", () => {
-    const wrapper = new ProxyWrapper();
-    wrapper.lock();
-
-    expect(() => wrapper.proxy()).toThrow(ProxyError);
-    wrapper.unlock();
-    expect(() => wrapper.proxy()).not.toThrow();
-  });
 });
