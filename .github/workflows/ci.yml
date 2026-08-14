@@ -19,6 +19,11 @@ jobs:
     uses: ./.github/workflows/version-check.yml
     secrets: inherit
 
+  security_audit:
+    name: Security Audit (non-dev dependencies)
+    uses: ./.github/workflows/security-audit.yml
+    secrets: inherit
+
   semantic_release:
     name: Run Semantic Release
     uses: ./.github/workflows/semantic-release.yml

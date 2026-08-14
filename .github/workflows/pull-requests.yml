@@ -17,6 +17,11 @@ jobs:
     name: Run Code Validation
     uses: ./.github/workflows/code-validation.yml
 
+  security_audit:
+    name: Security Audit (non-dev dependencies)
+    uses: ./.github/workflows/security-audit.yml
+    secrets: inherit
+
   unit_tests:
     name: Run Unit Tests
     uses: ./.github/workflows/unit-tests.yml
