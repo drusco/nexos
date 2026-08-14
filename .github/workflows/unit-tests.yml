@@ -27,14 +27,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Determine target branch
+        id: target
+        run: echo "branch=${{ github.event_name == 'pull_request' && github.base_ref || github.ref_name }}" >> "$GITHUB_OUTPUT"
+
       - name: Run production tests
-        if: github.ref_name == 'main'
+        if: steps.target.outputs.branch == 'main'
         env:
           COVERAGE_THRESHOLD: '{"global": {"branches": 100, "functions": 100, "lines": 100, "statements": 100}}'
         run: npx jest --coverage --coverageThreshold="$COVERAGE_THRESHOLD"
 
       - name: Run development tests
-        if: github.ref_name == 'next'
+        if: steps.target.outputs.branch == 'next'
         run: npm run test-coverage
 
       - name: Upload results to Codecov
