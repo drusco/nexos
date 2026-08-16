@@ -12,7 +12,7 @@ type ProxyEventSuffix =
 /**
  * Represents an event triggered by a proxy.
  */
-class ProxyEvent<D> extends Event<object, D> implements nx.Event<object, D> {
+class ProxyEvent<D> extends Event<object, D> {
   /**
    * Creates an instance of the `ProxyEvent`.
    * This constructor initializes the event with the name prefixed by `proxy.`
