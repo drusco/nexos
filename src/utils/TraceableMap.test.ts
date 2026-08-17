@@ -1,4 +1,3 @@
-import EventEmitter from "./EventEmitter.js";
 import TraceableMap from "./TraceableMap.js";
 
 describe("TraceableMap", () => {
@@ -83,18 +82,5 @@ describe("TraceableMap", () => {
       key: "bar",
       released: true,
     });
-  });
-
-  it("allows setting and removing a custom event emitter", () => {
-    const map = new TraceableMap();
-    const emitter = new EventEmitter();
-
-    map.setEventEmitter(emitter);
-
-    expect(map.events).toBe(emitter);
-
-    map.removeEventEmitter();
-
-    expect(map.events).toBeUndefined();
   });
 });

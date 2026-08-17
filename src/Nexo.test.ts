@@ -143,17 +143,4 @@ describe("Nexo", () => {
     expect(() => proxyA.foo).toThrow(); // should throw
     expect(() => proxyB.foo).not.toThrow(); // should not throw
   });
-
-  it("allows setting and removing a custom event emitter", () => {
-    const nexo = new Nexo();
-    const emitter = new EventEmitter();
-
-    nexo.setEventEmitter(emitter);
-
-    expect(nexo.events).toBe(emitter);
-
-    nexo.removeEventEmitter();
-
-    expect(nexo.events).toBeUndefined();
-  });
 });

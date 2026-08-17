@@ -15,12 +15,15 @@ import createHandlers from "../handlers/index.js";
  *
  */
 
-class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<T> {
+class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<
+  T,
+  nx.ProxyEvents
+> {
   get locked(): boolean {
     return this.isLocked;
   }
 
-  get events(): nx.EventEmitter<nx.ProxyEvents> | undefined {
+  get events(): nx.EventEmitter<nx.ProxyEvents> {
     return this.eventEmitter;
   }
 
@@ -54,7 +57,7 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<T> {
   private proxyManager?: nx.ProxyManager;
 
   /** Event emitter instance */
-  private eventEmitter?: nx.EventEmitter = new EventEmitter();
+  private readonly eventEmitter = new EventEmitter<nx.ProxyEvents>();
 
   /** Indicates whether the proxy has been locked */
   private isLocked: boolean = false;
@@ -135,17 +138,6 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<T> {
       this.manager.events?.emit(event.name, event);
     }
 
-    return this;
-  }
-
-  setEventEmitter(emitter: nx.EventEmitter): this {
-    if (this.isLocked) return this;
-    this.eventEmitter = emitter;
-    return this;
-  }
-
-  removeEventEmitter(): this {
-    this.eventEmitter = undefined;
     return this;
   }
 

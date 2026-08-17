@@ -12,8 +12,6 @@ describe("ProxyWrapper", () => {
     expect(typeof wrapper.id).toBe("string");
     expect(typeof wrapper.lock).toBe("function");
     expect(typeof wrapper.unlock).toBe("function");
-    expect(typeof wrapper.setEventEmitter).toBe("function");
-    expect(typeof wrapper.removeEventEmitter).toBe("function");
     expect(typeof wrapper.setManager).toBe("function");
     expect(typeof wrapper.setTarget).toBe("function");
     expect(typeof wrapper.setId).toBe("function");
@@ -40,37 +38,20 @@ describe("ProxyWrapper", () => {
     const wrapper = new ProxyWrapper();
     const manager = ProxyManager();
     const target = [];
-    const emitter = new EventEmitter();
 
     wrapper.setId("test");
     wrapper.setManager(manager);
     wrapper.setTarget(target);
-    wrapper.setEventEmitter(emitter);
 
     wrapper.lock();
 
     wrapper.setId("new_id");
     wrapper.setManager(ProxyManager());
     wrapper.setTarget({ test: true });
-    wrapper.setEventEmitter(new EventEmitter());
 
     expect(wrapper.id).toBe("test");
     expect(wrapper.target).toBe(target);
     expect(wrapper.manager).toBe(manager);
-    expect(wrapper.events).toBe(emitter);
-  });
-
-  it("allows setting and removing a custom event emitter", () => {
-    const wrapper = new ProxyWrapper();
-    const emitter = new EventEmitter();
-
-    wrapper.setEventEmitter(emitter);
-
-    expect(wrapper.events).toBe(emitter);
-
-    wrapper.removeEventEmitter();
-
-    expect(wrapper.events).toBeUndefined();
   });
 
   it("allows setting and removing a proxy manager instance", () => {
