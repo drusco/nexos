@@ -13,16 +13,18 @@ import EventEmitter from "./EventEmitter.js";
  */
 class TraceableMap<K, V extends object>
   extends Map<K, WeakRef<V>>
-  implements nx.EventEmittable
+  implements nx.EventEmittable<nx.TraceableMapEvents<K, V>>
 {
   /**
    * Event emitter used to broadcast map changes.
    */
-  private eventEmitter?: nx.EventEmitter = new EventEmitter();
+  private readonly eventEmitter = new EventEmitter<
+    nx.TraceableMapEvents<K, V>
+  >();
 
   /**
    * Removes an entry and optionally marks it as released,
-   * emitting a `delete` event if an emitter is present.
+   * emitting a `delete` event.
    *
    * @param key - The key of the entry to remove.
    * @param released - Whether the removal was due to garbage collection.
@@ -31,14 +33,12 @@ class TraceableMap<K, V extends object>
   private remove(key: K, released: boolean = false): boolean {
     const removed = super.delete(key);
 
-    if (this.eventEmitter) {
-      const event = new Event("delete", {
-        target: this,
-        cancelable: false,
-        data: { key, released },
-      });
-      this.eventEmitter.emit("delete", event);
-    }
+    const event = new Event("delete", {
+      target: this,
+      cancelable: false,
+      data: { key, released },
+    });
+    this.eventEmitter.emit("delete", event);
 
     return removed;
   }
@@ -53,9 +53,9 @@ class TraceableMap<K, V extends object>
   }
 
   /**
-   * Returns the current event emitter if present.
+   * Returns the event emitter used to broadcast map changes.
    */
-  get events(): nx.EventEmitter<nx.TraceableMapEvents<K, V>> | undefined {
+  get events(): nx.EventEmitter<nx.TraceableMapEvents<K, V>> {
     return this.eventEmitter;
   }
 
@@ -69,14 +69,12 @@ class TraceableMap<K, V extends object>
   set(key: K, value: WeakRef<V>): this {
     super.set(key, value);
 
-    if (this.eventEmitter) {
-      const event = new Event("set", {
-        target: this,
-        cancelable: false,
-        data: { key, value },
-      });
-      this.eventEmitter.emit("set", event);
-    }
+    const event = new Event("set", {
+      target: this,
+      cancelable: false,
+      data: { key, value },
+    });
+    this.eventEmitter.emit("set", event);
 
     return this;
   }
@@ -97,13 +95,11 @@ class TraceableMap<K, V extends object>
   clear(): void {
     super.clear();
 
-    if (this.eventEmitter) {
-      const event = new Event("clear", {
-        cancelable: false,
-        target: this,
-      });
-      this.eventEmitter.emit("clear", event);
-    }
+    const event = new Event("clear", {
+      cancelable: false,
+      target: this,
+    });
+    this.eventEmitter.emit("clear", event);
   }
 
   /**
@@ -116,25 +112,6 @@ class TraceableMap<K, V extends object>
         this.remove(key, true);
       }
     }
-  }
-
-  /**
-   * Replaces the internal event emitter.
-   *
-   * @param emitter - The new event emitter.
-   * @returns The current map instance.
-   */
-  setEventEmitter(emitter: nx.EventEmitter): this {
-    this.eventEmitter = emitter;
-    return this;
-  }
-
-  /**
-   * Removes the event emitter. After this call, no events will be emitted.
-   */
-  removeEventEmitter(): this {
-    this.eventEmitter = undefined;
-    return this;
   }
 }
 

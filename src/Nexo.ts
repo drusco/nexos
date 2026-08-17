@@ -28,7 +28,7 @@ import ProxyWrapper from "./utils/ProxyWrapper.js";
  * // The listener will be called when a new proxy is created.
  * const proxy = nexo.create();
  */
-class Nexo implements nx.ProxyManager {
+class Nexo implements nx.ProxyManager<nx.ProxyEvents & nx.ManagerEvents> {
   /**
    * A map that stores unique proxy IDs associated with their respective {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakRef | WeakRef} references to the proxy objects.
    *
@@ -41,7 +41,9 @@ class Nexo implements nx.ProxyManager {
   static isTraceable = isTraceable;
   static wrap = getProxyWrapper;
 
-  private eventEmitter?: nx.EventEmitter = new EventEmitter();
+  private readonly eventEmitter = new EventEmitter<
+    nx.ProxyEvents & nx.ManagerEvents
+  >();
 
   get events(): nx.EventEmitter<nx.ProxyEvents & nx.ManagerEvents> {
     return this.eventEmitter;
@@ -168,16 +170,6 @@ class Nexo implements nx.ProxyManager {
     }
 
     return proxy;
-  }
-
-  setEventEmitter(emitter: nx.EventEmitter): this {
-    this.eventEmitter = emitter;
-    return this;
-  }
-
-  removeEventEmitter(): this {
-    this.eventEmitter = undefined;
-    return this;
   }
 }
 
