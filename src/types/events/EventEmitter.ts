@@ -44,6 +44,23 @@ declare global {
         event: Name,
         data: Parameters<Events[Name]>[0],
       ): boolean;
+
+      /**
+       * Emits an event and asynchronously triggers all associated listeners.
+       *
+       * @remarks
+       * Unlike {@link emit}, this method awaits each listener in registration
+       * order, so `async` listeners can perform asynchronous work and still
+       * contribute to the event's `returnValue`.
+       *
+       * @param event - The name of the event to emit.
+       * @param data - The Event or Error payload passed to the listeners.
+       * @returns A promise resolving to `true` if one or more listeners were invoked, `false` otherwise.
+       */
+      emitAsync<Name extends keyof Events>(
+        event: Name,
+        data: Parameters<Events[Name]>[0],
+      ): Promise<boolean>;
     }
   }
 }

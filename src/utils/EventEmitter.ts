@@ -6,8 +6,12 @@
  * environments such as JavaScript Proxy traps. It executes listeners synchronously
  * and supports event cancellation (`defaultPrevented`) and return value capture (`returnValue`).
  *
- * This emitter intentionally does **not** support async listener chaining,
- * and errors thrown by listeners will crash the app unless an `'error'` handler is attached.
+ * The default {@link emit} path is synchronous and does **not** await listeners,
+ * so a listener that returns a `Promise` will have its resolved value ignored.
+ * Use {@link emitAsync} when listeners need to perform asynchronous work and still
+ * contribute to the event's `returnValue`.
+ *
+ * Errors thrown by listeners will crash the app unless an `'error'` handler is attached.
  *
  */
 class EventEmitter<
@@ -83,6 +87,29 @@ class EventEmitter<
   }
 
   /**
+   * Emits an event and asynchronously triggers all associated listeners.
+   *
+   * @remarks
+   * Unlike {@link emit}, this method awaits each listener in registration order.
+   * `async` listeners can therefore perform asynchronous work (e.g. network
+   * requests) and still contribute to the event's `returnValue` after calling
+   * `preventDefault()`: the resolved value is captured instead of the raw `Promise`.
+   *
+   * Error semantics mirror {@link emit}: if a listener throws, the error is
+   * re-emitted via the `'error'` event before being re-thrown.
+   *
+   * @param event - The name of the event to emit.
+   * @param data - A {@link Event} or an `Error`.
+   * @returns A promise resolving to `true` if any listeners were triggered; `false` otherwise.
+   */
+  async emitAsync<Name extends keyof Events>(
+    event: Name,
+    data: Parameters<Events[Name]>[0],
+  ): Promise<boolean> {
+    return this.emitInternalAsync(event as string, data as nx.Event | Error);
+  }
+
+  /**
    * Invokes the registered listeners for the given event payload, applying
    * the emitter's error and return value semantics.
    */
@@ -116,6 +143,50 @@ class EventEmitter<
     } catch (error) {
       if (errorListeners?.size) {
         this.emitInternal("error", error);
+      }
+      throw error;
+    }
+
+    return hasListeners;
+  }
+
+  /**
+   * Invokes the registered listeners for the given event payload asynchronously,
+   * applying the emitter's error and return value semantics.
+   */
+  private async emitInternalAsync(
+    event: string,
+    data: nx.Event | Error,
+  ): Promise<boolean> {
+    const listeners = this.listeners.get(event);
+    const hasListeners = !!listeners?.size;
+    const isError = data instanceof Error;
+    const errorListeners = this.listeners.get("error");
+
+    // Re-emit errors if the eventName is not "error"
+    if (isError && event !== "error") {
+      if (errorListeners?.size) {
+        await this.emitInternalAsync("error", data);
+      }
+    }
+
+    if (!hasListeners) return false;
+
+    try {
+      for (const listener of listeners) {
+        const returnValue = await listener.call(this, data);
+
+        if (isError) continue;
+
+        // Ignore non-defaultPrevented events
+        if (data.defaultPrevented === false) continue;
+        // Ignore when event.returnValue is set manually
+        // Listeners can check when 'returnValue' is set and thus transform or leave as is
+        data.returnValue = returnValue;
+      }
+    } catch (error) {
+      if (errorListeners?.size) {
+        await this.emitInternalAsync("error", error);
       }
       throw error;
     }

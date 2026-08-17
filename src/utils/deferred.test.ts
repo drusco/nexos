@@ -23,6 +23,21 @@ describe("deferred", () => {
       await expect(deferred.promise).resolves.toBe(true);
     });
 
+    it("should settle asynchronously after work completes (deferred settlement)", async () => {
+      const deferred = createDeferred<() => string>();
+
+      const work = (async () => {
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        deferred.resolve(() => "settled-later");
+      })();
+
+      const getResult = await deferred.promise;
+
+      await work;
+
+      expect(getResult()).toBe("settled-later");
+    });
+
     it("should reject the promise with an error", async () => {
       const deferred = createDeferred();
 
