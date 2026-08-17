@@ -104,4 +104,84 @@ describe("EventEmitter", () => {
     expect(testEvent.defaultPrevented).toBe(false);
     expect(testEvent.returnValue).toBeUndefined();
   });
+
+  describe("emitAsync", () => {
+    it("should await async listeners and capture the resolved return value", async () => {
+      const returnValue = Symbol("async-result");
+      const testEvent = new Event("test", { cancelable: true });
+
+      emitter.on("test", async (event) => {
+        await Promise.resolve();
+        event.preventDefault();
+        return returnValue;
+      });
+
+      await emitter.emitAsync("test", testEvent);
+
+      expect(testEvent.defaultPrevented).toBe(true);
+      expect(testEvent.returnValue).toBe(returnValue);
+    });
+
+    it("should execute async listeners in registration order", async () => {
+      const order: number[] = [];
+
+      emitter.on("test", async () => {
+        order.push(1);
+      });
+      emitter.on("test", async () => {
+        order.push(2);
+      });
+      emitter.on("test", async () => {
+        order.push(3);
+      });
+
+      await emitter.emitAsync("test", new Event("test"));
+
+      expect(order).toEqual([1, 2, 3]);
+    });
+
+    it("should resolve to true when listeners are triggered", async () => {
+      emitter.on("test", () => undefined);
+
+      await expect(emitter.emitAsync("test", new Event("test"))).resolves.toBe(
+        true,
+      );
+    });
+
+    it("should resolve to false when no listeners are registered", async () => {
+      await expect(emitter.emitAsync("test", new Event("test"))).resolves.toBe(
+        false,
+      );
+    });
+
+    it("should re-emit and rethrow errors thrown by async listeners", async () => {
+      const errorMessage = "async failure";
+      const errorListener = jest.fn();
+
+      emitter.on("error", errorListener);
+      emitter.on("test", async () => {
+        throw new Error(errorMessage);
+      });
+
+      await expect(
+        emitter.emitAsync("test", new Event("test")),
+      ).rejects.toThrow(errorMessage);
+
+      expect(errorListener).toHaveBeenCalledTimes(1);
+    });
+
+    it("should NOT capture an async listener's value under synchronous emit", () => {
+      const testEvent = new Event("test", { cancelable: true });
+
+      emitter.on("test", async (event) => {
+        await Promise.resolve();
+        event.preventDefault();
+        return "late-value";
+      });
+
+      emitter.emit("test", testEvent);
+
+      expect(testEvent.returnValue).toBeUndefined();
+    });
+  });
 });

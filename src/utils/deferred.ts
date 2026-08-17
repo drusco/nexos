@@ -7,6 +7,23 @@ type Deferred<T> = {
   reject: (reason?: unknown) => void;
 };
 
+/**
+ * Creates a deferred value: a `promise` together with its `resolve` and
+ * `reject` functions.
+ *
+ * @remarks
+ * Because the returned `resolve` and `reject` can be invoked at any time —
+ * including after asynchronous work completes — this is the primitive that lets
+ * proxy traps expose their eventual result as a `Promise` (`event.data.result`)
+ * while still returning a synchronous placeholder.
+ *
+ * @typeParam T - The type of the value the promise resolves to.
+ *
+ * @example
+ * const deferred = createDeferred<string>();
+ * deferred.resolve("done");
+ * await deferred.promise; // "done"
+ */
 export function createDeferred<T>(): Deferred<T> {
   let resolve: Deferred<T>["resolve"];
   let reject: Deferred<T>["reject"];
