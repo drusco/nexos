@@ -11,7 +11,7 @@ describe("EventEmitter", () => {
   let emitter: nx.EventEmitter<TestEvents>;
 
   beforeEach(() => {
-    emitter = new EventEmitter() as nx.EventEmitter<TestEvents>;
+    emitter = new EventEmitter<TestEvents>();
   });
 
   it("should emit an error when a listener throws", () => {

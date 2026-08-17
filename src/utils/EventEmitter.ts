@@ -10,7 +10,9 @@
  * and errors thrown by listeners will crash the app unless an `'error'` handler is attached.
  *
  */
-class EventEmitter implements nx.EventEmitter {
+class EventEmitter<
+  Events extends nx.EventMap = nx.EventMap,
+> implements nx.EventEmitter<Events> {
   private listeners = new Map<string, Set<nx.FunctionLike>>();
 
   /**
@@ -26,11 +28,14 @@ class EventEmitter implements nx.EventEmitter {
    * @returns The current instance for chaining.
    *
    */
-  on(event: string, listener: nx.FunctionLike): this {
-    if (!this.listeners.has(event)) {
-      this.listeners.set(event, new Set());
+  on<Name extends keyof Events>(
+    event: Name,
+    listener: (...args: Parameters<Events[Name]>) => ReturnType<Events[Name]>,
+  ): this {
+    if (!this.listeners.has(event as string)) {
+      this.listeners.set(event as string, new Set());
     }
-    this.listeners.get(event)!.add(listener);
+    this.listeners.get(event as string)!.add(listener as nx.FunctionLike);
     return this;
   }
 
@@ -48,8 +53,11 @@ class EventEmitter implements nx.EventEmitter {
    * @returns The current instance for chaining.
    *
    */
-  off(event: string, listener: nx.FunctionLike): this {
-    this.listeners.get(event)?.delete(listener);
+  off<Name extends keyof Events>(
+    event: Name,
+    listener: (...args: Parameters<Events[Name]>) => ReturnType<Events[Name]>,
+  ): this {
+    this.listeners.get(event as string)?.delete(listener as nx.FunctionLike);
     return this;
   }
 
@@ -67,7 +75,18 @@ class EventEmitter implements nx.EventEmitter {
    * @param data - A {@link Event} or an `Error`.
    * @returns `true` if any listeners were triggered; `false` otherwise.
    */
-  emit(event: string, data: nx.Event | Error): boolean {
+  emit<Name extends keyof Events>(
+    event: Name,
+    data: Parameters<Events[Name]>[0],
+  ): boolean {
+    return this.emitInternal(event as string, data as nx.Event | Error);
+  }
+
+  /**
+   * Invokes the registered listeners for the given event payload, applying
+   * the emitter's error and return value semantics.
+   */
+  private emitInternal(event: string, data: nx.Event | Error): boolean {
     const listeners = this.listeners.get(event);
     const hasListeners = !!listeners?.size;
     const isError = data instanceof Error;
@@ -76,7 +95,7 @@ class EventEmitter implements nx.EventEmitter {
     // Re-emit errors if the eventName is not "error"
     if (isError && event !== "error") {
       if (errorListeners?.size) {
-        this.emit("error", data);
+        this.emitInternal("error", data);
       }
     }
 
@@ -96,7 +115,7 @@ class EventEmitter implements nx.EventEmitter {
       }
     } catch (error) {
       if (errorListeners?.size) {
-        this.emit("error", error);
+        this.emitInternal("error", error);
       }
       throw error;
     }
