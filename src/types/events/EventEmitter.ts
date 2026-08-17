@@ -37,12 +37,12 @@ declare global {
        * Emits an event to all registered listeners.
        *
        * @param event - The name of the event to emit.
-       * @param data - The arguments passed to the listeners.
+       * @param data - The Event or Error payload passed to the listeners.
        * @returns `true` if one or more listeners were invoked, `false` otherwise.
        */
       emit<Name extends keyof Events>(
         event: Name,
-        ...data: Parameters<Events[Name]>
+        data: Parameters<Events[Name]>[0],
       ): boolean;
     }
   }
