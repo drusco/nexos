@@ -16,6 +16,15 @@ declare global {
       T = unknown,
     > = (this: T, ...args: A) => R;
 
+    /**
+     * Type-level map of event names to listener function signatures.
+     *
+     * @remarks
+     * This is a compile-time description of an emitter's events, not a runtime
+     * value. Concrete event maps (e.g. {@link ProxyEvents}) are supplied through
+     * the `Events` generic of {@link EventEmitter}, {@link ProxyManager}, and
+     * {@link ProxyWrapper} to type their `on`/`off`/`emit` calls.
+     */
     type EventMap = Record<string, FunctionLike>;
   }
 }
