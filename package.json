@@ -2,9 +2,21 @@
   "name": "nexos",
   "version": "0.0.0-development",
   "description": "Create JavaScript proxies with full event-driven trap control.",
+  "files": [
+    "dist",
+    "README.md",
+    "license"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": ">=22",
+      "onFail": "error"
+    }
+  },
   "author": "Pedro Gallardo",
   "license": "MIT",
   "homepage": "https://drusco.github.io/nexos/",
