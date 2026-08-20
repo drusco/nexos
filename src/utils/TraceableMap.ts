@@ -23,6 +23,29 @@ class TraceableMap<K, V extends object>
   >();
 
   /**
+   * Native finalizer used to automatically remove entries whose `WeakRef`
+   * targets have been garbage-collected. `undefined` when the runtime does
+   * not support `FinalizationRegistry`.
+   */
+  private readonly registry =
+    typeof FinalizationRegistry === "undefined"
+      ? undefined
+      : new FinalizationRegistry<K>((key: K) => {
+          // Only remove the entry when its target is actually collected. This
+          // keeps reused keys safe: if `set` overwrote the entry with a new,
+          // live target, `deref()` returns it (not `undefined`) and we skip.
+          if (this.get(key)?.deref() === undefined) {
+            this.remove(key, true);
+          }
+        });
+
+  /**
+   * Persistent sweep cursor used by {@link release} to resume where the
+   * previous bounded sweep left off.
+   */
+  private sweepCursor?: Iterator<[K, WeakRef<V>]>;
+
+  /**
    * Removes an entry and optionally marks it as released,
    * emitting a `delete` event.
    *
@@ -69,6 +92,13 @@ class TraceableMap<K, V extends object>
   set(key: K, value: WeakRef<V>): this {
     super.set(key, value);
 
+    // Register the target so its entry is removed automatically when the
+    // target is garbage-collected.
+    const target = value.deref();
+    if (target && this.registry) {
+      this.registry.register(target, key);
+    }
+
     const event = new Event("set", {
       target: this,
       cancelable: false,
@@ -94,6 +124,7 @@ class TraceableMap<K, V extends object>
    */
   clear(): void {
     super.clear();
+    this.sweepCursor = undefined;
 
     const event = new Event("clear", {
       cancelable: false,
@@ -103,15 +134,41 @@ class TraceableMap<K, V extends object>
   }
 
   /**
-   * Cleans up entries whose `WeakRef` targets were garbage-collected.
-   * Emits `delete` events for removed entries.
+   * Cleans up entries whose `WeakRef` targets were garbage-collected and emits
+   * `delete` events for each removed entry.
+   *
+   * @remarks
+   * Without arguments it performs a full pass, checking every entry. With a
+   * `limit`, it checks at most `limit` entries per call and resumes from where
+   * it left off on the next call, keeping the cost of each invocation bounded
+   * and deterministic regardless of the map size.
+   *
+   * @param limit - Maximum number of entries to inspect per call.
+   * @returns `true` while a sweep is still in progress, or `false` once a full
+   * pass over the map has completed.
    */
-  release(): void {
-    for (const [key, weakRef] of this) {
+  release(limit: number = Number.POSITIVE_INFINITY): boolean {
+    let remaining = limit;
+
+    while (remaining > 0) {
+      if (!this.sweepCursor) {
+        this.sweepCursor = this.entries();
+      }
+
+      const { value, done } = this.sweepCursor.next();
+      if (done) {
+        this.sweepCursor = undefined;
+        return false;
+      }
+
+      const [key, weakRef] = value;
       if (weakRef.deref() === undefined) {
         this.remove(key, true);
       }
+      remaining--;
     }
+
+    return true;
   }
 }
 

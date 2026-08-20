@@ -83,4 +83,54 @@ describe("TraceableMap", () => {
       released: true,
     });
   });
+
+  it("Releases a bounded number of entries per call and reports progress", () => {
+    const map = new TraceableMap();
+    const deadRef = {
+      deref() {},
+    } as WeakRef<object>;
+
+    map.set("foo", deadRef);
+    map.set("bar", deadRef);
+    map.set("baz", deadRef);
+
+    // First bounded call only checks two of the three entries.
+    expect(map.release(2)).toBe(true);
+    expect(map.size).toBe(1);
+
+    // The next bounded call finishes the pass.
+    expect(map.release(2)).toBe(false);
+    expect(map.size).toBe(0);
+  });
+
+  it("Skips live entries and removes only collected ones across bounded calls", () => {
+    const map = new TraceableMap();
+    const alive = {};
+    const liveRef = new WeakRef(alive);
+    const deadRef = {
+      deref() {},
+    } as WeakRef<object>;
+
+    map.set("live", liveRef);
+    map.set("dead", deadRef);
+
+    // Drain with bounded calls, as a consumer would do periodically.
+    let passes = 0;
+    while (map.release(1) && passes < 10) {
+      passes++;
+    }
+
+    expect(map.size).toBe(1);
+    expect(map.has("live")).toBe(true);
+    expect(map.has("dead")).toBe(false);
+  });
+
+  it("Registers live targets without throwing", () => {
+    const map = new TraceableMap();
+    const target = {};
+    const ref = new WeakRef(target);
+
+    expect(() => map.set("foo", ref)).not.toThrow();
+    expect(map.get("foo")).toBe(ref);
+  });
 });
