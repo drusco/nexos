@@ -10,7 +10,7 @@
  */
 export default class ProxyPipeline<
   T extends object,
-> implements nx.ProxyPipe<T> {
+> implements nx.ProxyPipeline<T> {
   private stack: nx.ProxyMiddleware<T>[] = [];
 
   use(middleware: nx.ProxyMiddleware<T>): void {
