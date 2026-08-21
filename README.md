@@ -1,4 +1,4 @@
-![npm](https://img.shields.io/npm/v/nexos.svg) ![release](https://img.shields.io/github/actions/workflow/status/drusco/nexos/ci.yml?branch=main&event=push) [![codecov](https://codecov.io/gh/drusco/nexos/graph/badge.svg?token=ALMIPSLT4U)](https://codecov.io/gh/drusco/nexos) ![Static Badge](https://img.shields.io/badge/node-v22.23.2-43853D?style=flat)
+![npm](https://img.shields.io/npm/v/nexos.svg) ![release](https://img.shields.io/github/actions/workflow/status/drusco/nexos/ci.yml?branch=main&event=push) [![codecov](https://codecov.io/gh/drusco/nexos/graph/badge.svg?token=ALMIPSLT4U)](https://codecov.io/gh/drusco/nexos) ![Static Badge](https://img.shields.io/badge/node-%3E%3D14.6.0-43853D?style=flat)
 
 ## Overview
 
@@ -33,6 +33,16 @@ Nexos is particularly useful for scenarios where proxies need to be monitored, m
 - **Virtual objects** – Work with proxies as standalone data structures without requiring a real target.
 
 Nexos extends the capabilities of JavaScript proxies, providing a structured, event-driven approach to working with dynamic objects. Whether you're building a reactive system, an API layer, or a debugging tool, Nexos gives you the power to manage and observe proxy interactions effortlessly.
+
+## Compatibility
+
+The published library requires Node.js **14.6.0 or newer** at runtime. Building and testing the project requires Node.js 22 or newer (see `.node-version`).
+
+| Node.js version | Library usage | Build & test |
+| --- | --- | --- |
+| >= 22.0.0 | ✅ | ✅ |
+| 14.6.0 – 21.x | ✅ | ❌ |
+| < 14.6.0 | ❌ | ❌ |
 
 ## Documentation
 
