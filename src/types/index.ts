@@ -5,6 +5,8 @@ import "./Proxy.js";
 import "./ProxyError.js";
 import "./ProxyManager.js";
 import "./ProxyWrapper.js";
+// proxy pipeline
+import "./ProxyPipeline.js";
 // event emission
 import "./events/EventEmittable.js";
 import "./events/EventEmitter.js";
