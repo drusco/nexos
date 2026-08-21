@@ -53,7 +53,7 @@ declare global {
      *
      * @typeParam T - The pipeline context type.
      */
-    interface ProxyPipe<T extends object> {
+    interface ProxyPipeline<T extends object> {
       /** Registers a middleware. */
       use(middleware: ProxyMiddleware<T>): void;
       /** Returns a builder that wraps trap handlers with the middlewares. */
