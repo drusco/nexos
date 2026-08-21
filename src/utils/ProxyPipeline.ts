@@ -1,41 +1,26 @@
-type ProxyTrap<K extends keyof ProxyHandler<object>> = (
-  ...args: Parameters<ProxyHandler<object>[K]>
-) => ReturnType<ProxyHandler<object>[K]>;
+/**
+ * Composes proxy trap handlers with middleware.
+ *
+ * @remarks
+ * Middlewares are executed synchronously before the trap handler, in registration
+ * order. A middleware may call `next()` to continue the chain or skip it to
+ * short-circuit the trap.
+ *
+ * @typeParam T - The context type shared by all middlewares (e.g. a proxy wrapper).
+ */
+export default class ProxyPipeline<
+  T extends object,
+> implements nx.ProxyPipe<T> {
+  private stack: nx.ProxyMiddleware<T>[] = [];
 
-type ProxyMiddlewareCtx<T, K extends keyof ProxyHandler<object>> = {
-  context: T;
-  trap: K;
-  args: Parameters<ProxyHandler<object>[K]>;
-};
-
-type ProxyMiddleware<T> = (
-  context: {
-    [K in keyof ProxyHandler<object>]: ProxyMiddlewareCtx<T, K>;
-  }[keyof ProxyHandler<object>],
-  next: () => void,
-) => void;
-
-type ProxyTrapBuilder<T> = <K extends keyof ProxyHandler<object>>(
-  trap: K,
-  handler: (ctx: T) => ProxyTrap<K>,
-) => ProxyTrap<K>;
-
-interface ProxyPipe<T extends object> {
-  use(middleware: ProxyMiddleware<T>): void;
-  wrap(ctx: T): ProxyTrapBuilder<T>;
-}
-
-export default class ProxyPipeline<T extends object> implements ProxyPipe<T> {
-  private stack: ProxyMiddleware<T>[] = [];
-
-  use(middleware: ProxyMiddleware<T>): void {
+  use(middleware: nx.ProxyMiddleware<T>): void {
     this.stack.push(middleware);
   }
 
-  wrap(context: T): ProxyTrapBuilder<T> {
+  wrap(context: T): nx.ProxyTrapBuilder<T> {
     return <K extends keyof ProxyHandler<object>>(
       trap: K,
-      handler: (ctx: T) => ProxyTrap<K>,
+      handler: (ctx: T) => nx.ProxyTrap<K>,
     ) => {
       let current = handler(context);
 
@@ -50,16 +35,9 @@ export default class ProxyPipeline<T extends object> implements ProxyPipe<T> {
             nextCalled = true;
           };
 
-          (middleware as (c: ProxyMiddlewareCtx<T, K>, n: () => void) => void)(
-            {
-              context,
-              trap,
-              args,
-            },
-            next,
-          );
+          middleware({ context, trap, args }, next);
 
-          // call next middleware if next() is invoked
+          // call the next middleware if next() is invoked
           if (nextCalled) {
             return prev(...args);
           }
