@@ -2,6 +2,7 @@ import EventEmitter from "./utils/EventEmitter.js";
 import Nexo from "./Nexo.js";
 import TraceableMap from "./utils/TraceableMap.js";
 import Event from "./events/Event.js";
+import ProxyPipeline from "./utils/ProxyPipeline.js";
 
 describe("Nexo", () => {
   it("Creates a new nexo object", () => {
@@ -142,5 +143,26 @@ describe("Nexo", () => {
 
     expect(() => proxyA.foo).toThrow(); // should throw
     expect(() => proxyB.foo).not.toThrow(); // should not throw
+  });
+
+  it("exposes a shared middleware pipeline", () => {
+    const nexo = new Nexo();
+
+    expect(nexo.pipeline).toBeInstanceOf(ProxyPipeline);
+  });
+
+  it("applies manager middleware to created proxies", () => {
+    const nexo = new Nexo();
+    const traps: string[] = [];
+
+    nexo.pipeline.use(({ trap }, next) => {
+      traps.push(trap);
+      next();
+    });
+
+    const proxy = nexo.create({ value: 1 }) as { value: unknown };
+    void proxy.value;
+
+    expect(traps).toContain("get");
   });
 });

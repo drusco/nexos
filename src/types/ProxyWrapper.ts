@@ -15,6 +15,8 @@ declare global {
       readonly id: string;
       /** The proxy manager instance. */
       readonly manager?: ProxyManager;
+      /** The middleware pipeline for this proxy. */
+      readonly pipeline: ProxyPipeline<ProxyWrapper<object, ProxyEvents>>;
       /** Whether the proxy has been locked. */
       readonly locked: boolean;
       /** Whether the `proxy` was created with a custom target object */

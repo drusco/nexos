@@ -39,6 +39,16 @@ declare global {
     ) => void;
 
     /**
+     * A named or anonymous middleware entry within a pipeline.
+     *
+     * @typeParam T - The pipeline context type.
+     */
+    type ProxyMiddlewareEntry<T> = {
+      name?: string;
+      middleware: ProxyMiddleware<T>;
+    };
+
+    /**
      * Builds a trap handler wrapped by the pipeline middlewares.
      *
      * @typeParam T - The pipeline context type.
@@ -54,8 +64,20 @@ declare global {
      * @typeParam T - The pipeline context type.
      */
     interface ProxyPipeline<T extends object> {
-      /** Registers a middleware. */
-      use(middleware: ProxyMiddleware<T>): void;
+      /** Appends a middleware. */
+      use(middleware: ProxyMiddleware<T>): this;
+      /** Appends a named middleware. */
+      use(name: string, middleware: ProxyMiddleware<T>): this;
+      /** Prepends a middleware. */
+      prepend(middleware: ProxyMiddleware<T>): this;
+      /** Prepends a named middleware. */
+      prepend(name: string, middleware: ProxyMiddleware<T>): this;
+      /** Inserts a middleware at the given index. */
+      insertAt(index: number, middleware: ProxyMiddleware<T>): this;
+      /** Removes a middleware by reference. */
+      remove(middleware: ProxyMiddleware<T>): this;
+      /** Removes a middleware by name. */
+      remove(name: string): this;
       /** Returns a builder that wraps trap handlers with the middlewares. */
       wrap(context: T): ProxyTrapBuilder<T>;
     }

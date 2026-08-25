@@ -6,6 +6,8 @@ declare global {
     > extends EventEmittable<Events> {
       /** Reference of managed proxies. */
       readonly entries?: Map<string, WeakRef<object>>;
+      /** Middleware pipeline shared by every proxy created by the manager. */
+      readonly pipeline?: ProxyPipeline<ProxyWrapper<object, ProxyEvents>>;
       /**
        * Retrieves an existing proxy by ID or creates one if it does not exist.
        *

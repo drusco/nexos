@@ -6,6 +6,8 @@ import generateId from "./generateId.js";
 import getProxyMap from "./getProxyMap.js";
 import getSandbox from "./getSandbox.js";
 import createHandlers from "../handlers/index.js";
+import ProxyPipeline from "./ProxyPipeline.js";
+import corePipeline from "./corePipeline.js";
 
 /**
  * A wrapper class that manages a proxy and its associated events.
@@ -21,6 +23,10 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<
 > {
   get locked(): boolean {
     return this.isLocked;
+  }
+
+  get pipeline(): nx.ProxyPipeline<nx.ProxyWrapper<object, nx.ProxyEvents>> {
+    return this.pipelineInstance;
   }
 
   get events(): nx.EventEmitter<nx.ProxyEvents> {
@@ -62,6 +68,11 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<
   /** Indicates whether the proxy has been locked */
   private isLocked: boolean = false;
 
+  /** Middleware pipeline inherited by this proxy. */
+  private readonly pipelineInstance: ProxyPipeline<
+    nx.ProxyWrapper<object, nx.ProxyEvents>
+  >;
+
   /** A weak reference to the proxy being wrapped */
   private proxyRef: WeakRef<nx.ProxyTarget<T>>;
 
@@ -88,6 +99,15 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<
     map.set(proxy, this);
   }
 
+  /** Resolves the pipeline a wrapper inherits from a manager. */
+  private resolvePipelineParent(
+    manager?: nx.ProxyManager,
+  ): ProxyPipeline<nx.ProxyWrapper<object, nx.ProxyEvents>> {
+    return (manager?.pipeline ?? corePipeline) as ProxyPipeline<
+      nx.ProxyWrapper<object, nx.ProxyEvents>
+    >;
+  }
+
   /**
    * Creates an instance of `ProxyWrapper`.
    *
@@ -97,6 +117,8 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<
   constructor(target?: T);
 
   constructor(target?: T) {
+    this.pipelineInstance = new ProxyPipeline(corePipeline);
+
     this.upsertProxy(target);
   }
 
@@ -148,6 +170,7 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<
     const proxy = this.proxyRef.deref();
 
     this.proxyManager = manager;
+    this.pipelineInstance.setParent(this.resolvePipelineParent(manager));
 
     // find proxy manager
     if (manager && previousManager !== manager && isProxy(proxy)) {
@@ -166,6 +189,7 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<
 
   removeManager(): this {
     this.proxyManager = undefined;
+    this.pipelineInstance.setParent(corePipeline);
     return this;
   }
 

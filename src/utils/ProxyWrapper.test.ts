@@ -4,6 +4,7 @@ import ProxyManager from "../handlers/__mocks__/ProxyManager.js";
 import EventEmitter from "../utils/EventEmitter.js";
 import getProxyWrapper from "./getProxyWrapper.js";
 import ProxyWrapper from "./ProxyWrapper.js";
+import ProxyPipeline from "./ProxyPipeline.js";
 
 describe("ProxyWrapper", () => {
   it("creates a wrapper that provides access to proxy metadata", () => {
@@ -163,5 +164,26 @@ describe("ProxyWrapper", () => {
     expect(wrapper.target).toBe(newTarget);
     expect(wrapper.proxy).not.toBe(proxy);
     expect(isProxy(wrapper.proxy)).toBe(true);
+  });
+
+  it("exposes a middleware pipeline for the proxy", () => {
+    const wrapper = new ProxyWrapper();
+
+    expect(wrapper.pipeline).toBeInstanceOf(ProxyPipeline);
+  });
+
+  it("applies wrapper middleware to the proxy", () => {
+    const wrapper = new ProxyWrapper();
+    const proxy = wrapper.proxy as unknown as { value: unknown };
+    const traps: string[] = [];
+
+    wrapper.pipeline.use(({ trap }, next) => {
+      traps.push(trap);
+      next();
+    });
+
+    void proxy.value;
+
+    expect(traps).toContain("get");
   });
 });
