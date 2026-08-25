@@ -11,27 +11,11 @@ import ownKeys from "./ownKeys.js";
 import preventExtensions from "./preventExtensions.js";
 import set from "./set.js";
 import setPrototypeOf from "./setPrototypeOf.js";
-import ProxyPipeline from "../utils/ProxyPipeline.js";
-import ProxyError from "../utils/ProxyError.js";
-
-const pipe = new ProxyPipeline<nx.ProxyWrapper<object, nx.ProxyEvents>>();
-
-pipe.use(({ context }, next) => {
-  if (!context.locked) {
-    return next();
-  }
-  const error = new ProxyError(
-    "The proxy is locked and cannot be used.",
-    context.proxy,
-  );
-  context.events?.emit("proxy.error", error);
-  throw error;
-});
 
 export default function createHandlers(
   wrapper: nx.ProxyWrapper,
 ): ProxyHandler<object> {
-  const handle = pipe.wrap(wrapper);
+  const handle = wrapper.pipeline.wrap(wrapper);
 
   return {
     apply: handle("apply", apply),
