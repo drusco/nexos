@@ -3,6 +3,7 @@ import Nexo from "./Nexo.js";
 import TraceableMap from "./utils/TraceableMap.js";
 import Event from "./events/Event.js";
 import ProxyPipeline from "./utils/ProxyPipeline.js";
+import ProxyError from "./utils/ProxyError.js";
 
 describe("Nexo", () => {
   it("Creates a new nexo object", () => {
@@ -164,5 +165,22 @@ describe("Nexo", () => {
     void proxy.value;
 
     expect(traps).toContain("get");
+  });
+
+  it("keeps the lock guard even when the manager pipeline is mutated", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.create({ value: 1 }) as { value: unknown };
+    const wrapper = Nexo.wrap(proxy);
+
+    wrapper.lock();
+
+    // The lock guard lives on the shared core pipeline, so mutating the
+    // manager's own pipeline cannot remove or precede it.
+    nexo.pipeline.remove("lock");
+    nexo.pipeline.prepend(({ context }, next) => {
+      if (context.locked) next();
+    });
+
+    expect(() => proxy.value).toThrow(ProxyError);
   });
 });

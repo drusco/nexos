@@ -6,8 +6,9 @@ import ProxyError from "../utils/ProxyError.js";
  * @remarks
  * Rejects any trap invocation on a locked proxy by emitting a `proxy.error` event
  * and throwing a {@link ProxyError}. It is registered on the shared core pipeline
- * (`src/utils/corePipeline.ts`) and therefore runs before every manager and
- * wrapper middleware.
+ * (`src/utils/corePipeline.ts`) as a **protected** middleware, so it always runs
+ * before every manager and wrapper middleware and cannot be removed, reordered,
+ * or bypassed.
  */
 const lockMiddleware = (
   { context }: { context: nx.ProxyWrapper<object, nx.ProxyEvents> },
