@@ -39,10 +39,10 @@ Nexos extends the capabilities of JavaScript proxies, providing a structured, ev
 The published library requires Node.js **14.6.0 or newer** at runtime. Building and testing the project requires Node.js 22 or newer (see `.node-version`).
 
 | Node.js version | Library usage | Build & test |
-| --- | --- | --- |
-| >= 22.0.0 | ✅ | ✅ |
-| 14.6.0 – 21.x | ✅ | ❌ |
-| < 14.6.0 | ❌ | ❌ |
+| --------------- | ------------- | ------------ |
+| >= 22.0.0       | ✅            | ✅           |
+| 14.6.0 – 21.x   | ✅            | ❌           |
+| < 14.6.0        | ❌            | ❌           |
 
 ## Documentation
 
