@@ -23,6 +23,12 @@ export default class ProxyPipeline<
 
   /** @internal Re-parents the pipeline (used when a proxy's manager changes). */
   setParent(parent?: ProxyPipeline<T>): this {
+    if (this.protectedCount() > 0) {
+      throw new Error(
+        "Cannot re-parent a pipeline that contains protected middlewares.",
+      );
+    }
+
     this.parent = parent;
     return this;
   }
@@ -30,17 +36,32 @@ export default class ProxyPipeline<
   use(middleware: nx.ProxyMiddleware<T>): this;
   use(name: string, middleware: nx.ProxyMiddleware<T>): this;
   use(
+    middleware: nx.ProxyMiddleware<T>,
+    options: nx.ProxyMiddlewareOptions,
+  ): this;
+  use(
+    name: string,
+    middleware: nx.ProxyMiddleware<T>,
+    options: nx.ProxyMiddlewareOptions,
+  ): this;
+  use(
     middlewareOrName: nx.ProxyMiddleware<T> | string,
-    middleware?: nx.ProxyMiddleware<T>,
+    middlewareOrOptions?: nx.ProxyMiddleware<T> | nx.ProxyMiddlewareOptions,
+    maybeOptions?: nx.ProxyMiddlewareOptions,
   ): this {
-    this.entries.push(
-      typeof middlewareOrName === "string"
-        ? {
-            name: middlewareOrName,
-            middleware: middleware as nx.ProxyMiddleware<T>,
-          }
-        : { middleware: middlewareOrName },
-    );
+    const name =
+      typeof middlewareOrName === "string" ? middlewareOrName : undefined;
+    const middleware = (
+      name ? middlewareOrOptions : middlewareOrName
+    ) as nx.ProxyMiddleware<T>;
+    const options = (name ? maybeOptions : middlewareOrOptions) as
+      nx.ProxyMiddlewareOptions | undefined;
+
+    this.entries.push({
+      ...(name ? { name } : {}),
+      ...(options?.protected ? { protected: true } : {}),
+      middleware,
+    });
     return this;
   }
 
@@ -50,6 +71,10 @@ export default class ProxyPipeline<
     middlewareOrName: nx.ProxyMiddleware<T> | string,
     middleware?: nx.ProxyMiddleware<T>,
   ): this {
+    if (this.protectedCount() > 0) {
+      throw new Error("Cannot prepend before a protected middleware.");
+    }
+
     this.entries.unshift(
       typeof middlewareOrName === "string"
         ? {
@@ -61,19 +86,54 @@ export default class ProxyPipeline<
     return this;
   }
 
-  insertAt(index: number, middleware: nx.ProxyMiddleware<T>): this {
+  insertBefore(
+    target: nx.ProxyMiddleware<T> | string,
+    middleware: nx.ProxyMiddleware<T>,
+  ): this {
+    const index = this.findIndex(target);
+
+    if (index === -1) {
+      throw new Error("Cannot insert before an unknown middleware.");
+    }
+
+    if (this.entries[index].protected) {
+      throw new Error("Cannot insert before a protected middleware.");
+    }
+
     this.entries.splice(index, 0, { middleware });
+    return this;
+  }
+
+  insertAfter(
+    target: nx.ProxyMiddleware<T> | string,
+    middleware: nx.ProxyMiddleware<T>,
+  ): this {
+    const index = this.findIndex(target);
+
+    if (index === -1) {
+      throw new Error("Cannot insert after an unknown middleware.");
+    }
+
+    this.entries.splice(index + 1, 0, { middleware });
     return this;
   }
 
   remove(middleware: nx.ProxyMiddleware<T>): this;
   remove(name: string): this;
   remove(middlewareOrName: nx.ProxyMiddleware<T> | string): this {
-    this.entries = this.entries.filter(({ name, middleware }) =>
+    const matches = ({
+      name,
+      middleware,
+    }: nx.ProxyMiddlewareEntry<T>): boolean =>
       typeof middlewareOrName === "string"
-        ? name !== middlewareOrName
-        : middleware !== middlewareOrName,
-    );
+        ? name === middlewareOrName
+        : middleware === middlewareOrName;
+
+    if (this.entries.some((entry) => matches(entry) && entry.protected)) {
+      throw new Error("Cannot remove a protected middleware.");
+    }
+
+    this.entries = this.entries.filter((entry) => !matches(entry));
     return this;
   }
 
@@ -111,6 +171,17 @@ export default class ProxyPipeline<
         return invoke(...args);
       };
     };
+  }
+
+  private protectedCount(): number {
+    return this.entries.filter(({ protected: isProtected }) => isProtected)
+      .length;
+  }
+
+  private findIndex(target: nx.ProxyMiddleware<T> | string): number {
+    return this.entries.findIndex(({ name, middleware }) =>
+      typeof target === "string" ? name === target : middleware === target,
+    );
   }
 
   private collect(): nx.ProxyMiddleware<T>[] {

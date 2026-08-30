@@ -39,12 +39,25 @@ declare global {
     ) => void;
 
     /**
+     * Options controlling how a middleware is registered in a pipeline.
+     */
+    type ProxyMiddlewareOptions = {
+      /**
+       * Marks the middleware as an invariant that always runs before any
+       * non-protected middleware and cannot be removed, reordered, or bypassed.
+       */
+      protected?: boolean;
+    };
+
+    /**
      * A named or anonymous middleware entry within a pipeline.
      *
      * @typeParam T - The pipeline context type.
      */
     type ProxyMiddlewareEntry<T> = {
       name?: string;
+      /** Whether the entry is protected against removal and reordering. */
+      protected?: boolean;
       middleware: ProxyMiddleware<T>;
     };
 
@@ -68,12 +81,41 @@ declare global {
       use(middleware: ProxyMiddleware<T>): this;
       /** Appends a named middleware. */
       use(name: string, middleware: ProxyMiddleware<T>): this;
+      /** Appends a protected middleware. */
+      use(
+        middleware: ProxyMiddleware<T>,
+        options: ProxyMiddlewareOptions,
+      ): this;
+      /** Appends a named protected middleware. */
+      use(
+        name: string,
+        middleware: ProxyMiddleware<T>,
+        options: ProxyMiddlewareOptions,
+      ): this;
       /** Prepends a middleware. */
       prepend(middleware: ProxyMiddleware<T>): this;
       /** Prepends a named middleware. */
       prepend(name: string, middleware: ProxyMiddleware<T>): this;
-      /** Inserts a middleware at the given index. */
-      insertAt(index: number, middleware: ProxyMiddleware<T>): this;
+      /**
+       * Inserts a middleware immediately before the middleware identified by
+       * `target` (a name or a reference).
+       *
+       * @throws If `target` is not found or is a protected middleware.
+       */
+      insertBefore(
+        target: ProxyMiddleware<T> | string,
+        middleware: ProxyMiddleware<T>,
+      ): this;
+      /**
+       * Inserts a middleware immediately after the middleware identified by
+       * `target` (a name or a reference).
+       *
+       * @throws If `target` is not found.
+       */
+      insertAfter(
+        target: ProxyMiddleware<T> | string,
+        middleware: ProxyMiddleware<T>,
+      ): this;
       /** Removes a middleware by reference. */
       remove(middleware: ProxyMiddleware<T>): this;
       /** Removes a middleware by name. */

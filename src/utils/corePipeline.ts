@@ -13,6 +13,6 @@ const corePipeline = new ProxyPipeline<
   nx.ProxyWrapper<object, nx.ProxyEvents>
 >();
 
-corePipeline.use(lockMiddleware);
+corePipeline.use("lock", lockMiddleware, { protected: true });
 
 export default corePipeline;
