@@ -23,12 +23,6 @@ export default class ProxyPipeline<
 
   /** @internal Re-parents the pipeline (used when a proxy's manager changes). */
   setParent(parent?: ProxyPipeline<T>): this {
-    if (this.protectedCount() > 0) {
-      throw new Error(
-        "Cannot re-parent a pipeline that contains protected middlewares.",
-      );
-    }
-
     this.parent = parent;
     return this;
   }
@@ -59,7 +53,6 @@ export default class ProxyPipeline<
 
     this.entries.push({
       ...(name ? { name } : {}),
-      ...(options?.protected ? { protected: true } : {}),
       ...(options?.traps ? { traps: options.traps } : {}),
       middleware,
     });
@@ -72,10 +65,6 @@ export default class ProxyPipeline<
     middlewareOrName: nx.ProxyMiddleware<T> | string,
     middleware?: nx.ProxyMiddleware<T>,
   ): this {
-    if (this.protectedCount() > 0) {
-      throw new Error("Cannot prepend before a protected middleware.");
-    }
-
     this.entries.unshift(
       typeof middlewareOrName === "string"
         ? {
@@ -95,10 +84,6 @@ export default class ProxyPipeline<
 
     if (index === -1) {
       throw new Error("Cannot insert before an unknown middleware.");
-    }
-
-    if (this.entries[index].protected) {
-      throw new Error("Cannot insert before a protected middleware.");
     }
 
     this.entries.splice(index, 0, { middleware });
@@ -129,10 +114,6 @@ export default class ProxyPipeline<
       typeof middlewareOrName === "string"
         ? name === middlewareOrName
         : middleware === middlewareOrName;
-
-    if (this.entries.some((entry) => matches(entry) && entry.protected)) {
-      throw new Error("Cannot remove a protected middleware.");
-    }
 
     this.entries = this.entries.filter((entry) => !matches(entry));
     return this;
@@ -168,11 +149,6 @@ export default class ProxyPipeline<
         return dispatch(0) as ReturnType<ProxyHandler<object>[K]>;
       };
     };
-  }
-
-  private protectedCount(): number {
-    return this.entries.filter(({ protected: isProtected }) => isProtected)
-      .length;
   }
 
   private findIndex(target: nx.ProxyMiddleware<T> | string): number {

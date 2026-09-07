@@ -48,11 +48,6 @@ declare global {
      */
     type ProxyMiddlewareOptions = {
       /**
-       * Marks the middleware as an invariant that always runs before any
-       * non-protected middleware and cannot be removed, reordered, or bypassed.
-       */
-      protected?: boolean;
-      /**
        * Restricts the middleware to the given trap(s). When omitted, the
        * middleware applies to every trap.
        */
@@ -66,8 +61,6 @@ declare global {
      */
     type ProxyMiddlewareEntry<T> = {
       name?: string;
-      /** Whether the entry is protected against removal and reordering. */
-      protected?: boolean;
       /** The traps this middleware is scoped to (all traps when omitted). */
       traps?: ReadonlyArray<keyof ProxyHandler<object>>;
       middleware: ProxyMiddleware<T>;
@@ -93,12 +86,12 @@ declare global {
       use(middleware: ProxyMiddleware<T>): this;
       /** Appends a named middleware. */
       use(name: string, middleware: ProxyMiddleware<T>): this;
-      /** Appends a protected middleware. */
+      /** Appends a middleware with options. */
       use(
         middleware: ProxyMiddleware<T>,
         options: ProxyMiddlewareOptions,
       ): this;
-      /** Appends a named protected middleware. */
+      /** Appends a named middleware with options. */
       use(
         name: string,
         middleware: ProxyMiddleware<T>,
@@ -112,7 +105,7 @@ declare global {
        * Inserts a middleware immediately before the middleware identified by
        * `target` (a name or a reference).
        *
-       * @throws If `target` is not found or is a protected middleware.
+       * @throws If `target` is not found.
        */
       insertBefore(
         target: ProxyMiddleware<T> | string,

@@ -6,7 +6,6 @@ import getProxyWrapper from "./utils/getProxyWrapper.js";
 import Event from "./events/Event.js";
 import ProxyWrapper from "./utils/ProxyWrapper.js";
 import ProxyPipeline from "./utils/ProxyPipeline.js";
-import corePipeline from "./utils/corePipeline.js";
 
 /**
  * Represents a proxy factory for creating and managing proxy objects.
@@ -47,7 +46,7 @@ class Nexo implements nx.ProxyManager<nx.ProxyEvents & nx.ManagerEvents> {
    * it to every proxy managed by this instance.
    */
   readonly pipeline: nx.ProxyPipeline<nx.ProxyWrapper<object, nx.ProxyEvents>> =
-    new ProxyPipeline<nx.ProxyWrapper<object, nx.ProxyEvents>>(corePipeline);
+    new ProxyPipeline<nx.ProxyWrapper<object, nx.ProxyEvents>>();
 
   static isProxy = isProxy;
   static isTraceable = isTraceable;

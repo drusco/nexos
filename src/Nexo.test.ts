@@ -174,8 +174,8 @@ describe("Nexo", () => {
 
     wrapper.lock();
 
-    // The lock guard lives on the shared core pipeline, so mutating the
-    // manager's own pipeline cannot remove or precede it.
+    // Locking is enforced by the wrapper itself (not by a middleware), so
+    // mutating the manager's pipeline cannot remove or precede it.
     nexo.pipeline.remove("lock");
     nexo.pipeline.prepend((_, next) => next());
 
