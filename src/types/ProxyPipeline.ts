@@ -47,6 +47,11 @@ declare global {
        * non-protected middleware and cannot be removed, reordered, or bypassed.
        */
       protected?: boolean;
+      /**
+       * Restricts the middleware to the given trap(s). When omitted, the
+       * middleware applies to every trap.
+       */
+      traps?: ReadonlyArray<keyof ProxyHandler<object>>;
     };
 
     /**
@@ -58,6 +63,8 @@ declare global {
       name?: string;
       /** Whether the entry is protected against removal and reordering. */
       protected?: boolean;
+      /** The traps this middleware is scoped to (all traps when omitted). */
+      traps?: ReadonlyArray<keyof ProxyHandler<object>>;
       middleware: ProxyMiddleware<T>;
     };
 
