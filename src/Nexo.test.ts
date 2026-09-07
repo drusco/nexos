@@ -158,7 +158,7 @@ describe("Nexo", () => {
 
     nexo.pipeline.use(({ trap }, next) => {
       traps.push(trap);
-      next();
+      return next();
     });
 
     const proxy = nexo.create({ value: 1 }) as { value: unknown };
@@ -177,9 +177,7 @@ describe("Nexo", () => {
     // The lock guard lives on the shared core pipeline, so mutating the
     // manager's own pipeline cannot remove or precede it.
     nexo.pipeline.remove("lock");
-    nexo.pipeline.prepend(({ context }, next) => {
-      if (context.locked) next();
-    });
+    nexo.pipeline.prepend((_, next) => next());
 
     expect(() => proxy.value).toThrow(ProxyError);
   });

@@ -147,29 +147,25 @@ export default class ProxyPipeline<
 
       return (...args: Parameters<ProxyHandler<object>[K]>) => {
         const middlewares = this.collect(trap);
-        let invoke = realHandler;
 
-        for (let i = middlewares.length - 1; i >= 0; i--) {
-          const middleware = middlewares[i];
-          const downstream = invoke;
+        const dispatch = (
+          index: number,
+          value?: ReturnType<ProxyHandler<object>[K]>,
+        ): ReturnType<ProxyHandler<object>[K]> => {
+          const middleware = middlewares[index];
 
-          invoke = (...innerArgs: Parameters<ProxyHandler<object>[K]>) => {
-            let nextCalled = false;
+          if (!middleware) {
+            return value === undefined ? realHandler(...args) : value;
+          }
 
-            const next = () => {
-              nextCalled = true;
-            };
+          return middleware(
+            { context, trap, args },
+            (nextValue?: ReturnType<ProxyHandler<object>[K]>) =>
+              dispatch(index + 1, nextValue),
+          );
+        };
 
-            middleware({ context, trap, args: innerArgs }, next);
-
-            // call the next middleware if next() is invoked
-            if (nextCalled) {
-              return downstream(...innerArgs);
-            }
-          };
-        }
-
-        return invoke(...args);
+        return dispatch(0);
       };
     };
   }

@@ -10,10 +10,9 @@ import ProxyError from "../utils/ProxyError.js";
  * before every manager and wrapper middleware and cannot be removed, reordered,
  * or bypassed.
  */
-const lockMiddleware = (
-  { context }: { context: nx.ProxyWrapper<object, nx.ProxyEvents> },
-  next: () => void,
-): void => {
+const lockMiddleware: nx.ProxyMiddleware<
+  nx.ProxyWrapper<object, nx.ProxyEvents>
+> = ({ context }, next) => {
   if (!context.locked) {
     return next();
   }

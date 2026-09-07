@@ -46,11 +46,11 @@ describe("ProxyPipeline", () => {
 
     pipe.use((_, next) => {
       order.push("second");
-      next();
+      return next();
     });
     pipe.prepend((_, next) => {
       order.push("first");
-      next();
+      return next();
     });
 
     const trap = pipe.wrap({})("get", () => () => "value");
@@ -65,15 +65,15 @@ describe("ProxyPipeline", () => {
 
     pipe.use("auth", (_, next) => {
       order.push("auth");
-      next();
+      return next();
     });
     pipe.use("validation", (_, next) => {
       order.push("validation");
-      next();
+      return next();
     });
     pipe.insertBefore("validation", (_, next) => {
       order.push("logging");
-      next();
+      return next();
     });
 
     const trap = pipe.wrap({})("get", () => () => "value");
@@ -88,16 +88,16 @@ describe("ProxyPipeline", () => {
 
     const auth = jest.fn((_, next) => {
       order.push("auth");
-      next();
+      return next();
     });
     pipe.use(auth);
     pipe.use((_, next) => {
       order.push("validation");
-      next();
+      return next();
     });
     pipe.insertAfter(auth, (_, next) => {
       order.push("rateLimit");
-      next();
+      return next();
     });
 
     const trap = pipe.wrap({})("get", () => () => "value");
@@ -109,7 +109,7 @@ describe("ProxyPipeline", () => {
   it("throws when inserting before an unknown middleware", () => {
     const pipe = new ProxyPipeline();
 
-    expect(() => pipe.insertBefore("missing", () => {})).toThrow(
+    expect(() => pipe.insertBefore("missing", (_, next) => next())).toThrow(
       "Cannot insert before an unknown middleware.",
     );
   });
@@ -117,7 +117,7 @@ describe("ProxyPipeline", () => {
   it("throws when inserting after an unknown middleware", () => {
     const pipe = new ProxyPipeline();
 
-    expect(() => pipe.insertAfter("missing", () => {})).toThrow(
+    expect(() => pipe.insertAfter("missing", (_, next) => next())).toThrow(
       "Cannot insert after an unknown middleware.",
     );
   });
@@ -126,8 +126,9 @@ describe("ProxyPipeline", () => {
     const pipe = new ProxyPipeline();
     const calls: string[] = [];
 
-    pipe.use("log", () => {
+    pipe.use("log", (_, next) => {
       calls.push("log");
+      return next();
     });
     pipe.remove("log");
 
@@ -157,11 +158,11 @@ describe("ProxyPipeline", () => {
 
     parent.use((_, next) => {
       order.push("parent");
-      next();
+      return next();
     });
     child.use((_, next) => {
       order.push("child");
-      next();
+      return next();
     });
 
     const trap = child.wrap({})("get", () => () => "value");
@@ -178,13 +179,13 @@ describe("ProxyPipeline", () => {
       "guard",
       (_, next) => {
         order.push("guard");
-        next();
+        return next();
       },
       { protected: true },
     );
     pipe.use((_, next) => {
       order.push("user");
-      next();
+      return next();
     });
 
     const trap = pipe.wrap({})("get", () => () => "value");
@@ -242,17 +243,17 @@ describe("ProxyPipeline", () => {
       "guard",
       (_, next) => {
         order.push("guard");
-        next();
+        return next();
       },
       { protected: true },
     );
     pipe.use((_, next) => {
       order.push("last");
-      next();
+      return next();
     });
     pipe.insertAfter("guard", (_, next) => {
       order.push("middle");
-      next();
+      return next();
     });
 
     const trap = pipe.wrap({})("get", () => () => "value");
@@ -276,12 +277,12 @@ describe("ProxyPipeline", () => {
 
     pipe.use(({ trap }, next) => {
       calls.push(`global:${trap}`);
-      next();
+      return next();
     });
     pipe.use(
       ({ trap }, next) => {
         calls.push(`scoped:${trap}`);
-        next();
+        return next();
       },
       { traps: ["get"] },
     );
@@ -300,7 +301,7 @@ describe("ProxyPipeline", () => {
     pipe.use(
       ({ trap }, next) => {
         calls.push(trap);
-        next();
+        return next();
       },
       { traps: ["get", "set"] },
     );
@@ -321,7 +322,7 @@ describe("ProxyPipeline", () => {
     parent.use(
       ({ trap }, next) => {
         calls.push(`parent:${trap}`);
-        next();
+        return next();
       },
       { traps: ["get"] },
     );
@@ -329,5 +330,56 @@ describe("ProxyPipeline", () => {
     child.wrap({})("get", () => () => "value")({}, "property", {});
 
     expect(calls).toEqual(["parent:get"]);
+  });
+
+  it("lets middleware short-circuit with a value", () => {
+    const pipe = new ProxyPipeline();
+
+    pipe.use((): ReturnType<ProxyHandler<object>["get"]> => "cached");
+
+    const trap = pipe.wrap({})("get", () => () => "value");
+
+    expect(trap({}, "property", {})).toBe("cached");
+  });
+
+  it("lets middleware transform the return value", () => {
+    const pipe = new ProxyPipeline();
+
+    pipe.use((_, next) => next().toUpperCase());
+
+    const trap = pipe.wrap({})("get", () => () => "value");
+
+    expect(trap({}, "property", {})).toBe("VALUE");
+  });
+
+  it("lets middleware supply a value via next(value)", () => {
+    const pipe = new ProxyPipeline();
+
+    pipe.use((_, next) =>
+      next("supplied" as ReturnType<ProxyHandler<object>["get"]>),
+    );
+
+    const trap = pipe.wrap({})("get", () => () => "value");
+
+    expect(trap({}, "property", {})).toBe("supplied");
+  });
+
+  it("skips downstream middlewares when short-circuiting", () => {
+    const pipe = new ProxyPipeline();
+    const calls: string[] = [];
+
+    pipe.use((): ReturnType<ProxyHandler<object>["get"]> => {
+      calls.push("first");
+      return "short";
+    });
+    pipe.use((_, next) => {
+      calls.push("second");
+      return next();
+    });
+
+    const trap = pipe.wrap({})("get", () => () => "value");
+
+    expect(trap({}, "property", {})).toBe("short");
+    expect(calls).toEqual(["first"]);
   });
 });

@@ -179,7 +179,7 @@ describe("ProxyWrapper", () => {
 
     wrapper.pipeline.use(({ trap }, next) => {
       traps.push(trap);
-      next();
+      return next();
     });
 
     void proxy.value;
