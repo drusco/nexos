@@ -30,13 +30,17 @@ declare global {
      * @typeParam T - The pipeline context type.
      *
      * @remarks
-     * Calling `next()` continues the chain; skipping it short-circuits the trap.
+     * Calling `next()` continues the chain and returns its result. `next(value)`
+     * threads `value` down the chain, replacing the trap's return value. Returning
+     * without calling `next()` short-circuits the chain with the returned value.
      * Middlewares execute in registration order.
      */
     type ProxyMiddleware<T> = <K extends keyof ProxyHandler<object>>(
       context: ProxyMiddlewareContext<T, K>,
-      next: () => void,
-    ) => void;
+      next: (
+        value?: ReturnType<ProxyHandler<object>[K]>,
+      ) => ReturnType<ProxyHandler<object>[K]>,
+    ) => ReturnType<ProxyHandler<object>[K]>;
 
     /**
      * Options controlling how a middleware is registered in a pipeline.
