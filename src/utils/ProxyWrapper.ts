@@ -7,7 +7,6 @@ import getProxyMap from "./getProxyMap.js";
 import getSandbox from "./getSandbox.js";
 import createHandlers from "../handlers/index.js";
 import ProxyPipeline from "./ProxyPipeline.js";
-import corePipeline from "./corePipeline.js";
 
 /**
  * A wrapper class that manages a proxy and its associated events.
@@ -103,7 +102,7 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<
   private resolvePipelineParent(
     manager?: nx.ProxyManager,
   ): ProxyPipeline<nx.ProxyWrapper<object, nx.ProxyEvents>> {
-    return (manager?.pipeline ?? corePipeline) as ProxyPipeline<
+    return manager?.pipeline as ProxyPipeline<
       nx.ProxyWrapper<object, nx.ProxyEvents>
     >;
   }
@@ -117,7 +116,7 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<
   constructor(target?: T);
 
   constructor(target?: T) {
-    this.pipelineInstance = new ProxyPipeline(corePipeline);
+    this.pipelineInstance = new ProxyPipeline();
 
     this.upsertProxy(target);
   }
@@ -189,7 +188,7 @@ class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<
 
   removeManager(): this {
     this.proxyManager = undefined;
-    this.pipelineInstance.setParent(corePipeline);
+    this.pipelineInstance.setParent();
     return this;
   }
 

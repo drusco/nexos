@@ -11,28 +11,46 @@ import ownKeys from "./ownKeys.js";
 import preventExtensions from "./preventExtensions.js";
 import set from "./set.js";
 import setPrototypeOf from "./setPrototypeOf.js";
+import ProxyError from "../utils/ProxyError.js";
 
 export default function createHandlers(
   wrapper: nx.ProxyWrapper,
 ): ProxyHandler<object> {
   const handle = wrapper.pipeline.wrap(wrapper);
 
+  /** Rejects a trap invocation while the proxy is locked. */
+  const guard = <K extends keyof ProxyHandler<object>>(
+    trap: nx.ProxyTrap<K>,
+  ): nx.ProxyTrap<K> =>
+    ((...args: Parameters<ProxyHandler<object>[K]>) => {
+      if (wrapper.locked) {
+        const error = new ProxyError(
+          "The proxy is locked and cannot be used.",
+          wrapper.proxy,
+        );
+
+        wrapper.events?.emit("proxy.error", error);
+        throw error;
+      }
+
+      return trap(...args);
+    }) as nx.ProxyTrap<K>;
+
   return {
-    apply: handle("apply", apply),
-    construct: handle("construct", construct),
-    defineProperty: handle("defineProperty", defineProperty),
-    deleteProperty: handle("deleteProperty", deleteProperty),
-    get: handle("get", get),
-    getOwnPropertyDescriptor: handle(
-      "getOwnPropertyDescriptor",
-      getOwnPropertyDescriptor,
+    apply: guard(handle("apply", apply)),
+    construct: guard(handle("construct", construct)),
+    defineProperty: guard(handle("defineProperty", defineProperty)),
+    deleteProperty: guard(handle("deleteProperty", deleteProperty)),
+    get: guard(handle("get", get)),
+    getOwnPropertyDescriptor: guard(
+      handle("getOwnPropertyDescriptor", getOwnPropertyDescriptor),
     ),
-    getPrototypeOf: handle("getPrototypeOf", getPrototypeOf),
-    has: handle("has", has),
-    isExtensible: handle("isExtensible", isExtensible),
-    ownKeys: handle("ownKeys", ownKeys),
-    preventExtensions: handle("preventExtensions", preventExtensions),
-    set: handle("set", set),
-    setPrototypeOf: handle("setPrototypeOf", setPrototypeOf),
+    getPrototypeOf: guard(handle("getPrototypeOf", getPrototypeOf)),
+    has: guard(handle("has", has)),
+    isExtensible: guard(handle("isExtensible", isExtensible)),
+    ownKeys: guard(handle("ownKeys", ownKeys)),
+    preventExtensions: guard(handle("preventExtensions", preventExtensions)),
+    set: guard(handle("set", set)),
+    setPrototypeOf: guard(handle("setPrototypeOf", setPrototypeOf)),
   };
 }
