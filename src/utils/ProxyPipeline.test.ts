@@ -270,4 +270,64 @@ describe("ProxyPipeline", () => {
       "Cannot re-parent a pipeline that contains protected middlewares.",
     );
   });
+  it("scopes middleware to a single trap", () => {
+    const pipe = new ProxyPipeline();
+    const calls: string[] = [];
+
+    pipe.use(({ trap }, next) => {
+      calls.push(`global:${trap}`);
+      next();
+    });
+    pipe.use(
+      ({ trap }, next) => {
+        calls.push(`scoped:${trap}`);
+        next();
+      },
+      { traps: ["get"] },
+    );
+
+    const builder = pipe.wrap({});
+    builder("get", () => () => "value")({}, "property", {});
+    builder("set", () => () => true)({}, "property", 1, {});
+
+    expect(calls).toEqual(["global:get", "scoped:get", "global:set"]);
+  });
+
+  it("scopes middleware to multiple traps", () => {
+    const pipe = new ProxyPipeline();
+    const calls: string[] = [];
+
+    pipe.use(
+      ({ trap }, next) => {
+        calls.push(trap);
+        next();
+      },
+      { traps: ["get", "set"] },
+    );
+
+    const builder = pipe.wrap({});
+    builder("get", () => () => "value")({}, "property", {});
+    builder("set", () => () => true)({}, "property", 1, {});
+    builder("has", () => () => true)({}, "property");
+
+    expect(calls).toEqual(["get", "set"]);
+  });
+
+  it("inherits scoped middleware from the parent pipeline", () => {
+    const parent = new ProxyPipeline();
+    const child = new ProxyPipeline(parent);
+    const calls: string[] = [];
+
+    parent.use(
+      ({ trap }, next) => {
+        calls.push(`parent:${trap}`);
+        next();
+      },
+      { traps: ["get"] },
+    );
+
+    child.wrap({})("get", () => () => "value")({}, "property", {});
+
+    expect(calls).toEqual(["parent:get"]);
+  });
 });

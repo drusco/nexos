@@ -60,6 +60,7 @@ export default class ProxyPipeline<
     this.entries.push({
       ...(name ? { name } : {}),
       ...(options?.protected ? { protected: true } : {}),
+      ...(options?.traps ? { traps: options.traps } : {}),
       middleware,
     });
     return this;
@@ -145,7 +146,7 @@ export default class ProxyPipeline<
       const realHandler = handler(context);
 
       return (...args: Parameters<ProxyHandler<object>[K]>) => {
-        const middlewares = this.collect();
+        const middlewares = this.collect(trap);
         let invoke = realHandler;
 
         for (let i = middlewares.length - 1; i >= 0; i--) {
@@ -184,8 +185,12 @@ export default class ProxyPipeline<
     );
   }
 
-  private collect(): nx.ProxyMiddleware<T>[] {
-    const inherited = this.parent?.collect() ?? [];
-    return [...inherited, ...this.entries.map(({ middleware }) => middleware)];
+  private collect(trap: keyof ProxyHandler<object>): nx.ProxyMiddleware<T>[] {
+    const inherited = this.parent?.collect(trap) ?? [];
+    const own = this.entries
+      .filter(({ traps }) => !traps || traps.includes(trap))
+      .map(({ middleware }) => middleware);
+
+    return [...inherited, ...own];
   }
 }
