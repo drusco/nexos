@@ -17,6 +17,13 @@ declare global {
     > = (this: T, ...args: A) => R;
 
     /**
+     * A value or a promise that resolves to that value.
+     *
+     * @typeParam T - The value type.
+     */
+    type MaybePromise<T> = T | Promise<T>;
+
+    /**
      * Type-level map of event names to listener function signatures.
      *
      * @remarks

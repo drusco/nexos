@@ -25,7 +25,7 @@ declare global {
     };
 
     /**
-     * A middleware that runs synchronously before a proxy trap handler.
+     * A middleware that runs before a proxy trap handler.
      *
      * @typeParam T - The pipeline context type.
      *
@@ -33,14 +33,15 @@ declare global {
      * Calling `next()` continues the chain and returns its result. `next(value)`
      * threads `value` down the chain, replacing the trap's return value. Returning
      * without calling `next()` short-circuits the chain with the returned value.
-     * Middlewares execute in registration order.
+     * A middleware may be synchronous or asynchronous (`await next()`); its result
+     * may be a plain value or a `Promise`. Middlewares execute in registration order.
      */
     type ProxyMiddleware<T> = <K extends keyof ProxyHandler<object>>(
       context: ProxyMiddlewareContext<T, K>,
       next: (
         value?: ReturnType<ProxyHandler<object>[K]>,
-      ) => ReturnType<ProxyHandler<object>[K]>,
-    ) => ReturnType<ProxyHandler<object>[K]>;
+      ) => MaybePromise<ReturnType<ProxyHandler<object>[K]>>,
+    ) => MaybePromise<ReturnType<ProxyHandler<object>[K]>>;
 
     /**
      * Options controlling how a middleware is registered in a pipeline.
