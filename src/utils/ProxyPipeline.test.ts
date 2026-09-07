@@ -345,7 +345,9 @@ describe("ProxyPipeline", () => {
   it("lets middleware transform the return value", () => {
     const pipe = new ProxyPipeline();
 
-    pipe.use((_, next) => next().toUpperCase());
+    pipe.use((_, next) =>
+      (next() as ReturnType<ProxyHandler<object>["get"]>).toUpperCase(),
+    );
 
     const trap = pipe.wrap({})("get", () => () => "value");
 
@@ -381,5 +383,44 @@ describe("ProxyPipeline", () => {
 
     expect(trap({}, "property", {})).toBe("short");
     expect(calls).toEqual(["first"]);
+  });
+
+  it("supports async middleware", async () => {
+    const pipe = new ProxyPipeline();
+
+    pipe.use(async (_, next) => {
+      await Promise.resolve();
+      return await next();
+    });
+
+    const trap = pipe.wrap({})("get", () => () => "value");
+
+    await expect(trap({}, "property", {})).resolves.toBe("value");
+  });
+
+  it("lets async middleware short-circuit", async () => {
+    const pipe = new ProxyPipeline();
+
+    pipe.use(async () => {
+      await Promise.resolve();
+      return "cached" as ReturnType<ProxyHandler<object>["get"]>;
+    });
+
+    const trap = pipe.wrap({})("get", () => () => "value");
+
+    await expect(trap({}, "property", {})).resolves.toBe("cached");
+  });
+
+  it("lets async middleware transform the return value", async () => {
+    const pipe = new ProxyPipeline();
+
+    pipe.use(async (_, next) => {
+      const value = await next();
+      return value.toUpperCase();
+    });
+
+    const trap = pipe.wrap({})("get", () => () => "value");
+
+    await expect(trap({}, "property", {})).resolves.toBe("VALUE");
   });
 });

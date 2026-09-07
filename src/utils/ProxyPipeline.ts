@@ -151,7 +151,7 @@ export default class ProxyPipeline<
         const dispatch = (
           index: number,
           value?: ReturnType<ProxyHandler<object>[K]>,
-        ): ReturnType<ProxyHandler<object>[K]> => {
+        ): nx.MaybePromise<ReturnType<ProxyHandler<object>[K]>> => {
           const middleware = middlewares[index];
 
           if (!middleware) {
@@ -165,7 +165,7 @@ export default class ProxyPipeline<
           );
         };
 
-        return dispatch(0);
+        return dispatch(0) as ReturnType<ProxyHandler<object>[K]>;
       };
     };
   }
