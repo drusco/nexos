@@ -12,6 +12,8 @@ import preventExtensions from "./preventExtensions.js";
 import set from "./set.js";
 import setPrototypeOf from "./setPrototypeOf.js";
 import ProxyError from "../utils/ProxyError.js";
+import ProxyEvent from "../events/ProxyEvent.js";
+import emitProxyEvent from "../utils/emitProxyEvent.js";
 
 export default function createHandlers(
   wrapper: nx.ProxyWrapper,
@@ -36,21 +38,56 @@ export default function createHandlers(
       return trap(...args);
     }) as nx.ProxyTrap<K>;
 
+  /** Emits a uniform before/after observation pair around a trap. */
+  const observe = <K extends keyof ProxyHandler<object>>(
+    trap: K,
+    handler: (context: nx.ProxyWrapper) => nx.ProxyTrap<K>,
+  ): nx.ProxyTrap<K> => {
+    const run = handle(trap, handler);
+
+    return guard(((...args: Parameters<ProxyHandler<object>[K]>) => {
+      const { proxy } = wrapper;
+
+      emitProxyEvent(
+        wrapper,
+        new ProxyEvent("before", {
+          target: proxy,
+          cancelable: false,
+          data: { trap, args },
+        }),
+      );
+
+      const result = run(...args);
+
+      emitProxyEvent(
+        wrapper,
+        new ProxyEvent("after", {
+          target: proxy,
+          cancelable: false,
+          data: { trap, args, result },
+        }),
+      );
+
+      return result;
+    }) as nx.ProxyTrap<K>);
+  };
+
   return {
-    apply: guard(handle("apply", apply)),
-    construct: guard(handle("construct", construct)),
-    defineProperty: guard(handle("defineProperty", defineProperty)),
-    deleteProperty: guard(handle("deleteProperty", deleteProperty)),
-    get: guard(handle("get", get)),
-    getOwnPropertyDescriptor: guard(
-      handle("getOwnPropertyDescriptor", getOwnPropertyDescriptor),
+    apply: observe("apply", apply),
+    construct: observe("construct", construct),
+    defineProperty: observe("defineProperty", defineProperty),
+    deleteProperty: observe("deleteProperty", deleteProperty),
+    get: observe("get", get),
+    getOwnPropertyDescriptor: observe(
+      "getOwnPropertyDescriptor",
+      getOwnPropertyDescriptor,
     ),
-    getPrototypeOf: guard(handle("getPrototypeOf", getPrototypeOf)),
-    has: guard(handle("has", has)),
-    isExtensible: guard(handle("isExtensible", isExtensible)),
-    ownKeys: guard(handle("ownKeys", ownKeys)),
-    preventExtensions: guard(handle("preventExtensions", preventExtensions)),
-    set: guard(handle("set", set)),
-    setPrototypeOf: guard(handle("setPrototypeOf", setPrototypeOf)),
+    getPrototypeOf: observe("getPrototypeOf", getPrototypeOf),
+    has: observe("has", has),
+    isExtensible: observe("isExtensible", isExtensible),
+    ownKeys: observe("ownKeys", ownKeys),
+    preventExtensions: observe("preventExtensions", preventExtensions),
+    set: observe("set", set),
+    setPrototypeOf: observe("setPrototypeOf", setPrototypeOf),
   };
 }

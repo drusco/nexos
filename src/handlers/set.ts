@@ -1,4 +1,5 @@
 import ProxyEvent from "../events/ProxyEvent.js";
+import emitProxyEvent from "../utils/emitProxyEvent.js";
 import ProxyError from "../utils/ProxyError.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
 
@@ -34,10 +35,7 @@ export default function set(wrapper: nx.ProxyWrapper) {
       },
     }) as nx.ProxySetEvent;
 
-    // Emit the proxy event to its listeners on the proxy manager
-    wrapper?.manager?.events?.emit("proxy.set", event);
-    // Emit the proxy event to its listeners on the wrapper's event emitter
-    wrapper?.events?.emit("proxy.set", event);
+    emitProxyEvent(wrapper, event);
 
     if (event.defaultPrevented) {
       finalValue = event.returnValue;

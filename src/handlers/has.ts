@@ -1,4 +1,5 @@
 import ProxyEvent from "../events/ProxyEvent.js";
+import emitProxyEvent from "../utils/emitProxyEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
 import ProxyError from "../utils/ProxyError.js";
 
@@ -32,10 +33,7 @@ export default function has(wrapper: nx.ProxyWrapper) {
       },
     }) as nx.ProxyHasEvent;
 
-    // Emit the proxy event to its listeners on the proxy manager
-    wrapper?.manager?.events?.emit("proxy.has", event);
-    // Emit the proxy event to its listeners on the wrapper's event emitter
-    wrapper?.events?.emit("proxy.has", event);
+    emitProxyEvent(wrapper, event);
 
     if (event.defaultPrevented) {
       if (typeof event.returnValue !== "boolean") {

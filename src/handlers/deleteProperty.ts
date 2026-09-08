@@ -1,4 +1,5 @@
 import ProxyEvent from "../events/ProxyEvent.js";
+import emitProxyEvent from "../utils/emitProxyEvent.js";
 import ProxyError from "../utils/ProxyError.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
 
@@ -29,10 +30,7 @@ export default function deleteProperty(wrapper: nx.ProxyWrapper) {
       },
     }) as nx.ProxyDeletePropertyEvent;
 
-    // Emit the proxy event to its listeners on the proxy manager
-    wrapper?.manager?.events?.emit("proxy.deleteProperty", event);
-    // Emit the proxy event to its listeners on the wrapper's event emitter
-    wrapper?.events?.emit("proxy.deleteProperty", event);
+    emitProxyEvent(wrapper, event);
 
     if (event.defaultPrevented) {
       // Prevent property deletion

@@ -7,7 +7,9 @@ type ProxyEventSuffix =
   | "unlock"
   | "rename"
   | "manager"
-  | "target";
+  | "target"
+  | "before"
+  | "after";
 
 /**
  * Represents an event triggered by a proxy.
