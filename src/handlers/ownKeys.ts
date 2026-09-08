@@ -1,4 +1,5 @@
 import ProxyEvent from "../events/ProxyEvent.js";
+import emitProxyEvent from "../utils/emitProxyEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
 import ProxyError from "../utils/ProxyError.js";
 
@@ -35,10 +36,7 @@ export default function ownKeys(wrapper: nx.ProxyWrapper) {
       },
     }) as nx.ProxyOwnKeysEvent;
 
-    // Emit the proxy event to its listeners on the proxy manager
-    wrapper?.manager?.events?.emit("proxy.ownKeys", event);
-    // Emit the proxy event to its listeners on the wrapper's event emitter
-    wrapper?.events?.emit("proxy.ownKeys", event);
+    emitProxyEvent(wrapper, event);
 
     if (event.defaultPrevented) {
       const returnValue = event.returnValue;

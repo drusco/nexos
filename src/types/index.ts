@@ -12,7 +12,9 @@ import "./events/EventEmittable.js";
 import "./events/EventEmitter.js";
 import "./events/Event.js";
 // proxy events
+import "./events/ProxyAfterEvent.js";
 import "./events/ProxyApplyEvent.js";
+import "./events/ProxyBeforeEvent.js";
 import "./events/ProxyConstructEvent.js";
 import "./events/ProxyCreateEvent.js";
 import "./events/ProxyDefinePropertyEvent.js";

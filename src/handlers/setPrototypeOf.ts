@@ -1,4 +1,5 @@
 import ProxyEvent from "../events/ProxyEvent.js";
+import emitProxyEvent from "../utils/emitProxyEvent.js";
 import ProxyError from "../utils/ProxyError.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
 
@@ -37,10 +38,7 @@ export default function setPrototypeOf(wrapper: nx.ProxyWrapper) {
       },
     }) as nx.ProxySetPrototypeOfEvent;
 
-    // Emit the proxy event to its listeners on the proxy manager
-    wrapper?.manager?.events?.emit("proxy.setPrototypeOf", event);
-    // Emit the proxy event to its listeners on the wrapper's event emitter
-    wrapper?.events?.emit("proxy.setPrototypeOf", event);
+    emitProxyEvent(wrapper, event);
 
     if (event.defaultPrevented) {
       finalPrototype = event.returnValue;

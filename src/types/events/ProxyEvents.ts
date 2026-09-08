@@ -4,6 +4,8 @@ declare global {
     type ProxyEvents = {
       error: (error: Error) => void;
       "proxy.error": (error: ProxyError) => void;
+      "proxy.before": (event: ProxyBeforeEvent) => void;
+      "proxy.after": (event: ProxyAfterEvent) => void;
       "proxy.apply": (event: ProxyApplyEvent) => ProxyApplyEvent["returnValue"];
       "proxy.get": (event: ProxyGetEvent) => ProxyGetEvent["returnValue"];
       "proxy.has": (event: ProxyHasEvent) => ProxyHasEvent["returnValue"];
