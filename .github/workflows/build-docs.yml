@@ -41,6 +41,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
+      - name: Verify npm cache
+        run: npm cache verify
+
       - name: Install root dependencies
         run: npm ci
 
