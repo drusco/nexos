@@ -64,7 +64,7 @@
   },
   "overrides": {
     "jest-runtime": "29.7.0",
-    "npm": "12.0.2"
+    "npm": "^12.2.0"
   },
   "config": {
     "commitizen": {

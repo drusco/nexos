@@ -10,6 +10,8 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     outputs:
       success: ${{ steps.set_success.outputs.success }}
     steps:
@@ -37,7 +39,6 @@ jobs:
       - name: Determine next and previous version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           set -e
           output=$(npx semantic-release --dry-run || echo "")
