@@ -1,4 +1,3 @@
-import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../utils/ProxyError.js";
@@ -10,8 +9,8 @@ describe("Set Hander", () => {
     const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
-    nexo.on("proxy.set", listener);
-    wrapper.on("proxy.set", listener);
+    nexo.events.on("proxy.set", listener);
+    wrapper.events.on("proxy.set", listener);
 
     proxy.foo = "bar";
 
@@ -38,7 +37,7 @@ describe("Set Hander", () => {
       return replacement as unknown as boolean;
     });
 
-    nexo.on("proxy.set", listener);
+    nexo.events.on("proxy.set", listener);
 
     proxy.foo = true;
 
@@ -52,7 +51,7 @@ describe("Set Hander", () => {
 
   it("can prevent the default event behavior on proxies with target", async () => {
     const nexo = new Nexo();
-    const proxy = nexo.create({ hasTarget: true });
+    const proxy = nexo.create({ foo: false });
     const replacement = "_has_target_";
 
     const listener = jest.fn((event: nx.ProxySetEvent) => {
@@ -60,7 +59,7 @@ describe("Set Hander", () => {
       return replacement as unknown as boolean;
     });
 
-    nexo.on("proxy.set", listener);
+    nexo.events.on("proxy.set", listener);
 
     proxy.foo = true;
 
@@ -75,10 +74,12 @@ describe("Set Hander", () => {
   it("throws an error when setting a custom value from a prevented event fails", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const proxyWithTarget = nexo.create({});
+    const proxyWithTarget = nexo.create({ foo: false });
     const replacement = false;
 
-    nexo.on("proxy.set", (event: nx.ProxySetEvent) => {
+    Reflect.defineProperty(proxyWithTarget, "foo", { writable: false });
+
+    nexo.events.on("proxy.set", (event: nx.ProxySetEvent) => {
       event.preventDefault();
       return replacement;
     });
@@ -93,10 +94,13 @@ describe("Set Hander", () => {
   it("throws an error when setting a custom value fails", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
-    const proxyWithTarget = nexo.create({});
+    const proxyWithTarget = nexo.create({ foo: false });
 
     Reflect.defineProperty(proxy, "foo", { value: null });
-    Reflect.defineProperty(proxyWithTarget, "foo", { value: null });
+    Reflect.defineProperty(proxyWithTarget, "foo", {
+      value: null,
+      writable: false,
+    });
 
     expect(() => (proxy.foo = true)).toThrow(ProxyError);
     expect(() => (proxyWithTarget.foo = true)).toThrow(ProxyError);
@@ -112,14 +116,16 @@ describe("Set Hander", () => {
     expect(proxy[sym]).toBe(42);
   });
 
-  it("sets the value on the sandbox when present", () => {
+  it("sets the value on the target or sandbox", () => {
     const nexo = new Nexo();
-    const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
+    const sandbox = nexo.create();
+    const target = nexo.create({ foo: 0 });
 
-    proxy.foo = 123;
+    sandbox.foo = 123;
+    target.foo = 123;
 
-    expect(wrapper.sandbox["foo"]).toBe(123);
+    expect(target.foo).toBe(123);
+    expect(sandbox.foo).toBe(123);
   });
 
   it("returns true when new property is added", () => {

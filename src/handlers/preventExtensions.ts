@@ -1,5 +1,5 @@
-import type * as nx from "../types/Nexo.js";
-import ProxyPreventExtensionsEvent from "../events/ProxyPreventExtensionsEvent.js";
+import ProxyEvent from "../events/ProxyEvent.js";
+import emitProxyEvent from "../utils/emitProxyEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
 import ProxyError from "../utils/ProxyError.js";
 
@@ -15,20 +15,20 @@ import ProxyError from "../utils/ProxyError.js";
  * Emits a `ProxyPreventExtensionsEvent` and resolves or rejects based on the result
  * and conformance with proxy invariants.
  */
-export default function preventExtensions(resolveProxy: nx.resolveProxy) {
-  return (target: nx.Traceable): boolean => {
-    const [proxy, wrapper] = resolveProxy();
-    const { sandbox } = wrapper;
+export default function preventExtensions(wrapper: nx.ProxyWrapper) {
+  return (target: object): boolean => {
+    const { proxy } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
-    const finalTarget = sandbox || target;
 
-    const event = new ProxyPreventExtensionsEvent({
+    const event = new ProxyEvent("preventExtensions", {
       target: proxy,
       data: {
-        target: finalTarget,
+        target,
         result: deferred.promise,
       },
-    });
+    }) as nx.ProxyPreventExtensionsEvent;
+
+    emitProxyEvent(wrapper, event);
 
     if (event.defaultPrevented) {
       const returnValue = event.returnValue || false;
@@ -44,10 +44,6 @@ export default function preventExtensions(resolveProxy: nx.resolveProxy) {
       }
 
       return resolveWith(deferred.resolve, returnValue);
-    }
-
-    if (sandbox) {
-      Reflect.preventExtensions(sandbox);
     }
 
     return resolveWith(deferred.resolve, Reflect.preventExtensions(target));

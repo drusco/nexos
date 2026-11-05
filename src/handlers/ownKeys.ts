@@ -1,5 +1,5 @@
-import type * as nx from "../types/Nexo.js";
-import ProxyOwnKeysEvent from "../events/ProxyOwnKeysEvent.js";
+import ProxyEvent from "../events/ProxyEvent.js";
+import emitProxyEvent from "../utils/emitProxyEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
 import ProxyError from "../utils/ProxyError.js";
 
@@ -23,20 +23,20 @@ import ProxyError from "../utils/ProxyError.js";
  * for consumers performing reflective operations.
  *
  */
-export default function ownKeys(resolveProxy: nx.resolveProxy) {
-  return (target: nx.Traceable): nx.ObjectKey[] => {
-    const [proxy, wrapper] = resolveProxy();
-    const { sandbox } = wrapper;
+export default function ownKeys(wrapper: nx.ProxyWrapper) {
+  return (target: object): nx.ObjectKey[] => {
+    const { proxy } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], nx.ObjectKey[]>>();
-    const finalTarget = sandbox || target;
 
-    const event = new ProxyOwnKeysEvent({
+    const event = new ProxyEvent("ownKeys", {
       target: proxy,
       data: {
-        target: finalTarget,
+        target,
         result: deferred.promise,
       },
-    });
+    }) as nx.ProxyOwnKeysEvent;
+
+    emitProxyEvent(wrapper, event);
 
     if (event.defaultPrevented) {
       const returnValue = event.returnValue;
@@ -55,27 +55,6 @@ export default function ownKeys(resolveProxy: nx.resolveProxy) {
       }
 
       return resolveWith(deferred.resolve, returnValue);
-    }
-
-    if (sandbox) {
-      const targetKeys = Reflect.ownKeys(target);
-      const sandboxKeys = Reflect.ownKeys(sandbox);
-
-      if (!Object.isExtensible(target)) {
-        // Target is non-extensible, keys must match exactly
-        return resolveWith(deferred.resolve, targetKeys);
-      }
-
-      // Return the combined own keys from both target and sandbox.
-      // This ensures all keys are accounted for, even if the target has been mutated
-      // or Reflect.ownKeys(target) returns an empty array. Prevents invariant violations
-      // when consumer code expects target keys to still be present.
-      const combinedKeys = new Set<nx.ObjectKey>([
-        ...targetKeys,
-        ...sandboxKeys,
-      ]);
-
-      return resolveWith(deferred.resolve, Array.from(combinedKeys));
     }
 
     // return the proxy target own keys

@@ -1,5 +1,5 @@
-import type * as nx from "../types/Nexo.js";
-import ProxySetPrototypeOfEvent from "../events/ProxySetPrototypeOfEvent.js";
+import ProxyEvent from "../events/ProxyEvent.js";
+import emitProxyEvent from "../utils/emitProxyEvent.js";
 import ProxyError from "../utils/ProxyError.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
 
@@ -14,7 +14,7 @@ import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
  * - If the target is non-extensible, the prototype must remain unchanged.
  * - If the prototype set (or returned by a listener) is not an object or null,
  *   the operation is rejected with a ProxyError.
- * - The prototype is applied to both the real target and sandbox (if present).
+ * - The prototype is applied to both the real target and sandbox.
  *
  * Events:
  * - The dispatched event contains a promise `result`, which resolves with the
@@ -23,27 +23,29 @@ import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
  *
  * This supports complex metaprogramming behaviors and runtime policy enforcement.
  */
-export default function setPrototypeOf(resolveProxy: nx.resolveProxy) {
-  return (target: nx.Traceable, prototype: object): boolean => {
-    const [proxy, wrapper] = resolveProxy();
-    const { sandbox } = wrapper;
-    const finalTarget = sandbox || target;
-    const targetIsExtensible = Reflect.isExtensible(target);
-    const currentPrototype = Reflect.getPrototypeOf(target);
+export default function setPrototypeOf(wrapper: nx.ProxyWrapper) {
+  return (target: object, prototype: object): boolean => {
+    const { proxy } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
     let finalPrototype: unknown = prototype;
 
-    const event = new ProxySetPrototypeOfEvent({
+    const event = new ProxyEvent("setPrototypeOf", {
       target: proxy,
       data: {
-        target: finalTarget,
+        target,
         prototype,
         result: deferred.promise,
       },
-    });
+    }) as nx.ProxySetPrototypeOfEvent;
+
+    emitProxyEvent(wrapper, event);
 
     if (event.defaultPrevented) {
       finalPrototype = event.returnValue;
+    }
+
+    if (finalPrototype === undefined) {
+      return resolveWith(deferred.resolve, false);
     }
 
     // Throw an error when the prototype is not an object or null
@@ -55,20 +57,6 @@ export default function setPrototypeOf(resolveProxy: nx.resolveProxy) {
           proxy,
         ),
       );
-    }
-
-    if (!targetIsExtensible && currentPrototype !== finalPrototype) {
-      return rejectWith(
-        deferred.resolve,
-        new ProxyError(
-          "Prototype cannot be changed because the target object is not extensible",
-          proxy,
-        ),
-      );
-    }
-
-    if (sandbox) {
-      Reflect.setPrototypeOf(sandbox, finalPrototype);
     }
 
     return resolveWith(

@@ -1,6 +1,7 @@
-import type * as nx from "../types/Nexo.js";
-import ProxyGetEvent from "../events/ProxyGetEvent.js";
+import ProxyEvent from "../events/ProxyEvent.js";
+import emitProxyEvent from "../utils/emitProxyEvent.js";
 import { createDeferred, resolveWith } from "../utils/deferred.js";
+import ProxyWrapper from "../utils/ProxyWrapper.js";
 
 /**
  * Implements the `get` trap for a Proxy, enabling interception of property access.
@@ -13,36 +14,37 @@ import { createDeferred, resolveWith } from "../utils/deferred.js";
  *
  * Ensures all outcomes are funneled through a deferred promise resolution for consistency.
  */
-export default function get(resolveProxy: nx.resolveProxy) {
-  return (target: nx.Traceable, property: nx.ObjectKey): unknown => {
-    const [proxy, wrapper] = resolveProxy();
-    const { sandbox, nexo } = wrapper;
+export default function get(wrapper: nx.ProxyWrapper) {
+  return (target: object, property: nx.ObjectKey): unknown => {
+    const { proxy, manager } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], unknown>>();
-    const finalTarget = sandbox || target;
 
-    const event = new ProxyGetEvent({
+    const event = new ProxyEvent("get", {
       target: proxy,
       data: {
-        target: finalTarget,
+        target,
         property,
         result: deferred.promise,
       },
-    });
+    }) as nx.ProxyGetEvent;
+
+    emitProxyEvent(wrapper, event);
 
     if (event.defaultPrevented) {
       return resolveWith(deferred.resolve, event.returnValue);
     }
 
-    if (!sandbox) {
+    if (Reflect.has(target, property)) {
+      // return existing value on the target or sandbox
       return resolveWith(deferred.resolve, Reflect.get(target, property));
     }
 
-    if (Reflect.has(sandbox, property)) {
-      // return existing value on the sandbox
-      return resolveWith(deferred.resolve, Reflect.get(sandbox, property));
-    } else {
-      // returns new proxy
-      return resolveWith(deferred.resolve, nexo.create());
+    // create a new managed proxy
+    if (manager) {
+      return resolveWith(deferred.resolve, manager.create());
     }
+
+    // create a new unmanaged proxy
+    return resolveWith(deferred.resolve, new ProxyWrapper().proxy);
   };
 }

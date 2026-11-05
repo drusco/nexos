@@ -16,7 +16,12 @@
   },
   "plugins": ["@typescript-eslint", "prettier"],
   "rules": {
-    "@typescript-eslint/no-unused-vars": "error"
+    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/no-namespace": "off",
+    "@typescript-eslint/no-empty-object-type": [
+      "error",
+      { "allowInterfaces": "with-single-extends" }
+    ]
   },
   "ignorePatterns": ["node_modules/*", "dist/*", "coverage/*", "docusaurus/*"]
 }

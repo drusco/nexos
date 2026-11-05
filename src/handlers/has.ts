@@ -1,5 +1,5 @@
-import type * as nx from "../types/Nexo.js";
-import ProxyHasEvent from "../events/ProxyHasEvent.js";
+import ProxyEvent from "../events/ProxyEvent.js";
+import emitProxyEvent from "../utils/emitProxyEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
 import ProxyError from "../utils/ProxyError.js";
 
@@ -12,28 +12,28 @@ import ProxyError from "../utils/ProxyError.js";
  * If the event is canceled (`event.preventDefault()`), the provided return value is
  * validated to ensure it's a boolean. If not, a `ProxyError` is thrown.
  *
- * If the event is not canceled, the check is forwarded to either the sandbox (if present)
+ * If the event is not canceled, the check is forwarded to either the sandbox
  * or the original target using `Reflect.has`.
  *
  * Deferred resolution is used to allow async inspection of the result via the event's
  * `.data.result` promise.
  *
  */
-export default function has(resolveProxy: nx.resolveProxy) {
-  return (target: nx.Traceable, property: nx.ObjectKey): boolean => {
-    const [proxy, wrapper] = resolveProxy();
-    const { sandbox } = wrapper;
+export default function has(wrapper: nx.ProxyWrapper) {
+  return (target: object, property: nx.ObjectKey): boolean => {
+    const { proxy } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
-    const finalTarget = sandbox || target;
 
-    const event = new ProxyHasEvent({
+    const event = new ProxyEvent("has", {
       target: proxy,
       data: {
-        target: finalTarget,
+        target,
         property,
         result: deferred.promise,
       },
-    });
+    }) as nx.ProxyHasEvent;
+
+    emitProxyEvent(wrapper, event);
 
     if (event.defaultPrevented) {
       if (typeof event.returnValue !== "boolean") {
@@ -43,10 +43,6 @@ export default function has(resolveProxy: nx.resolveProxy) {
         );
       }
       return resolveWith(deferred.resolve, event.returnValue);
-    }
-
-    if (sandbox) {
-      return resolveWith(deferred.resolve, Reflect.has(sandbox, property));
     }
 
     return resolveWith(deferred.resolve, Reflect.has(target, property));

@@ -1,4 +1,3 @@
-import type * as nx from "../types/Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import Nexo from "../Nexo.js";
 import ProxyError from "../utils/ProxyError.js";
@@ -10,8 +9,8 @@ describe("Has Handler", () => {
     const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
-    nexo.on("proxy.has", listener);
-    wrapper.on("proxy.has", listener);
+    nexo.events.on("proxy.has", listener);
+    wrapper.events.on("proxy.has", listener);
 
     Reflect.has(proxy, "foo");
 
@@ -36,7 +35,7 @@ describe("Has Handler", () => {
       return true;
     });
 
-    wrapper.on("proxy.has", listener);
+    wrapper.events.on("proxy.has", listener);
 
     const result = Reflect.has(proxy, "foo");
 
@@ -52,7 +51,7 @@ describe("Has Handler", () => {
     const proxy = nexo.create();
     const wrapper = Nexo.wrap(proxy);
 
-    wrapper.on("proxy.has", (event: nx.ProxyHasEvent) => {
+    wrapper.events.on("proxy.has", (event: nx.ProxyHasEvent) => {
       event.preventDefault();
       return "invalid" as unknown as boolean;
     });

@@ -1,4 +1,3 @@
-import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import ProxyError from "../utils/ProxyError.js";
 
@@ -11,8 +10,8 @@ describe("GetOwnPropertyDescriptor Handler", () => {
 
     proxy.foo = true;
 
-    nexo.on("proxy.getOwnPropertyDescriptor", listener);
-    wrapper.on("proxy.getOwnPropertyDescriptor", listener);
+    nexo.events.on("proxy.getOwnPropertyDescriptor", listener);
+    wrapper.events.on("proxy.getOwnPropertyDescriptor", listener);
 
     const descriptor = Reflect.getOwnPropertyDescriptor(proxy, "foo");
 
@@ -79,6 +78,23 @@ describe("GetOwnPropertyDescriptor Handler", () => {
     expect(result).toStrictEqual(descriptor);
   });
 
+  it("returns undefined unless the event listener provides a replacement", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.create({ foo: true });
+
+    nexo.events.on(
+      "proxy.getOwnPropertyDescriptor",
+      (event: nx.ProxyGetOwnPropertyDescriptorEvent) => {
+        event.preventDefault();
+        return;
+      },
+    );
+
+    const descriptor = Object.getOwnPropertyDescriptor(proxy, "foo");
+
+    expect(descriptor).toBeUndefined();
+  });
+
   it("returns undefined for missing properties", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
@@ -99,7 +115,7 @@ describe("GetOwnPropertyDescriptor Handler", () => {
       writable: false,
     };
 
-    nexo.on(
+    nexo.events.on(
       "proxy.getOwnPropertyDescriptor",
       (event: nx.ProxyGetOwnPropertyDescriptorEvent) => {
         event.preventDefault();
@@ -117,8 +133,8 @@ describe("GetOwnPropertyDescriptor Handler", () => {
     const proxy = nexo.create();
     const errorListener = jest.fn();
 
-    nexo.on("error", errorListener);
-    nexo.on(
+    nexo.events.on("error", errorListener);
+    nexo.events.on(
       "proxy.getOwnPropertyDescriptor",
       (event: nx.ProxyGetOwnPropertyDescriptorEvent) => {
         event.preventDefault();

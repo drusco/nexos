@@ -1,4 +1,3 @@
-import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 import ProxyError from "../utils/ProxyError.js";
@@ -10,8 +9,8 @@ describe("GetPrototypeOf Handler", () => {
     const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
-    nexo.on("proxy.getPrototypeOf", listener);
-    wrapper.on("proxy.getPrototypeOf", listener);
+    nexo.events.on("proxy.getPrototypeOf", listener);
+    wrapper.events.on("proxy.getPrototypeOf", listener);
 
     const prototype = Reflect.getPrototypeOf(proxy);
 
@@ -36,7 +35,7 @@ describe("GetPrototypeOf Handler", () => {
       return Array.prototype;
     });
 
-    wrapper.on("proxy.getPrototypeOf", listener);
+    wrapper.events.on("proxy.getPrototypeOf", listener);
 
     expect(Object.getPrototypeOf(proxy)).toBe(Array.prototype);
 
@@ -57,8 +56,8 @@ describe("GetPrototypeOf Handler", () => {
       return "invalid" as unknown as object;
     });
 
-    nexo.on("error", errorListener);
-    wrapper.on("proxy.getPrototypeOf", listener);
+    nexo.events.on("error", errorListener);
+    wrapper.events.on("proxy.getPrototypeOf", listener);
 
     expect(() => Object.getPrototypeOf(proxy)).toThrow(ProxyError);
 

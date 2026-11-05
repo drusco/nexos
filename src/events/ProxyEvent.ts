@@ -1,39 +1,41 @@
-import type * as nx from "../types/Nexo.js";
-import NexoEvent from "./NexoEvent.js";
-import map from "../utils/maps.js";
+import Event from "./Event.js";
+import isProxy from "../utils/isProxy.js";
+
+type ProxyEventSuffix =
+  | keyof ProxyHandler<object>
+  | "lock"
+  | "unlock"
+  | "rename"
+  | "manager"
+  | "target"
+  | "before"
+  | "after";
 
 /**
  * Represents an event triggered by a proxy.
  */
-class ProxyEvent<Data = unknown>
-  extends NexoEvent<nx.Proxy, Data>
-  implements nx.ProxyEvent<Data>
-{
-  declare readonly cancelable: true;
-
+class ProxyEvent<D> extends Event<object, D> {
   /**
    * Creates an instance of the `ProxyEvent`.
    * This constructor initializes the event with the name prefixed by `proxy.`
    *
-   * @param name - The name of the proxy event.
+   * @param name - Name of the {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy#handler_functions | built-in handler}.
    * @param options - Options to configure the event.
    * @param options.data - The data associated with the event.
    * @param options.target - The proxy of the event.
-   *
-   * @example
-   * const proxyEvent = new ProxyEvent('get', { target: proxy, data: "example" });
    */
   constructor(
-    name: nx.ProxyHandler,
+    name: ProxyEventSuffix,
     options?: {
-      data?: Data;
-      target: nx.Proxy;
+      data?: D;
+      target: object;
+      cancelable?: boolean;
     },
   ) {
-    if (!map.proxies.has(options?.target)) {
+    if (!isProxy(options?.target)) {
       throw TypeError("options.target is not a valid proxy.");
     }
-    super(`proxy.${name}`, { ...options, cancelable: true });
+    super(`proxy.${name}`, { cancelable: true, ...options });
   }
 }
 

@@ -1,35 +1,16 @@
-import type * as nx from "./types/Nexo.js";
-import NexoEmitter from "./utils/NexoEmitter.js";
+import EventEmitter from "./utils/EventEmitter.js";
 import Nexo from "./Nexo.js";
-import NexoMap from "./utils/NexoMap.js";
-import ProxyWrapper from "./utils/ProxyWrapper.js";
+import TraceableMap from "./utils/TraceableMap.js";
+import Event from "./events/Event.js";
+import ProxyPipeline from "./utils/ProxyPipeline.js";
 import ProxyError from "./utils/ProxyError.js";
-import maps from "./utils/maps.js";
-import ProxyCreateEvent from "./events/ProxyCreateEvent.js";
 
 describe("Nexo", () => {
   it("Creates a new nexo object", () => {
     const nexo = new Nexo();
 
-    expect(nexo.entries).toBeInstanceOf(NexoMap);
-    expect(nexo).toBeInstanceOf(NexoEmitter);
-  });
-
-  it("Access the wrapper using the proxy", () => {
-    const nexo = new Nexo();
-    const proxy = nexo.create();
-    const wrapper = Nexo.wrap(proxy);
-
-    expect(wrapper).toBeInstanceOf(ProxyWrapper);
-  });
-
-  it("Access the wrapper using the target", () => {
-    const nexo = new Nexo();
-    const target = {};
-    const proxy = nexo.create(target);
-    const wrapper = Nexo.wrap(proxy);
-
-    expect(wrapper).toBeInstanceOf(ProxyWrapper);
+    expect(nexo.entries).toBeInstanceOf(TraceableMap);
+    expect(nexo.events).toBeInstanceOf(EventEmitter);
   });
 
   it("Creates a new proxy object without a target", () => {
@@ -47,31 +28,33 @@ describe("Nexo", () => {
     const target = {};
     const listener = jest.fn();
 
-    nexo.on("proxy", listener);
+    nexo.events.on("proxy", listener);
 
     const proxy = nexo.create(target);
     const wrapper = Nexo.wrap(proxy);
     const [proxyEvent]: [nx.ProxyCreateEvent] = listener.mock.lastCall;
 
     expect(listener).toHaveBeenCalledTimes(1);
-    expect(proxyEvent).toBeInstanceOf(ProxyCreateEvent);
+    expect(proxyEvent).toBeInstanceOf(Event);
     expect(proxyEvent.target).toBe(proxy);
     expect(proxyEvent.name).toBe("proxy");
     expect(proxyEvent.data).toStrictEqual({
       id: wrapper.id,
       target,
-      result: proxyEvent.data.result,
     });
   });
 
-  it("Creates a proxy by name with optional target", () => {
+  it("Creates a proxy by id with optional target", () => {
     const nexo = new Nexo();
     const target = {};
     const proxy = nexo.use("foo", target);
+    const sameProxy = nexo.use("foo");
     const wrapper = Nexo.wrap(proxy);
 
     expect(wrapper.id).toBe("foo");
     expect(nexo.entries.has("foo")).toBe(true);
+    expect(nexo.entries.get("foo").deref()).toBe(proxy);
+    expect(sameProxy).toBe(proxy);
   });
 
   it("Updates the proxy target", () => {
@@ -81,7 +64,7 @@ describe("Nexo", () => {
 
     const proxyA = nexo.use("foo", targetA);
     const proxyB = nexo.use("foo", targetB);
-    const proxyC = nexo.use("foo");
+    const proxyC = nexo.use("foo") as object as unknown[];
 
     const wrapperA = Nexo.wrap(proxyA);
     const wrapperB = Nexo.wrap(proxyB);
@@ -127,22 +110,10 @@ describe("Nexo", () => {
     expect(proxy1).not.toBe(proxy2);
   });
 
-  it("Throws when the wrapper cannot be found", () => {
-    const nexo = new Nexo();
-    const target = () => {};
-
-    const proxy = nexo.create(target);
-
-    // force proxy removal from map of proxies
-    maps.proxies.delete(proxy);
-
-    expect(() => Nexo.wrap(proxy)).toThrow(ProxyError);
-  });
-
   it("Does not emit events across different Nexo instances", () => {
     const nexoA = new Nexo();
     const nexoB = new Nexo();
-    const target = {};
+    const target = { foo: 0, bar: 0 };
 
     const proxyA = nexoA.create(target);
     const proxyB = nexoB.create(target);
@@ -150,8 +121,8 @@ describe("Nexo", () => {
     const listenerA = jest.fn();
     const listenerB = jest.fn();
 
-    nexoA.on("proxy.set", listenerA);
-    nexoB.on("proxy.set", listenerB);
+    nexoA.events.on("proxy.set", listenerA);
+    nexoB.events.on("proxy.set", listenerB);
 
     proxyA.foo = 123;
     proxyB.bar = 456;
@@ -160,56 +131,54 @@ describe("Nexo", () => {
     expect(listenerB).toHaveBeenCalledTimes(1);
   });
 
-  it("Only revokes proxy in its own instance", () => {
+  it("Only locks a proxy in its own instance", () => {
     const nexoA = new Nexo();
     const nexoB = new Nexo();
-    const target = {};
+    const target = { foo: 0 };
 
     const proxyA = nexoA.create(target);
     const proxyB = nexoB.create(target);
 
     const wrapperA = Nexo.wrap(proxyA);
-    wrapperA.revoke();
+    wrapperA.lock();
 
     expect(() => proxyA.foo).toThrow(); // should throw
     expect(() => proxyB.foo).not.toThrow(); // should not throw
   });
 
-  it("Returns true when the parameter is a proxy", () => {
+  it("exposes a shared middleware pipeline", () => {
     const nexo = new Nexo();
-    const proxy = nexo.create();
-    const result = Nexo.isProxy(proxy);
 
-    expect(result).toBe(true);
+    expect(nexo.pipeline).toBeInstanceOf(ProxyPipeline);
   });
 
-  it("Returns false when the parameter is not a proxy", () => {
-    expect(Nexo.isProxy(undefined)).toBe(false);
-    expect(Nexo.isProxy(NaN)).toBe(false);
-    expect(Nexo.isProxy(null)).toBe(false);
-    expect(Nexo.isProxy("foo")).toBe(false);
-    expect(Nexo.isProxy(() => {})).toBe(false);
-    expect(Nexo.isProxy({})).toBe(false);
-    expect(Nexo.isProxy([])).toBe(false);
-    expect(Nexo.isProxy(true)).toBe(false);
+  it("applies manager middleware to created proxies", () => {
+    const nexo = new Nexo();
+    const traps: string[] = [];
+
+    nexo.pipeline.use(({ trap }, next) => {
+      traps.push(trap);
+      return next();
+    });
+
+    const proxy = nexo.create({ value: 1 }) as { value: unknown };
+    void proxy.value;
+
+    expect(traps).toContain("get");
   });
 
-  it("Returns true when the value is a non null object or a function", () => {
-    const traceableObject = Nexo.isTraceable({});
-    const traceableArray = Nexo.isTraceable([]);
-    const traceableFunction = Nexo.isTraceable(() => {});
+  it("keeps the lock guard even when the manager pipeline is mutated", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.create({ value: 1 }) as { value: unknown };
+    const wrapper = Nexo.wrap(proxy);
 
-    expect(traceableArray).toBe(true);
-    expect(traceableObject).toBe(true);
-    expect(traceableFunction).toBe(true);
-  });
+    wrapper.lock();
 
-  it("Returns false when the parameter is not traceable", () => {
-    expect(Nexo.isTraceable(undefined)).toBe(false);
-    expect(Nexo.isTraceable(NaN)).toBe(false);
-    expect(Nexo.isTraceable(null)).toBe(false);
-    expect(Nexo.isTraceable("foo")).toBe(false);
-    expect(Nexo.isTraceable(1000)).toBe(false);
-    expect(Nexo.isTraceable(true)).toBe(false);
+    // Locking is enforced by the wrapper itself (not by a middleware), so
+    // mutating the manager's pipeline cannot remove or precede it.
+    nexo.pipeline.remove("lock");
+    nexo.pipeline.prepend((_, next) => next());
+
+    expect(() => proxy.value).toThrow(ProxyError);
   });
 });

@@ -1,5 +1,5 @@
-import type * as nx from "../types/Nexo.js";
-import ProxyGetPrototypeOfEvent from "../events/ProxyGetPrototypeOfEvent.js";
+import ProxyEvent from "../events/ProxyEvent.js";
+import emitProxyEvent from "../utils/emitProxyEvent.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
 import ProxyError from "../utils/ProxyError.js";
 
@@ -10,21 +10,22 @@ import ProxyError from "../utils/ProxyError.js";
  * like `Reflect.getPrototypeOf(proxy)` and optionally emits a cancelable event
  * before returning the prototype. If the event is prevented, the handler validates
  * the returned value and uses it instead. Otherwise, it defaults to the prototype
- * of the sandbox (if defined) or the original target object.
+ * of the sandbox or the original target object.
  */
-export default function getPrototypeOf(resolveProxy: nx.resolveProxy) {
-  return (target: nx.Traceable): object => {
-    const [proxy, wrapper] = resolveProxy();
-    const { sandbox } = wrapper;
+export default function getPrototypeOf(wrapper: nx.ProxyWrapper) {
+  return (target: object): object => {
+    const { proxy } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], object>>();
 
-    const event = new ProxyGetPrototypeOfEvent({
+    const event = new ProxyEvent("getPrototypeOf", {
       target: proxy,
       data: {
-        target: sandbox || target,
+        target,
         result: deferred.promise,
       },
-    });
+    }) as nx.ProxyGetPrototypeOfEvent;
+
+    emitProxyEvent(wrapper, event);
 
     if (event.defaultPrevented) {
       if (typeof event.returnValue !== "object") {
@@ -37,10 +38,6 @@ export default function getPrototypeOf(resolveProxy: nx.resolveProxy) {
         );
       }
       return resolveWith(deferred.resolve, event.returnValue);
-    }
-
-    if (sandbox) {
-      return resolveWith(deferred.resolve, Reflect.getPrototypeOf(sandbox));
     }
 
     return resolveWith(deferred.resolve, Reflect.getPrototypeOf(target));
