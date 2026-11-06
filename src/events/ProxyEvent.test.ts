@@ -1,12 +1,14 @@
+import Nexo from "../Nexo.js";
 import ProxyEvent from "./ProxyEvent.js";
-import ProxyWrapper from "../utils/ProxyWrapper.js";
+import NexoEvent from "./NexoEvent.js";
 
 describe("ProxyEvent", () => {
   it("initializes with default options and prepends `proxy.` to the event name", () => {
-    const { proxy } = new ProxyWrapper();
+    const nexo = new Nexo();
+    const proxy = nexo.create();
     const event = new ProxyEvent("get", { target: proxy });
 
-    expect(event).toBeInstanceOf(ProxyEvent);
+    expect(event).toBeInstanceOf(NexoEvent);
     expect(event.name).toBe("proxy.get");
     expect(event.target).toBe(proxy);
     expect(event.data).toBeUndefined();
@@ -15,15 +17,16 @@ describe("ProxyEvent", () => {
   });
 
   it("accepts custom event data", () => {
-    const { proxy } = new ProxyWrapper();
+    const nexo = new Nexo();
+    const proxy = nexo.create();
     const data = { foo: "bar" };
 
-    const event = new ProxyEvent("set", {
+    const event = new ProxyEvent("defineProperty", {
       target: proxy,
       data,
     });
 
-    expect(event.name).toBe("proxy.set");
+    expect(event.name).toBe("proxy.defineProperty");
     expect(event.target).toBe(proxy);
     expect(event.data).toBe(data);
   });

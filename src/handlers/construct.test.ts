@@ -1,109 +1,88 @@
-import isProxy from "../utils/isProxy.js";
+import type * as nx from "../types/Nexo.js";
+import Nexo from "../Nexo.js";
 import ProxyError from "../utils/ProxyError.js";
-import ProxyWrapper from "../utils/ProxyWrapper.js";
-import ProxyManager from "./__mocks__/ProxyManager.js";
 
 describe("Construct Handler", () => {
-  let manager: nx.ProxyManager;
-
-  beforeEach(() => {
-    manager = ProxyManager();
-  });
-
-  it("emits a 'proxy.construct' event", async () => {
-    const wrapper = new ProxyWrapper();
+  it("emits a 'proxy.construct' event with correct data", async () => {
+    const nexo = new Nexo();
+    const proxy = nexo.create();
+    const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
-    wrapper.events.on("proxy.construct", listener);
-    wrapper.setManager(manager);
+    nexo.on("proxy.construct", listener);
+    wrapper.on("proxy.construct", listener);
 
     const args = ["foo", "bar"];
-    const result = Reflect.construct(wrapper.proxy, args);
+    const result = Reflect.construct(proxy, args);
 
     const [event]: [nx.ProxyConstructEvent] = listener.mock.lastCall;
-    const getResult = await event.data.result;
+    const getResultFn = await event.data.result;
 
-    expect(listener).toHaveBeenCalledTimes(1);
-    expect(manager.events.emit).toHaveBeenCalledWith("proxy.construct", event);
-    expect(event.target).toBe(wrapper.proxy);
+    expect(listener).toHaveBeenCalledTimes(2);
+    expect(event.target).toBe(proxy);
     expect(event.cancelable).toBe(true);
     expect(event.data.args).toStrictEqual(args);
-    expect(getResult()).toBe(result);
+    expect(getResultFn()).toBe(result);
   });
 
-  it("returns a sandboxed proxy by default", () => {
-    const wrapper = new ProxyWrapper();
-    const result = Reflect.construct(wrapper.proxy, []);
+  it("returns a new proxy instance by default", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.create();
 
-    expect(isProxy(result)).toBe(true);
-    expect(manager.create).not.toHaveBeenCalled();
-  });
+    const instance = Reflect.construct(proxy, []);
 
-  it("returns a managed proxy when a proxy manager is present", () => {
-    const wrapper = new ProxyWrapper();
-
-    wrapper.setManager(manager);
-    const result = Reflect.construct(wrapper.proxy, []);
-
-    expect(isProxy(result)).toBe(true);
-    expect(manager.create).toHaveBeenCalledTimes(1);
+    expect(Nexo.isProxy(instance)).toBe(true);
   });
 
   it("constructs an instance using the target constructor", () => {
+    const nexo = new Nexo();
     class MyClass {}
-    const wrapper = new ProxyWrapper(MyClass);
-    const result = Reflect.construct(wrapper.proxy, []);
+    const proxy = nexo.create(MyClass);
 
-    expect(result).toBeInstanceOf(MyClass);
+    const instance = Reflect.construct(proxy, []);
+
+    expect(instance).toBeInstanceOf(MyClass);
   });
 
   it("allows event listeners to override the returned instance", () => {
-    const wrapper = new ProxyWrapper();
-    const expectedResult = {};
+    const nexo = new Nexo();
+    const proxy = nexo.create();
+    const wrapper = Nexo.wrap(proxy);
 
-    wrapper.events.on("proxy.construct", (event) => {
+    const customInstance = {};
+
+    wrapper.on("proxy.construct", (event: nx.ProxyConstructEvent) => {
       event.preventDefault();
-      return expectedResult;
+      return customInstance;
     });
 
-    const result = Reflect.construct(wrapper.proxy, []);
+    const result = Reflect.construct(proxy, []);
 
-    expect(result).toBe(expectedResult);
+    expect(result).toBe(customInstance);
   });
 
   it("throws ProxyError if the overridden result is not an object", () => {
-    const wrapper = new ProxyWrapper();
+    const nexo = new Nexo();
+    const proxy = nexo.create();
+    const wrapper = Nexo.wrap(proxy);
 
-    wrapper.setManager(manager);
-
-    const errorListener = jest.fn();
-    const listener = jest.fn((event) => {
+    wrapper.on("proxy.construct", (event: nx.ProxyConstructEvent) => {
       event.preventDefault();
-      return "invalid" as null;
+      return "invalid" as unknown as object; // not an object
     });
 
-    wrapper.events.on("proxy.construct", listener);
-    wrapper.events.on("proxy.error", errorListener);
-
-    expect(() => Reflect.construct(wrapper.proxy, [])).toThrow(ProxyError);
-
-    const [event]: [nx.ProxyConstructEvent] = listener.mock.lastCall;
-    const [error]: [nx.ProxyError] = errorListener.mock.lastCall;
-
-    expect(listener).toHaveBeenCalledTimes(1);
-    expect(errorListener).toHaveBeenCalledTimes(1);
-    expect(manager.events.emit).toHaveBeenCalledWith("proxy.construct", event);
-    expect(manager.events.emit).toHaveBeenCalledWith("proxy.error", error);
+    expect(() => Reflect.construct(proxy, [])).toThrow(ProxyError);
   });
 
   it("throws ProxyError if the original constructor throws", () => {
+    const nexo = new Nexo();
     class ExplodingClass {
       constructor() {
         throw new Error("boom");
       }
     }
-    const wrapper = new ProxyWrapper(ExplodingClass);
+    const proxy = nexo.create(ExplodingClass);
 
-    expect(() => Reflect.construct(wrapper.proxy, [])).toThrow(ProxyError);
+    expect(() => Reflect.construct(proxy, [])).toThrow(ProxyError);
   });
 });

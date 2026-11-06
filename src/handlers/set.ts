@@ -1,5 +1,5 @@
-import ProxyEvent from "../events/ProxyEvent.js";
-import emitProxyEvent from "../utils/emitProxyEvent.js";
+import type * as nx from "../types/Nexo.js";
+import ProxySetEvent from "../events/ProxySetEvent.js";
 import ProxyError from "../utils/ProxyError.js";
 import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
 
@@ -19,29 +19,33 @@ import { createDeferred, rejectWith, resolveWith } from "../utils/deferred.js";
  *
  * The final resolved result reflects the behavior of `Reflect.set`.
  */
-export default function set(wrapper: nx.ProxyWrapper) {
-  return (target: object, property: nx.ObjectKey, value: unknown): boolean => {
-    const { proxy } = wrapper;
+export default function set(resolveProxy: nx.resolveProxy) {
+  return (
+    target: nx.Traceable,
+    property: nx.ObjectKey,
+    value: unknown,
+  ): boolean => {
+    const [proxy, wrapper] = resolveProxy();
+    const { sandbox } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
+    const finalTarget = sandbox || target;
     let finalValue = value;
 
-    const event = new ProxyEvent("set", {
+    const event = new ProxySetEvent({
       target: proxy,
       data: {
-        target,
+        target: finalTarget,
         property,
         value,
         result: deferred.promise,
       },
-    }) as nx.ProxySetEvent;
-
-    emitProxyEvent(wrapper, event);
+    });
 
     if (event.defaultPrevented) {
       finalValue = event.returnValue;
     }
 
-    if (!Reflect.set(target, property, finalValue)) {
+    if (!Reflect.set(finalTarget, property, finalValue)) {
       return rejectWith(
         deferred.resolve,
         new ProxyError(

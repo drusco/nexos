@@ -1,3 +1,4 @@
+import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import ProxyError from "../utils/ProxyError.js";
 
@@ -11,15 +12,15 @@ describe("DeleteProperty Handler", () => {
 
     proxy.foo = true;
 
-    nexo.events.on("proxy.deleteProperty", listener);
-    wrapper.events.on("proxy.deleteProperty", listener);
+    nexo.on("proxy.deleteProperty", listener);
+    wrapper.on("proxy.deleteProperty", listener);
 
     const result = Reflect.deleteProperty(proxy, "foo");
 
     const [event]: [nx.ProxyDeletePropertyEvent] = listener.mock.lastCall;
 
     expect(result).toBe(true);
-    expect(Object.hasOwn(proxy, "foo")).toBe(false);
+    expect(Nexo.isProxy(proxy.foo)).toBe(true);
     expect(listener).toHaveBeenCalledTimes(2);
     expect(event.target).toBe(proxy);
     expect(event.cancelable).toBe(true);
@@ -34,7 +35,7 @@ describe("DeleteProperty Handler", () => {
     const result = Reflect.deleteProperty(proxy, "foo");
 
     expect(result).toBe(true);
-    expect(Object.hasOwn(proxy, "foo")).toBe(false);
+    expect(proxy.foo).toBeUndefined();
   });
 
   it("returns true when the property is deleted from an untraceable target", () => {
@@ -57,7 +58,7 @@ describe("DeleteProperty Handler", () => {
       event.preventDefault();
     });
 
-    nexo.events.on("proxy.deleteProperty", listener);
+    nexo.on("proxy.deleteProperty", listener);
 
     const result = Reflect.deleteProperty(proxy, "foo");
     const [event]: [nx.ProxyDeletePropertyEvent] = listener.mock.lastCall;
@@ -70,10 +71,10 @@ describe("DeleteProperty Handler", () => {
 
   it("throws an error if deletion is not possible on proxy with traceable target", () => {
     const nexo = new Nexo();
-    const target = { foo: false };
+    const target = {};
     const proxy = nexo.create(target);
 
-    Object.defineProperty(proxy, "foo", { value: true, configurable: false });
+    Object.defineProperty(proxy, "foo", { value: true });
 
     expect(() => delete proxy.foo).toThrow(ProxyError);
     expect(proxy.foo).toBe(true);

@@ -1,3 +1,4 @@
+import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import ProxyEvent from "../events/ProxyEvent.js";
 
@@ -10,8 +11,8 @@ describe("Get Handler", () => {
     const property = "name";
     const value = "foo";
 
-    nexo.events.on("proxy.get", listener);
-    wrapper.events.on("proxy.get", listener);
+    nexo.on("proxy.get", listener);
+    wrapper.on("proxy.get", listener);
 
     proxy[property] = value;
 
@@ -49,7 +50,7 @@ describe("Get Handler", () => {
       return currentValue;
     });
 
-    wrapper.events.on("proxy.get", listener);
+    wrapper.on("proxy.get", listener);
 
     proxy[property] = value;
 

@@ -1,25 +1,22 @@
 // types
-import "./types/index.js";
-export type { nx };
+export type * from "./types/Nexo.js";
 // main
 import Nexo from "./Nexo.js";
 // utils
-import TraceableMap from "./utils/TraceableMap.js";
-import EventEmitter from "./utils/EventEmitter.js";
+import NexoMap from "./utils/NexoMap.js";
+import NexoEmitter from "./utils/NexoEmitter.js";
 import ProxyWrapper from "./utils/ProxyWrapper.js";
 import ProxyError from "./utils/ProxyError.js";
-import ProxyPipeline from "./utils/ProxyPipeline.js";
 // events
-import Event from "./events/Event.js";
+import NexoEvent from "./events/NexoEvent.js";
 import ProxyEvent from "./events/ProxyEvent.js";
 
 export {
   Nexo,
-  TraceableMap,
-  EventEmitter,
-  Event,
+  NexoMap,
+  NexoEmitter,
+  NexoEvent,
   ProxyEvent,
   ProxyError,
-  ProxyPipeline,
   ProxyWrapper,
 };

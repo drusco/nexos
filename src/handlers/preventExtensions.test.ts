@@ -1,3 +1,4 @@
+import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import ProxyError from "../utils/ProxyError.js";
 
@@ -5,10 +6,12 @@ describe("PreventExtensions Handler", () => {
   it("prevents extensions on the sandboxed proxies", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
+    const wrapper = Nexo.wrap(proxy);
     const result = Reflect.preventExtensions(proxy);
 
     expect(result).toBe(true);
     expect(Object.isExtensible(proxy)).toBe(false);
+    expect(Object.isExtensible(wrapper.sandbox)).toBe(false);
   });
 
   it("prevents extensions on the proxy target", () => {
@@ -28,8 +31,8 @@ describe("PreventExtensions Handler", () => {
     const wrapper = Nexo.wrap(proxy);
     const listener = jest.fn();
 
-    nexo.events.on("proxy.preventExtensions", listener);
-    wrapper.events.on("proxy.preventExtensions", listener);
+    nexo.on("proxy.preventExtensions", listener);
+    wrapper.on("proxy.preventExtensions", listener);
 
     const result = Reflect.preventExtensions(proxy);
 
@@ -54,7 +57,7 @@ describe("PreventExtensions Handler", () => {
       return false;
     });
 
-    wrapper.events.on("proxy.preventExtensions", listener);
+    wrapper.on("proxy.preventExtensions", listener);
 
     const result = Reflect.preventExtensions(proxy);
     const [event]: [nx.ProxyPreventExtensionsEvent] = listener.mock.lastCall;
@@ -76,7 +79,7 @@ describe("PreventExtensions Handler", () => {
       return true;
     });
 
-    wrapper.events.on("proxy.preventExtensions", listener);
+    wrapper.on("proxy.preventExtensions", listener);
 
     expect(() => Reflect.preventExtensions(proxy)).toThrow(ProxyError);
     expect(Reflect.isExtensible(proxy)).toBe(true);

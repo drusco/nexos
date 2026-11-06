@@ -33,9 +33,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Verify npm cache
-        run: npm cache verify
-
       - name: Install Root dependencies
         run: npm ci
 
@@ -45,4 +42,5 @@ jobs:
       - name: Run semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release --debug

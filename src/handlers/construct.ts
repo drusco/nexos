@@ -1,9 +1,8 @@
-import ProxyEvent from "../events/ProxyEvent.js";
-import emitProxyEvent from "../utils/emitProxyEvent.js";
+import type * as nx from "../types/Nexo.js";
+import ProxyConstructEvent from "../events/ProxyConstructEvent.js";
 import ProxyError from "../utils/ProxyError.js";
-import ProxyWrapper from "../utils/ProxyWrapper.js";
+import Nexo from "../Nexo.js";
 import { createDeferred, resolveWith, rejectWith } from "../utils/deferred.js";
-import isTraceable from "../utils/isTraceable.js";
 
 /**
  * Creates a `construct` trap handler for a Proxy, enabling interception and custom handling
@@ -20,24 +19,24 @@ import isTraceable from "../utils/isTraceable.js";
  * If no override is applied and the target isn't directly traceable, a new proxy instance is returned.
  *
  */
-export default function construct(wrapper: nx.ProxyWrapper) {
-  return (target: nx.FunctionLike, args: unknown[] = []): object => {
-    const { proxy, manager, traceable } = wrapper;
+export default function construct(resolveProxy: nx.resolveProxy) {
+  return (target: nx.FunctionLike, args: nx.ArrayLike): object => {
+    const [proxy, wrapper] = resolveProxy();
+    const { nexo, sandbox } = wrapper;
     const deferred = createDeferred<nx.FunctionLike<[], object>>();
+    const finalTarget = sandbox || target;
 
-    const event = new ProxyEvent("construct", {
+    const event = new ProxyConstructEvent({
       target: proxy,
       data: {
-        target,
+        target: finalTarget,
         args,
         result: deferred.promise,
       },
-    }) as nx.ProxyConstructEvent;
-
-    emitProxyEvent(wrapper, event);
+    });
 
     if (event.defaultPrevented) {
-      if (isTraceable(event.returnValue)) {
+      if (Nexo.isTraceable(event.returnValue)) {
         // return value from the prevented event
         const returnValue = event.returnValue;
         return resolveWith(deferred.resolve, returnValue);
@@ -51,7 +50,7 @@ export default function construct(wrapper: nx.ProxyWrapper) {
       );
     }
 
-    if (traceable && typeof target === "function") {
+    if (!sandbox && typeof target === "function") {
       // return instance from the traceable constructor target
       try {
         const result = Reflect.construct(target, args);
@@ -64,12 +63,7 @@ export default function construct(wrapper: nx.ProxyWrapper) {
       }
     }
 
-    // create a new managed proxy
-    if (manager) {
-      return resolveWith(deferred.resolve, manager.create());
-    }
-
-    // create a new unmanaged proxy
-    return resolveWith(deferred.resolve, new ProxyWrapper().proxy);
+    // create a new proxy
+    return resolveWith(deferred.resolve, nexo.create());
   };
 }

@@ -1,5 +1,5 @@
-import ProxyEvent from "../events/ProxyEvent.js";
-import emitProxyEvent from "../utils/emitProxyEvent.js";
+import type * as nx from "../types/Nexo.js";
+import ProxyDefinePropertyEvent from "../events/ProxyDefinePropertyEvent.js";
 import ProxyError from "../utils/ProxyError.js";
 import { createDeferred, resolveWith, rejectWith } from "../utils/deferred.js";
 
@@ -10,32 +10,33 @@ import { createDeferred, resolveWith, rejectWith } from "../utils/deferred.js";
  * - Prevent the property from being defined by calling `event.preventDefault()`
  * - Replace the property descriptor by returning a new one from the listener
  *
- * If not prevented, the descriptor is applied to the internal target or sandbox.
+ * If not prevented, the descriptor is applied to the internal sandbox.
  * The trap respects standard JavaScript invariants (e.g., non-extensibility, frozen objects).
  *
  * The resolved result reflects the actual JS engine behavior (true/false),
  * while the event provides a `data.result` promise representing the expected outcome.
  */
-export default function defineProperty(wrapper: nx.ProxyWrapper) {
+export default function defineProperty(resolveProxy: nx.resolveProxy) {
   return (
-    target: object,
+    target: nx.Traceable,
     property: nx.ObjectKey,
     descriptor: PropertyDescriptor,
   ): boolean => {
-    const { proxy } = wrapper;
+    const [proxy, wrapper] = resolveProxy();
+    const { sandbox } = wrapper;
+    const extensible = Object.isExtensible(target);
     const deferred = createDeferred<nx.FunctionLike<[], boolean>>();
+    const finalTarget = sandbox || target;
 
-    const event = new ProxyEvent("defineProperty", {
+    const event = new ProxyDefinePropertyEvent({
       target: proxy,
       data: {
-        target,
+        target: finalTarget,
         property,
         descriptor,
         result: deferred.promise,
       },
-    }) as nx.ProxyDefinePropertyEvent;
-
-    emitProxyEvent(wrapper, event);
+    });
 
     // If event prevented, try to define with event.returnValue or return false
     if (event.defaultPrevented) {
@@ -43,7 +44,7 @@ export default function defineProperty(wrapper: nx.ProxyWrapper) {
         return resolveWith(deferred.resolve, false);
       }
 
-      if (!Reflect.defineProperty(target, property, event.returnValue)) {
+      if (!Reflect.defineProperty(finalTarget, property, event.returnValue)) {
         return rejectWith(
           deferred.resolve,
           new ProxyError(
@@ -53,17 +54,87 @@ export default function defineProperty(wrapper: nx.ProxyWrapper) {
         );
       }
 
-      return resolveWith(deferred.resolve, false);
+      return resolveWith(deferred.resolve, true);
     }
 
-    // Define on the target or sandbox
-    try {
-      if (!Reflect.defineProperty(target, property, descriptor)) {
-        throw TypeError(
-          `Cannot define property '${String(property)}' on proxy target`,
+    // If no sandbox, define directly on target
+    if (!sandbox) {
+      try {
+        if (!Reflect.defineProperty(target, property, descriptor)) {
+          throw TypeError(
+            `Cannot define property '${String(property)}' on proxy target`,
+          );
+        }
+        return resolveWith(deferred.resolve, true);
+      } catch (error) {
+        return rejectWith(
+          deferred.resolve,
+          new ProxyError(error.message, proxy),
         );
       }
-      return resolveWith(deferred.resolve, true);
+    }
+
+    // If target is not extensible
+    if (!extensible) {
+      try {
+        if (!Reflect.defineProperty(target, property, descriptor)) {
+          throw TypeError(
+            `Cannot define property '${String(property)}', object is not extensible`,
+          );
+        }
+        return resolveWith(deferred.resolve, true);
+      } catch (error) {
+        return rejectWith(
+          deferred.resolve,
+          new ProxyError(error.message, proxy),
+        );
+      }
+    }
+
+    const configurable = descriptor.configurable ?? true;
+    const isNonConfigurable = configurable === false;
+    const sandboxDescriptor = Reflect.getOwnPropertyDescriptor(
+      sandbox,
+      property,
+    );
+
+    // Don't allow making configurable property non-configurable
+    if (
+      sandboxDescriptor &&
+      sandboxDescriptor.configurable &&
+      isNonConfigurable
+    ) {
+      return rejectWith(
+        deferred.resolve,
+        new ProxyError(
+          `Cannot define non-configurable property '${String(property)}' that is configurable on the sandbox`,
+          proxy,
+        ),
+      );
+    }
+
+    // validate the property descriptor
+    if (
+      !("value" in descriptor || "get" in descriptor || "set" in descriptor) &&
+      isNonConfigurable
+    ) {
+      return rejectWith(
+        deferred.resolve,
+        new ProxyError(
+          `Cannot define non-configurable property '${String(property)}' without a value, get, or set`,
+          proxy,
+        ),
+      );
+    }
+
+    // Define on sandbox
+    try {
+      if (!Reflect.defineProperty(sandbox, property, descriptor)) {
+        throw TypeError(
+          `Cannot define property '${String(property)}' on proxy sandbox`,
+        );
+      }
+      return resolveWith(deferred.resolve, configurable);
     } catch (error) {
       return rejectWith(deferred.resolve, new ProxyError(error.message, proxy));
     }

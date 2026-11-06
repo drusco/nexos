@@ -1,240 +1,89 @@
-import isTraceable from "./isTraceable.js";
-import EventEmitter from "./EventEmitter.js";
-import ProxyEvent from "../events/ProxyEvent.js";
-import isProxy from "./isProxy.js";
-import generateId from "./generateId.js";
-import getProxyMap from "./getProxyMap.js";
-import getSandbox from "./getSandbox.js";
-import createHandlers from "../handlers/index.js";
-import ProxyPipeline from "./ProxyPipeline.js";
+import type * as nx from "../types/Nexo.js";
+import NexoEmitter from "./NexoEmitter.js";
+import Nexo from "../Nexo.js";
 
 /**
  * A wrapper class that manages a proxy and its associated events.
  * The `ProxyWrapper` encapsulates the functionality of proxy operations and ensures
  * that event listeners are triggered appropriately. It also provides the ability
- * to lock the proxy and manage sandboxed targets.
+ * to revoke the proxy and manage traceability.
  *
+ * @example
+ * const proxyWrapper = new ProxyWrapper({ id: 'proxy1', nexo: someNexoInstance, traceable: true, revoke: revokeFunction });
+ * proxyWrapper.revoke(); // This will revoke the proxy.
  */
+class ProxyWrapper
+  extends NexoEmitter<nx.ProxyEvents>
+  implements nx.ProxyWrapper
+{
+  /** The unique identifier for the proxy wrapper. */
+  readonly id: string;
 
-class ProxyWrapper<T extends object = nx.Proxy> implements nx.ProxyWrapper<
-  T,
-  nx.ProxyEvents
-> {
-  get locked(): boolean {
-    return this.isLocked;
-  }
+  /** The `Nexo` instance associated with this proxy wrapper. */
+  readonly nexo: Nexo;
 
-  get pipeline(): nx.ProxyPipeline<nx.ProxyWrapper<object, nx.ProxyEvents>> {
-    return this.pipelineInstance;
-  }
+  /** The sandbox for the proxy if it is not traceable, otherwise `undefined`. */
+  readonly sandbox: void | nx.Traceable;
 
-  get events(): nx.EventEmitter<nx.ProxyEvents> {
-    return this.eventEmitter;
-  }
+  /** A private flag indicating whether the proxy has been revoked. */
+  private _revoked: boolean = false;
 
-  get id(): string {
-    return this.proxyId;
-  }
-
-  get target(): T {
-    return this.proxyTarget;
-  }
-
-  get manager(): nx.ProxyManager | undefined {
-    return this.proxyManager;
-  }
-
-  get traceable(): boolean {
-    return this.isTraceable;
-  }
-
-  get proxy(): nx.ProxyTarget<T> | undefined {
-    return this.proxyRef.deref();
-  }
-
-  /** The underlying target object */
-  private proxyTarget: T;
-
-  /** Whether the `proxy` was created with a custom target object */
-  private isTraceable: boolean = false;
-
-  /** The proxy manager associated with the proxy */
-  private proxyManager?: nx.ProxyManager;
-
-  /** Event emitter instance */
-  private readonly eventEmitter = new EventEmitter<nx.ProxyEvents>();
-
-  /** Indicates whether the proxy has been locked */
-  private isLocked: boolean = false;
-
-  /** Middleware pipeline inherited by this proxy. */
-  private readonly pipelineInstance: ProxyPipeline<
-    nx.ProxyWrapper<object, nx.ProxyEvents>
-  >;
-
-  /** A weak reference to the proxy being wrapped */
-  private proxyRef: WeakRef<nx.ProxyTarget<T>>;
-
-  /** A unique identifier for the proxy */
-  private proxyId: string = generateId();
-
-  /** Method to create or update an existing proxy */
-  private upsertProxy(target?: object): void {
-    const traceable = isTraceable(target);
-    const targetObject = traceable ? target : getSandbox();
-    const prevProxy = this.proxyRef?.deref();
-    const map = getProxyMap();
-
-    const proxy = new Proxy<nx.ProxyTarget<T>>(
-      targetObject as nx.ProxyTarget<T>,
-      createHandlers(this),
-    );
-
-    this.proxyTarget = targetObject as T;
-    this.isTraceable = traceable;
-    this.proxyRef = new WeakRef(proxy);
-
-    map.delete(prevProxy);
-    map.set(proxy, this);
-  }
-
-  /** Resolves the pipeline a wrapper inherits from a manager. */
-  private resolvePipelineParent(
-    manager?: nx.ProxyManager,
-  ): ProxyPipeline<nx.ProxyWrapper<object, nx.ProxyEvents>> {
-    return manager?.pipeline as ProxyPipeline<
-      nx.ProxyWrapper<object, nx.ProxyEvents>
-    >;
-  }
+  /** The function responsible for revoking the proxy. */
+  private _revoke: nx.FunctionLike<[], void>;
 
   /**
    * Creates an instance of `ProxyWrapper`.
+   * This constructor initializes the wrapper with the provided data and sets up
+   * the proxy's traceability. If the proxy is not traceable, a sandbox is created.
    *
-   * @param target - The target object for the initial proxy
+   * @param data - The data for initializing the proxy wrapper, including `id`, `nexo`, `traceable` flag, and `revoke` function.
+   * @example
+   * const proxyWrapper = new ProxyWrapper({ id: 'proxy1', nexo: someNexoInstance, traceable: true, revoke: revokeFunction });
+   * // Initializes the ProxyWrapper instance.
    */
-  constructor(target?: null);
-  constructor(target?: T);
+  constructor(data: {
+    id: string;
+    nexo: Nexo;
+    traceable: boolean;
+    revoke: nx.FunctionLike<[], void>;
+  }) {
+    super();
 
-  constructor(target?: T) {
-    this.pipelineInstance = new ProxyPipeline();
+    this.id = data.id;
+    this.nexo = data.nexo;
+    this._revoke = data.revoke;
 
-    this.upsertProxy(target);
-  }
-
-  lock(): this {
-    if (this.isLocked) return this;
-
-    this.isLocked = true;
-
-    const proxy = this.proxyRef.deref();
-
-    // find proxy manager
-    if (this.manager && isProxy(proxy)) {
-      // create the `proxy.lock` event
-      const event = new ProxyEvent("lock", {
-        target: proxy,
-        cancelable: false,
-        data: this,
-      }) as nx.ProxyWrapperEvent;
-      // emit the event to the manager
-      this.manager.events?.emit(event.name, event);
+    // If the proxy is not traceable, create a sandbox
+    if (!data.traceable) {
+      this.sandbox = Object.create(null);
     }
-
-    return this;
   }
 
-  unlock(): this {
-    this.isLocked = false;
-
-    const proxy = this.proxyRef.deref();
-
-    if (this.manager && isProxy(proxy)) {
-      // create the `proxy.unlock` event
-      const event = new ProxyEvent("unlock", {
-        target: proxy,
-        cancelable: false,
-        data: this,
-      }) as nx.ProxyWrapperEvent;
-      // emit the event to the manager
-      this.manager.events?.emit(event.name, event);
+  /**
+   * Revokes the proxy, triggering the revoke function and marking the proxy as revoked.
+   * Once revoked, the proxy can no longer be used for its original operations.
+   *
+   * @example
+   * proxyWrapper.revoke(); // Revokes the proxy and prevents further use.
+   */
+  revoke(): void {
+    if (this._revoke) {
+      this._revoke();
+      delete this._revoke;
+      this._revoked = true;
     }
-
-    return this;
   }
 
-  setManager(manager: nx.ProxyManager): this {
-    if (this.isLocked) return this;
-
-    const previousManager = this.proxyManager;
-    const proxy = this.proxyRef.deref();
-
-    this.proxyManager = manager;
-    this.pipelineInstance.setParent(this.resolvePipelineParent(manager));
-
-    // find proxy manager
-    if (manager && previousManager !== manager && isProxy(proxy)) {
-      // create the `proxy.manager` event
-      const event = new ProxyEvent("manager", {
-        target: proxy,
-        cancelable: false,
-        data: this,
-      }) as nx.ProxyWrapperEvent;
-      // emit the event to the manager
-      manager.events?.emit(event.name, event);
-    }
-
-    return this;
-  }
-
-  removeManager(): this {
-    this.proxyManager = undefined;
-    this.pipelineInstance.setParent();
-    return this;
-  }
-
-  setTarget(target: object): this {
-    if (this.target === target) return this;
-    if (this.isLocked) return this;
-
-    this.upsertProxy(target);
-
-    const proxy = this.proxyRef?.deref();
-
-    if (this.manager && isProxy(proxy)) {
-      // create the event
-      const event = new ProxyEvent("target", {
-        target: proxy,
-        cancelable: false,
-        data: this,
-      }) as nx.ProxyWrapperEvent;
-      // emit the event to the manager
-      this.manager.events?.emit(event.name, event);
-    }
-
-    return this;
-  }
-
-  setId(id: string): this {
-    if (this.isLocked) return this;
-    if (typeof id !== "string" || !id.length) return this;
-
-    this.proxyId = id;
-
-    const proxy = this.proxyRef.deref();
-
-    // find proxy manager
-    if (this.manager && isProxy(proxy)) {
-      // create the `proxy.rename` event
-      const event = new ProxyEvent("rename", {
-        target: proxy,
-        cancelable: false,
-        data: this,
-      }) as nx.ProxyWrapperEvent;
-      // emit the event to the manager
-      this.manager.events?.emit(event.name, event);
-    }
-
-    return this;
+  /**
+   * A getter that returns whether the proxy has been revoked.
+   * This value is `true` if the proxy was revoked, otherwise `false`.
+   *
+   * @returns `true` if the proxy is revoked, `false` otherwise.
+   * @example
+   * const isRevoked = proxyWrapper.revoked; // Checks if the proxy is revoked.
+   */
+  get revoked(): boolean {
+    return this._revoked;
   }
 }
 

@@ -1,3 +1,4 @@
+import type * as nx from "../types/Nexo.js";
 import Nexo from "../Nexo.js";
 import ProxyError from "../utils/ProxyError.js";
 import ProxyEvent from "../events/ProxyEvent.js";
@@ -10,8 +11,8 @@ describe("SetPrototypeOf Handler", () => {
     const listener = jest.fn();
     const prototype = Array.prototype;
 
-    nexo.events.on("proxy.setPrototypeOf", listener);
-    wrapper.events.on("proxy.setPrototypeOf", listener);
+    nexo.on("proxy.setPrototypeOf", listener);
+    wrapper.on("proxy.setPrototypeOf", listener);
 
     const result = Reflect.setPrototypeOf(proxy, prototype);
 
@@ -37,7 +38,7 @@ describe("SetPrototypeOf Handler", () => {
       return null;
     });
 
-    nexo.events.on("proxy.setPrototypeOf", listener);
+    nexo.on("proxy.setPrototypeOf", listener);
 
     const result = Reflect.setPrototypeOf(proxy, Array.prototype);
     const [event]: [nx.ProxySetPrototypeOfEvent] = listener.mock.lastCall;
@@ -52,13 +53,10 @@ describe("SetPrototypeOf Handler", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
 
-    nexo.events.on(
-      "proxy.setPrototypeOf",
-      (event: nx.ProxySetPrototypeOfEvent) => {
-        event.preventDefault();
-        return "non-object" as unknown as object;
-      },
-    );
+    nexo.on("proxy.setPrototypeOf", (event: nx.ProxySetPrototypeOfEvent) => {
+      event.preventDefault();
+      return "non-object" as unknown as object;
+    });
 
     expect(() => {
       Reflect.setPrototypeOf(proxy, Array.prototype);
@@ -91,6 +89,35 @@ describe("SetPrototypeOf Handler", () => {
     expect(Reflect.getPrototypeOf(target)).toBe(prototype);
   });
 
+  it("throws an error when the target is not extensible", () => {
+    const nexo = new Nexo();
+    const proxy = nexo.create();
+    const target = { foo: true };
+    const targetProxy = nexo.create(target);
+    const prototype = Array.prototype;
+
+    Reflect.preventExtensions(proxy);
+    Reflect.preventExtensions(targetProxy);
+
+    expect(() => {
+      Reflect.setPrototypeOf(proxy, prototype);
+    }).toThrow(ProxyError);
+
+    expect(() => {
+      Reflect.setPrototypeOf(proxy, Reflect.getPrototypeOf(proxy));
+    }).not.toThrow();
+
+    expect(Reflect.setPrototypeOf(target, prototype)).toBe(false);
+
+    expect(() => {
+      Reflect.setPrototypeOf(targetProxy, prototype);
+    }).toThrow(ProxyError);
+
+    expect(() => {
+      Reflect.setPrototypeOf(targetProxy, Reflect.getPrototypeOf(targetProxy));
+    }).not.toThrow();
+  });
+
   it("allows setting prototype to null", () => {
     const nexo = new Nexo();
     const proxy = nexo.create();
@@ -105,13 +132,10 @@ describe("SetPrototypeOf Handler", () => {
     const proxy = nexo.create();
     const proto = { x: true };
 
-    nexo.events.on(
-      "proxy.setPrototypeOf",
-      (event: nx.ProxySetPrototypeOfEvent) => {
-        event.preventDefault();
-        return proto;
-      },
-    );
+    nexo.on("proxy.setPrototypeOf", (event: nx.ProxySetPrototypeOfEvent) => {
+      event.preventDefault();
+      return proto;
+    });
 
     const result = Reflect.setPrototypeOf(proxy, []);
     expect(result).toBe(true);
@@ -123,7 +147,7 @@ describe("SetPrototypeOf Handler", () => {
     const proxy = nexo.create();
     const prototype = Array.prototype;
 
-    nexo.events.on("proxy.setPrototypeOf", () => {
+    nexo.on("proxy.setPrototypeOf", () => {
       return null; // should be ignored unless preventDefault is called
     });
 

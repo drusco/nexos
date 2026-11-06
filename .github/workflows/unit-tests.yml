@@ -24,24 +24,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Verify npm cache
-        run: npm cache verify
-
       - name: Install dependencies
         run: npm ci
 
-      - name: Determine target branch
-        id: target
-        run: echo "branch=${{ github.event_name == 'pull_request' && github.base_ref || github.ref_name }}" >> "$GITHUB_OUTPUT"
-
       - name: Run production tests
-        if: steps.target.outputs.branch == 'main'
+        if: github.ref_name == 'main'
         env:
           COVERAGE_THRESHOLD: '{"global": {"branches": 100, "functions": 100, "lines": 100, "statements": 100}}'
         run: npx jest --coverage --coverageThreshold="$COVERAGE_THRESHOLD"
 
       - name: Run development tests
-        if: steps.target.outputs.branch == 'next'
+        if: github.ref_name == 'next'
         run: npm run test-coverage
 
       - name: Upload results to Codecov
